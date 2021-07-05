@@ -1,0 +1,111 @@
+﻿@model FarmerBrothers.Models.CallCloserModel
+
+@{
+    ViewBag.Title = "CallCloser";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Data;
+@using FarmerBrothers.Models;
+
+
+<script src="~/Content/jquery.validate.min.js"></script>
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: right;
+        height: auto;
+    }
+</style> 
+
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+        $( '#CallClosureLink' ).css( "color", "white" );
+    } );
+
+    function queryCellInfo( args )
+    {
+        if ( args.column.field == "WorkOrderId" )
+        {
+            args.cell.className += " urlStyle";
+        }
+
+    }
+    function RecordClick( args )
+    {
+        if ( args.columnName == "Work Order ID" )
+        {
+            window.location.href = "@Url.Action("CallClosureManagement", "CallClosure")" + "/" + args.data["CustomerId"] + '/' + args.data["WorkOrderId"] + "/false/false";
+        }
+    }
+</script>
+
+
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <h2 class="customer-head arrow-down tabheader">Work Orders</h2>
+        <div class="customer-content margin-top">
+            <div class="row clear-input">
+
+                <div class="col-md-12">
+                    <div class="table-responsive">
+
+                        @(Html.EJ().Grid<FarmerBrothers.Models.CallCloserModel>
+                                    ("CallCloserDetails")
+                                        .Datasource((IEnumerable<object>)ViewBag.callClosers)
+                                                       .AllowPaging().AllowFiltering().AllowScrolling()
+                                                       .AllowTextWrap()
+                                                                .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+                                               .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                        .Columns(col =>
+                                        {
+                                            col.Field("WorkOrderId").HeaderText("Work Order ID").IsPrimaryKey(true).Width(100).Add();
+                                            col.Field("TechId").HeaderText("Technician ID").Width(110).Add();
+                                            col.Field("WorkorderCalltypeDesc").HeaderText("Service Code").Width(100).Add();
+                                            col.Field("WorkOrderCallStatus").HeaderText("Work Order Status").Width(100).Add();
+                                            col.Field("ScheduledDate").HeaderText("Event Scheduled To").Width(110).Add();
+                                            col.Field("CustomerId").HeaderText("Customer ID").Width(110).Add();
+                                            col.Field("CustomerName").HeaderText("Customer Name").Width(150).Add();
+                                            col.Field("CustomerCity").HeaderText("City").Width(100).Add();
+                                            col.Field("CustomerState").HeaderText("State").Width(100).Add();
+                                            col.Field("AppointmentDate").HeaderText("Appointment Date").Width(110).Add();
+                                            col.Field("EntryDate").HeaderText("Entry Date").Width(100).Add();
+                                            col.Field("DispatchDate").HeaderText("Dispatch Date").Width(100).Add();
+                                            col.Field("SLACountDown").HeaderText("SLA Count Down/Elapsed(SLA)").Width(130).Add();
+                                            col.Field("EquipmentCount").HeaderText("Equip Count").Width(100).Add();
+
+                                        })
+                                        .ClientSideEvents(eve =>
+                                        {
+                                            eve.RecordClick("RecordClick")
+                                                .QueryCellInfo("queryCellInfo");
+                                        }))
+
+
+
+
+
+
+                    </div><!--end of .table-responsive-->
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+

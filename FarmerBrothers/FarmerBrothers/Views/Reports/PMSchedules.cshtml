@@ -1,0 +1,210 @@
+﻿@{
+    ViewBag.Title = "ReportsSearch";
+}
+
+@model FarmerBrothers.Models.PMSchedulesModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var formDirty = false;
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+        console.debug("at page lode = " + ej.serverTimeZoneOffset)
+        $('#ReportsLink').css("color", "white");
+
+        $("#DateFrom").ejDatePicker({ value: new Date($("#DateFrom").val()) });
+        $("#DateTo").ejDatePicker({ value: new Date($("#DateTo").val()) });
+
+        $('#PMScheduleResults').ejGrid({
+            exportToExcelAction : '@Url.Action("PMScheduleExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                //{ field: "FBNo", headerText: "Workorder ID"},
+                { field: "ContactID", headerText: "Account No" },
+                { field: "CustomerName", headerText: "Customer Name" },
+                { field: "TechID", headerText: "TechID" },
+                { field: "TechName", headerText: "Tech Name" },
+                { field: "ContactName", headerText: "Contact Name" },
+                { field: "Phone", headerText: "Phone" },
+                { field: "StartDate", headerText: "Start Date" },
+                { field: "IntervalType", headerText: "Interval Type" },
+                { field: "NextRunDate", headerText: "Next Run Date" },
+                { field: "IntervalDuration", headerText: "Interval Duration" },
+                { field: "Notes", headerText: "Notes" }
+            ]
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchPMSchedule", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#PMScheduleResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+    });
+
+    function SearchClear() {
+        $('.form-control').val('');
+        //$('#StatesDropDown').val("n/a");
+        //$('#Submitclear').val('true');
+        //$("#Operation").val(5);
+        //$('#reportSearchForm').submit();
+    }
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        //if ($('#DateFrom').val() == ""
+        //    || $('#DateTo').val() == "")
+        //{
+        //    AlertPopup("|Please Select StartDate and EndDate!");
+        //    valid = false;
+        //}
+        //if($("#CustomerJDE").val() == "")
+        //{
+        //    AlertPopup("|Please Enter an Account Number!");
+        //    valid = false;
+        //}
+
+        if ($('#DateFrom').val() == ""
+                && $('#DateTo').val() == "" && $("#CustomerJDE").val() == "")
+        {
+            AlertPopup("|Please Enter any search criteria");
+            valid = false;
+        }
+        if(($('#DateFrom').val() != "" && $('#DateTo').val() == "") || ($('#DateFrom').val() == "" && $('#DateTo').val() != ""))
+        {
+            AlertPopup("|Please Enter both start and End Date");
+            valid = false;
+        }
+        return valid;
+    }
+
+    function ClearPMScheduleSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearPMScheduleResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#PMScheduleResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>PM Schedules Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "DateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                END Date :
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "DateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Account No :
+                                @Html.TextBoxFor(c => c.CustomerJDE, new { @class = "form-control SearchPanelControl", @Id = "CustomerJDE" })
+                            </div>
+                        </div>
+                        @*<div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Tech ID :
+                                @Html.TextBoxFor(c => c.TechJDE, new { @class = "form-control SearchPanelControl", @Id = "TechJDE" })
+                            </div>
+                        </div>*@
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearPMScheduleSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="PMScheduleResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

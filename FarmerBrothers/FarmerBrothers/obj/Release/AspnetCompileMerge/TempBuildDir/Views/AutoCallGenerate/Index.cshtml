@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
+}
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+        $( '#IdSubmit' ).attr( 'disabled', true );
+        $( '#CustomerId' ).keyup( function ()
+        {
+            if ( $( this ).val().length != 0 )
+                $( '#IdSubmit' ).attr( 'disabled', false );
+            else
+                $( '#IdSubmit' ).attr( 'disabled', true );
+        } )
+
+        $( "#IdSubmit" ).click( function ( e )
+        {
+            GetUserNotes();
+            e.preventDefault();
+        } );
+    } );
+
+    function GetUserNotes()
+    {
+        var customerId = $( '#CustomerId' ).val();
+        $.ajax( {
+            type: 'GET',
+            url: "@Url.Action("IsCustomerExist", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+            data: { customerId: customerId },
+            contentType: "application/json",
+            success: function ( response )
+            {
+                if ( response.message !=undefined && response.message != '' )
+                {
+                    AlertPopup( "|" + response.message );
+
+                }
+                else
+                {
+                    //var url = "/AutoCallGenerate/WorkOrder?customerId=" + customerId;
+                    window.location.href = response.Url;
+                }
+
+            },
+            error: function ( reponse )
+            {
+            }
+        } );
+    }
+
+</script>
+@using (Html.BeginForm())
+{
+    <section class="well">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+
+            </div>
+        </div>
+    </section>
+
+    <div class="col-md-12">
+        <div class="col-sm-6-o">
+            <span class="col-md-2 required">Account Number:</span>
+            <div class="col-md-2">
+                <div class="form-group">
+                    @Html.TextBox("CustomerId", "", new { Value = "", @class = "form-control", @type = "number" })
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button id="IdSubmit" type="submit" class="btn btn-primary" style="float:left;">Submit</button>
+            </div>
+            <div class="col-md-1">
+
+            </div>
+
+        </div>
+    </div>
+}
+

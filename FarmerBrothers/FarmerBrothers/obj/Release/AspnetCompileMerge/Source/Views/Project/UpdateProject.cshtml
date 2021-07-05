@@ -1,0 +1,83 @@
+﻿@model FarmerBrothers.Models.ProjectNumberModel
+@using (Html.BeginForm("Upload", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    if (Model != null && Model.ProjectID != null)
+    {
+        <div class="test" id="dvProjectNumberList">
+            <div>
+                <label style="width:120px;">Project ID:</label>
+                @Html.DisplayFor(m => m.ProjectID, new { id = "txtProjectNumberid", name = "txtProjectNumberid" })
+            </div>
+            <table>
+                <tr>
+                    <td style="vertical-align:top"><label style="width:120px;">Deadline:</label></td>
+                    <td>
+                        @Html.TextBoxFor(a => a.DeadLine, new { @id = "deadLineDate", name = "deadline", @class="UpdatePanelControl" })
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align:top"><label style="width:120px;">Notes:</label></td>
+                    <td>@Html.TextAreaFor(m => m.Notes, new { id = "txtNotes", name = "notes", @cols = 55, @rows = 7, @class = "UpdatePanelControl" })</td>
+                </tr>
+
+            </table>
+            <br />
+            <br />
+            <input type="hidden" id="testDate1" name="testUpdateDate" value="" />
+
+            <div style="align-items:center">
+                <button type="button" class="btn btn-primary" style="margin-left:590px;" id="btnSave">Save</button>
+            </div>
+        </div>
+    }
+}
+<script type="text/javascript">
+    $(function () {
+        
+        $(".UpdatePanelControl").change(function () {
+            formDirty = true;
+        });
+
+        $("#deadLineDate").ejDatePicker({
+            change: function (args) {
+                formDirty = true;
+            }
+        });
+
+        var dd=@Html.Raw(Json.Encode(Model.DeadLine));
+        if(dd != null)
+        {
+            var date = new Date(dd.match(/\d+/)[0] * 1);
+            myDate=(date.getMonth() + 1) + '/' + date.getDate() + '/' +  date.getFullYear();
+
+            $("#deadLineDate").val(myDate);
+        }
+
+        $("#btnSave").click(function () {
+            debugger;
+            var myUrl1 = '@Url.Action("UpdateProject", "Project")';
+            if ($("#txtNotes").val().trim().length == 0) {
+                $("#txtNotes").focus();
+            }
+            else {
+                $("#testDate1").val($("#deadLineDate").val());
+                $.ajax({
+                    type: 'POST',
+                    url: myUrl1, // we are calling json method
+                    dataType: 'json',
+                    data: { id: $("#txtProjectNumberid").val(), deadline: $("#deadLineDate").val(), notes: $("#txtNotes").val(),testUpdateDate:$("#testDate1").val() },
+                    success: function (data) {
+                        //alert("Project ID " + $("#txtProjectNumberid").val() + " updated successfully.");
+                        //$("#txtNotes").val("");
+                        //$("#deadLineDate").val("");
+                        //$("#dvProjectNumberList").html("");
+                        formDirty = false;
+                    },
+                    error: function (ex) {
+                    }
+                });
+                return false;
+            }
+        });
+    });
+</script>

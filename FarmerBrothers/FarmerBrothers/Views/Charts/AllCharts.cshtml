@@ -1,0 +1,228 @@
+﻿@model FarmerBrothers.Models.Charts
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.EJ2;
+@using Syncfusion.JavaScript;
+@using Syncfusion.JavaScript.DataVisualization
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+<script type="text/javascript">
+    var searchCriteria;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+        $("#rejCallDateFrom").ejDatePicker({ value: new Date($("#rejCallDateFrom").val()) });
+        $("#rejCallDateTo").ejDatePicker({ value: new Date($("#rejCallDateTo").val()) });
+
+       
+     $("#TechID").change(function () {
+            $.ajax({
+            url: "@Url.Action("TechnicianByFamilyAff", "Reports")",
+            data: { FamilyAff: $('#TechID option:selected').val() },
+            success: function (Result) {
+                $('#TechniciansId').empty()
+                $.each(Result, function (key, value) {
+                    $("#TechniciansId").append($("<option></option>").val(value.DealerId).html(value.CompanyName));
+                });
+
+            }
+
+            })
+        });       
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchRedirectCall", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#rejCallResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#rejCallDateFrom').val() == ""
+            && $('#rejCallDateTo').val() == ""
+        )) {
+            $('form').submit();
+        }
+
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#rejCallDateFrom').val() == ""
+            || $('#rejCallDateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearRejCallSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearRedirectCallResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#rejCallResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Redirect Call Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.RedirectCallFromDate, new { @class = "form-control SearchPanelControl", @Id = "rejCallDateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.RedirectCallToDate, new { @class = "form-control SearchPanelControl", @Id = "rejCallDateTo" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Family Aff :
+                                @Html.DropDownListFor(c => c.TechID, new SelectList(Model.FamilyAffs, "TechID", "TechName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Technician :
+                                @Html.DropDownListFor(t => t.DealerId, new SelectList(Model.Technicianlist, "DealerId", "CompanyName", "None"), new { @class = "form-control SearchPanelControl", @Id = "TechniciansId" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearRejCallSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                
+                @(Html.EJ().Chart("chartContainer")
+                    .Series(sr =>
+                    {
+                        sr.DataSource(Model.SearchResults)
+                        .Type(SeriesType.Doughnut)
+                        .XName("xValue").YName("yValue")
+                        .DoughnutCoefficient(0.4f)
+                        .DoughnutSize(1.0f)
+                        //.ExplodeAll(true)
+                        .Explode(true)
+                        //.StartAngle(-90).EndAngle(90)
+                        //.ExplodeIndex(1)
+                        .Marker(mr =>
+                               {
+                                   mr.DataLabel(db =>
+                                   {
+                                       db.Visible(true)
+                                           .Font(fn => { fn.Size("20px").FontWeight(ChartFontWeight.Regular); });
+                                   });
+                               })
+                        .Add();
+                    })
+                )
+
+
+                @*<div class="control-section">
+                    <div id="container" style="text-align:center">
+                        @(Html.EJS().AccumulationChart("container").Series(
+                    series =>
+                    {
+                        series.DataLabel(dl => dl.Visible(true).Name("text").Position(Syncfusion.EJ2.Charts.AccumulationLabelPosition.Inside).Font(ft => ft.FontWeight("600").Color("#ffffff"))).
+                             XName("xValue").
+                             YName("yValue").
+                             Name("Project").
+                             Type(Syncfusion.EJ2.Charts.AccumulationType.Pie).
+                             Radius("70%").
+                             DataSource(Model.SearchResults).
+                             StartAngle(0).
+                             EndAngle(360).
+                             InnerRadius("40%").
+                             Explode(true).
+                             ExplodeOffset("10%").
+                             ExplodeIndex(3).Add();
+                    }).EnableSmartLabels(true).Title("Project Cost Breakdown").LegendSettings(
+                    legend =>
+                    {
+                        legend.Position(Syncfusion.EJ2.Charts.LegendPosition.Top).Visible(true);
+                    }).Tooltip(tl => tl.Enable(true)).Load("load").Render()
+                        )
+                    </div>
+                </div>*@
+
+
+            </div>
+        </div>
+    </div>
+</section>

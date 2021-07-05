@@ -1,0 +1,304 @@
+﻿@model FarmerBrothers.Models.NewProfile
+
+@using FarmerBrothers.Models;
+@{
+    ViewBag.Title = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Content/jquery.validate.min.js"></script>
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+        $( "form" ).submit( function ( e )
+        {
+            var validator = $( "form" ).validate( {
+                rules: {
+                    Password: "required",
+                    ConfirmPassword: {
+                        equalTo: "#Password"
+                    }
+                }
+            } );
+
+            if ( validator.form() && ValidateProfile() == true )
+            {
+                var frmValues = $( "form" ).serialize();
+                $.ajax( {
+                    type: "post",
+                    url: "@Url.Action("CreateProfile", "User")",
+                    data: frmValues
+                } ).done( function ( response )
+                {
+                    if ( response != null && response.success == 0 )
+                    {
+                        AlertPopup( '|User Profile created Successfully!' );
+                        Users();
+                    }
+                    else
+                    {
+                        AlertPopup( '|There is a problem in user profile creation!' );
+                    }
+                } );
+            }
+            e.preventDefault();
+        } );
+        ProfileClear();
+    } );
+
+    function Users()
+    {
+        window.location.href = "@Url.Action("UserSearch", "User")";
+    }
+
+    function ValidateProfile()
+    {
+        var valid = true;
+        if ( $( '#FirstName' ).val() == ''
+            || $( '#Email' ).val() == ''
+            || $( '#LastName' ).val() == ''
+            || $( '#Password' ).val() == ''
+            || $( '#Company' ).val() == ''
+            || $( '#ConfirmPassword' ).val() == '' )
+        {
+            AlertPopup( "|Please enter required information to create profile!" );
+            valid = false;
+        }
+
+        return valid;
+    }
+    function ProfileClear()
+    {
+        $( '.form-control' ).val( '' );
+        $( '#StatesDropDown' ).val( "n/a" );
+    }
+</script>
+
+<div class="block margin-top">
+    <div class="col-md-12">
+        <div class="col-md-10">
+            <h4>New Profile</h4>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" style="display: inline-block;margin-right:50px;float:right;" class="btn btn-primary" onclick="Users();">Users</button>
+
+        </div>
+
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            @*<h2 class="customer-head arrow-down tabheader">Profile</h2>*@
+            <div class="customer-content margin-top">
+                <div class="row clear-input">
+                    <div class="col-md-4 customer-col1 customer sm-pad-reset">
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">First Name:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.FirstName, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">Email:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Email, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Title:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Title, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Region:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Region, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">City:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.City, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Phone:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Phone, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Role:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.DropDownListFor(c => c.RoleName, new SelectList(Model.Roles, "RoleId", "RoleName"), new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 customer sm-pad-reset">
+                        <div class="row">
+                            <div class="col-md-6 customer-col2">
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5 required">Last Name:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.LastName, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5 required">Password:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Password, new { @class = "form-control CustomerData", @type = "password" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Manager:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Manager, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Division:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Division, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">State:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">FAX:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Fax, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 customer-form-cnt">
+
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5 required">Company:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Company, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5 required">Confirm Password:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.ConfirmPassword, new { @class = "form-control CustomerData", @type = "password" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">M.I:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.MI, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Address:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Address, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Zip:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Zip, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">JDE#:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.JDE, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-3">
+                @{
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null 
+                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"],null) :
+                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                    if (UserPrivilege["User Maintenance"] == "Full")
+                    {
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" style="display: inline-block; margin-right: 10px; float: left;">Create Profile</button>
+                            <a onclick="ProfileClear()" class="btn btn-orange">Clear</a>
+                        </div>
+                    }
+                }
+
+            </div>
+            <div class="col-md-7">
+
+            </div>
+            <div class="col-md-1">
+
+            </div>
+            <div class="col-md-1">
+
+            </div>
+        </div>
+
+
+    </section>
+}

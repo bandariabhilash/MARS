@@ -1,0 +1,116 @@
+﻿@model FarmerBrothers.Models.UserModulePrivilegeModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+        
+    } );
+
+    function ApplicationPrivilegeBegin(args) {
+        if (args.requestType == "save") {//When the save action is triggered.
+            if ($.inArray(args.data,args.model.dataSource) != -1) {
+                args.cancel = true;
+                alert("Please enter only unique values");
+                $("#" + this._id + "_dialogEdit").ejDialog("close");
+               
+            }
+        }
+        $( '#ApplicationPrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    //function ApplicationPrivilegeBegin( args )
+    //{
+    //    if ( args.requestType == "save" )
+    //    {//When the save action is triggered.
+    //        //alert( "save =" + JSON.stringify( args.model.dataSource ) );
+
+           
+
+    //        if ( $.inArray( args.data, args.model.dataSource ) != -1 )
+    //        {
+    //            args.cancel = true;
+    //            alert("Please enter only unique values");
+    //            $("#" + this._id + "_dialogEdit").ejDialog("close");
+    //            //break;
+    //        }
+    //    }
+    //    $( '#ApplicationPrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    //}
+    function ApplicationPrivilegeEndEdit( args )
+    {
+        $( '#ApplicationPrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function ApplicationPrivilegeEndAdd( args )
+    {
+        $( '#ApplicationPrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    var apModule;
+    var apPrivilege;
+    
+    function ApplicationPrivilegeBeginEdit( args )
+    {
+        var children = args.row.children();
+        apModule = $( children[0] ).text();
+        apPrivilege = $( children[1] ).text();
+    }
+    function CompleteApplicationPrivilege( args )
+    {
+        if ( args.requestType == "beginedit" || args.requestType == "add" )
+        {
+            if ( args.requestType == "beginedit" )
+            {
+            }
+            
+        }
+    }
+    function queryApplicationPrivilege( args )
+    {
+        if ( args.column.headerText === "Module" )
+        {
+        }
+    }
+</script>
+@(Html.EJ().Grid<FarmerBrothers.Models.ApplicationRoleModel>
+                                        ("ApplicationPrivilege")
+                                            .Datasource(ds => ds.Json((IEnumerable<object>)Model.AppRoleModel)
+                                                .UpdateURL(Url.Action("ApplicationPrivilegeUpdate", "User"))
+                                                .InsertURL(Url.Action("ApplicationPrivilegeInsert", "User"))
+                                                .RemoveURL(Url.Action("ApplicationPrivilegeDelete", "User"))
+                                            .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                        .AllowPaging()
+                                        .ToolbarSettings(toolbar =>
+                                        {
+                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                            {
+                                               // items.AddTool(ToolBarItems.Add);
+                                                items.AddTool(ToolBarItems.Edit);
+                                                //items.AddTool(ToolBarItems.Delete);
+                                                items.AddTool(ToolBarItems.Update);
+                                                items.AddTool(ToolBarItems.Cancel);
+                                            });
+                                        })
+                                        .Columns(col =>
+                                        {
+                                            col.Field("AppId").HeaderText("Application ID").IsPrimaryKey(true).Visible(false).Add();
+                                            //col.Field("AppName").HeaderText("Module").ForeignKeyField("ApplicationName").ForeignKeyValue("ApplicationName").DataSource(((IEnumerable<object>)Model.Modules)).AllowEditing(false).Add();
+                                            col.Field("AppName").HeaderText("Module").AllowEditing(false).Width(30).Add();
+                                            col.Field("PriType").HeaderText("Privilege").ForeignKeyField("PrivilegeType").ForeignKeyValue("PrivilegeType").DataSource(((IEnumerable<object>)Model.Privileges)).Width(30).Add();
+                                        })
+                                            .ClientSideEvents(eve =>
+                                            {
+                                                eve.ActionComplete("CompleteApplicationPrivilege")
+                                                    .BeginEdit("ApplicationPrivilegeBeginEdit")
+                                                    .ActionBegin("ApplicationPrivilegeBegin")
+                                                    .EndEdit("ApplicationPrivilegeEndEdit")
+                                                    .EndAdd("ApplicationPrivilegeEndAdd")
+                                                    .QueryCellInfo("queryCellInfoApplicationPrivilege")
+                                                    .ToolbarClick("onToolbarClick");
+                                            }))

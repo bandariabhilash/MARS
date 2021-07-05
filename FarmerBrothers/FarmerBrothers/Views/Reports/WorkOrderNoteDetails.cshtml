@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "Reports";
+}
+
+@model FarmerBrothers.Models.NotesModel
+@using Newtonsoft.Json;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var searchWorkOrder = 0;
+    $(function () {
+        $('#ReportsLink').css("color", "white");
+        $('#NotesHistoryResults').ejGrid({
+            exportToExcelAction: '@Url.Action("ExcelExport","Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting: true,
+            allowTextWrap: true,
+            allowResizeToFit: true,
+            queryCellInfo: "queryCellInfo",
+            dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.NotesHistory, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }))),
+            columns: [
+
+                { field: "WorkorderID", headerText: "Workorder ID", width: 0 },
+                { field: "UserName", headerText: "User" },
+                { field: "EntryDate", headerText: "Date/Time", format: "{0:MM/dd/yyyy hh:mm tt}" },
+                { field: "Notes", headerText: "Note" }
+            ]
+        });
+
+        jQuery('.numbersOnly').keyup(function () {
+            this.value = this.value.replace(/[^0-9\.]/g, '');
+        });
+
+        $("#btnSearch").click(function () {
+            if ($("#txtWorkOrderId").val().length == 0) {
+                alert("Please enter WorkOrderId");
+                return false;
+            }
+        });
+    });
+</script>
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Reports</b>
+            </div>
+        </div>
+    </section>
+    <section class="well">
+        <h4>Work Order Note Details</h4>
+        <div>
+            Work Order ID:
+            <input type="text" name="Id" value="@(ViewBag.workOrderId ?? String.Empty)" pattern="\d*" class="numbersOnly" id="txtWorkOrderId" />
+            <button type="submit" class="btn btn-primary" id="btnSearch">Search</button>
+            <br /><br />
+            Notes:
+            <table id="NotesHistoryResults" class="display" cellspacing="0" width="100%"></table>
+        </div>
+    </section>
+}
+
+

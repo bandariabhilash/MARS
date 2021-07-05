@@ -1,0 +1,160 @@
+﻿@model FarmerBrothers.Models.UserRole
+
+@{
+    ViewBag.Title = "UserRoles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+<style type="text/css">
+    table {
+        margin: 0px auto;
+    }
+</style>
+<script type="text/javascript">
+    var rId = 101;
+    $( document ).ready( function ()
+    {
+        //alert( $( '#Roles' ).val() );
+        //$( '#Roles' ).val( "101" )
+
+        //$( "#Roles" ).val( $( '#Roles' ).text() );
+        //var roleId = $( '#Roles' ).val()
+
+        $( '.imgExpColl' ).click( function ()
+        {
+            var id = $( this ).prop( 'id' );
+            $( '.' + id ).toggle();
+            $( '.imgExpColl' ).toggle();
+        } );
+
+        $( '#btnSaveRoleData' ).click( SaveRoleData );
+
+        $( "#Role" ).change( function ()
+        {
+            var firstDropVal = $( '#Role' ).val();
+            window.location.href = "@Url.Action("UserRoles", "Admin")" + "?roleId=" + firstDropVal;
+        } );
+
+    } );
+
+    function GetUserRoles()
+    {
+        //alert( "Test" );
+        $.ajax( {
+            type: "GET",
+            url: "@Url.Action("UserRoles", "Admin")",
+            data: { roleId: rId },
+            success: function ( jsonResult )
+            {
+                //alert( jsonResult );
+                //$( '#divRoles' ).append( jsonResult.Data.data );
+            },
+            error: function ( jsonResult )
+            {
+                alert( jsonResult );
+                AlertPopup( "|There is a problem in getting User Roles!" );
+            }
+        } );
+    }
+    function GetSecurityFlag( can )
+    {
+        var canFlag = 0;
+        if ( can.is( ':checked' ) )
+        {
+            canFlag = 1;
+        }
+        else if ( can.is( ':disabled' ) )
+        {
+            canFlag = -1;
+        }
+        return canFlag;
+    }
+
+    function SaveRoleData()
+    {
+        var roleId = $( '[id$=Role]' ).val();
+        
+        var tabSecurity = [];
+        var tabSecurityRows = $( '#securityTable tr.securityRow' );
+        tabSecurityRows.each( function ()
+        {
+            tabSecurity.push( {
+                roleFunctionId: $( this ).prop( 'id' ),
+                roleId: roleId,
+                canCreate: GetSecurityFlag( $( this ).find( '#chkCanCreate' ) ),
+                canView: GetSecurityFlag( $( this ).find( '#chkCanView' ) ),
+                canUpdate: GetSecurityFlag( $( this ).find( '#chkCanUpdate' ) ),
+                canDelete: GetSecurityFlag( $( this ).find( '#chkCanDelete' ) )
+            } );
+        } );
+
+        //alert( "RoleID =" + roleId );
+        //alert( JSON.stringify( { security: tabSecurity } ) );
+        $.ajax( {
+            type: "POST",
+            url: "@Url.Action("UpdateSecurityData", "Admin")",
+            data: JSON.stringify( { security: tabSecurity } ),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function ( jsonResult )
+            {
+                AlertPopup( "|User Roles Updated successfully!" );
+            },
+            error: function ( jsonResult )
+            {
+                AlertPopup( "|An error occured while saving User Roles" );
+            }
+        } );
+    }
+</script>
+
+<section class="container-fluid white-bg pad fixedSecond header">
+    <div class="row vertical-align">
+        <div class="col-md-12">
+            <div class="col-md-8">
+
+
+            </div>
+            <div class="col-md-4">
+
+                <button id="btnSaveRoleData" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose">Save</button>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="erf-Assets-content margin-top">
+        <div class="row clear-input">
+
+            <div class="col-sm-6-o">
+                <span class="col-md-3" align="right"><h4><b>Roles:</b></h4></span>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.DropDownListFor(c => c.Role, new SelectList(Model.Roles, "RoleId", "RoleName"), new
+                   {
+                       @class = "form-control CustomerData"//,
+                       //onchange = "document.location.href='/UserRoles?roleId=' + this.options[this.selectedIndex].value;"
+                   })
+                    </div>
+                </div>
+                <div class="col-md-3">
+
+                </div>
+                <div class="col-md-3">
+                </div>
+            </div>
+
+            <div class="col-sm-6-o">
+                <div id="divRoles">
+                    @Html.Raw(Model.RolesInHtml)
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

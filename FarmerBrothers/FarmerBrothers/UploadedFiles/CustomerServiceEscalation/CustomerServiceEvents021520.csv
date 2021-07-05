@@ -1,0 +1,564 @@
+Route,Branch,RSRName,,RSRPhone,RSREmail,SalesManagerName,SalesManagerPhone,SalesManagerEmail,RegionalsName,RegionalsPhone,RegionalsEmail
+10,2,Maluina Tamapua,,858-829-2702,Maluina.Tamapua@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+13,2,Jermaine Jordan,,858-829-5267,jjordan@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+14,2,John Smurlo,,858-829-7927,jsmurlo@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+15,2,Ephraim Preciado,,858-212-2987,epreciado@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+501,2,Addie Lim,,858-829-8275,Addie.Lim@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+74,3,Michael Morris,,928-446-3162,mmorris@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+75,3,Kenneth Porter,,928-261-9966,Kenneth.Porter@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+78,4,Brian Riggins,,510-932-6939,briggins@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+79,4,Yonggang 'Eric' Chen,,510-750-6317,ychen@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+80,4,Evan Fernandez,,510-932-6753,Evan.Fernandez@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+82,4,Paul Vargas,,510-459-8147,pvargas@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+86,7,Robert Pauly,,805-406-5113,rpauly@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+114,4,Pac Thong,,408-591-6491,Pac.Thong@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+115,4,Michael Geckler,,510-750-6334,Mike.Geckler@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+116,4,Michael Wang,,510-755-3590,Michael.Wang@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+235,5,Ryan Butterfield,,602-505-2706,Ryan.Butterfield@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+236,5,Brian Tompkins,,602-505-2815,btompkins@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+237,5,Estevan (Steve) Aviles,,602-505-2233,eaviles@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+239,5,Cory Hoover,,602-505-2570,CHoover@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+240,5,Terry Kingston,,602-505-2892,tkingston@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+243,6,Scott Leon,,520-250-2856,scleon@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+244,6,John Barkhurst,,520-732-7644,John.Barkhurst@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+246,6,Rodney Carlson,,520-732-7968,Rodney.Carlson@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+85,7,Daniel Stutz,,805-258-9398,dstutz@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+87,7,Jeffery Zahn,,805-258-9332,Jeff.Zahn@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+90,8,Shawn Lusk,,209-423-1583,Shawn.Lusk@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+91,8,Alan Fmura,,209-684-1539,Alan.Fmura@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+92,8,Todd Wooley,,209-423-1207,Todd.Wooley@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+93,8,Jose Duque,,209-684-1573,Joe.Duque@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+94,8,Michael Mendes,,209-423-1526,Mike.Mendes@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+100,9,Sewell Ryan,,559-647-8037,rsewell@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+101,9,Daniel Ruiz,,559-213-9960,druiz@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+102,9,Jesus Ibarra,,559-217-4384,jibarra@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+105,9,Kevin Ring,,559-213-9069,kring@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+107,10,James Howard,,916-878-9236,jhoward@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+108,10,Mark Yeager,,916-878-9440,Mark.Yeager@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+111,10,Rodney Panchision,,916-878-9706,rpanchision@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+112,10,Henry Vidaure,,209-423-1646,HVidaure@farmerbros.com,Ken Cardoza,209-689-8464,kcardoza@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+17,11,Richard Snow,,661-312-6903,rsnow@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+19,11,Michael Rowley,,661-312-1834,mrowley@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+20,11,James Dickson,,661-312-470,jdickson@farmerbros.com,Micahel Parmer,559-723-9968,mparmer@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+150,12,Thomas Hatch,,707-704-1272,thatch@farmerbros.com,Chris Burns,707-396-6426,cburns@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+151,12,Chris Burns,,707-704-1716,cburns@farmerbros.com,Chris Burns,707-396-6426,cburns@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+119,14,Darrin Wallis,,707-704-1661,Darrin.Wallis@farmerbros.com,Chris Burns,707-396-6426,cburns@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+121,14,Alfredo Yanez,,707-704-1268,Alfredo.Yanez@farmerbros.com,Chris Burns,707-396-6426,cburns@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+122,14,Stephen Kelly,,707-362-2608,Stephen.Kelly@farmerbros.com,Chris Burns,707-396-6426,cburns@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+124,15,Michael Bennett,,831-428-9608,mbennett@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+125,15,David Lara Zamora,,831-585-9747,Dzamora@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+126,15,Ronald DeGroodt,,831-750-5038,rdegroodt@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+127,15,Roberto Ruiz,,831-428-3557,rruiz@farmerbros.com,Ted Stavianoudakis,805-440-5745,tstavrianoudakis@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+153,16,Eric Hansen,,208-447-8263,Eric.Hansen@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+154,16,Douglas Somsen,,208-350-0074,Doug.Somsen@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+155,16,Tyson Foster,,208-206-9006,tfoster@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+156,16,Steven Poulos,,208-350-0327,Steve.Poulos@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+131,17,Jesse Rose,,775-354-3323,Jesse.Rose@farmerbros.com,Kevin Hutchings,770-235-0682,khutchings@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+133,17,Ian St Clair,,775-671-7287,istclair@farmerbros.com,Kevin Hutchings,770-235-0682,khutchings@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+134,17,Shawn Clark,,775-354-3426,Shawn.Clark@farmerbros.com,Kevin Hutchings,770-235-0682,khutchings@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+135,17,Charles Reyes,,775-354-3265,Charles.Reyes@farmerbros.com,Kevin Hutchings,770-235-0682,khutchings@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+250,18,Gabriel Saiz,,505-692-4115,gsaiz@farmerbros.com,Ernesto Canales,505-710-5509,ecanales@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+251,18,James Alderete,,505-453-4004,jalderete@farmerbros.com,Ernesto Canales,505-710-5509,ecanales@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+252,18,Jose Rosales,,505-453-4912,Jose.Rosales@farmerbros.com,Ernesto Canales,505-710-5509,ecanales@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+253,18,Charles Shedd,,505-402-0008,cshedd@farmerbros.com,Ernesto Canales,505-710-5509,ecanales@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+279,18,John (Andy) Lareau,,575-578-9476,Andy.Lareau@farmerbros.com,Ernesto Canales,505-710-5509,ecanales@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+132,19,Kyle Wright,,775-671-7538,kwright@farmerbros.com,Ian Bertain,707-704-1443,ian.bertain@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+137,19,Joseph Ceccato,,530-209-9069,tceccato@farmerbros.com,Ian Bertain,707-704-1443,ian.bertain@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+138,19,John Tortorici,,530-210-9773,John.Tortorici@farmerbros.com,Ian Bertain,707-704-1443,ian.bertain@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+139,19,Brad Stevens,,530-209-1243,bstevens@farmerbros.com,Ian Bertain,707-704-1443,ian.bertain@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+22,20,Daniel Hernandez,,818-612-8763,DHernandez@farmerbros.com,Kirk Ishibashi,714-580-2051,kishibashi@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+24,20,Darr Holland,,626-523-5511,Darr.Holland@farmerbros.com,Kirk Ishibashi,714-580-2051,kishibashi@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+27,20,Werner Escobar,,626-252-3030,Werner.Escobar@farmerbros.com,Kirk Ishibashi,714-580-2051,kishibashi@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+258,22,Tanner Thorp,,928-246-8332,tthorp@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+259,22,David Bogs,,928-232-9182,David.Bogs@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+260,22,Donald Scheid,,928-446-6748,Don.Scheid@farmerbros.com,Troy Huebner,480-495-7988,thuebner@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+29,24,Jason Hood,,760-458-8433,Jason.Hood@farmerbros.com,Greg Long,760-457-8030,glong@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+30,24,Dwight Anthony Blanton,,760-622-1207,ablanton@farmerbros.com,Greg Long,760-457-8030,glong@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+31,24,Christopher Hamilton,,760-458-0739,Chris.Hamilton@farmerbros.com,Greg Long,760-457-8030,glong@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+32,24,Miguel Montes,,661-312-2254,mmontes@farmerbros.com,Greg Long,760-457-8030,glong@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+193,26,Scott Kilpatrick,,801-513-4393,skilpartrick@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+262,26,Jaren Clark ,,801-660-5634,jaclark@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+263,26,James Wylie ,,801-835-2981,James.Wylie@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+264,26,Levi Flueha,,801-949-1853,lflueha@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+359,28,Jeffrey Zak,,217-553-2001,Jeff.Zak@FarmerBros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+360,28,James Waters,,217-816-2936,Scott.Waters@FarmerBros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+363,28,Larry Nail,,314-486-2936,lnail@farmerbros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+47,29,Edward  Michaud,,805-827-9609,Ed.Michaud@farmerbros.com,Kirk Ishibashi,714-580-2051,kishibashi@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+49,29,Luis Bojorquez,,805-827-9563,lbojorquez@farmerbros.com,Kirk Ishibashi,714-580-2051,kishibashi@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+50,29,Mark Rivera,,805-827-9053,Mark.Rivera@farmerbros.com,Kirk Ishibashi,714-580-2051,kishibashi@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+266,30,Armando   Avalos,,915-799-1325,Armando.Avalos@farmerbros.com,Ernesto Canales,505-710-5509,ecanales@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+267,30,Armando Sifuentes,,915-799-1265,asifuentes@farmerbros.com,Juan Ortiz,915-799-1430,juortiz@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+268,30,Tomas Meraz,,915-799-1772,jmerez@farmerbros.com,Juan Ortiz,915-799-1430,juortiz@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+270,30,Luis Escarcega,,915-799-1769,lescarcega@farmerbros.com,Juan Ortiz,915-799-1430,juortiz@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+53,31,William McMullin,,760-457-8009,wmcmullin@farmerbros.com,William McMullin,760-457-8009,wmcmullin@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+54,31,Harvey Chase,,760-457-8021,hchase@farmerbros.com,William McMullin,760-457-8009,wmcmullin@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+158,32,Chad Day,,541-232-7927,cday@farmerbros.com,Jay King,541-948-2995,jking@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+159,32,David (Mart) Dewitt ,,541-212-2529,Mart.Dewitt@farmerbros.com,Jay King,541-948-2995,jking@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+274,33,Jonathan Waldrop,,806-282-9237,Jon.Waldrop@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+275,33,Evaristo (Orlando) Jiminez,,806-881-2086,Evaristo.Jiminez@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+569,33,Albert Paiz,,806-677-8160,apaiz@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+368,36,Beau Williams,,501-818-9698,BrWilliams@farmerbros.com,Jerry Wallace,501-398-0000,jwallace@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+369,36,Mark Brown,,501-818-9744,mbrown@farmerbros.com,Jerry Wallace,501-398-0000,jwallace@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+370,36,Ryan Atwood,,501-818-9756,ryan.atwood@farmerbros.com,Jerry Wallace,501-398-0000,jwallace@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+410,37,Jason  Meidinger,,701-540-3770,Jason.Meidinger@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+768,37,John Alan Wicks,,701-540-3772,John.Wicks@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+769,37,Brian  Ellersick,,701-595-1624,bellersick@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+56,38,Christopher Vosburg,,714-396-4760,Christopher.Vosburg@farmerbros.com,Mike Zankich,310-919-7820,mzankich@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+57,38,Timothy Garcia,,714-396-6434,Timothy.Garcia@farmerbros.com,Mike Zankich,310-919-7820,mzankich@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+58,38,Matthew Guglielmo,,714-396-4543,mguglielmo@farmerbros.com,Mike Zankich,310-919-7820,mzankich@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+60,38,Chhean Hong,,562-964-3831,Chhean.Hong@farmerbros.com,Mike Zankich,310-919-7820,mzankich@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+162,39,Ryan Smith,,406-696-0984,rsmith@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+163,39,Vern Opitz,,406-471-5326,Vern.Opitz@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+164,39,Kevin Schwartzkopf,,406-422-6208,Kevin.Schwartzkopf@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+282,41,Joshua Gonzales,,432-349-3043,jogonzales@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+283,41,Dago Urias,,432-210-1586,durias@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+577,41,Manuel Lopez,,432-210-1626,Manuel.Lopez@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+167,42,David Inghram,,425-328-6800,David.Inghram@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+169,42,Martin Owen,,425-328-6765,Martin.Owen@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+170,42,Stuart Smith,,425-328-6766,Stuart.Smith@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+172,42,Brandon Lasby,,425-328-6649,Brandon.Lasby@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+173,42,Eric McCallum,,425-328-6796,Eric.McCallum@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+372,43,Scott Allen Mattly,,309-706-1391,Scott.Mattly@farmerbros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+374,43,Paul  Noakes,,309-287-6576,PNoakes@farmerbros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+375,43,Thomas Michael Millsaps,,309-287-1228,Thomas.Millsaps@farmerbros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+376,43,Robert  Thomspon,,309-287-6052,Robert.Thompson@farmerbros.com,Alexis Burnett,217-691-0931,aburnett@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+176,44,Michael Messinger,,509-361-3581,mmessinger@farmerbros.com,Dirl Weiler,208-416-1852,psestak@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+177,44,Timothy Maret,,509-370-1838,Timothy.Maret@farmerbros.com,Dirl Weiler,208-416-1852,psestak@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+178,44,William Eldredge,,509-370-1487,William.Eldredge@farmerbros.com,Dirl Weiler,208-416-1852,psestak@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+179,44,Matt Weinbender,,509-370-6914,Matt.Weinbender@farmerbros.com,Dirl Weiler,208-416-1852,psestak@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+180,44,Alan Barthelmess,,509-294-1452,abarthelmess@farmerbros.com,Dirl Weiler,208-416-1852,psestak@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+182,45,Steven Oneill,,253-761-6603,Steven.O'Neill@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+183,45,Harold Lewis,,253-761-6641,hlewis@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+184,45,Richard Doyle,,253-761-6594,Richard.Doyle@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+185,45,Scott Foley,,253-761-6600,Scott.Foley@farmerbros.com,Jim Shea,206-450-4653,jshea@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+189,46,Jeffery Brown,,509-350-0318,Jeff.Brown@farmerbros.com,Dirl Weiler,509-370-5476,dweiler@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+190,46,Thomas Ford,,509-350-0383,Tom.Ford@farmerbros.com,Dirl Weiler,509-370-5476,dweiler@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+191,46,Daniel Roth,,509-350-0796,Dan.Roth@farmerbros.com,Dirl Weiler,509-370-5476,dweiler@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+192,46,Adam Leslie,,509-350-0520,Adam.Leslie@farmerbros.com,Dirl Weiler,509-370-5476,dweiler@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+195,47,Maxel Colonia,,541-212-1844,mcolonia@farmerbros.com,Jay King,541-948-2995,jking@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+196,47,Marc Lancy,,541-212-2506,Marc.Lancy@farmerbros.com,Jay King,541-948-2995,jking@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+561,47,Eric Reece,,541-212-2548,Eric.Reece@farmerbros.com,Jay King,541-948-2995,jking@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+199,48,William (Todd) Haldane,,406-422-6710,William.Haldane@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+200,48,John Altringer,,406-422-6217,jaltringer@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+412,49,Brent Fosberg,,608-957-3424,bfosberg@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+413,49,Marc Young,,608-957-3976,myoung@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+414,49,Matthew Schroedle,,608-957-3614,mschroedle@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+722,49,Scott  Kriel,,608-957-3976,skriel@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+203,50,Chris Pittenger,,360-213-5296,cpittenger@farmerbros.com,Marlena Promma,971-313-1750,mpromma@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+204,50,Jeffrey Porter,,515-556-7994,jporter@farmerbros.com,Marlena Promma,971-313-1750,mpromma@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+205,50,Keith McFall,,503-484-4419,wmcfall@mfarmerbros.com,Marlena Promma,971-313-1750,mpromma@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+206,50,Philip Bleck,,503-309-7389,Philip.Bleck@farmerbros.com,Marlena Promma,971-313-1750,mpromma@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+207,50,Stephen Snedeker,,503-309-7655,Stephen.Snedeker@farmerbros.com,Marlena Promma,971-313-1750,mpromma@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+530,50,Corey McFall,,503-756-0984,cmcfall@farmerbros.com,Marlena Promma,971-313-1750,mpromma@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+285,51,David Buck,,719-896-6110,dbuck@farmerbros.com,Mark Gladysh,305-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+286,51,Joseph Vesely,,719-896-6111,joseph.vesely@farmerbros.com,Mark Gladysh,305-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+287,51,Paul Hansen,,719-930-6989,Paul.Hansen@farmerbros.com,Mark Gladysh,303-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+147,52,Charles Swisher,,775-340-9915,cswisher@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+148,52,Martin Varnum,,775-453-3909,Martin.Varnum@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+290,53,Jonathan Morris,,970-986-0988,Jonathan.Morris@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+291,53,Ryan Oberlander,,970-366-9405,Ryan.Oberlander@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+292,53,Cole Griswold,,970-366-9400,cgriswold@farmerbros.com,Scott Kilpatrick,801-513-4393,skilpartrick@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+416,55,Mark  Mellick,,712-204-7699,Mark.Mellick@farmerbros.com,Scott St Germaine,402-718-3594,sstgermaine@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+418,55,James  Irvine,,712-204-7808,James.Irvine@farmerbros.com,Scott St Germaine,402-718-3594,sstgermaine@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+419,55,Robbie  Albertson,,402-718-3594,Robbie.Albertson@farmerbros.com,Scott St Germaine,402-718-3594,sstgermaine@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+421,56,Tjaden  Sinclair,,701-540-3826,Tjaden.Sinclair@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+422,56,Matthew Robert Staehnke,,701-866-2828,mstaehnke@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+423,56,Jeremy  Koland,,701-540-3814,Jeremy.Koland@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+209,57,Kyle Darnall,,307-258-4885,kdarnall@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+294,58,Mark Libby,,303-521-4807,mlibby@farmerbros.com,Mark Gladysh,305-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+295,58,Christopher Viscarra,,303-521-5982,Chris.Viscarra@farmerbros.com,Mark Gladysh,303-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+296,58,Vincent Colletti,,303-521-4911,Vincent.Colletti@farmerbros.com,Mark Gladysh,303-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+297,58,Mark Larson,,303-521-3285,mlarson@farmerbros.on,Mark Gladysh,305-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+305,59,Roger Escamilla,,361-548-3485,rescamilla@farmerbros.com,Chris Reyna,361-548-3202,creyna@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+307,59,Norberto Rodriguez,,361-533-6084,Norberto.Rodriguez@farmerbros.com,Chris Reyna,361-548-3202,creyna@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+829,59,Benjamin Boehme,,361-548-3613,Benjamin.Boehme@farmerbros.com,Chris Reyna,361-548-3202,creyna@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+831,59,Rene Garcia,,361-489-8561,Rene.Garcia@farmerbros.com,Chris Reyna,361-548-3202,creyna@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+214,60,David Godtlibsen,,208-350-0337,dgodtlibsen@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+215,60,Cody Kirkland,,208-724-3462,ckirkland@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+229,60,Chet McFarland,,208-350-0498,chmcfarland@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+230,60,Stephan Leslie,,208-440-8768,sleslie@farmerbros.com,Eric Rambo,208-447-8276,erambo@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+308,61,Robert McCree,,817-937-9958,rmccree@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+309,61,Anthony Vaxter,,817-707-9527,avaxter@farmerbros.scom,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+310,61,Grady Adams,,817-707-9329,gadams@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+311,61,Dennis Dials,,817-707-9547,ddials@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+312,61,David Largent,,817-707-9797,dlargent@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+313,61,Brandon Wilson,,817-422-7775,bwilson@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+314,61,Derek Tellis,,817-707-9568,Derek.Tellis@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+315,61,Jason Nachtigal,,817-723-1018,Jason.Nachtigal@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+317,61,Brian Urban,,817-637-9471,burban@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+319,61,Jeffrey Gordon,,817-707-9253,Jeffrey.Gordon@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+487,61,Virgil Croft,,817-538-0916,vcroft@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+321,62,Victor Moreno,,405-290-8358,Victor.Moreno@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+322,62,Gary Blair,,940-597-4809,Gary.Blair@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+630,62,Andre Pounds,,940-224-5427,Andre.Pounds@farmerbros.com,Keith Clark,940-641-6063,kclark@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+378,63,Mike Lynn,,901-270-1958,mlynn@farmerbros.com,Jeremy Jones,901-282-9806,jjones@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+379,63,Otto Perryman,,901-395-6865,operryman@farmerbros.com,Jeremy Jones,901-282-9806,jjones@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+380,63,Jerry German,,901-830-4097,jgerman@farmerbros.com,Jeremy Jones,901-282-9806,jjones@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+576,63,Will   Schwab,,901-355-9274,wchwab@farmerbros.com,Jeremy Jones,901-282-9806,jjones@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+849,63,Jeremy  Jones,,901-570-6361,jerjones@farmerbros.com,Jeremy Jones,901-282-9806,jjones@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+854,63,Andrew Buckley,,901-331-5295,abuckley@famrerbros.com,Jeremy Jones,901-282-9806,jjones@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+336,66,Russell Marbach,,210-825-9030,Russell.Marbach@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+337,66,Evaristo Flores,,210-852-3067,Evaristo.Flores@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+338,66,Roger Alvarez,,210-896-8519,ralvarez@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+339,66,Timothy   Clarey,,210-421-5443,Timothy.Clarey@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+782,66,Pedro (Pete) Rico,,210-852-3283,Pedro.Rico@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+66,67,Juan Aispuro,,760-521-1170,jaispuro@farmerbros.com,Celso Vargas,760-457-8032,cvargas@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+67,67,Alejandro Lara,,760-521-1467,Alejandro.Lara@farmerbros.com,Celso Vargas,760-457-8032,cvargas@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+68,67,Mauro Gallo,,760-457-8007,mgallo@farmerbros.com,Celso Vargas,760-457-8032,cvargas@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+567,67,Christian Castillo Fontes,,760-521-6121,cfontes@farmerbros.com,Celso Vargas,760-457-8032,cvargas@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+389,72,Robert Romanchuk,,314-625-3478,Robert.Romanchuk@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+391,72,Joseph Bradley,,314-486-3092,Joseph.Bradley@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+393,72,Tim Bradford,,314-625-3506,tbradford@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+553,72,Michael Deutsch,,314-486-2405,Michael.Deutsch@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+879,72,Dustin Baker,,314-625-3382,Dustin.Baker@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+220,73,Adam Nemec,,605-412-0182,anemec@farmerbros.com,Carlton Phillips,605-787-3835,caphillips@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+221,73,William Whitlock,,605-496-4362,William.Whitlock@farmerbros.com,Carlton Phillips,605-787-3835,caphillips@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+365,74,Dustin  Dody,,816-876-6053,Dustin.Dody@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+366,74,Ralph  Glavin,,573-219-0984,Ralph.Glavin@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+396,74,Gary Breeden,,816-876-6591,Gary.Breeden@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+397,74,Matthew Love,,785-845-5348,Matthew.Love@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+398,74,Michael Arnett,,816-885-0705,Michael.Arnett@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+400,74,Stephen  Rinehart,,816-646-0127,Stephen.Rinehart@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+836,74,Gary Edwards,,816-214-3667,Gary.Edwards@farmerbros.com,Scott Opoka,816-876-6375,sopoka@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+425,75,Michael Sapp,,507-208-2900,msapp@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+432,75,Gregory  Wacek,,763-458-3352,Gregory.Wacek@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+433,75,Corey Clapp,,763-458-3882,Corey.Clapp@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+434,75,Christopher  Bangle ,,763-458-3698,Christopher.Bangle@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+440,75,Thomas  Ward,,763-458-9150,Thomas.Ward@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+631,75,Andrew Rehmer,,763-458-1869,arehmer@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+632,75,Brian  Kohout,,763-458-4758,Brian.Kohout@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+467,76,Ruemmelle Febres,,281-594-6556,Ruemmelle.Febres@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+442,77,Timothy Vencill,,308-227-9393,Timothy.Vencill@farmerbros.com,Mark Gladysh,303-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+470,78,Ephraim Preciado,,858-583-8308,epreciado@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+471,78,Eric Miller,,858-663-0100,emiller@farmerbros.com,Matt Sigall,619-602-5616,msigall@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+474,79,Joseph Gonzales,,510-385-2933,Joseph.Gonzales@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+475,79,Kevin Alexander,,510-469-1431,kalexander@farmerbros.com,Mike Neil,831-776-2107,mneil@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+345,81,Doug Seybold,,512-848-5007,Douglas.Seybold@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+346,81,William Heald,,512-851-7543,wheald@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+859,81,Johnny Ontiveros,,512-699-1174,jontiveros@farmerbros.com,Gilberto Lara,210-799-1868,glara@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+574,83,Ronald Clayton,,318-703-0456,Ronald.DeGroodt@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+480,84,Brandon Buchanan,,303-591-8778,Brandon.Buchanan@farmerbros.com,Mark Gladysh,303-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+481,84,Torsten Nieminen,,303-591-9448,tnieminen@farmerbros.com,Mark Gladysh,305-591-5427,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+351,85,Felix  Garza,,956-232-0349,Felix.Garza@farmerbros.com,John Henwood,956-655-7468,jhenwood@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+352,85,Juan Gonzalez,,956-402-7434,jgonzalez@farmerbros.com,John Henwood,956-655-7468,jhenwood@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+353,85,Alonzo Deleon,,956-251-7059,Alonzo.Deleon@farmerbros.com,John Henwood,956-655-7468,jhenwood@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+354,85,Rudy Ramirez,,956-655-8973,rramirez@farmerbros.com,John Henwood,956-655-7468,jhenwood@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+301,86,Matthew Zabel,,970-556-4086,matt.zabel@farmerbros.com,Mark Gladysh,305-591-5428,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+302,86,Donald (Tony) Swift,,970-333-8840,tswift@farmerbros.com,Mark Gladysh,305-591-5428,mgladysh@farmerbros.com,Ray Maroney,612-845-5000,rmaroney@farmerbros.com
+485,87,Michael Fruge,,817-707-8933,Michael.Fruge@farmerbros.com,Brandon Wilson,832-492-1207,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+486,87,Ronny Roberson,,817-538-7179,rroberson@farmerbros.com,Brandon Wilson,832-492-1208,bwilson@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+356,88,Garlen Yell,,479-599-9316,Garlen.Yell@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+357,88,Mathew Johnson,,479-599-9182,Mathew.Johnson@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+814,88,James (Mike) Cook,,479-719-6099,james.cook@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+223,101,Troy Strucke,,406-422-6002,Troy.Stucke@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+224,101,Corey Mertes,,406-529-6843,cmertes@farmerbros.com,Sean Bickford,406-561-6805,sbickford@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+453,105,Craig Uptagrafft,,605-521-4734,Craig.Uptagrafft@farmerbros.com,Carlton Phillips,605-787-3835,caphillips@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+454,105,Bryon Jamison,,605-675-9110,Bryon.Jamison@farmerbros.com,Carlton Phillips,605-787-3835,caphillips@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+773,105,Miles Langley,,605-321-7831,mlangley@farmerbros.com,Carlton Phillips,605-787-3835,caphillips@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+404,108,Brandin Johnson,,812-841-6015,bjohnson@farmerbros.com,Tony Fuller,317-331-8316,tfuller@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+461,111,Christopher  Golden,,218-522-0596,Chris.Golden@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+761,111,Kevin Ramage,,218-205-2069,kramage@farmerbros.com,Tom Melody,763-238-9554,tmelody@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+4,117,Timothy Ebersole,,310-722-7330,tebersole@farmerbros.com,Mike Silva,714-206-5879,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+26,117,Hay Pe,,323-952-6311,hpe@farmerbros.com,Mike Silva,714-206-5883,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+562,117,Derek Fieber,,323-952-6039,Derek.Fieber@farmerbros.com,Mike Silva,714-206-5880,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+563,117,Jose Yanez,,626-523-5489,Jose.Yanez@farmerbros.com,Mike Silva,714-206-5881,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+579,117,Kenny McClellan,,310-704-3698,Kenny.McClellan@farmerbros.com,Mike Silva,714-206-5883,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+582,117,Jorge Martinez ,,562-964-4139,jmartinez@farmerbros.com,Mike Silva,714-206-5883,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+587,117,Anthony Martinez ,,323-952-6276,amartinez@farmerbros.com,Mike Silva,714-206-5882,msilva@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+593,124,Phillip Pruett,,951-259-8596,Phillip.Pruett@farmerbros.com,Joe Ortega,951-840-6986,jortega@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+594,124,Cameron Minardo,,626-523-4498,cminardo@farmerbros.com,Joe Ortega,951-840-6986,jortega@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+596,124,Naun Flamenco,,951-259-8207,Naun.Flamenco@farmerbros.com,Joe Ortega,951-840-6986,jortega@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+598,124,Jeff Munoz,,951-443-8947,Jeff.Munoz@farmerbros.com,Joe Ortega,951-840-6986,jortega@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+599,124,Daniel Carrasco,,626-627-8328,Daniel.Carrasco@farmerbros.com,Joe Ortega,951-840-6986,jortega@farmerbros.com,Andrew Williams,951-903-3274,awilliams@farmerbros.com
+622,134,Joseph Pagan,,201-376-1591,Joseph.Pagan@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+625,134,Edmund Schoenfield,,201-376-1506,eschoenfeld@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+627,134,Joseph Huster ,,201-815-0451,Joseph.Huster@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+946,134,Michael Gross,,201-376-2247,Michael.Gross@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+949,134,Jeffrey Smith,,201-205-5950,jsmith@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+950,134,John O'Connor,,631-252-9464,joconnor@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+951,134,Joseph D'Angelo,,201-312-1299,jdangelo@farmerbros.com,Nick Tapia,201-881-9064,Ntapia@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+330,136,Joseph Casey,,405-630-0428,jcasey@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+332,136,Tony Brittain,,405-250-7270,Tony.Brittain@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+333,136,David Downs,,405-248-7576,David.Downs@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+783,136,Jay Ford,,405-417-9548,Jay.Ford@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+784,136,Carey Heath,,405-417-3372,cheath@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+786,136,Donald Richart,,405-824-5286,drichart@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+788,136,Micah Creed,,405-824-5864,mcreed@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+789,136,Thomas Daniel,,405-824-5916,Thomas.Daniel@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+790,136,Jerry Kelley,,405-922-3306,Jerry.Kelley@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+801,136,Melvin (Todd) Williamson,,405-397-9822,todd.williamson@farmerbros.com,Kevin Langdon,405-409-5204,klangdon@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+458,137,Stuart  Karoubas,,630-219-9837,Stuart.Karoubas@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+459,137,Austin Mugnai,,630-774-1917,amugnai@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+707,137,Omar Pena,,773-447-1930,OPena@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+708,137,Patrick Paul Nirchi,,630-926-5645,Patrick.Nirchi@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+709,137,Nicholas Gargano,,630-886-2299,ngargano@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+716,137,Louie Sekuloski,,219-808-9807,Louie.Sekuloski@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+718,137,Rocco Raymond Dolce,,219-613-0616,Rocco.Dolce@farmerbros.com,Daniel Schmidt,312-437-1818,dschmidt@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+324,140,Guadalupe Garza,,713-443-2003,ggarza@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+325,140,Raymond Ysiano,,713-732-4036,Raymond.Ysiano@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+326,140,Paul  Mikeska,,832-435-5141,Paul.Mikeska@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+327,140,Christopher Mellino,,281-330-0262,cmellino@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+328,140,Steven  Lunsford,,832-435-6100,Steven.Lunsford@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+477,140,Jorge Garcia,,713-548-3561,jgarcia@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+900,140,Ivan Cavazos,,832-335-4978,jbouquet@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+901,140,Jeffrey Casanova,,281-300-4385,jcasanova@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+903,140,Armando Ramos,,713-548-3188,aramos@farmerbros.com,Cliff Shearrow,281-594-1320,cshearrow@farmerbros.com,Don Richards,972-352-3736,drichards@farmerbros.com
+197,147,Joel Williams,,541-501-2221,jwilliams@farmerbros.com,Jay King,541-948-2995,jking@farmerbros.com,Brian Granley,916-257-6435,bgranley@farmerbros.com
+118,208,Lee Alexander,,707-280-5750,lalexander@farmerbros.com,Chris Burns,707-396-6426,cburns@farmerbros.com,Anthony Mann,510-684-1148,amann@farmerbros.com
+969,218,William Tuttle,,616-318-7436,William.Tuttle@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+972,218,Daniel O'Rourke,,616-318-7027,Daniel.O'Rourke@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+968,219,Keith Benner,,989-233-6379,Keith.Benner@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+770,222,Paul  Gregory,,701-610-1946,Paul.Gregory@farmerbros.com,Mark Burman,701-200-3247,mburman@farmerbros.com,Bob Crosslin,501-398-1785,jshores@farmerbros.com
+619,226,David Shilling,,614-588-3135,dshilling@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+342,229,Robert Medlock,,918-200-3834,Robert.Medlock@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+806,229,John Weygandt,,918-407-9813,jweygandt@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+808,229,Greg Rock,,918-939-8525,grock@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+813,229,Jeffrey (Todd) Adams,,918-200-4693,todd.adams@farmerbros.com,Louis Shaw,479-418-9722,lshaw@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+348,230,Bruce Burris,,620-960-2710,Bruce.Burris@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+349,230,Bradley Horne,,620-202-2026,Brad.Horne@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+819,230,Jason Cox,,316-761-0725,Jason.Cox@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+821,230,Robert Petrik,,316-889-7164,rpetrik@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+822,230,Fred Heese,,316-249-7535,fheese@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+823,230,Matthew Hummingbird,,316-761-2798,mhummingbird@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+824,230,David Morton,,316-308-3548,David.Morton@farmerbros.com,Chris Crow,316-761-1697,ccrow@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+383,240,Brian Joy,,417-763-1172,bjoy@farmerbros.com,Tony McReynolds,417-353-2433,tmcreynolds@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+384,240,Joe (Dave) Hinkle,,417-204-8092,joel.hinkle@farmerbros.com,Tony McReynolds,417-353-2433,tmcreynolds@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+385,240,James Gragg,,417-773-5913,james.gragg@farmerbros.com,Tony McReynolds,417-353-2433,tmcreynolds@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+386,240,Albert Griggs ,,417-773-5976,Albert.Griggs@farmerbros.com,Tony McReynolds,417-353-2433,tmcreynolds@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+873,240,Brandon Davis,,417-483-9268,BDavis@farmerbros.com,Tony McReynolds,417-353-2433,tmcreynolds@farmerbros.com,Mike Bennett,918-740-5124,mbennett@farmerbros.com
+445,245,Anthony Bidney,,262-239-8631,abidney@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+446,245,Jason  Schroeder,,262-365-1414,jschroeder@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+447,245,Todd  Polakoski,,262-365-1171,Todd.Polakoski@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+726,245,Benjamin Fisher,,920-327-2853,bfisher@farmerbros.com,Dennis Corstvet,414-349-5439,dcorstvet@farmerbros.com,Jason Barrett,501-398-1785,jshores@farmerbros.com
+402,247,Brian Edward Kester,,317-945-4337,Brian.Kester@farmerbros.com,Tony Fuller,317-331-8316,tfuller@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+403,247,Chad  Hall,,317-205-1221,Chad.Hall@farmerbros.com,Tony Fuller,317-331-8316,tfuller@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+735,247,Anthony  Alexander,,317-205-1198,Anthony.Alexander@farmerbros.com,Tony Fuller,317-331-8316,tfuller@farmerbros.com,Jason Barrett,812-369-1342,abarrett@farmerbros.com
+986,255,John (J) Fiaschetti,,315-575-1784,jfiaschetti@farmerbros.com,Frank Giangerelli,201-205-7312,fgiangerelli@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+990,256,Matthew Shupenis,,203-496-0998,mshupenis@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+991,256,Patrick Granahan,,203-537-8296,pgranahan@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+620,259,Kenneth Torres,,305-423-5514,Kenneth.Torres@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+744,259,Ricardo Regosa,,305-762-2028,Ricardo.Reigosa@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+724,265,Richard Hall,,904-482-7294,rhall@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+743,265,Bobby McKinnon,,407-373-3003,bmckinnon@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+749,265,Anthony Bryant,,407-468-3296,abryant@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+750,265,Ivan Labrador,,407-461-6287,ilabrador@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+605,266,John Wrigley,,980-525-9294,jwrigley@farmerbros.com,Jake Dove,678-478-3960,jdove@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+746,266,Austin Gabriel,,770-864-7708,agabriel@farmerbros.com,Jake Dove,678-478-3960,jdove@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+748,266,Austin Moseley,,678-358-4507,amoseley@farmerbros.com,Jake Dove,678-478-3960,jdove@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+714,267,Mark Campochiaro,,904-400-5353,mcampochiaro@farmerbros.com,Jared Clark,408-910-0041,jclark@farmerbros.com,Bob Crosslin,682-267-2795,bcrosslin@farmerbros.com
+140,272,Sidney (Blaze) Hamblet,,702-604-4351,Sidney.Hamblet@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+141,272,Christopher Webster,,702-204-7506,Chris.Webster@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+142,272,Tyson Taylor,,702-328-6749,ttaylor@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+143,272,Raul Rodriguez,,702-245-7783,Raul.Rodriguez@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+926,272,Chris Legere,,702-204-7508,Chris.Legere@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+929,272,Roy Sipes,,702-561-2613,Roy.Sipes@farmerbros.com,Jerry Siano,702-289-6552,jsiano@farmerbros.com,Ray Maroney,210-238-9554,rmaroney@farmerbros.com
+616,276,John Crawford,,856-491-6845,John.Crawford@farmerbros.com,Robert Beatrice,412-589-0352,rbeatrice@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+617,276,Raymond Klein,,609-839-3427,Raymond.Klein@farmerbros.com,Robert Beatrice,412-589-0352,rbeatrice@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+998,276,Dominic Tripodi,,267-549-2397,dtripodi@farmerbros.com,Robert Beatrice,412-589-0352,rbeatrice@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+999,276,Matthew Harbison,,609-377-1961,Matthew.Harbison@farmerbros.com,Robert Beatrice,412-589-0352,rbeatrice@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+612,302,Robin Casteel,,216-244-6569,rcasteel@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+613,302,Bruce Olds,,216-287-2639,bolds@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+961,303,Chris Turcheck,,734-891-7425,cturcheck@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+963,303,Paul Wenson,,734-564-0928,Paul.Wenson@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+964,303,Ryan Hundt,,734-891-2387,Ryan.Hundt@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+965,303,Doug Szczdrowski,,734-891-3697,dszczdrowski@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+967,303,Timothy Quinn,,734-891-2394,tquinn@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+979,303,James Davis,,734-619-9164,James.Davis@farmerbros.com,Craig Steele,734-891-0592,csteele@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+974,304,Bruce Olds,,216-244-6565,bolds@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+976,304,Tim Crump,,724-321-6144,tcrump@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+981,305,Ricardo Robinson,,301-399-2287,Ricardo.Robinson@farmerbros.com,Robert Beatrice,412-589-0352,rbeatrice@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+572,306,Frank Crable,,513-383-9962,fcrable@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+614,306,David Covert,,614-588-3133,dcovert@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+615,306,Scott Gorrell,,614-588-3134,sgorrell@farmerbros.com,Bruce Olds,216-244-6565,bolds@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+611,311,David Bergeron,,603-608-9360,dbergeron@farmerbros.com,Wes Snow,978-407-7431,wsnow@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+977,311,Freddie Estrada,,603-608-8260,festrada@farmerbros.com,Wes Snow,978-407-7431,wsnow@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+984,311,Steven Colangelo,,603-608-9357,Steven.Colangelo@farmerbros.com,Wes Snow,978-407-7431,wsnow@farmerbros.com,Bob Claffy,757-513-8024,blaffy@farmerbros.com
+851,RDSN1,Susan Tylkowski,,708-236-3105,stylkowski@farmerbros.com,Susan Tylkowski,708-236-3105,CustomerServiceNA@farmerbros.com,Susan Tylkowski,708-236-3105,stylkowski@farmerbros.com
+855,RDS5,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+856,RDS6,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+857,RDS7,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+858,RDS8,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+862,RDS12,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+863,RDS13,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+870,RDS9,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+538,RDS9,Kim Forman,,224-230-6749,kforman@farmerbros.com,,,,Kim Forman,224-230-6749,kforman@farmerbros.com
+1,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+9,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+11,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+16,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+21,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+25,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+28,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+46,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+52,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+53,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+54,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+55,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+65,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+76,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+77,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+84,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+89,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+99,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+106,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+113,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+117,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+123,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+130,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+136,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+146,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+149,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+152,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+157,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+161,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+165,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+174,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+181,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+188,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+194,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+198,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+202,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+208,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+211,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+218,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+219,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+222,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+233,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+242,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+249,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+257,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+261,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+265,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+273,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+278,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+281,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+284,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+289,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+293,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+298,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+300,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+304,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+318,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+320,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+323,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+329,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+334,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+340,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+344,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+347,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+350,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+355,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+358,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+367,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+371,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+377,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+382,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+388,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+395,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+401,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+405,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+408,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+409,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+411,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+415,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+420,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+424,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+426,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+427,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+428,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+429,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+431,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+437,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+438,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+439,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+444,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+448,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+449,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+450,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+451,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+452,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+455,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+456,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+460,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+463,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+464,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+465,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+469,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+473,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+478,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+484,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+488,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+495,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+559,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+565,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+568,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+571,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+573,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+578,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+585,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+592,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+601,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+603,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+610,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+621,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+624,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+628,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+650,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+713,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+717,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+719,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+723,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+727,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+730,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+731,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+732,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+733,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+747,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+751,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+753,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+762,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+767,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+772,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+777,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+778,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+779,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+780,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+785,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+787,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+792,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+793,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+800,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+807,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+812,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+815,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+846,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+852,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+853,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+860,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+861,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+864,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+865,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+866,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+867,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+871,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+875,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+928,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+953,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+956,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+957,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+962,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+966,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+970,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+975,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+978,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+980,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+989,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+992,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+995,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+996,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+997,,,,,dsdcustomerservice@farmerbros.com,,,,,,dsdcustomerservice@farmerbros.com
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,`,,,,,,,,,

@@ -1,0 +1,69 @@
+﻿@model FarmerBrothers.Models.OriginalEventDetailsResultsModel
+@{
+    ViewBag.Title = "OriginalEventDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#originalEventDetailsResults').ejGrid({
+            exportToExcelAction : '@Url.Action("OriginalEventDetailsExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            queryCellInfo:"queryCellInfo",
+            pageSettings: { pageSize: 25 },
+            allowResizeToFit : true,
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "EventID", headerText: "EventID" },
+                { field: "Status", headerText: "Status" },
+                { field: "EntryDate", headerText: "Entrydate" },
+                { field: "CustomerRegion", headerText: "Customer Region#" },
+                { field: "CustomerRegionName", headerText: "Customer Region Name" },
+                { field: "CustomerBranch", headerText: "Customer Branch#" },
+                { field: "CustomerBranchName", headerText: "Customer Branch Name" },
+                { field: "JDE", headerText: "JDE#" },
+                { field: "CompanyName", headerText: "Company Name" },
+                { field: "Address1", headerText: "Address1" },
+                { field: "City", headerText: "City" },
+                { field: "State", headerText: "State" },
+                { field: "PostalCode", headerText: "Postal Code" },
+                { field: "DispatchCompany", headerText: "Dispatch Company" },
+                { field: "DispatchDate", headerText: "Dispatch Date" },
+                { field: "ElapsedTime", headerText: "ElapsedTime" }
+            ]
+        });
+    });
+</script>
+
+@*<section class="container-fluid white-bg pad">
+    <div class="row top-info">
+        <div class="col-md-11">
+            <b>Original Event Details</b>
+        </div>
+        <div class="col-md-1">
+            @Html.ActionLink("Back", "RepeatCallReport", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+        </div>
+    </div>
+
+</section>*@
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                @*<b>Original Event Details</b>*@
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="originalEventDetailsResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>
+

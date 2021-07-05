@@ -1,0 +1,1741 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="Smuckers.Data" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityContainer Name="SmuckersEntities" annotation:LazyLoadingEnabled="true">
+    <FunctionImport Name="ERFDetails" ReturnType="Collection(Smuckers.Data.ERFDetails_Result)">
+      <Parameter Name="ERFId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetBranches" ReturnType="Collection(Smuckers.Data.GetBranches_Result)">
+      <Parameter Name="TechId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetBranchTechnicians" ReturnType="Collection(Smuckers.Data.GetBranchTechnicians_Result)">
+      <Parameter Name="TechID" Mode="In" Type="Int32" />
+      <Parameter Name="ServiceCenter_ID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetCustomerWorkOrders" ReturnType="Collection(Smuckers.Data.GetCustomerWorkOrders_Result)">
+      <Parameter Name="CustomerId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetNotes" ReturnType="Collection(Smuckers.Data.GetNotes_Result)">
+      <Parameter Name="ERFId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetWorkOrders">
+      <Parameter Name="TechId" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetWorkorderSavedSearch" ReturnType="Collection(Smuckers.Data.GetWorkorderSavedSearch_Result)">
+      <Parameter Name="savedsearchid" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="GetZonePriority" ReturnType="Collection(Smuckers.Data.GetZonePriority_Result)">
+      <Parameter Name="ZipCode" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_DispatchToPreferredTech" ReturnType="Collection(Int32)">
+      <Parameter Name="WorkOrderID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_DispatchToSpawntech" ReturnType="Collection(Smuckers.Data.USP_AutoDispatch_DispatchToSpawntech_Result)">
+      <Parameter Name="WorkOrderID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_DueToCallPriority" ReturnType="Collection(Smuckers.Data.USP_AutoDispatch_DueToCallPriority_Result)">
+      <Parameter Name="WorkOrderID" Mode="In" Type="Int32" />
+      <Parameter Name="TechID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_GetDispatchBKPTechID" ReturnType="Collection(Int32)">
+      <Parameter Name="WorkOrderID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_GetDispatchTechID" ReturnType="Collection(Int32)">
+      <Parameter Name="WorkOrderID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_UpdNoAutoDispatch_NOtherDetails" />
+    <FunctionImport Name="USP_Closure" />
+    <FunctionImport Name="GetTechSchedules">
+      <Parameter Name="TechID" Mode="In" Type="Int32" />
+      <Parameter Name="ServiceCenter_ID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_AutoDispatch_Reject" ReturnType="Collection(String)">
+      <Parameter Name="WorkorderID" Mode="In" Type="Int32" />
+      <Parameter Name="techID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_TechDispatch_Details">
+      <Parameter Name="CustomerZip" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="USP_GetCustomer_DateTime" ReturnType="Collection(DateTime)">
+      <Parameter Name="WorkOrderID" Mode="In" Type="Int32" />
+    </FunctionImport>
+    <FunctionImport Name="USP_Update_ZonePriority" />
+    <EntitySet Name="C20161025_MARS_DEV_Trace" EntityType="Smuckers.Data.C20161025_MARS_DEV_Trace" />
+    <EntitySet Name="C2017_0105_MARS_DEV_Trace" EntityType="Smuckers.Data.C2017_0105_MARS_DEV_Trace" />
+    <EntitySet Name="AllSmuckersStatus" EntityType="Smuckers.Data.AllSmuckersStatu" />
+    <EntitySet Name="AMPSLists" EntityType="Smuckers.Data.AMPSList" />
+    <EntitySet Name="BrandNames" EntityType="Smuckers.Data.BrandName" />
+    <EntitySet Name="CallTypeSymptomEquipTypes" EntityType="Smuckers.Data.CallTypeSymptomEquipType" />
+    <EntitySet Name="CallTypeSymptomMasters" EntityType="Smuckers.Data.CallTypeSymptomMaster" />
+    <EntitySet Name="CallTypeSymptomSolutionMasters" EntityType="Smuckers.Data.CallTypeSymptomSolutionMaster" />
+    <EntitySet Name="Categories" EntityType="Smuckers.Data.Category" />
+    <EntitySet Name="CustomerLogs" EntityType="Smuckers.Data.CustomerLog" />
+    <EntitySet Name="ElectricalPhaseLists" EntityType="Smuckers.Data.ElectricalPhaseList" />
+    <EntitySet Name="EquipTypes" EntityType="Smuckers.Data.EquipType" />
+    <EntitySet Name="Erfs" EntityType="Smuckers.Data.Erf" />
+    <EntitySet Name="ErfWorkorderLogs" EntityType="Smuckers.Data.ErfWorkorderLog" />
+    <EntitySet Name="EventLogs" EntityType="Smuckers.Data.EventLog" />
+    <EntitySet Name="FeastMovements" EntityType="Smuckers.Data.FeastMovement" />
+    <EntitySet Name="HolidayLists" EntityType="Smuckers.Data.HolidayList" />
+    <EntitySet Name="IndexCounters" EntityType="Smuckers.Data.IndexCounter" />
+    <EntitySet Name="InventoryCountSheetHeaders" EntityType="Smuckers.Data.InventoryCountSheetHeader" />
+    <EntitySet Name="InventoryCountSheetLineDatas" EntityType="Smuckers.Data.InventoryCountSheetLineData" />
+    <EntitySet Name="Invoices" EntityType="Smuckers.Data.Invoice" />
+    <EntitySet Name="MARS_DEV_TRACE_20161018" EntityType="Smuckers.Data.MARS_DEV_TRACE_20161018" />
+    <EntitySet Name="NEMANumberLists" EntityType="Smuckers.Data.NEMANumberList" />
+    <EntitySet Name="NonSerializeds" EntityType="Smuckers.Data.NonSerialized" />
+    <EntitySet Name="NotesHistories" EntityType="Smuckers.Data.NotesHistory" />
+    <EntitySet Name="OnCallGroups" EntityType="Smuckers.Data.OnCallGroup" />
+    <EntitySet Name="ProjectNumbers" EntityType="Smuckers.Data.ProjectNumber" />
+    <EntitySet Name="RemovalSurveys" EntityType="Smuckers.Data.RemovalSurvey" />
+    <EntitySet Name="RemovalSurveyReasons" EntityType="Smuckers.Data.RemovalSurveyReason" />
+    <EntitySet Name="ReturnsInvoices" EntityType="Smuckers.Data.ReturnsInvoice" />
+    <EntitySet Name="SalesPersons" EntityType="Smuckers.Data.SalesPerson" />
+    <EntitySet Name="Serializeds" EntityType="Smuckers.Data.Serialized" />
+    <EntitySet Name="Skus" EntityType="Smuckers.Data.Sku" />
+    <EntitySet Name="Solutions" EntityType="Smuckers.Data.Solution" />
+    <EntitySet Name="States" EntityType="Smuckers.Data.State" />
+    <EntitySet Name="Symptoms" EntityType="Smuckers.Data.Symptom" />
+    <EntitySet Name="SymptomSystemMasters" EntityType="Smuckers.Data.SymptomSystemMaster" />
+    <EntitySet Name="SystemInfoes" EntityType="Smuckers.Data.SystemInfo" />
+    <EntitySet Name="TechOnCalls" EntityType="Smuckers.Data.TechOnCall" />
+    <EntitySet Name="TechSchedules" EntityType="Smuckers.Data.TechSchedule" />
+    <EntitySet Name="ThirdpartyConMaintenanceZonerates" EntityType="Smuckers.Data.ThirdpartyConMaintenanceZonerate" />
+    <EntitySet Name="ThirdPartyContractMaintenances" EntityType="Smuckers.Data.ThirdPartyContractMaintenance" />
+    <EntitySet Name="TmpInvTransfers" EntityType="Smuckers.Data.TmpInvTransfer" />
+    <EntitySet Name="TmpinvTransferNonserializeds" EntityType="Smuckers.Data.TmpinvTransferNonserialized" />
+    <EntitySet Name="TmpinvTransferSerializeds" EntityType="Smuckers.Data.TmpinvTransferSerialized" />
+    <EntitySet Name="UnKnownCustomerLogs" EntityType="Smuckers.Data.UnKnownCustomerLog" />
+    <EntitySet Name="UserProfiles" EntityType="Smuckers.Data.UserProfile" />
+    <EntitySet Name="Vendors" EntityType="Smuckers.Data.Vendor" />
+    <EntitySet Name="VendorModels" EntityType="Smuckers.Data.VendorModel" />
+    <EntitySet Name="VoltageLists" EntityType="Smuckers.Data.VoltageList" />
+    <EntitySet Name="WaterLineLists" EntityType="Smuckers.Data.WaterLineList" />
+    <EntitySet Name="WorkOrders" EntityType="Smuckers.Data.WorkOrder" />
+    <EntitySet Name="WorkOrderBrands" EntityType="Smuckers.Data.WorkOrderBrand" />
+    <EntitySet Name="WorkorderDetails" EntityType="Smuckers.Data.WorkorderDetail" />
+    <EntitySet Name="WorkorderEquipments" EntityType="Smuckers.Data.WorkorderEquipment" />
+    <EntitySet Name="WorkorderEquipmentRequesteds" EntityType="Smuckers.Data.WorkorderEquipmentRequested" />
+    <EntitySet Name="WorkorderImages" EntityType="Smuckers.Data.WorkorderImage" />
+    <EntitySet Name="WorkorderInstallationSurveys" EntityType="Smuckers.Data.WorkorderInstallationSurvey" />
+    <EntitySet Name="WorkorderNonAudits" EntityType="Smuckers.Data.WorkorderNonAudit" />
+    <EntitySet Name="WorkorderParts" EntityType="Smuckers.Data.WorkorderPart" />
+    <EntitySet Name="WorkorderReasonlogs" EntityType="Smuckers.Data.WorkorderReasonlog" />
+    <EntitySet Name="WorkorderSavedSearches" EntityType="Smuckers.Data.WorkorderSavedSearch" />
+    <EntitySet Name="WorkorderSchedules" EntityType="Smuckers.Data.WorkorderSchedule" />
+    <EntitySet Name="WorkorderServiceClaims" EntityType="Smuckers.Data.WorkorderServiceClaim" />
+    <EntitySet Name="WorkorderTypes" EntityType="Smuckers.Data.WorkorderType" />
+    <EntitySet Name="ZonePriorities" EntityType="Smuckers.Data.ZonePriority" />
+    <EntitySet Name="AutoDispatchLogHistories" EntityType="Smuckers.Data.AutoDispatchLogHistory" />
+    <EntitySet Name="Zips" EntityType="Smuckers.Data.Zip" />
+    <EntitySet Name="ZoneZips" EntityType="Smuckers.Data.ZoneZip" />
+    <EntitySet Name="ZoneZipCopies" EntityType="Smuckers.Data.ZoneZipCopy" />
+    <EntitySet Name="VW_WorkOrder_History" EntityType="Smuckers.Data.VW_WorkOrder_History" />
+    <AssociationSet Name="FK__NonSerial__Worko__05D8E0BE" Association="Smuckers.Data.FK__NonSerial__Worko__05D8E0BE">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="NonSerialized" EntitySet="NonSerializeds" />
+    </AssociationSet>
+    <AssociationSet Name="FK__NotesHist__Worko__06CD04F7" Association="Smuckers.Data.FK__NotesHist__Worko__06CD04F7">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="NotesHistory" EntitySet="NotesHistories" />
+    </AssociationSet>
+    <AssociationSet Name="FK__TechSched__WorkO__07C12930" Association="Smuckers.Data.FK__TechSched__WorkO__07C12930">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="TechSchedule" EntitySet="TechSchedules" />
+    </AssociationSet>
+    <AssociationSet Name="FK__VendorMod__Vendo__08B54D69" Association="Smuckers.Data.FK__VendorMod__Vendo__08B54D69">
+      <End Role="Vendor" EntitySet="Vendors" />
+      <End Role="VendorModel" EntitySet="VendorModels" />
+    </AssociationSet>
+    <AssociationSet Name="FK__WorkOrder__Worko__09A971A2" Association="Smuckers.Data.FK__WorkOrder__Worko__09A971A2">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkOrderBrand" EntitySet="WorkOrderBrands" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__4C6B5938" Association="Smuckers.Data.FK__Workorder__Worko__4C6B5938">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderDetail" EntitySet="WorkorderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__4D5F7D71" Association="Smuckers.Data.FK__Workorder__Worko__4D5F7D71">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderEquipment" EntitySet="WorkorderEquipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__4D5F7D72" Association="Smuckers.Data.FK__Workorder__Worko__4D5F7D72">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderEquipmentRequested" EntitySet="WorkorderEquipmentRequesteds" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__4E53A1AA" Association="Smuckers.Data.FK__Workorder__Worko__4E53A1AA">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderImage" EntitySet="WorkorderImages" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__4F47C5E3" Association="Smuckers.Data.FK__Workorder__Worko__4F47C5E3">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderInstallationSurvey" EntitySet="WorkorderInstallationSurveys" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__503BEA1C" Association="Smuckers.Data.FK__Workorder__Worko__503BEA1C">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderNonAudit" EntitySet="WorkorderNonAudits" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__51300E55" Association="Smuckers.Data.FK__Workorder__Worko__51300E55">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderPart" EntitySet="WorkorderParts" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__5224328E" Association="Smuckers.Data.FK__Workorder__Worko__5224328E">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderReasonlog" EntitySet="WorkorderReasonlogs" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__58D1301D" Association="Smuckers.Data.FK__Workorder__Worko__58D1301D">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderSchedule" EntitySet="WorkorderSchedules" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Asset__0C85DE4D" Association="Smuckers.Data.FK__Workorder__Asset__0C85DE4D">
+      <End Role="WorkorderEquipment" EntitySet="WorkorderEquipments" />
+      <End Role="WorkorderImage" EntitySet="WorkorderImages" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Asset__0E6E26BF" Association="Smuckers.Data.FK__Workorder__Asset__0E6E26BF">
+      <End Role="WorkorderEquipment" EntitySet="WorkorderEquipments" />
+      <End Role="WorkorderInstallationSurvey" EntitySet="WorkorderInstallationSurveys" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Asset__14270015" Association="Smuckers.Data.FK__Workorder__Asset__14270015">
+      <End Role="WorkorderEquipment" EntitySet="WorkorderEquipments" />
+      <End Role="WorkorderServiceClaim" EntitySet="WorkorderServiceClaims" />
+    </AssociationSet>
+    <FunctionImport Name="USP_Update_ZonePriority1" />
+  </EntityContainer>
+  <ComplexType Name="ERFDetails_Result">
+    <Property Type="String" Name="ERFID" Nullable="false" MaxLength="50" />
+    <Property Type="DateTime" Name="ERFDateProcessed" Nullable="true" Precision="23" />
+    <Property Type="DateTime" Name="ERFDateRecevied" Nullable="true" Precision="23" />
+    <Property Type="DateTime" Name="OriginalRequestDate" Nullable="true" Precision="23" />
+    <Property Type="Int32" Name="FeastMovementId" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="GetBranches_Result">
+    <Property Type="String" Name="TechType" Nullable="false" MaxLength="3" />
+    <Property Type="Double" Name="BranchId" Nullable="true" />
+    <Property Type="String" Name="BranchName" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="GetBranchTechnicians_Result">
+    <Property Type="Double" Name="tech_id" Nullable="true" />
+    <Property Type="String" Name="tech_name" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="GetCustomerWorkOrders_Result">
+    <Property Type="Int32" Name="WorkOrderId" Nullable="false" />
+    <Property Type="String" Name="WorkOrdertype" Nullable="true" MaxLength="75" />
+    <Property Type="String" Name="WorkorderStatus" Nullable="true" MaxLength="25" />
+    <Property Type="DateTime" Name="Workordercreated" Nullable="true" Precision="23" />
+    <Property Type="DateTime" Name="AppointmentDate" Nullable="true" Precision="23" />
+    <Property Type="String" Name="Tech" Nullable="true" MaxLength="150" />
+  </ComplexType>
+  <ComplexType Name="GetNotes_Result">
+    <Property Type="Int32" Name="NoteId" Nullable="false" />
+    <Property Type="String" Name="Notes" Nullable="true" MaxLength="Max" />
+    <Property Type="Int32" Name="ProjName" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="GetWorkorderSavedSearch_Result">
+    <Property Type="Int32" Name="CustomerId" Nullable="true" />
+    <Property Type="String" Name="SavedSearchName" Nullable="true" MaxLength="90" />
+    <Property Type="Int32" Name="ErfId" Nullable="true" />
+    <Property Type="Int32" Name="WorkorderId" Nullable="true" />
+    <Property Type="String" Name="Status" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="SerialNumber" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="FollowupCall" Nullable="true" />
+    <Property Type="String" Name="AutoDispatched" Nullable="true" MaxLength="5" />
+    <Property Type="String" Name="WorkorderType" Nullable="true" MaxLength="150" />
+    <Property Type="String" Name="Priority" Nullable="true" MaxLength="50" />
+    <Property Type="Int32" Name="FSR" Nullable="true" />
+    <Property Type="String" Name="City" Nullable="true" MaxLength="70" />
+    <Property Type="String" Name="Zipcode" Nullable="true" MaxLength="10" />
+    <Property Type="String" Name="State" Nullable="true" />
+    <Property Type="Int32" Name="CoverageZone" Nullable="true" />
+    <Property Type="Int32" Name="TSM" Nullable="true" />
+    <Property Type="String" Name="TechType" Nullable="true" MaxLength="50" />
+    <Property Type="String" Name="ServiceCompany" Nullable="true" MaxLength="90" />
+    <Property Type="String" Name="Technician" Nullable="true" MaxLength="90" />
+    <Property Type="Int32" Name="TechId" Nullable="true" />
+    <Property Type="Int32" Name="FSM" Nullable="true" />
+    <Property Type="DateTime" Name="DateFrom" Nullable="true" Precision="16" />
+    <Property Type="DateTime" Name="DateTo" Nullable="true" Precision="16" />
+    <Property Type="DateTime" Name="AppointmentDateFrom" Nullable="true" Precision="16" />
+    <Property Type="DateTime" Name="AppointmentDateTo" Nullable="true" Precision="16" />
+  </ComplexType>
+  <ComplexType Name="GetZonePriority_Result">
+    <Property Type="Int32" Name="zoneIndex" Nullable="false" />
+    <Property Type="String" Name="zoneName" Nullable="true" MaxLength="90" />
+    <Property Type="Int32" Name="responsibletechID" Nullable="true" />
+    <Property Type="String" Name="responsibletechName" Nullable="true" MaxLength="90" />
+    <Property Type="String" Name="responsibletechphone" Nullable="true" MaxLength="25" />
+    <Property Type="Int32" Name="techteamlead" Nullable="true" />
+    <Property Type="Int32" Name="responsibletechBranch" Nullable="true" />
+    <Property Type="Int32" Name="secondarytechID" Nullable="true" />
+    <Property Type="String" Name="secondarytechName" Nullable="true" MaxLength="90" />
+    <Property Type="String" Name="secondarytechphone" Nullable="true" MaxLength="25" />
+    <Property Type="Int32" Name="secondarytechBranch" Nullable="true" />
+    <Property Type="Int32" Name="fsm" Nullable="true" />
+    <Property Type="Int32" Name="rsm" Nullable="true" />
+    <Property Type="Int32" Name="tsm" Nullable="true" />
+    <Property Type="String" Name="fsmname" Nullable="true" MaxLength="60" />
+  </ComplexType>
+  <ComplexType Name="USP_AutoDispatch_DispatchToSpawntech_Result">
+    <Property Type="Int32" Name="SendEmail" Nullable="true" />
+    <Property Type="Int32" Name="TechID" Nullable="true" />
+  </ComplexType>
+  <ComplexType Name="USP_AutoDispatch_DueToCallPriority_Result">
+    <Property Type="Int32" Name="SendEmail" Nullable="true" />
+    <Property Type="Int32" Name="TechID" Nullable="true" />
+  </ComplexType>
+  <EntityType Name="C20161025_MARS_DEV_Trace">
+    <Key>
+      <PropertyRef Name="RowNumber" />
+    </Key>
+    <Property Name="RowNumber" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EventClass" Type="Int32" />
+    <Property Name="TextData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ApplicationName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="NTUserName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="LoginName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="CPU" Type="Int32" />
+    <Property Name="Reads" Type="Int64" />
+    <Property Name="Writes" Type="Int64" />
+    <Property Name="Duration" Type="Int64" />
+    <Property Name="ClientProcessID" Type="Int32" />
+    <Property Name="SPID" Type="Int32" />
+    <Property Name="StartTime" Type="DateTime" Precision="3" />
+    <Property Name="EndTime" Type="DateTime" Precision="3" />
+    <Property Name="BinaryData" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="DatabaseID" Type="Int32" />
+    <Property Name="DatabaseName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="EventSequence" Type="Int64" />
+    <Property Name="GroupID" Type="Int32" />
+    <Property Name="HostName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="IntegerData" Type="Int32" />
+    <Property Name="IntegerData2" Type="Int32" />
+    <Property Name="IsSystem" Type="Int32" />
+    <Property Name="LoginSid" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NTDomainName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="RequestID" Type="Int32" />
+    <Property Name="ServerName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="SessionLoginName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="Type" Type="Int32" />
+    <Property Name="Error" Type="Int32" />
+    <Property Name="ObjectName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="RowCounts" Type="Int64" />
+    <Property Name="TransactionID" Type="Int64" />
+    <Property Name="XactSequence" Type="Int64" />
+    <Property Name="LineNumber" Type="Int32" />
+    <Property Name="NestLevel" Type="Int32" />
+    <Property Name="ObjectID" Type="Int32" />
+    <Property Name="ObjectType" Type="Int32" />
+    <Property Name="SourceDatabaseID" Type="Int32" />
+    <Property Name="Offset" Type="Int32" />
+  </EntityType>
+  <EntityType Name="C2017_0105_MARS_DEV_Trace">
+    <Key>
+      <PropertyRef Name="RowNumber" />
+    </Key>
+    <Property Name="RowNumber" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EventClass" Type="Int32" />
+    <Property Name="TextData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ApplicationName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="NTUserName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="LoginName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="CPU" Type="Int32" />
+    <Property Name="Reads" Type="Int64" />
+    <Property Name="Writes" Type="Int64" />
+    <Property Name="Duration" Type="Int64" />
+    <Property Name="ClientProcessID" Type="Int32" />
+    <Property Name="SPID" Type="Int32" />
+    <Property Name="StartTime" Type="DateTime" Precision="3" />
+    <Property Name="EndTime" Type="DateTime" Precision="3" />
+    <Property Name="BinaryData" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="DatabaseID" Type="Int32" />
+    <Property Name="DatabaseName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="Error" Type="Int32" />
+    <Property Name="EventSequence" Type="Int64" />
+    <Property Name="GroupID" Type="Int32" />
+    <Property Name="HostName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="IntegerData" Type="Int32" />
+    <Property Name="IsSystem" Type="Int32" />
+    <Property Name="LoginSid" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NTDomainName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="ObjectName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="RequestID" Type="Int32" />
+    <Property Name="RowCounts" Type="Int64" />
+    <Property Name="ServerName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="SessionLoginName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="TransactionID" Type="Int64" />
+    <Property Name="XactSequence" Type="Int64" />
+    <Property Name="IntegerData2" Type="Int32" />
+    <Property Name="LineNumber" Type="Int32" />
+    <Property Name="NestLevel" Type="Int32" />
+    <Property Name="ObjectID" Type="Int32" />
+    <Property Name="ObjectType" Type="Int32" />
+    <Property Name="Offset" Type="Int32" />
+    <Property Name="SourceDatabaseID" Type="Int32" />
+    <Property Name="State" Type="Int32" />
+  </EntityType>
+  <EntityType Name="AllSmuckersStatu">
+    <Key>
+      <PropertyRef Name="SmuckersStatusID" />
+    </Key>
+    <Property Name="SmuckersStatusID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="SmuckersStatus" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="Active" Type="Int16" />
+    <Property Name="StatusSequence" Type="Int16" />
+    <Property Name="StatusFor" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+    <Property Name="SolutionID" Type="Int32" />
+    <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="AMPSList">
+    <Key>
+      <PropertyRef Name="AMPSID" />
+    </Key>
+    <Property Name="AMPSID" Type="Int32" Nullable="false" />
+    <Property Name="AMPSDescription" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="Sequence" Type="Int32" />
+  </EntityType>
+  <EntityType Name="BrandName">
+    <Key>
+      <PropertyRef Name="BrandID" />
+    </Key>
+    <Property Name="BrandID" Type="Int32" Nullable="false" />
+    <Property Name="BrandName1" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Int32" />
+  </EntityType>
+  <EntityType Name="CallTypeSymptomEquipType">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="Int32" Nullable="false" />
+    <Property Name="CallTypeID" Type="Double" />
+    <Property Name="SymptomID" Type="Double" />
+    <Property Name="EquipTypeID" Type="Int32" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="CallTypeSymptomMaster">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="CallTypeID" Type="Int32" />
+    <Property Name="SymptomID" Type="Int32" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="CallTypeSymptomSolutionMaster">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="CallTypeID" Type="Int32" />
+    <Property Name="SymptomID" Type="Int32" />
+    <Property Name="SolutionID" Type="Int32" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="CategoryId" />
+    </Key>
+    <Property Name="CategoryId" Type="Int32" Nullable="false" />
+    <Property Name="CategoryDesc" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="CustomerLog">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="Customerpreferences" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CurrentUserID" Type="Int32" />
+    <Property Name="LogInTime" Type="DateTime" Precision="0" />
+    <Property Name="SpecialInstructions" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ElectricalPhaseList">
+    <Key>
+      <PropertyRef Name="ElectricalPhaseID" />
+    </Key>
+    <Property Name="ElectricalPhaseID" Type="Int32" Nullable="false" />
+    <Property Name="ElectricalPhase" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Double" />
+    <Property Name="Sequence" Type="Double" />
+  </EntityType>
+  <EntityType Name="EquipType">
+    <Key>
+      <PropertyRef Name="EquipTypeId" />
+    </Key>
+    <Property Name="EquipTypeCode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="EquipTypeId" Type="Int32" Nullable="false" />
+    <Property Name="Sequence" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Erf">
+    <Key>
+      <PropertyRef Name="ErfID" />
+    </Key>
+    <Property Name="ErfID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainContactName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhone" Type="String" MaxLength="35" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhoneExtn" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="FeastMovementID" Type="Int32" />
+    <Property Name="ChannelID" Type="Int16" />
+    <Property Name="SalesPerson" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="EntryUserID" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+    <Property Name="ReasonID" Type="Int16" />
+    <Property Name="DateOnERF" Type="DateTime" Precision="3" />
+    <Property Name="DateERFReceived" Type="DateTime" Precision="3" />
+    <Property Name="DateERFProcessed" Type="DateTime" Precision="3" />
+    <Property Name="TimeERFProcessed" Type="DateTime" Precision="3" />
+    <Property Name="OriginalRequestedDate" Type="DateTime" Precision="3" />
+    <Property Name="InstallLocation" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TimeZone" Type="Int32" />
+    <Property Name="DayLightSaving" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EquipETADate" Type="DateTime" Precision="3" />
+    <Property Name="ShipToJDE" Type="Int32" />
+    <Property Name="SiteReady" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="JdeProcessDate" Type="DateTime" Precision="3" />
+    <Property Name="ShipfromJDE" Type="Int32" />
+    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TransType" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPO" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="CmUser" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="CmReceviedDate" Type="DateTime" Precision="3" />
+    <Property Name="DateReceived" Type="DateTime" Precision="3" />
+    <Property Name="LoanSale" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="ErfWorkorderLog">
+    <Key>
+      <PropertyRef Name="ErfID" />
+      <PropertyRef Name="WorkorderID" />
+    </Key>
+    <Property Name="ErfID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="EventLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Source" Type="String" MaxLength="225" FixedLength="false" Unicode="true" />
+    <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ExtendedMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Date" Type="DateTime" Precision="3" />
+    <Property Name="CustomInt" Type="Int32" />
+    <Property Name="CustomTest" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="FeastMovement">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="Feastmovementid" Type="Int32" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Erfid" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="FeastmovementState" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ShipMethod" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ShipCarrier" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="TrackingNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+  </EntityType>
+  <EntityType Name="HolidayList">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="HolidayDate" Type="DateTime" Precision="0" />
+    <Property Name="HolidayName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Status" Type="Boolean" Nullable="false" />
+  </EntityType>
+  <EntityType Name="IndexCounter">
+    <Key>
+      <PropertyRef Name="Indexid" />
+    </Key>
+    <Property Name="Indexid" Type="Int32" Nullable="false" />
+    <Property Name="IndexName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="IndexValue" Type="Int32" />
+  </EntityType>
+  <EntityType Name="InventoryCountSheetHeader">
+    <Key>
+      <PropertyRef Name="CountSheetID" />
+    </Key>
+    <Property Name="CountSheetID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="LocationID" Type="Int32" />
+    <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="GenerationDate" Type="DateTime" Precision="0" />
+    <Property Name="CountedBy" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="CountStatus" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="InventoryCountSheetLineData">
+    <Key>
+      <PropertyRef Name="CountSheetLineID" />
+    </Key>
+    <Property Name="CountSheetLineID" Type="Int32" Nullable="false" />
+    <Property Name="LocationID" Type="Int32" />
+    <Property Name="GenerationDate" Type="DateTime" Precision="0" />
+    <Property Name="OriginalOnHandQty" Type="Int32" />
+    <Property Name="CountQty" Type="Int32" />
+    <Property Name="Bin" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="CatalogId" Type="Int32" />
+    <Property Name="SerialNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EmptyBin" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="ItemType" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+    <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Invoice">
+    <Key>
+      <PropertyRef Name="InvoiceUniqueid" />
+    </Key>
+    <Property Name="InvoiceUniqueid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Invoiceid" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceLocation" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderCompletionDate" Type="DateTime" Precision="0" />
+    <Property Name="InvoiceStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceSubmitDate" Type="DateTime" Precision="0" />
+    <Property Name="SubmitAmount" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PaymentCreated" Type="DateTime" Precision="0" />
+    <Property Name="PaymentAmtApproved" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="CheckNumber" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Mileage" Type="Int32" />
+    <Property Name="TravelTimeInSecs" Type="Int32" />
+    <Property Name="StandardTravelSecs" Type="Int32" />
+    <Property Name="OverTimeTravelSecs" Type="Int32" />
+    <Property Name="RoundTripIncluded" Type="Int16" />
+    <Property Name="LaborHours" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="StandardLabor" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="OvertimeLabor" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="ZoneRateid" Type="Int32" />
+    <Property Name="AdditionalCharge" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="AdditionalChargeDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PartsTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="LaborTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TravelTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="SubTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TaxAmount" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="InvoiceTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PhoneSolveTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="ProjectTotal" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="OverTimeRequestApproved" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="DateCheckCreated" Type="DateTime" Precision="3" />
+    <Property Name="AmountPaid" Type="Decimal" Precision="19" Scale="4" />
+  </EntityType>
+  <EntityType Name="MARS_DEV_TRACE_20161018">
+    <Key>
+      <PropertyRef Name="RowNumber" />
+    </Key>
+    <Property Name="RowNumber" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EventClass" Type="Int32" />
+    <Property Name="TextData" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ApplicationName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="NTUserName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="LoginName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="CPU" Type="Int32" />
+    <Property Name="Reads" Type="Int64" />
+    <Property Name="Writes" Type="Int64" />
+    <Property Name="Duration" Type="Int64" />
+    <Property Name="ClientProcessID" Type="Int32" />
+    <Property Name="SPID" Type="Int32" />
+    <Property Name="StartTime" Type="DateTime" Precision="3" />
+    <Property Name="EndTime" Type="DateTime" Precision="3" />
+    <Property Name="BinaryData" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="DatabaseID" Type="Int32" />
+    <Property Name="DatabaseName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="Error" Type="Int32" />
+    <Property Name="EventSequence" Type="Int64" />
+    <Property Name="GroupID" Type="Int32" />
+    <Property Name="HostName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="IntegerData" Type="Int32" />
+    <Property Name="IsSystem" Type="Int32" />
+    <Property Name="LoginSid" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="NTDomainName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="ObjectName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="RequestID" Type="Int32" />
+    <Property Name="RowCounts" Type="Int64" />
+    <Property Name="ServerName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="SessionLoginName" Type="String" MaxLength="128" FixedLength="false" Unicode="true" />
+    <Property Name="TransactionID" Type="Int64" />
+    <Property Name="XactSequence" Type="Int64" />
+    <Property Name="LineNumber" Type="Int32" />
+    <Property Name="NestLevel" Type="Int32" />
+    <Property Name="ObjectID" Type="Int32" />
+    <Property Name="ObjectType" Type="Int32" />
+    <Property Name="SourceDatabaseID" Type="Int32" />
+    <Property Name="IntegerData2" Type="Int32" />
+    <Property Name="Offset" Type="Int32" />
+    <Property Name="State" Type="Int32" />
+    <Property Name="Severity" Type="Int32" />
+  </EntityType>
+  <EntityType Name="NEMANumberList">
+    <Key>
+      <PropertyRef Name="NemaNumberID" />
+    </Key>
+    <Property Name="NemaNumberID" Type="Int32" Nullable="false" />
+    <Property Name="NemaNumberDescription" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Double" />
+    <Property Name="Sequence" Type="Double" />
+  </EntityType>
+  <EntityType Name="NonSerialized">
+    <Key>
+      <PropertyRef Name="NSerialid" />
+    </Key>
+    <Property Name="NSerialid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Erfid" Type="Int32" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Model" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="OrigOrderQuantity" Type="Int32" />
+    <Property Name="ExpectedQty" Type="Int32" />
+    <Property Name="ShippedQuantity" Type="Int32" />
+    <Property Name="ManufNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Bin" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="Catalogid" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="TagType" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="UnitPrice" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TotalLineAmount" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="ShippedFrom" Type="Int32" />
+    <Property Name="FeastMovementid" Type="Int32" />
+    <Property Name="Location" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__NonSerial__Worko__05D8E0BE" FromRole="NonSerialized" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="NotesHistory">
+    <Key>
+      <PropertyRef Name="NotesID" />
+    </Key>
+    <Property Name="ErfID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="FeastMovementID" Type="Int32" />
+    <Property Name="Userid" Type="Int32" />
+    <Property Name="UserName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="AutomaticNotes" Type="Int16" />
+    <Property Name="NotesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__NotesHist__Worko__06CD04F7" FromRole="NotesHistory" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="OnCallGroup">
+    <Key>
+      <PropertyRef Name="OnCallGroupID" />
+    </Key>
+    <Property Name="OnCallGroupID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OnCallGroup1" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="ProjectNumber">
+    <Key>
+      <PropertyRef Name="ProjectID" />
+    </Key>
+    <Property Name="ProjectID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="DeadLine" Type="DateTime" Precision="0" />
+    <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedUserName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedUserID" Type="Int32" />
+    <Property Name="ModifiedUserName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="RemovalSurvey">
+    <Key>
+      <PropertyRef Name="RemovalSurveyID" />
+    </Key>
+    <Property Name="RemovalSurveyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="JMSOwnedMachines" Type="Int32" />
+    <Property Name="RemovalDate" Type="DateTime" Precision="0" />
+    <Property Name="RemoveAllMachines" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="RemovalReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="BeveragesSupplier" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="RemovalSurveyReason">
+    <Key>
+      <PropertyRef Name="RemovalSurveyUniqueID" />
+    </Key>
+    <Property Name="RemovalSurveyUniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="RemovalSurveyReasonID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="ReturnsInvoice">
+    <Key>
+      <PropertyRef Name="ReturnInvoiceID" />
+    </Key>
+    <Property Name="ReturnInvoiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FeastMovementID" Type="Int32" />
+    <Property Name="VendorID" Type="Int32" />
+    <Property Name="VendorName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceContact" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="ContactPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Address" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="State" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="PostalCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="EstimatedPallets" Type="Int32" />
+    <Property Name="NoPalletsUsed" Type="Int32" />
+    <Property Name="PriceperPallet" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="Total" Type="Decimal" Precision="19" Scale="4" />
+  </EntityType>
+  <EntityType Name="SalesPerson">
+    <Key>
+      <PropertyRef Name="SalesPersonID" />
+    </Key>
+    <Property Name="SalesPersonID" Type="Int32" Nullable="false" />
+    <Property Name="SalesPersonName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="SalesPersonNameOLD" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Double" />
+    <Property Name="SalesRepID" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="AEEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Serialized">
+    <Key>
+      <PropertyRef Name="Serialid" />
+    </Key>
+    <Property Name="Serialid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Erfid" Type="Int32" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Model" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="Quantity" Type="Int32" />
+    <Property Name="ManufNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ReceivedDate" Type="DateTime" Precision="0" />
+    <Property Name="ScannedSerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Bin" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="EquipState" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Sealed" Type="Boolean" />
+    <Property Name="Catalogid" Type="Int32" />
+    <Property Name="Category" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="UnitPrice" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TotalLineAmount" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="LoanSale" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="SubAllowed" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="InstallLocation" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="ShippedFrom" Type="Int32" />
+    <Property Name="FeastMovementid" Type="Int32" />
+  </EntityType>
+  <EntityType Name="Sku">
+    <Key>
+      <PropertyRef Name="Skuid" />
+    </Key>
+    <Property Name="Skuid" Type="Int32" Nullable="false" />
+    <Property Name="Sku1" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="120" FixedLength="false" Unicode="true" />
+    <Property Name="SkuActive" Type="Int16" />
+    <Property Name="VendorCode" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="SKUCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="LastModified" Type="DateTime" Precision="0" />
+    <Property Name="ColUpdated" Type="Int16" />
+    <Property Name="Manufacturer" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="JMS_ITEM_NUMBER" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="VEND_ITEM_NUMBER" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="EQUIPMENT_TAG" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="Category" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Solution">
+    <Key>
+      <PropertyRef Name="SolutionId" />
+    </Key>
+    <Property Name="SolutionId" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Sequence" Type="Int16" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="State">
+    <Key>
+      <PropertyRef Name="StateCode" />
+    </Key>
+    <Property Name="StateCode" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="StateName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="Symptom">
+    <Key>
+      <PropertyRef Name="SymptomID" />
+    </Key>
+    <Property Name="SymptomID" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Sequence" Type="Int16" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="SymptomSystemMaster">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="SymptomID" Type="Int32" />
+    <Property Name="SystemID" Type="Int32" />
+    <Property Name="Active" Type="Int32" />
+    <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ColUpdated" Type="Int32" />
+  </EntityType>
+  <EntityType Name="SystemInfo">
+    <Key>
+      <PropertyRef Name="SystemId" />
+    </Key>
+    <Property Name="SystemId" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Sequence" Type="Int16" />
+    <Property Name="Active" Type="Int32" />
+  </EntityType>
+  <EntityType Name="TechOnCall">
+    <Key>
+      <PropertyRef Name="TechOnCallID" />
+    </Key>
+    <Property Name="TechOnCallID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TechId" Type="Int32" />
+    <Property Name="ScheduleDate" Type="DateTime" Precision="0" />
+    <Property Name="ScheduleStartTime" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="ScheduleEndTime" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="EntryUserID" Type="Int32" />
+    <Property Name="EntryUserName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="ModifiedUserName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="ScheduleEndDate" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="TechSchedule">
+    <Key>
+      <PropertyRef Name="TechScheduleID" />
+    </Key>
+    <Property Name="TechScheduleID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="TechId" Type="Int32" />
+    <Property Name="Availability" Type="String" MaxLength="40" FixedLength="false" Unicode="false" />
+    <Property Name="ScheduleDate" Type="DateTime" Precision="0" />
+    <Property Name="ScheduleStartTime" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="ScheduleEndTime" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="WorkOrderID" Type="Int32" />
+    <Property Name="EntryUserID" Type="Int32" />
+    <Property Name="EntryUserName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="ModifiedUserName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="AppointmentSubject" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__TechSched__WorkO__07C12930" FromRole="TechSchedule" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="ThirdpartyConMaintenanceZonerate">
+    <Key>
+      <PropertyRef Name="ZoneRateid" />
+    </Key>
+    <Property Name="ContractMaintenanceid" Type="Int32" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="ZoneRateid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Description" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+    <Property Name="Rate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="BasedOn" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="ThirdPartyContractMaintenance">
+    <Key>
+      <PropertyRef Name="ContractMaintenanceid" />
+    </Key>
+    <Property Name="ContractMaintenanceid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Techid" Type="Int32" Nullable="false" />
+    <Property Name="PartsUpCharge" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="LaborHourlyRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="LaborOvertimeRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="MinOneHourFlag" Type="Boolean" />
+    <Property Name="RatePerPalletFlag" Type="Boolean" />
+    <Property Name="RatePerPallet" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TravelRatePerMileFlag" Type="Boolean" />
+    <Property Name="TravelRatePerMile" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TravelAllowRoundTripFlag" Type="Boolean" />
+    <Property Name="TravelMinOneHour" Type="Boolean" />
+    <Property Name="TravelHourlyRateFlag" Type="Boolean" />
+    <Property Name="TravelHourlyRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TravelOverTimeRateFlag" Type="Boolean" />
+    <Property Name="TravelOvertimeRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TravelZoneRateFlag" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="TmpInvTransfer">
+    <Key>
+      <PropertyRef Name="Transferid" />
+    </Key>
+    <Property Name="Transferid" Type="Int32" Nullable="false" />
+    <Property Name="TransferDate" Type="DateTime" Precision="0" />
+    <Property Name="FromLoc" Type="Int32" />
+    <Property Name="ToLoc" Type="Int32" />
+    <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="TmpinvTransferNonserialized">
+    <Key>
+      <PropertyRef Name="Transferid" />
+    </Key>
+    <Property Name="Transferid" Type="Int32" Nullable="false" />
+    <Property Name="Catalogid" Type="Int32" />
+    <Property Name="ManufNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="QtyTransfered" Type="Int32" />
+    <Property Name="Bin" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="Van" Type="Int32" />
+  </EntityType>
+  <EntityType Name="TmpinvTransferSerialized">
+    <Key>
+      <PropertyRef Name="Transferid" />
+    </Key>
+    <Property Name="Transferid" Type="Int32" Nullable="false" />
+    <Property Name="Catalogid" Type="Int32" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Sealed" Type="Boolean" />
+    <Property Name="EquipmentStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Manufacturer" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="FileName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Bin" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="Van" Type="Int32" />
+  </EntityType>
+  <EntityType Name="UnKnownCustomerLog">
+    <Key>
+      <PropertyRef Name="CustomerLogID" />
+    </Key>
+    <Property Name="CustomerLogID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="OldCustomerID" Type="Int32" />
+    <Property Name="NewCustomerID" Type="Int32" />
+    <Property Name="ModifiedUserName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="0" />
+  </EntityType>
+  <EntityType Name="UserProfile">
+    <Key>
+      <PropertyRef Name="Techid" />
+    </Key>
+    <Property Name="Techid" Type="Int32" Nullable="false" />
+    <Property Name="Branchid" Type="Int32" />
+    <Property Name="AcceptDate" Type="DateTime" Precision="0" />
+    <Property Name="LastAcceptDate" Type="DateTime" Precision="0" />
+    <Property Name="TechType" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="UsrPassword" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UserName" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="ApiKey" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="0" />
+    <Property Name="TokenKey" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="UserID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="UserActive" Type="Int32" />
+    <Property Name="DispatchEmails" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="TechnicianAccount" Type="Boolean" />
+    <Property Name="InvoicingAccount" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="Vendor">
+    <Key>
+      <PropertyRef Name="VendorID" />
+    </Key>
+    <Property Name="VendorID" Type="Int32" Nullable="false" />
+    <Property Name="VendorCode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="VendorDescription" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Phone" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Fax" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Contact" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="APVendorNo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="VendorActive" Type="Int32" />
+    <NavigationProperty Name="VendorModels" Relationship="Smuckers.Data.FK__VendorMod__Vendo__08B54D69" FromRole="Vendor" ToRole="VendorModel" />
+  </EntityType>
+  <EntityType Name="VendorModel">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" />
+    <Property Name="VendorID" Type="Int32" />
+    <Property Name="VendorCode" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ItemNo" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Vendor" Relationship="Smuckers.Data.FK__VendorMod__Vendo__08B54D69" FromRole="VendorModel" ToRole="Vendor" />
+  </EntityType>
+  <EntityType Name="VoltageList">
+    <Key>
+      <PropertyRef Name="VoltageID" />
+    </Key>
+    <Property Name="VoltageID" Type="Int32" Nullable="false" />
+    <Property Name="Voltage" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Double" />
+    <Property Name="Sequence" Type="Double" />
+  </EntityType>
+  <EntityType Name="WaterLineList">
+    <Key>
+      <PropertyRef Name="WaterLineID" />
+    </Key>
+    <Property Name="WaterLineID" Type="Int32" Nullable="false" />
+    <Property Name="WaterLine" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Active" Type="Double" />
+    <Property Name="Sequence" Type="Double" />
+  </EntityType>
+  <EntityType Name="WorkOrder">
+    <Key>
+      <PropertyRef Name="WorkorderID" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" Nullable="false" />
+    <Property Name="WorkorderCallstatus" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainContactName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhoneExtn" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerCustomerPreferences" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderEntryUserid" Type="Int32" />
+    <Property Name="WorkorderEntryDate" Type="DateTime" Precision="3" />
+    <Property Name="WorkorderCloseUserid" Type="Int32" />
+    <Property Name="WorkorderCloseDate" Type="DateTime" Precision="3" />
+    <Property Name="WorkorderModifiedUserid" Type="Int32" />
+    <Property Name="WorkorderModifiedDate" Type="DateTime" Precision="3" />
+    <Property Name="WorkorderErfid" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderEquipCount" Type="Int16" />
+    <Property Name="WorkorderCalltypeid" Type="Int32" />
+    <Property Name="WorkorderCalltypeDesc" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="WorkorderSpawnEvent" Type="Int32" />
+    <Property Name="WorkorderFsm" Type="Int32" />
+    <Property Name="WorkorderTimeZone" Type="Int32" />
+    <Property Name="WorkorderDaylightSaving" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="WorkorderClosureConfirmationNo" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="CoverageZone" Type="Int32" />
+    <Property Name="TechTeamLead" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechid" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechBranch" Type="Int32" />
+    <Property Name="SecondaryTechid" Type="Int32" />
+    <Property Name="SecondaryTechName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechBranch" Type="Int32" />
+    <Property Name="Fsm" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="Rsm" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="Tsm" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="MarketSegment" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="ProgramName" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="DistributorName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ServiceTier" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="OtherParts" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="DateNeeded" Type="DateTime" Precision="0" />
+    <Property Name="PurchaseOrder" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="PartsShipTo" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="AppointmentDate" Type="DateTime" Precision="3" />
+    <Property Name="OriginalWorkorderid" Type="Int32" />
+    <Property Name="CallerName" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+    <Property Name="OvertimeRequest" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="PriorityCode" Type="Int32" />
+    <Property Name="ProjectID" Type="Int32" />
+    <Property Name="AutoDispatch" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="FollowupCallID" Type="Int32" />
+    <Property Name="WorkorderContactPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="WorkorderContactName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="FSR" Type="Int32" />
+    <Property Name="PartsRushOrder" Type="Boolean" />
+    <Property Name="OtherPartsName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsContactName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsAddress1" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsAddress2" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsCity" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsState" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsZip" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="TechTeamLeadID" Type="Int32" />
+    <Property Name="EntryUserName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="ClosedUserName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedUserName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="TSMEmail" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TSMPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="FSMID" Type="Int32" />
+    <Property Name="ProjectFlatRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="NoServiceRequired" Type="Boolean" />
+    <Property Name="FSRName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="HoldDateTime" Type="DateTime" Precision="0" />
+    <Property Name="EmailSent" Type="Int16" />
+    <Property Name="TechType" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="IsRejected" Type="Boolean" />
+    <Property Name="OtherPartsPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="SpawnCounter" Type="Int32" />
+    <Property Name="ParentWorkorderid" Type="Int32" />
+    <NavigationProperty Name="NonSerializeds" Relationship="Smuckers.Data.FK__NonSerial__Worko__05D8E0BE" FromRole="WorkOrder" ToRole="NonSerialized" />
+    <NavigationProperty Name="NotesHistories" Relationship="Smuckers.Data.FK__NotesHist__Worko__06CD04F7" FromRole="WorkOrder" ToRole="NotesHistory" />
+    <NavigationProperty Name="TechSchedules" Relationship="Smuckers.Data.FK__TechSched__WorkO__07C12930" FromRole="WorkOrder" ToRole="TechSchedule" />
+    <NavigationProperty Name="WorkOrderBrands" Relationship="Smuckers.Data.FK__WorkOrder__Worko__09A971A2" FromRole="WorkOrder" ToRole="WorkOrderBrand" />
+    <NavigationProperty Name="WorkorderDetails" Relationship="Smuckers.Data.FK__Workorder__Worko__4C6B5938" FromRole="WorkOrder" ToRole="WorkorderDetail" />
+    <NavigationProperty Name="WorkorderEquipments" Relationship="Smuckers.Data.FK__Workorder__Worko__4D5F7D71" FromRole="WorkOrder" ToRole="WorkorderEquipment" />
+    <NavigationProperty Name="WorkorderEquipmentRequesteds" Relationship="Smuckers.Data.FK__Workorder__Worko__4D5F7D72" FromRole="WorkOrder" ToRole="WorkorderEquipmentRequested" />
+    <NavigationProperty Name="WorkorderImages" Relationship="Smuckers.Data.FK__Workorder__Worko__4E53A1AA" FromRole="WorkOrder" ToRole="WorkorderImage" />
+    <NavigationProperty Name="WorkorderInstallationSurveys" Relationship="Smuckers.Data.FK__Workorder__Worko__4F47C5E3" FromRole="WorkOrder" ToRole="WorkorderInstallationSurvey" />
+    <NavigationProperty Name="WorkorderNonAudits" Relationship="Smuckers.Data.FK__Workorder__Worko__503BEA1C" FromRole="WorkOrder" ToRole="WorkorderNonAudit" />
+    <NavigationProperty Name="WorkorderParts" Relationship="Smuckers.Data.FK__Workorder__Worko__51300E55" FromRole="WorkOrder" ToRole="WorkorderPart" />
+    <NavigationProperty Name="WorkorderReasonlogs" Relationship="Smuckers.Data.FK__Workorder__Worko__5224328E" FromRole="WorkOrder" ToRole="WorkorderReasonlog" />
+    <NavigationProperty Name="WorkorderSchedules" Relationship="Smuckers.Data.FK__Workorder__Worko__58D1301D" FromRole="WorkOrder" ToRole="WorkorderSchedule" />
+  </EntityType>
+  <EntityType Name="WorkOrderBrand">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="BrandID" Type="Int32" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__WorkOrder__Worko__09A971A2" FromRole="WorkOrderBrand" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderDetail">
+    <Key>
+      <PropertyRef Name="WorkorderDetailid" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkorderDetailid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceDate" Type="DateTime" Precision="0" />
+    <Property Name="StartDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ArrivalDateTime" Type="DateTime" Precision="0" />
+    <Property Name="CompletionDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ResponsibleTechid" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Mileage" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="TravelTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PhoneSolveid" Type="Int32" />
+    <Property Name="OriginalWorkorder" Type="Int32" />
+    <Property Name="SpawnReason" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerSignature" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="EntryUserid" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="ModifiedUserid" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="0" />
+    <Property Name="SpecialClosure" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="SolutionId" Type="Int32" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__4C6B5938" FromRole="WorkorderDetail" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderEquipment">
+    <Key>
+      <PropertyRef Name="Assetid" />
+    </Key>
+    <Property Name="Assetid" Type="Int32" Nullable="false" />
+    <Property Name="CallTypeid" Type="Int32" />
+    <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Manufacturer" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Solutionid" Type="Int32" />
+    <Property Name="Temperature" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Settings" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Systemid" Type="Int32" />
+    <Property Name="Symptomid" Type="Int32" />
+    <Property Name="QualityIssue" Type="Boolean" />
+    <Property Name="Name" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkPerformedCounter" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="NoPartsNeeded" Type="Boolean" />
+    <Property Name="CatalogID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FeastMovementid" Type="Int32" />
+    <Property Name="IsSlNumberImageExist" Type="Boolean" />
+    <Property Name="EquipmentId" Type="Int32" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__4D5F7D71" FromRole="WorkorderEquipment" ToRole="WorkOrder" />
+    <NavigationProperty Name="WorkorderImages" Relationship="Smuckers.Data.FK__Workorder__Asset__0C85DE4D" FromRole="WorkorderEquipment" ToRole="WorkorderImage" />
+    <NavigationProperty Name="WorkorderInstallationSurveys" Relationship="Smuckers.Data.FK__Workorder__Asset__0E6E26BF" FromRole="WorkorderEquipment" ToRole="WorkorderInstallationSurvey" />
+    <NavigationProperty Name="WorkorderServiceClaims" Relationship="Smuckers.Data.FK__Workorder__Asset__14270015" FromRole="WorkorderEquipment" ToRole="WorkorderServiceClaim" />
+  </EntityType>
+  <EntityType Name="WorkorderEquipmentRequested">
+    <Key>
+      <PropertyRef Name="Assetid" />
+    </Key>
+    <Property Name="Assetid" Type="Int32" Nullable="false" />
+    <Property Name="CallTypeid" Type="Int32" />
+    <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Manufacturer" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Solutionid" Type="Int32" />
+    <Property Name="Temperature" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="Settings" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Systemid" Type="Int32" />
+    <Property Name="Symptomid" Type="Int32" />
+    <Property Name="QualityIssue" Type="Boolean" />
+    <Property Name="Name" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkPerformedCounter" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="NoPartsNeeded" Type="Boolean" />
+    <Property Name="CatalogID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FeastMovementid" Type="Int32" />
+    <Property Name="IsSlNumberImageExist" Type="Boolean" />
+    <Property Name="EquipmentId" Type="Int32" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__4D5F7D72" FromRole="WorkorderEquipmentRequested" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderImage">
+    <Key>
+      <PropertyRef Name="WorkorderImageid" />
+    </Key>
+    <Property Name="WorkorderImageid" Type="Int32" Nullable="false" />
+    <Property Name="WorkorderDetailid" Type="Int32" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkorderPicture" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="WorkorderImagePath" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="AssetID" Type="Int32" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__4E53A1AA" FromRole="WorkorderImage" ToRole="WorkOrder" />
+    <NavigationProperty Name="WorkorderEquipment" Relationship="Smuckers.Data.FK__Workorder__Asset__0C85DE4D" FromRole="WorkorderImage" ToRole="WorkorderEquipment" />
+  </EntityType>
+  <EntityType Name="WorkorderInstallationSurvey">
+    <Key>
+      <PropertyRef Name="Installsurveyid" />
+    </Key>
+    <Property Name="Installsurveyid" Type="Int32" Nullable="false" />
+    <Property Name="NemwNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ElectricalPhase" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="MachineAmperage" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="UnitFitSpace" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="Voltage" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="CounterUnitSpace" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="WaterLine" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="AssetLocation" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="AssetID" Type="Int32" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__4F47C5E3" FromRole="WorkorderInstallationSurvey" ToRole="WorkOrder" />
+    <NavigationProperty Name="WorkorderEquipment" Relationship="Smuckers.Data.FK__Workorder__Asset__0E6E26BF" FromRole="WorkorderInstallationSurvey" ToRole="WorkorderEquipment" />
+  </EntityType>
+  <EntityType Name="WorkorderNonAudit">
+    <Key>
+      <PropertyRef Name="NonAuditid" />
+    </Key>
+    <Property Name="NonAuditid" Type="Int32" Nullable="false" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="Category" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Equipment" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__503BEA1C" FromRole="WorkorderNonAudit" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderPart">
+    <Key>
+      <PropertyRef Name="PartsIssueid" />
+    </Key>
+    <Property Name="PartsIssueid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Quantity" Type="Int32" />
+    <Property Name="Manufacturer" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Sku" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="120" FixedLength="false" Unicode="true" />
+    <Property Name="Erfid" Type="Int32" />
+    <Property Name="ProdNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModelNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="StandardCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TPSPCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="Total" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="AssetID" Type="Int32" />
+    <Property Name="NonSerializedIssue" Type="Boolean" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__51300E55" FromRole="WorkorderPart" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderReasonlog">
+    <Key>
+      <PropertyRef Name="WorkorderLogid" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="OldAppointmentDate" Type="DateTime" Precision="0" />
+    <Property Name="NewAppointmentDate" Type="DateTime" Precision="0" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="Reasonid" Type="Int32" />
+    <Property Name="LogDescription" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderLogid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ReasonFor" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__5224328E" FromRole="WorkorderReasonlog" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderSavedSearch">
+    <Key>
+      <PropertyRef Name="SavedSearchid" />
+    </Key>
+    <Property Name="SavedSearchName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Customerid" Type="Int32" />
+    <Property Name="Erfid" Type="Int32" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkorderCallStatus" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="FollowupCall" Type="Int32" />
+    <Property Name="AutoDispatch" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderType" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Priority" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Fsr" Type="Int32" />
+    <Property Name="City" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="CoverageZoneIndex" Type="Int32" />
+    <Property Name="Tsm" Type="Int32" />
+    <Property Name="TechType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceCompany" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Technician" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="Fsm" Type="Int32" />
+    <Property Name="DateFrom" Type="DateTime" Precision="0" />
+    <Property Name="DateTo" Type="DateTime" Precision="0" />
+    <Property Name="ApptdateFrom" Type="DateTime" Precision="0" />
+    <Property Name="ApptDateTo" Type="DateTime" Precision="0" />
+    <Property Name="SavedSearchid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserID" Type="Int32" />
+    <Property Name="OriginalWorkOrderID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="WorkorderSchedule">
+    <Key>
+      <PropertyRef Name="Scheduleid" />
+    </Key>
+    <Property Name="Scheduleid" Type="Int32" Nullable="false" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="ScheduleDate" Type="DateTime" Precision="3" />
+    <Property Name="ScheduleUserid" Type="Int32" />
+    <Property Name="ModifiedScheduleDate" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedScheduleUserid" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="3" />
+    <Property Name="ServiceCenterID" Type="Int32" />
+    <Property Name="PrimaryTech" Type="Int16" />
+    <Property Name="TechName" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+    <Property Name="TechPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="ServiceCenterName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="FSMID" Type="Int32" />
+    <Property Name="FSMName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="FSMPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="TSMID" Type="Int32" />
+    <Property Name="TSMName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="TSMEmail" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TSMPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="FSMEmail" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TeamLeadID" Type="Int32" />
+    <Property Name="TeamLeadName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="AssignedStatus" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="AssistTech" Type="Int16" />
+    <Property Name="WS_ArrivalDateTime" Type="DateTime" Precision="0" />
+    <Property Name="WS_CompletionDateTime" Type="DateTime" Precision="0" />
+    <Property Name="WS_Mileage" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="WS_TravelTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WS_AppointmentDate" Type="DateTime" Precision="3" />
+    <NavigationProperty Name="WorkOrder" Relationship="Smuckers.Data.FK__Workorder__Worko__58D1301D" FromRole="WorkorderSchedule" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderServiceClaim">
+    <Key>
+      <PropertyRef Name="ServiceClaimid" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Assetid" Type="Int32" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="ServiceClaimid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <NavigationProperty Name="WorkorderEquipment" Relationship="Smuckers.Data.FK__Workorder__Asset__14270015" FromRole="WorkorderServiceClaim" ToRole="WorkorderEquipment" />
+  </EntityType>
+  <EntityType Name="WorkorderType">
+    <Key>
+      <PropertyRef Name="CallTypeID" />
+    </Key>
+    <Property Name="CallTypeID" Type="Int32" Nullable="false" />
+    <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="Sequence" Type="Int32" />
+    <Property Name="Active" Type="Int32" />
+  </EntityType>
+  <EntityType Name="ZonePriority">
+    <Key>
+      <PropertyRef Name="ZoneIndex" />
+    </Key>
+    <Property Name="ZoneIndex" Type="Int32" Nullable="false" />
+    <Property Name="ZoneName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibletechID" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="TechTeamLead" Type="Int32" />
+    <Property Name="ResponsibleTechBranch" Type="Int32" />
+    <Property Name="SecondaryTechID" Type="Int32" />
+    <Property Name="SecondaryTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechBranch" Type="Int32" />
+    <Property Name="Fsm" Type="Int32" />
+    <Property Name="Rsm" Type="Int32" />
+    <Property Name="Tsm" Type="Int32" />
+    <Property Name="TechTeamLeadName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechBranchName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechBranchName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="RSMName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="FSMName" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+    <Property Name="PhoneSolveTechID" Type="Int32" />
+    <Property Name="PhoneSolveTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="Latitude" Type="Double" />
+    <Property Name="Longitude" Type="Double" />
+    <Property Name="Coordinates" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="OnCallGroupID" Type="Int32" />
+    <Property Name="OnCallPrimarytechID" Type="Int32" />
+    <Property Name="OnCallBackupTechID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="AutoDispatchLogHistory">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="EventID" Type="Int32" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="LogNotes" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+    <Property Name="UserID" Type="Int32" />
+    <Property Name="HoldLog" Type="Int16" />
+  </EntityType>
+  <EntityType Name="Zip">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="ZIP1" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="County" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Country" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="AreaCode" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="Latitude" Type="Double" />
+    <Property Name="Longitude" Type="Double" />
+    <Property Name="PreferredCity" Type="Int16" />
+    <Property Name="TimeZone" Type="Int32" />
+    <Property Name="DayLightSaving" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="FIPSState" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="FIPSCounty" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="FIPSCity" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="UniqueID" Type="Int32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="ZoneZip">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ZipCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="ZoneIndex" Type="Int32" />
+    <Property Name="ZoneName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="ZoneZipCopy">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ZipCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="ZoneIndex" Type="Int32" />
+    <Property Name="ZoneName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="VW_WorkOrder_History">
+    <Key>
+      <PropertyRef Name="WorkorderID" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" Nullable="false" />
+    <Property Name="WorkOrderType" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderCalltypeid" Type="Int32" />
+    <Property Name="WorkorderEntryDate" Type="DateTime" Precision="3" />
+    <Property Name="AppointmentDate" Type="DateTime" Precision="3" />
+    <Property Name="ResponsibleTechid" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <Association Name="FK__NonSerial__Worko__05D8E0BE">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.NonSerialized" Role="NonSerialized" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="NonSerialized">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__NotesHist__Worko__06CD04F7">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.NotesHistory" Role="NotesHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="NotesHistory">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__TechSched__WorkO__07C12930">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.TechSchedule" Role="TechSchedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="TechSchedule">
+        <PropertyRef Name="WorkOrderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__VendorMod__Vendo__08B54D69">
+    <End Type="Smuckers.Data.Vendor" Role="Vendor" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.VendorModel" Role="VendorModel" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Vendor">
+        <PropertyRef Name="VendorID" />
+      </Principal>
+      <Dependent Role="VendorModel">
+        <PropertyRef Name="VendorID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__WorkOrder__Worko__09A971A2">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkOrderBrand" Role="WorkOrderBrand" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkOrderBrand">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__4C6B5938">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderDetail" Role="WorkorderDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderDetail">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__4D5F7D71">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderEquipment" Role="WorkorderEquipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderEquipment">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__4D5F7D72">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderEquipmentRequested" Role="WorkorderEquipmentRequested" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderEquipmentRequested">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__4E53A1AA">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderImage" Role="WorkorderImage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderImage">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__4F47C5E3">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderInstallationSurvey" Role="WorkorderInstallationSurvey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderInstallationSurvey">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__503BEA1C">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderNonAudit" Role="WorkorderNonAudit" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderNonAudit">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__51300E55">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderPart" Role="WorkorderPart" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderPart">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__5224328E">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderReasonlog" Role="WorkorderReasonlog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderReasonlog">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__58D1301D">
+    <End Type="Smuckers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderSchedule" Role="WorkorderSchedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderSchedule">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Asset__0C85DE4D">
+    <End Type="Smuckers.Data.WorkorderEquipment" Role="WorkorderEquipment" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderImage" Role="WorkorderImage" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkorderEquipment">
+        <PropertyRef Name="Assetid" />
+      </Principal>
+      <Dependent Role="WorkorderImage">
+        <PropertyRef Name="AssetID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Asset__0E6E26BF">
+    <End Type="Smuckers.Data.WorkorderEquipment" Role="WorkorderEquipment" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderInstallationSurvey" Role="WorkorderInstallationSurvey" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkorderEquipment">
+        <PropertyRef Name="Assetid" />
+      </Principal>
+      <Dependent Role="WorkorderInstallationSurvey">
+        <PropertyRef Name="AssetID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Asset__14270015">
+    <End Type="Smuckers.Data.WorkorderEquipment" Role="WorkorderEquipment" Multiplicity="0..1" />
+    <End Type="Smuckers.Data.WorkorderServiceClaim" Role="WorkorderServiceClaim" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkorderEquipment">
+        <PropertyRef Name="Assetid" />
+      </Principal>
+      <Dependent Role="WorkorderServiceClaim">
+        <PropertyRef Name="Assetid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>

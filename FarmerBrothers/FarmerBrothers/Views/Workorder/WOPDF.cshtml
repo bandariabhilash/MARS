@@ -1,0 +1,14 @@
+﻿@model FarmerBrothers.Models.WorkOrderPdfModel
+
+@{
+    Layout = null;
+
+    // var gridWorkOrderParts = new WebGrid(Model.objWorkOrder.WorkorderParts, canPage: false, canSort: false,
+    //ajaxUpdateContainerId: "main");
+
+    var gridEquipmentList = new WebGrid(Model.Equipmentlist, canPage: false, canSort: false,
+      ajaxUpdateContainerId: "main");
+
+}
+
+

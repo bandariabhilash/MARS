@@ -1,0 +1,1344 @@
+﻿@model FarmerBrothers.Models.WorkOrderPdfModel
+
+@{
+    Layout = null;
+
+    // var gridWorkOrderParts = new WebGrid(Model.objWorkOrder.WorkorderParts, canPage: false, canSort: false,
+    //ajaxUpdateContainerId: "main");
+
+    /* var gridEquipmentList = new WebGrid(Model.Equipmentlist, canPage: false, canSort: false,
+       ajaxUpdateContainerId: "main");*/
+
+
+
+    if (Model.Equipmentlist == null)
+    {
+        Model.Equipmentlist = new List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>();
+    }
+    if (Model.EquipmentRequestedlist == null)
+    {
+        Model.EquipmentRequestedlist = new List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>();
+    }
+    if (Model.EquipmentRequestedSuperlist == null)
+    {
+        Model.EquipmentRequestedSuperlist = new List<List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>>();
+    }
+    if (Model.EquipmentSuperlist == null)
+    {
+        Model.EquipmentSuperlist = new List<List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>>();
+    }
+
+
+    List<System.Web.Helpers.WebGrid> requestedWebGridArr = new List<System.Web.Helpers.WebGrid>();
+    int num = 0;
+    foreach (var itemList in Model.EquipmentRequestedSuperlist)
+    {
+        var wbgrid = new WebGrid(itemList, canPage: false, canSort: false, ajaxUpdateContainerId: "eqpReqMain" + num);
+        requestedWebGridArr.Add(wbgrid);
+        num++;
+    }
+
+
+    List<System.Web.Helpers.WebGrid> eqpWebGridArr = new List<System.Web.Helpers.WebGrid>();
+    int eqpnum = 0;
+    foreach (var itemList in Model.EquipmentSuperlist)
+    {
+        var wbgrid = new WebGrid(itemList, canPage: false, canSort: false, ajaxUpdateContainerId: "main" + eqpnum);
+        eqpWebGridArr.Add(wbgrid);
+        eqpnum++;
+    }
+
+
+
+
+}
+
+<!doctype html>
+<html>
+<head>
+    <title>Workorder-Search</title>
+    <meta charset="utf-8">
+    <!--media css support meta tag-->
+
+    <style type="text/css">
+        .webGrid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #FCFCFC;
+        }
+
+        /*.header {
+            background-color: #C1D4E6;
+            font-weight: bold;
+            color: #FFF;
+        }*/
+
+        .webGrid th {
+            border: 1px solid #C0C0C0;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .webGrid td {
+            font-size: 12px;
+        }
+
+        .webGrid tr {
+            height: 12px;
+        }
+
+        .alt {
+            height: 50px;
+            background-color: #E4E9F5;
+            color: #000;
+        }
+
+        .gridHead a:hover {
+            text-decoration: underline;
+        }
+
+        .description {
+            width: auto;
+        }
+
+        .doctitle {
+            width: auto;
+        }
+
+        .total {
+            width: 171px;
+        }
+
+        .docwidth {
+            width: auto;
+        }
+
+        .select {
+            background-color: #389DF5;
+        }
+
+        .panel-body
+        {
+            border: 0.1vw solid gray;
+        }
+    </style>
+
+    <style type="text/css">
+        /*Customization Styles*/
+        .invoice-form .form-group {
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+            .invoice-form .form-group label {
+                font-weight: normal;
+            }
+
+        .invoice-header {
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .invoice-form .panel-heading {
+            overflow: hidden;
+        }
+
+            .invoice-form .panel-heading h4 {
+                font-weight: bold;
+                margin-top: 5px;
+            }
+
+        .margin0 {
+            margin: 0 !important;
+        }
+
+        .serilaized-items {
+            float: none;
+            margin: 0 auto;
+        }
+
+        .cust-textarea {
+            border: 1px solid;
+            height: 150px;
+            margin: 0 0 0 15px;
+            width: 100%;
+        }
+
+        td label {
+            font-weight: normal;
+        }
+
+        table.border-less tr td {
+            border: 0 none;
+        }
+
+        .table .table {
+            background: none;
+        }
+
+        .table .stripe-borders-table {
+            background: #fff;
+            margin: 0;
+        }
+
+        .stripe-borders-table th {
+            background: #ccc;
+        }
+
+        .stripe-borders-table-grid {
+            background: #8bb6dd;
+            padding: 15px;
+            margin: 0 15px;
+        }
+
+        .stripe-borders-table td, .stripe-borders-table th {
+            text-align: center;
+            font-weight: normal;
+            border: 1px solid !important;
+        }
+
+        .stripe-borders-table tr:nth-child(2n) td {
+            background: #eeeeee none repeat scroll 0 0;
+        }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            border: 0;
+            border-color: #000;
+        }
+
+        .logo-block {
+            float: left;
+            min-height: 1px;
+            width: 340px;
+        }
+
+        .work-order label {
+            font-size: 19px;
+        }
+
+        .small-text td {
+            font-size: 12px;
+        }
+    </style>
+
+    <style>
+        /*Here I will write some css for looks good*/
+
+        th, td {
+            padding: 5px;
+        }
+
+        th {
+            /*background-color: rgb(248, 248, 248);*/
+        }
+
+        #gridT, #gridT tr {
+            /*border:1px solid ;*/
+        }
+
+        .breakhere {
+            page-break-before: always;
+        }
+
+        .WordSection1 {
+            padding-top: 80px;
+            padding-right: 80px;
+            padding-bottom: 80px;
+            padding-left: 80px;
+        }
+
+        .footer {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 1rem;
+            text-align: left;
+        }
+        .costDetailsBlock table tr td, .timeDetailsBlock table tr td
+        {
+            font-size: 12px;
+        }
+    </style>
+
+
+    <style>
+        #gridWrkReq  thead tr,
+         #gridT thead tr
+        {
+            background-color:#b2b2b2;
+        }
+        #gridWrkReq  thead tr th,
+        #gridT thead tr th
+        {
+            color:#000;
+            font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;height: 26px;text-align:left;
+        }
+        #gridWrkReq  tbody tr td,
+        #gridT tbody tr td
+        {
+            color:#000;
+            font-size:13px;text-align:center;font-weight:normal;font-family:Helvetica, Arial, sans-serif;height: 26px;text-align:left;background-color:#FFFFFF;
+        }
+        #gridT td:nth-child(0) {
+           display: none;
+        }
+
+         #gridT1 thead tr
+         {
+             background-color: #ffc41e;
+         }
+        #gridT1 thead tr th
+        {
+            color:#000;
+            font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;height: 23px;background: #ffc41e;
+        }
+        #gridT1 tbody tr td
+        {            
+            color:#000;
+            font-size:13px;text-align:center;font-weight:normal;font-family:Helvetica, Arial, sans-serif;height: 23px;text-align:left; background-color: #fff1ca;
+        }
+
+        #mainBodyDiv tr:nth-child(even) {
+             background: none;
+        }
+
+        .colStyle{
+            width: 150px;
+            word-break:break-word;
+        }
+          .is-nope {
+            color: #D23;
+            border: 0.5rem double #D23;
+            transform: rotate(3deg);
+            -webkit-mask-position: 2rem 3rem;
+            font-size: 2rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .is-approved {
+            color: #0A9928;
+            border: 0.5rem solid #0A9928;
+            -webkit-mask-position: 13rem 6rem;
+            transform: rotate(-14deg);
+            border-radius: 0;
+        }
+        .is-draft {
+            color: #C4C4C4;
+            border: 1rem double #C4C4C4;
+            transform: rotate(-5deg);
+            font-size: 2rem;
+            font-family: "Open sans", Helvetica, Arial, sans-serif;
+            border-radius: 15px;
+            padding: 1rem;
+            width: 60%;
+            text-align: center;           
+            float: right;
+        }
+        .floatLeft { width: 50%; float: left; }
+        .floatRight {width: 50%; float: right; }
+        .container { overflow: hidden; }
+        /*border: 0.8rem solid #ea13139e;*/
+        .stamp {
+            transform: rotate(-18deg);
+            color: #555;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 0.8rem solid #f503033d;
+            
+            display: inline-block;
+            padding: 1.25rem 1rem;
+            text-transform: uppercase;
+            border-radius: 1rem;
+            font-family: 'Courier';
+            -webkit-mask-image: url(../../img/grunge.png);
+            -webkit-mask-size: 944px 604px;
+            mix-blend-mode: multiply;
+            float: right;
+            margin-top: 5rem;
+        }
+
+
+        .rubber {
+          box-shadow: 0 0 0 3px blue, 0 0 0 2px blue inset;  
+          border: 2px solid transparent;
+          border-radius: 4px;
+          display: inline-block;
+          padding: 5px 2px;
+          line-height: 22px;
+          color: blue;
+          font-size: 24px;
+          font-family: 'Black Ops One', cursive;
+          text-transform: uppercase;
+          text-align: center;
+          opacity: 0.4;
+          width: 155px;
+          transform: rotate(-5deg);
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="mainBodyDiv">
+        <div class="invoice-form">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table ">
+                <tr>
+                    <td>
+                        <div class="invoice-header">
+                            <div class="work-order" style="padding:10px;">
+                                <table style="width: 100%;border-bottom: 2px dotted #bebebe;">
+                                    @*<tr>
+                                            <td>
+                                                <img width="100%" src="~/img/FB-logo.png" class="img-responisve" />
+                                            </td>
+                                        </tr>*@
+
+                                    <tr bgcolor='#49463f'>
+                                        <td bgcolor='#49463f'>
+                                            <table border='0' width='100%' align='center' cellpadding='0' cellspacing='0'>
+                                                <tr>
+                                                    <td>
+                                                        <table border='0' align='left' cellpadding='0' cellspacing='0'>
+                                                            <tr style="width:100%">
+                                                                <td align='left' style="width:50%;"><a href='#' style='display: block;'><img width="150" src="~/img/logo_header.png" class="img-responisve" /></a></td>
+                                                                <td align="center"><div style="color:#fff; font-size: 2.5em; text-align:center; word-spacing: 0px !important;font-family:Arial;">Work Performed Summary</div></td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        @*<td width="20%">
+                                                <img width="100%" src="~/img/FB-logo.png" class="img-responisve" />
+                                            </td>*@
+                                        <td width="100%">
+                                            @*<table width="100%" border="0" cellspacing="0" cellpadding="0">*@
+                                            <table border='0' width='48%' align='left' cellpadding='0' cellspacing='0'>
+                                                <tr>
+                                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Customer Account Number#:&nbsp;<span style='font-weight:normal;text-align:left;'>@Model.objWorkOrder.CustomerID</span>
+                                                    </td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>                                                
+                                                @*<tr>
+                                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Technician Name:&nbsp;
+                                                        @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0
+                && string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold for AB".ToUpper(), 0) != 0
+                && string.Compare(Model.objWorkOrder.WorkorderCalltypeDesc.ToUpper(), "Parts Request".ToUpper(), 0) != 0
+                && string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold".ToUpper(), 0) != 0)
+                                                        {
+                                                            <span style='font-weight:normal;text-align:left;'>@Model.objWorkorderSchedule.TechName</span>
+                                                        }
+                                                    </td>
+                                                </tr>*@
+                                                <tr><td height='12'></td></tr>
+                                                <tr>
+                                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Service Contact:&nbsp;<span style='font-weight:normal;text-align:left;'>@Model.objWorkOrder.CustomerMainContactName</span>
+                                                    </td>
+                                                </tr>
+                                                <tr><td height='12'>&nbsp;</td></tr>
+                                                <tr>
+                                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Call Placed By:&nbsp;<span style='font-weight:normal;text-align:left;'>@Model.objWorkOrder.EntryUserName</span>
+                                                    </td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>
+
+
+
+
+                                                @*    <tr>
+                                                                                            <td>
+                                                                                                <label>Customer Account Number&nbsp;:</label>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <label style="color: #0000ff;">@Model.objWorkOrder.CustomerID</label>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <label>Service Date&nbsp;:</label>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <label>@Model.objWorkOrder.WorkorderEntryDate.Value</label>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>
+                                                                                                <label>Customer Location&nbsp;:</label>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <label>@Model.objWorkOrder.CustomerName</label></br>
+                                                                                                <label>@Model.objWorkOrder.CustomerAddress</label></br>
+                                                                                                <label>@Model.objWorkOrder.CustomerCity</label>
+                                                                                                <label>@Model.objWorkOrder.CustomerState</label>
+                                                                                                <label>@Model.objWorkOrder.CustomerZipCode</label>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <label>Technician Name&nbsp;:</label>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0
+                                                    && string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold for AB".ToUpper(), 0) != 0
+                                                    && string.Compare(Model.objWorkOrder.WorkorderCalltypeDesc.ToUpper(), "Parts Request".ToUpper(), 0) != 0
+                                                    && string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold".ToUpper(), 0) != 0)
+                                                                                                {
+                                                                                                    <label>@Model.objWorkorderSchedule.TechName</label>
+                                                                                                }
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td><label>Service Contact</label></td>
+                                                                                            <td>
+                                                                                                @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0)
+                                                                                                {
+                                                                                                    <label>@Model.objWorkOrder.WorkorderContactName</label>
+                                                                                                }
+
+                                                                                            </td>
+                                                                                            <td><label>Phone Number</label></td>
+                                                                                            <td>
+                                                                                                @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0)
+                                                                                                {
+                                                                                                    <label>@Model.objWorkOrder.WorkorderContactPhone</label>
+                                                                                                }
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td><label>Workorder ID</label></td>
+                                                                                            <td><label>@Model.objWorkOrder.WorkorderID</label></td>
+                                                                                        </tr>    *@
+                                            </table>
+                                            <table border='0' width='48%' style='float:right;' align='left' cellpadding='0' cellspacing='0' class='section-item'>
+                                                <tr>
+                                                    <td style='color:#484848;font-size: 13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'> Workorder ID:&nbsp;<span style='font-weight: normal;text-align:left;'>@Model.objWorkOrder.WorkorderID</span></td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>
+                                                <tr>
+                                                    <td style='color:#484848;font-size: 13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'> Phone Number:&nbsp;<span style='font-weight: normal;text-align:left;'>@Model.objWorkOrder.CustomerPhone</span></td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>
+                                                <tr>
+                                                    <td style='color:#484848;font-size: 13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Service Date:&nbsp;<span style='font-weight: normal;text-align:left;'>@Model.objWorkOrder.WorkorderEntryDate.Value</span>
+                                                    </td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>
+                                                <tr>
+                                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Customer PO:&nbsp;<span style='font-weight:normal;text-align:left;'>@Model.objWorkOrder.CustomerPO</span>
+                                                    </td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>
+                                                <tr>
+                                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                                        Call Priority:&nbsp;<span style='font-weight:normal;text-align:left;'>@Model.CallPriority</span>
+                                                    </td>
+                                                </tr>
+                                                <tr><td height='12'></td></tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                            Customer Location:<span style='font-weight:normal;text-align:left;'>
+                                                <label>@Model.objWorkOrder.CustomerName</label>
+                                                <label>@Model.objWorkOrder.CustomerAddress</label>
+                                                <label>@Model.objWorkOrder.CustomerCity </label>
+                                                <label>@Model.objWorkOrder.CustomerState</label>
+                                                <label>@Model.objWorkOrder.CustomerZipCode </label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="reqEquipmentBlock">
+
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                <tr>
+                                    <td>
+
+                                        <div class="panel panel-default margin0">
+                                            <div class="panel-heading wrkReqHeading" style="background:#FFFFFF;">
+                                                <h4 class="panel-title">Accessories</h4>
+                                            </div>
+                                            <div class="panel-body">
+                                                @for (int j = 0; j < requestedWebGridArr.Count(); j++)
+                                                {
+                                                    <div id="eqpReqMain" style="padding:25px;background-color: white;" class="stripe-borders-table-grid reqEqpSec">
+                                                        @requestedWebGridArr[j].GetHtml(
+                                                            htmlAttributes: new { id = "gridWrkReq", width = "100%", border = "1", bordercolor = "#000000", padding = "0", cellspacing = "0" },
+                                                            columns: requestedWebGridArr[j].Columns(
+                                                                requestedWebGridArr[j].Column("Category", "Equipment Type"),
+                                                            requestedWebGridArr[j].Column("WorkOrderType", "Service Code"),
+                                                             requestedWebGridArr[j].Column("SymptomDesc", "Symptom"),
+                                                             requestedWebGridArr[j].Column("Location", "Equipment Location"),
+                                                            requestedWebGridArr[j].Column("SerialNumber", "Serial Number")
+                                                           ))
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="equipmentBlock">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                <tr>
+                                    <td>
+
+                                        <div class="panel panel-default margin0">
+                                            <div class="panel-heading closureEqpHeading">
+                                                <h4 class="panel-title">Asset Details</h4>
+                                            </div>
+
+                                            <div class="panel-body" style="padding:0px;">
+                                                @for (int j = 0; j < eqpWebGridArr.Count(); j++)
+                                                {
+                                                    <div id="main" style="background-color: white; margin:0px;" class="stripe-borders-table-grid eqpSec">
+                                                        @eqpWebGridArr[j].GetHtml(
+                                                        htmlAttributes: new { id = "gridT", width = "100%", border = "1", bordercolor = "#999999",  cellpadding = "0", cellspacing = "0" },
+                                                        columns: eqpWebGridArr[j].Columns(
+                                                        eqpWebGridArr[j].Column("WorkOrderType", "Service Code"),
+                                                        eqpWebGridArr[j].Column("Category", "Equipment Type"),
+                                                        //gridEquipmentList.Column("Location", "Location"),
+                                                        eqpWebGridArr[j].Column("Manufacturer", "Manufacturer"),
+                                                        //eqpWebGridArr[j].Column("Assetid", "Asset ID"),
+                                                        eqpWebGridArr[j].Column("Model", "Model"),
+                                                        eqpWebGridArr[j].Column("SerialNumber", "Serial Number"),
+                                                        eqpWebGridArr[j].Column("SolutionDesc", "Completion Code"),
+                                                        eqpWebGridArr[j].Column("Temperature", "Temperature"),
+                                                        eqpWebGridArr[j].Column("Weight", "Weight"),
+                                                        eqpWebGridArr[j].Column("Ratio", "Ratio"),
+                                                        //eqpWebGridArr[j].Column("WorkDescription", "Work Description", style: "colStyle"),
+
+
+                                                        eqpWebGridArr[j].Column(format: @<text>
+                                                            <div>
+                                                                <div class="col-sm-12">
+                                                                    @{
+        var rows = ((System.Web.Helpers.WebGridRow)(item)).Value.Parts;
+                                                                    }
+                                                                    @if (rows != null && rows.Count > 0)
+    {
+                                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                                            <tbody>
+
+                                                                                <tr>
+
+                                                                                    @*<td></td>*@
+
+                                                                                    <td width="70%">
+                                                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                                                            <tbody>
+                                                                                                <tr>
+                                                                                                    <td colspan="4" style="padding:0px;">
+                                                                                                        <div class="col-sm-11 serilaized-items" style="width:100%;padding:0px;">
+                                                                                                            @*<label>Parts</label>*@
+                                                                                                            <div id="main1" width="100%" cellspacing="0" cellpadding="0" class="table stripe-borders-table">
+                                                                                                                @{
+
+                                                    var gridWorkOrderParts = new WebGrid(((System.Web.Helpers.WebGridRow)(item)).Value.Parts, canPage: false, canSort: false,
+                                                                                                    ajaxUpdateContainerId: "main");
+                                                                                                                }
+
+                                                                                                                @gridWorkOrderParts.GetHtml(
+                                                            htmlAttributes: new { id = "gridT1", width = "100%", border = "1", bgcolor = "#fff1ca", bordercolor = "#999999", align = "left", cellpadding = "0", cellspacing = "0" },
+                                                            columns:
+                                                            gridWorkOrderParts.Columns(
+                                                            gridWorkOrderParts.Column("Quantity", "Quantity", style: "doctitle"),
+                                                            gridWorkOrderParts.Column("Manufacturer", "Manufacturer", style: "doctitle"),
+                                                            gridWorkOrderParts.Column("Sku", "SKU", style: "doctitle"),
+                                                            gridWorkOrderParts.Column("Description", "Description", style: "doctitle")
+                                                            //gridWorkOrderParts.Column("partsTotal", format: (item1) => item1.partsTotal.ToString("C", new System.Globalization.CultureInfo("en-US")), header: "Parts Total")
+                                                            ))
+
+
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </td>
+
+                                                                                    <!--<td width="30%">
+                                                                                        <table width="50%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                                                            <tbody>
+                                                                                                <tr>
+                                                                                                    <td>Describe Work Performed</td>
+                                                                                                </tr>
+                                                                                                <tr>
+                                                                                                    <td>
+                                                                                                        <textarea class="cust-textarea">@item["WorkDescription"]</textarea>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </td>-->
+                                                                                </tr>
+
+                                                                            </tbody>
+                                                                        </table>
+                                                    }
+                                                    else
+                                                    {
+                                                                                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
+                                                                                                                            <tbody>
+
+                                                                                                                                <tr>
+
+                                                                                                                                    @*<td width="70%">
+                                                                                                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                                                                                                            <tbody>
+                                                                                                                                                <tr>
+                                                                                                                                                    <td colspan="4"></td>
+                                                                                                                                                    </tr>
+                                                                                                                                                </tbody>
+                                                                                                                                            </table>
+                                                                                                                                        </td>*@
+
+
+
+
+                                                                                                                                </tr>
+                                                                                                                            </tbody>
+                                                                                                                        </table>
+                                                                        }
+                                                                </div>
+                                                            </div>
+                                                        </text>)
+))
+
+                                                    </div>
+                                                                                                                }
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                        <td>
+                                            <div class="panel panel-default margin0">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">Customer Signature</h4>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <table>
+                                                        <!-- <tr><td colspan="2"><img id="CustomerSignatureImage" height="100" width="250" onerror='ImageNotFound()' src=@Html.DisplayFor(w => w.CustomerSign) /></td></tr>
+                                                        -->
+                                                        <tr><td>Name:</td><td>@Model.objWorkOrder.CustomerName</td></tr>
+                                                        <tr><td>E-mail:</td><td>@Model.objWorkOrder.CustomerMainEmail</td></tr>
+
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>*@
+                            </table>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        
+                        <div class="costDetailsBlock container" style="padding: 30px; margin-top:25px">
+                            @if (Model.BalanceDue == 0)
+                            {
+                            <table id="" border="0" cellspacing="0" cellpadding="0" class="table floatLeft" style="width: 50%;">
+                                <tr>
+                                    <td>
+                                        <div class="stamp is-draft">                                       
+                                            @*<span style="display: block;color: #ff000075;font-style: italic;font-family: auto;">No Charge Invoice</span>                                            
+                                            <span style="display: block;color: #ef5c59c9;font-style: italic;font-family: monospace;"> Thank you for being a </span>
+                                            <span style="display: block;color: #f10c3a63;font-style: oblique;font-family: cursive;"> Farmer Brothers Customer</span>*@                                           
+                                            <span style="display: block;color: #ef5c59c9;font-style: italic;font-family: monospace;"> Thank you for being a </span>
+                                            <span style="display: block;color: #f10c3a63;font-style: oblique;font-family: cursive;"> Loyal Customer</span>
+                                        </div>                                        
+                                    </td>
+                                </tr>
+                            </table>
+                            }
+                            @*<table border="0" cellspacing="0" cellpadding="0" class="table floatRight" style="width: 50%;">                                
+                                <tr>
+                                    <td align='right' style='color:#484848;font-size:13px;font-family:Helvetica, Arial, sans-serif;text-align:right;'><b>Travel Rate: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b> @string.Format("{0:C}", Model.TravelRate)</td>
+                                </tr>
+                                <tr>
+                                    <td align='right' style='color:#484848;font-size:13px;font-family:Helvetica, Arial, sans-serif;text-align:right;'><b>Labor: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>@string.Format("{0:C}", Model.LaborCost)</td>
+                                </tr>
+                                <tr>
+                                    <td align='right' style='color:#484848;font-size:13px;font-family:Helvetica, Arial, sans-serif;text-align:right;'><b>Parts: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>@string.Format("{0:C}",Model.PartsTotal)</td>
+                                </tr>
+                                <tr>
+                                    <td align='right' style='color:#484848;font-size:13px;font-family:Helvetica, Arial, sans-serif;text-align:right;'><b>Tax: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>@string.Format("{0:C}",Model.Tax)</td>
+                                </tr>                                
+                                <tr>
+                                    <td align='right' style='color:#e50322;font-size:13px;font-family:Helvetica, Arial, sans-serif;text-align:right;'><b>Total: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>@string.Format("{0:C}",Model.Total)</td>
+                                </tr>
+                                <tr>
+                                    <td align='right' style='color:#484848;font-size:13px;font-family:Helvetica, Arial, sans-serif;text-align:right;'><b>Balance Due: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>@string.Format("{0:C}", Model.BalanceDue)</td>
+                                </tr>
+                            </table>*@
+                        </div>
+                    </td>
+                    <td>
+                        <div style="padding: 25px; margin-top:25px">
+                            <table width="100%">
+                                <tr>
+                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'></td>
+                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'></td>
+                                </tr>
+                                <tr>
+                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'></td>
+                                    <td style='color:#484848;font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </td>
+                </tr>
+
+
+
+                <tr>
+                    <td>
+                        <div class="timeDetailsBlock" style="padding: 25px; margin-top:25px">
+                            <table width="100%">
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Start Time:&nbsp;
+                                        <span style='text-align:left;'>@Model.StartTime</span>
+                                    </td>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Arrival Time:&nbsp;
+                                        <span style='font-weight:normal;text-align:left;'>@Model.ArrivalTime</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Completion Time:&nbsp;
+                                        <span style='font-weight:normal;text-align:left;'>@Model.CompletionTime</span>
+                                    </td>
+                                    <td style='ont-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Travel Time:&nbsp;
+                                        <span style='font-weight:normal;text-align:left;'>@Model.TravelTime</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan='3' style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Machine Notes:&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-weight:normal;'><pre>@Model.MachineNotes</pre></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr bgcolor='#49463f'>
+                    <td bgcolor='#49463f'>
+                        <div class="CustomerSignatureBlock" style="padding:0px 40px 0px 20px;"> 
+                            <table border='0' width='100%' align='center' cellpadding='0' cellspacing='0' >
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;' align='left'>
+                                        Technician Signature:&nbsp;
+                                    </td>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;' align='right'>
+                                        Customer Signature:
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;' align='left'>
+                                        <span style='font-weight:normal;text-align:left;'><b> TechName:</b> @Model.objWorkorderSchedule.TechName</span>
+                                    </td>
+                                    <td align='right'>
+                                        <span><b>Signature By:</b> @Model.CustomerSignatureBy </span>
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;' align="left">
+                                        @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0
+                                                && string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold for AB".ToUpper(), 0) != 0
+                                                && string.Compare(Model.objWorkOrder.WorkorderCalltypeDesc.ToUpper(), "Parts Request".ToUpper(), 0) != 0
+                                                && string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold".ToUpper(), 0) != 0)
+                                        {
+                                            <span style='font-weight:normal;text-align:left;'>@Model.objWorkorderSchedule.TechName</span>
+                                        }
+                                    </td>
+                                    <td align='right'>
+                                        <span>@Model.CustomerSignatureBy</span>                                        
+                                    </td>
+                                </tr>*@
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;' align="left">
+                                        @if (!string.IsNullOrEmpty(Model.TechnicianSign))
+                                        {
+                                            <a href='#' style='display: block;text-align:left;'><img width="150" src="@Model.TechnicianSign" class="img-responisve" /></a>
+                                        }           
+                                    </td>
+                                    <td align='right'>                                      
+                                        @if (!string.IsNullOrEmpty(Model.CustomerSign))
+                                        {
+                                            <a href='#' style='display: block;text-align:right;'><img width="150" src="@Model.CustomerSign" class="img-responisve" /></a>
+                                        }
+                                    </td>
+                                </tr>
+                                @*<tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;' align="left">                                       
+                                        @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0
+&& string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold for AB".ToUpper(), 0) != 0
+&& string.Compare(Model.objWorkOrder.WorkorderCalltypeDesc.ToUpper(), "Parts Request".ToUpper(), 0) != 0
+&& string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold".ToUpper(), 0) != 0)
+                                        {
+                                            <span style='font-weight:normal;text-align:left;'>@Model.objWorkorderSchedule.TechName</span>
+                                        }
+                                    </td>
+                                    <td align='right' >
+                                        @if (!string.IsNullOrEmpty(Model.CustomerSign))
+                                        {
+                                            <a href='#' style='display: block;text-align:right;' ><img width="150" src="@Model.CustomerSign" class="img-responisve" /></a>
+                                        }
+                                    </td>
+                                </tr>*@
+                            </table>       
+                        </div>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        <div class="CustomerSurveyBlock">
+                            <table>
+                                <tr bgcolor='ffffff'>
+                                    <td align='center' style='color:#484848;font-size:12px;font-family:Helvetica, Arial, sans-serif;'>
+                                        <a style='text-decoration: none;color:#2996f7' href='https://goo.gl/forms/KgvSAgobIEee3kEz2'>Click here for Customer Satisfaction Survey</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+        </table>
+    </div>
+        <table align="right" class="signatureBlock">
+            @*<tr>
+                <td>
+                    1912 Farmer Brothers Drive, <br />
+                    Northlake, TX 76262 <br />
+                    (682) 549-6600<br />
+                </td>
+            </tr>*@
+            
+
+
+
+        </table>
+        <div style="page-break-after: always;">
+            -
+        </div>
+
+        <div class=WordSection1>
+            </div>
+            <div class=WordSection2>
+                <p class=MsoNormal align=center style='text-align:center'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>
+                            TERMS AND
+                            CONDITIONS<o:p></o:p>
+                        </span>
+                    </b>
+                </p>
+
+                <p class=MsoNormal style='text-align:justify'>
+                    <span style='font-size:15.0pt;font-family:"Arial",sans-serif'><o:p>&nbsp;</o:p></span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>EQUIPMENT DESCRIPTION AND LOCATION</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'></span>The equipment covered by these Equipment
+                        Usage Terms and Conditions (this “Agreement”) shall consist of the equipment
+                        installed at Operator's location(s) by Farmer Bros. Co. (including any
+                        subsidiary or affiliate, hereinafter called “FBC”) as described on the reverse
+                        or in any addendum hereto.<span style='mso-spacerun:yes'>  </span>Operator
+                        shall not remove any equipment from the location installed by FBC without FBC's
+                        prior written consent.<o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>EQUIPMENT OWNERSHIP</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>  </span>Title
+                        to and ownership of the equipment shall at all times remain with FBC. Operator
+                        shall not remove or obscure labeling on the equipment indicating that it is the
+                        property of FBC.<span style='mso-spacerun:yes'>  </span>Operator shall not
+                        sell, assign, transfer, pledge, hypothecate or otherwise dispose of, encumber
+                        or permit a lien to be placed on the equipment. Upon termination of this
+                        Agreement, Operator shall provide FBC reasonable access to Operator's location(s)
+                        to permit FBC to remove the equipment. Operator shall be responsible for all
+                        federal, state or local taxes levied upon the equipment or upon its use, and
+                        shall reimburse FBC for any such taxes upon receipt of FBC's invoice for such
+                        taxes or pay such taxes directly.<span style='mso-spacerun:yes'>
+                        </span>Operator shall indemnify FBC for any liability for such taxes.<o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>USE OF EQUIPMENT</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>
+                        </span>Operator shall use the equipment only to dispense, brew, sell or store FBC
+                        products purchased from FBC (the “Products”), and shall not use the equipment
+                        to dispense, brew, sell or store any products other than FBC products. <o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>CARE AND OPERATION</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>
+                        </span>Operator shall maintain and use the equipment in a careful and proper
+                        manner in accordance with the written instructions of the equipment
+                        manufacturer and FBC, and shall not make any modifications to the equipment
+                        without FBC's prior written consent.<span style='mso-spacerun:yes'>  </span>Any
+                        modifications to the equipment of any kind shall immediately become the
+                        property of FBC subject to the terms of this Agreement.<span style='mso-spacerun:yes'></span>Operator shall comply with all laws,
+                        ordinances and regulations relating to the possession, use and maintenance of
+                        the equipment.<span style='mso-spacerun:yes'>  </span>FBC shall not be
+                        responsible for any damages, claims, injury or liability (collectively,
+                        &quot;Damages&quot;) relating to the operation of the equipment while it is in
+                        the possession of Operator (except for Damages caused by the negligence of FBC,
+                        its employees, agents or contractors).<span style='mso-spacerun:yes'>
+                        </span>Operator shall be responsible for all Damages caused by its negligent
+                        use of the equipment and for the loss, theft or destruction of the equipment.<o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>INSTALLATION AND SERVICE</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        : FBC will conduct a basic installation
+                        of the equipment on Operator’s premises at no charge. A basic installation
+                        consists of connecting the equipment to an established water line with a
+                        shut-off valve and calibrating the equipment for optimum service level. Operator
+                        must ensure that the plumbing and electrical are in good working order and
+                        compliant with all applicable building codes, landlord requirements or other
+                        requirements.<span style='mso-spacerun:yes'>  </span>At Operator’s request and
+                        expense, FBC will arrange the services of a licensed contractor to perform
+                        electrical or plumbing services. FBC will service the equipment at no
+                        additional cost to Operator to the extent FBC sees fit in its discretion.<span style='mso-spacerun:yes'></span>Operator will afford reasonable access to the
+                        equipment so that FBC may service the equipment.<span style='mso-spacerun:yes'></span>FBC shall not be responsible for any delays
+                        in repairing or replacing equipment. <o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>INSPECTION AND VERIFICATION</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'></span>FBC or its representatives shall have the
+                        right at all reasonable times to enter the premises where the equipment is
+                        located for purposes of inspection.<span style='mso-spacerun:yes'>
+                        </span>Operator agrees to provide a record of serial numbers of beverage
+                        equipment at Operator's location(s), upon request by FBC.<o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>ACCEPTANCE OF EQUIPMENT</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>
+                        </span>Operator shall immediately inspect each piece of equipment delivered in
+                        accordance with this Agreement and immediately give notice to FBC if any
+                        equipment is damaged or different from the type of equipment described on the
+                        reverse or in any addendum hereto.<span style='mso-spacerun:yes'>  </span>If
+                        Operator gives no such notice within fourteen (14) days after delivery of any
+                        piece of equipment, it shall be conclusively presumed that such equipment was
+                        delivered in good condition. <b style='mso-bidi-font-weight:normal'>
+                            THE
+                            EQUIPMENT AND ALL SERVICES ARE PROVIDED &quot;AS IS.” FBC MAKES NO
+                            REPRESENTATION OR WARRANTY OF ANY KIND AND EXPRESSLY DISCLAIMS ALL SUCH
+                            REPRESENTATIONS AND WARRANTIES, EXPRESS OR IMPLIED, WITH RESPECT TO THE
+                            EQUIPMENT AND THE SERVICES, THEIR SUITABILITY OR FITNESS FOR ANY PURPOSE AND
+                            THEIR MERCHANTABILITY.
+                        </b><o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>RISK OF LOSS OR DAMAGE</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>
+                        </span>Operator assumes all risk of loss or damage to the equipment from any
+                        cause, including but not limited to fire, theft, water damage, accidental
+                        overturning, dropping or negligence and agrees to return the equipment to FBC
+                        in as good condition as when received, normal wear and tear excepted. In the
+                        event of loss or damage to the equipment due to any cause other than ordinary
+                        wear and tear including fire, theft or otherwise, Operator shall place the equipment
+                        in good repair or pay FBC the value of the equipment. Operator will, to the
+                        full extent permitted by law, release, indemnify, defend and hold harmless FBC
+                        from any loss, damage, liability, cost, fine or expense, including reasonable
+                        attorneys’ fees, incurred in connection with the services, or Operator’s use,
+                        possession or operation of the equipment. <o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>LIMITATION OF LIABILITY</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        : Notwithstanding any provisions in this
+                        Agreement or any other agreement between the parties to the contrary, the total
+                        overall liability of FBC, whether in contract, tort (including negligence and
+                        strict liability) or otherwise is limited to repair or replacement of the
+                        equipment, subject to FBC’s rights in the paragraph entitled “REMOVAL OF
+                        EQUIPMENT” below.<span style='mso-spacerun:yes'>  </span><b style='mso-bidi-font-weight:
+normal'>
+                            IN NO EVENT SHALL FBC BE LIABLE IN ANY ACTION, INCLUDING WITHOUT
+                            LIMITATION, CONTRACT, TORT, STRICT LIABILITY OR OTHERWISE FOR ANY DIRECT, INDIRECT,
+                            INCIDENTAL, SPECIAL, EXEMPLARY, CONSEQUENTIAL, OR PUNITIVE DAMAGES OR
+                            PENALTIES, INCLUDING WITHOUT LIMITATION PROCUREMENT OF SUBSTITUTE EQUIPMENT,
+                            LOSS OF USE, PROFITS, REVENUE, OR DATA, OR BUSINESS INTERRUPTION ARISING OUT OF
+                            OR IN CONNECTION WITH THIS AGREEMENT OR THE EQUIPMENT, EVEN IF FBC WAS ADVISED
+                            OF THE POSSIBILITY OF SUCH DAMAGES.<span style='mso-spacerun:yes'>  </span>ANY
+                            ACTION RESULTING FROM ANY BREACH ON THE PART OF FBC AS TO THE EQUIPMENT
+                            DELIVERED HEREUNDER MUST BE COMMENCED WITHIN ONE (1) YEAR AFTER THE CAUSE OF
+                            ACTION HAS ACCRUED.
+                        </b><o:p></o:p>
+                    </span>
+                </p>
+
+                <h1 style='line-height:normal;mso-list:none'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>
+                            OPERATOR’S
+                            REMEDIES:
+                        </span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        The
+                        remedies reserved to FBC in this Agreement shall be cumulative and additional
+                        to any other remedies in law or in equity.
+                    </span><span style='font-size:8.0pt;font-family:"Arial",sans-serif;letter-spacing:.05pt'><o:p></o:p></span>
+                </h1>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>REMOVAL OF EQUIPMENT</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>  </span>If any
+                        covenant of this Agreement is breached by Operator, or if any of Operator's
+                        property is subjected to levy or seizure by any creditor or government agency,
+                        or if bankruptcy proceedings are commenced by or against Operator, or if
+                        Operator discontinues business, this shall constitute a breach of this
+                        Agreement by Operator and FBC may without notice or demand remove and recover
+                        possession of the equipment. In addition, FBC may, without limitation,
+                        transfer, remove or reduce the equipment assigned to Operator at any time.
+                        Operator understands that FBC assigns equipment based on Operator’s expected
+                        volume of purchases from FBC and that Operator’s failure to meet expected
+                        volumes, or failure to purchase exclusively from FBC, may result in a reduction
+                        or removal of equipment assigned by Operator. If Operator prevents FBC, either
+                        directly or indirectly, from retaking possession of equipment, Operator shall
+                        pay to FBC all costs of retaking said equipment, including reasonable
+                        attorneys’ fees.<o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>USE OF FBC MARKS</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>  </span>FBC
+                        owns certain proprietary and other property rights and interests in and to
+                        trademarks, service marks, logo types, insignias, trade dress designs and commercial
+                        symbols relating to FBC and its products (the “FBC Marks”), which Operator
+                        acknowledges are the sole and exclusive property of FBC, with any goodwill
+                        arising from the use thereof to inure solely to the benefit of FBC.<span style='mso-spacerun:yes'></span>FBC may provide Operator with displays,
+                        signage and other advertising materials incorporating the FBC Marks or approve
+                        Operator’s use of the FBC Marks on Operator’s menus. Operator shall use such
+                        materials solely in connection with the marketing and sale of FBC products and
+                        for no other purpose.<span style='mso-spacerun:yes'>  </span>If at any time
+                        Operator shall cease dispensing FBC products, whether in connection with the
+                        termination of this Agreement or otherwise, all rights granted hereunder to
+                        Operator to use the FBC Marks shall forthwith terminate, and Operator shall
+                        immediately and permanently cease to use, in any manner whatsoever, any FBC
+                        Marks and all displays, signage, advertising materials, menus and other
+                        materials incorporating the FBC Marks and, upon request, immediately return to FBC
+                        all such materials owned by FBC or destroy all such materials owned by Operator
+                        incorporating such marks.<o:p></o:p>
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>CONFIDENTIALITY</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        :<span style='mso-spacerun:yes'>
+                        </span>Operator agrees to maintain in strict confidence all of the terms and
+                        the existence of this Agreement.<o:p></o:p>
+                    </span>
+                </p>
+
+                <br />
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:
+"Arial",sans-serif'>GOVERNING LAW; ARBITRATION</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        : This Agreement will be
+                        governed by, and construed in accordance with, the laws of the State of Texas,
+                        USA without application of the conflict of law principles thereof. Any
+                        controversy or claim arising out of or relating to this Agreement, or the
+                        breach thereof, or any rights granted hereunder, will be exclusively settled by
+                        binding arbitration in Dallas, Texas, USA.<span style='mso-spacerun:yes'>
+                        </span>The arbitration will be conducted in English and in accordance with the
+                        rules of the American Arbitration Association, which will administer the
+                        arbitration and act as appointing authority. The decision of the arbitrators
+                        will be binding upon the parties hereto, and the expense of the arbitration
+                        will be paid as the arbitrator determines. The decision of the arbitrator will
+                        be final, and judgment thereon may be entered by any court of competent
+                        jurisdiction and application may be made to any court for a judicial acceptance
+                        of the award or order of enforcement.<span style='mso-spacerun:yes'>  </span><b style='mso-bidi-font-weight:normal'><o:p></o:p></b>
+                    </span>
+                </p>
+
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>WAIVER; VALIDITY; SURVIVAL:</span>
+                    </b>The failure of either Operator or FBC to<span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        insist upon the strict
+                        observance and performance of the terms and conditions set forth herein will
+                        not be deemed a waiver of other obligations hereunder, nor will it be
+                        considered a future or continuing waiver of the same terms. If any term of this
+                        Agreement, or any part hereof, not essential to the commercial purpose of this Agreement
+                        is held to be illegal, invalid, or unenforceable, it is the intention of the
+                        parties that the remaining terms will remain in full force and effect.<span style='mso-spacerun:yes'></span>To the extent legally permissible, any
+                        illegal, invalid, or unenforceable provision of this Agreement will be replaced
+                        by a valid provision that will implement the commercial purpose of the illegal,
+                        invalid, or unenforceable provision. Sections regarding remedies, governing
+                        law, disputes and such other sections that by their nature must survive
+                        termination in order to affect their intended purpose shall survive termination
+                        of this Agreement
+                    </span>
+                </p>
+
+                <p class=MsoNormal style='margin-bottom:6.0pt;text-align:justify'>
+                    <b style='mso-bidi-font-weight:normal'>
+                        <span style='font-size:15.0pt;font-family:"Arial",sans-serif'>ENTIRE AGREEMENT; ASSIGNMENT:</span>
+                    </b><span style='font-size:14.0pt;font-family:"Arial",sans-serif;'>
+                        The terms and conditions
+                        set forth herein, or as changed or modified by a written agreement signed by Operator
+                        and FBC, shall constitute the entire contract between Operator and FBC with
+                        respect to the subject matter herein and shall supersede any additional or
+                        inconsistent terms and conditions contained in
+                    </span><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        any proposals, invoices, orders, or any
+                        other documents or correspondence of Operator
+                    </span><span style='font-size:14.0pt;font-family:"Arial",sans-serif;'>
+                        . For the avoidance
+                        of doubt, this Agreement does not apply to any goods (other than the equipment)
+                        that FBC may sell to Operator. All such goods shall be governed by FBC’s
+                        standard Terms and Conditions of Sale, which shall not be superseded by this
+                        Agreement. No changes or modifications to the terms and conditions set forth
+                        herein shall have any force or effect, unless otherwise agreed to in writing by
+                        Operator and FBC.
+                    </span><span style='font-size:14.0pt;font-family:"Arial",sans-serif'>
+                        Neither
+                        party may<b style='mso-bidi-font-weight:normal'> </b>assign, delegate or
+                        otherwise transfer this Agreement, in whole or in part, without the prior
+                        written consent of the other party (not to be unreasonably withheld); provided,
+                        that FBC may assign this Agreement to any party controlling, controlled by or
+                        under common control with FBC or to any person acquiring all or substantially
+                        all of the assets or outstanding capital stock of FBC. Any attempted
+                        assignment, delegation, or other transfer of this Agreement in violation of
+                        this Section shall be null and void. An electronic image of this document and
+                        any signature or acknowledgement thereto will be considered an original (to the
+                        same extent as any paper or hard copy), including under evidentiary standards
+                        applicable to a proceeding between the parties hereto.<span style='mso-spacerun:yes'></span>[<span style='background:yellow;mso-highlight:yellow'>
+                            The current version of this Agreement and any modifications or
+                            amendments supersede all prior versions of this Agreement. The most current
+                            version of this Agreement may be found at FBC’s website (www.farmerbros.com/____)
+                            and is otherwise available upon request.
+                        </span>]
+                        <span style='font-size:8.0pt;font-family:"Arial",sans-serif;'><o:p></o:p></span>
+                </p>
+                <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+                <br />
+
+                <footer>
+                    <div class="col-md-12">
+                        <p>Equipment Usage Terms and Conditions (4-@DateTime.Now.Year)</p>
+                    </div>
+                </footer>
+            </div>
+
+        </div>
+</body>
+</html>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var size = $("#main #gridT > thead > tr >th").size(); // get total column
+        $("#main #gridT > thead > tr >th").last().remove(); // remove last column
+        $("#main #gridT > thead > tr").prepend("<th></th>"); // add one column at first for collapsible column
+        $("#main #gridT > tbody > tr").each(function (i, el) {
+            $(this).prepend(
+                $("<td></td>")
+                    .addClass("expand")
+                    .addClass("hoverEff")
+                    .attr('title', "click for show/hide")
+            );
+
+            //Now get sub table from last column and add this to the next new added row
+            var table = $("table", this).parent().html();
+            //add new row with this subtable
+            $(this).after("<tr><td></td><td style='padding:5px; margin:0px;' colspan='" + (size - 1) + "'>" + table + "</td></tr>");
+            $("table", this).parent().remove();
+            // ADD CLICK EVENT FOR MAKE COLLAPSIBLE
+            //$(".hoverEff", this).live("click", function () {
+            //    $(this).parent().closest("tr").next().slideToggle(100);
+            //    $(this).toggleClass("expand collapse");
+            //});
+        });
+
+
+
+    });
+    function ImageNotFound() {
+        $('#CustomerSignatureImage').remove();
+    }
+</script>

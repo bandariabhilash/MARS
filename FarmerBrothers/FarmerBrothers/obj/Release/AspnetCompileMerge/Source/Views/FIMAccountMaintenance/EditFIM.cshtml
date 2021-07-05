@@ -1,0 +1,341 @@
+﻿<style type="text/css">
+    .vendor-block {
+        margin-bottom: 15px;
+        padding: 0;
+    }
+    .fim-ac-block label {
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 14px;
+    }
+}
+
+</style>
+<link href="~/Content/Tpcm.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "FIM Account Maintenance";
+}
+<script type="text/javascript">
+
+    $(document).ready(function ()
+    {
+
+        var strMsg= '@TempData["Sucess"]';
+        //alert('@TempData["Sucess"]');
+        if(strMsg != null && strMsg != "")
+        {
+            AlertPopup(strMsg);
+        }
+        var IsActive=@Html.Raw(Json.Encode(Model.IsActive));
+        var IsInvoicingAccount=@Html.Raw(Json.Encode(Model.InvoicingAccount));
+        var IsTechnicianAccount=@Html.Raw(Json.Encode(Model.TechnicianAccount));
+        var IsSaved=@Html.Raw(Json.Encode(Model.Userpassword));
+        if(IsInvoicingAccount ==false && IsTechnicianAccount==false  )
+        {
+            $('#btnEmail').attr('disabled', true);
+        }
+
+        if(IsActive=="false" )
+        {
+            $('#btnEmail').attr('disabled', true);
+        }
+        if(IsSaved=="")
+        {$('#btnEmail').attr('disabled', true);}
+
+
+    });
+
+    function fnChkboxClick()
+    {
+        if($('#TechnicianAccount').is(':checked') || $('#InvoicingAccount').is(':checked'))
+        {
+            var IsActive=@Html.Raw(Json.Encode(Model.IsActive));
+            var IsSaved=@Html.Raw(Json.Encode(Model.Userpassword));
+            if(IsActive!="false" && IsSaved!="")
+                $('#btnEmail').attr('disabled', false);
+        }
+        else{  $('#btnEmail').attr('disabled', true);}
+
+    }
+
+    function fnEmail()
+    {
+        var TechnicianMail=@Html.Raw(Json.Encode(Model.VendorBranchEmail));
+        var TechnicianName=@Html.Raw(Json.Encode(Model.VendorBranchName));
+        var TechId=@Html.Raw(Json.Encode(Model.TechId));
+        TechnicianName = TechnicianName.replace("#", " ");
+        var url = "@Url.Action("SendEmail", "FIMAccountMaintenance")" + "?TechnicianMail=" + TechnicianMail +"&TechnicianAccount="+ $('#TechnicianAccount').is(':checked') +" &InvoiceAccount=" + $('#InvoicingAccount').is(':checked')+" &TechnicianName=" + TechnicianName+" &Techid=" + TechId;
+        if(TechnicianMail=="")
+        {
+            AlertPopup("|Tech Email Does not exist.");
+            event.preventDefault();
+        }
+        else
+        {
+            $.ajax({
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function (response) {
+
+                    if(response=="Success")
+                    {
+                        AlertPopup("|Email sent sucessfully.");
+                    }
+                    else
+                    {
+                        AlertPopup("|Email sending failed.");
+                    }
+                },
+                error: function (reponse) {                    
+                    AlertPopup("|Email sending  failed.");
+                }
+            });
+
+        }
+    }
+    function Validate()
+    {
+        var TechnicianMail=@Html.Raw(Json.Encode(Model.VendorBranchEmail));
+        if(TechnicianMail=="")
+        {
+            AlertPopup("|Tech Email Does not exist.");
+            event.preventDefault();
+        }
+        else
+        {
+            return true;
+        }
+
+    }
+    </script>
+@model FarmerBrothers.Models.FIMModel
+@using Newtonsoft.Json;
+
+@using (Html.BeginForm("EditFIM", "FIMAccountMaintenance", FormMethod.Post, new { id = "FIMAccountEditForm" }))
+{
+    <section class="well">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>FIM Account Maintenance</b>
+            </div>
+        </div>
+    </section>
+
+
+        <div class="row">
+            <div class="customer-content margin-top">
+                <div class="customer clear-input">
+
+                    <div class="col-sm-12 sm-pad-reset row fim-ac-block">
+                        <div class="form-group col-sm-12">
+                            @if (Model.IsActive == "true")
+                            {
+                                <button type="submit" class="btn btn-danger" name="submit" value="Deactivate">Deactivate FIM Access</button>
+                            }
+                            else if (Model.IsActive == "false")
+                            {
+                                <button type="submit" class="btn btn-green" name="submit" value="Activate">Activate FIM Access</button>
+
+                            }
+                        </div>
+
+                        <div class="col-sm-6 vendor-block">
+                            <div class="col-sm-4"> <label> Location ID:</label></div>
+                            <div class="col-sm-8">
+                                <label>
+                                @Html.DisplayFor(c => c.VendorBranchID, new { @class = "SearchPanelControl" })
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 vendor-block">
+                            <div class="col-sm-4"> <label>Parent Location ID:</label></div>
+                            <div class="col-sm-8">
+                                <label>
+                                @Html.DisplayFor(c => c.ParentVendorID, new { @class = "form-control SearchPanelControl" })
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 vendor-block">
+                            <div class="col-sm-4"><label>Location Branch Name:  </label></div>
+                            <div class="col-sm-8">
+                                <label>
+                                    @Html.DisplayFor(c => c.VendorBranchName, new { @class = "form-control SearchPanelControl" })
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 vendor-block">
+                            <div class="col-sm-4"> <label>Parent Location Name:</label></div>
+                            <div class="col-sm-8">
+                                <label>
+                                    @Html.DisplayFor(c => c.ParentVendorName, new { @class = "form-control SearchPanelControl" })
+                                </label>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="col-sm-6 vendor-block">
+                                <div class="col-sm-4"> <label>Location Branch City:</label></div>
+                                <div class="col-sm-8">
+                                    <label>
+                                        @Html.DisplayFor(c => c.VendorBranchCity, new { @class = "form-control SearchPanelControl" })
+                                    </label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="col-sm-6 vendor-block">
+                                <div class="col-sm-4"> <label>Location Branch State:</label></div>
+                                <div class="col-sm-8">
+                                    <label>
+                                        @Html.DisplayFor(c => c.VendorBranchState, new { @class = "form-control SearchPanelControl" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="col-sm-6 vendor-block">
+                                <div class="col-sm-4"> <label>Location Branch Phone:</label></div>
+                                <div class="col-sm-8">
+                                    <label>
+                                        @Html.DisplayFor(c => c.VendorBranchPhone, new { @class = "form-control SearchPanelControl" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        @*<div class="clearfix">
+
+
+                                       @if (Model.IsActive)
+                                       {
+                                        <div class="col-sm-6 row">
+                                            <div class="col-sm-4">Vendor Nickname:</div>
+                                            <div class="col-sm-8 form-group">
+                                                @Html.TextBoxFor(c => c.VendorNickname, new { @class = "form-control SearchPanelControl" })
+
+                                            </div>
+                                            </div>
+                                       }
+                                       else
+                                       {
+                                        <div class="col-sm-6 vendor-block">
+                                            <div class="col-sm-4">Vendor Nickname:</div>
+                                            <div class="col-sm-8">
+                                                @Html.DisplayFor(c => c.VendorNickname, new { @class = "form-control SearchPanelControl" })
+                                            </div>
+                                        </div>
+                                       }
+
+
+                                        </div>
+                                <div class="clearfix">
+                                    <div class="col-sm-6 vendor-block">
+                                        <div class="col-sm-4">Vendor Branch Email:</div>
+                                        <div class="col-sm-8">
+
+                                                @Html.DisplayFor(c => c.VendorBranchEmail, new { @class = "form-control SearchPanelControl" })
+
+                                        </div>
+                                    </div>
+                                    </div>
+                                <div class="clearfix">
+
+            @if (Model.IsActive)
+            {
+                <div class="col-sm-6 row">
+                    <div class="col-sm-4">Copy on Dispatch emails:</div>
+                    <div class="col-sm-8 form-group">
+
+                        @Html.EditorFor(c => c.CopyOnDispatchEmail, new { @class = "form-control SearchPanelControl" })
+                        @Html.ValidationMessageFor(m => m.CopyOnDispatchEmail)
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-sm-6 vendor-block">
+                    <div class="col-sm-4">Copy on Dispatch emails:</div>
+                    <div class="col-sm-8">
+                        @Html.DisplayFor(c => c.CopyOnDispatchEmail, new { @class = "form-control SearchPanelControl" })
+                    </div>
+                </div>
+            }
+
+
+                                    </div>
+                                <div class="clearfix">
+                                    <div class="col-sm-6 vendor-block">
+                                        <div class="col-sm-4">Technician Name:</div>
+                                        <div class="col-sm-8">
+                                                @Html.DisplayFor(c => c.TechName, new { @class = "form-control SearchPanelControl" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix">
+                                    <div class="col-sm-6 vendor-block">
+                                        <div class="col-sm-4">Technician JMS Login ID:</div>
+                                        <div class="col-sm-8 form-group">
+                                           Html.TextBoxFor(c => c.TechnicianJMSLoginID, new { @class = "form-control SearchPanelControl" })
+                                        </div>
+                                    </div>
+                                    </div>*@
+                        <div class="clearfix">
+                            <div class="col-sm-6 vendor-block">
+                                <div class="col-sm-4"> <label>Account Role:</label></div>
+                                <div class="col-sm-8">
+                                    <div class="form-group">
+
+                                        <button type="button" onclick="fnEmail()" class="btn btn-primary" id="btnEmail">Email Account</button>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="col-sm-6 vendor-block">
+                                <div class="col-sm-4"><label>Technician Account:</label></div>
+                                <div class="col-sm-8">
+                                    <label>
+                                        @Html.CheckBoxFor(c => c.TechnicianAccount, new { @class = "SearchPanelControl", @onclick = "fnChkboxClick()" })
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <div class="col-sm-6 vendor-block">
+                                <div class="col-sm-4"><label>Invoicing Account: </label></div>
+                                <div class="col-sm-8">
+                                    @Html.CheckBoxFor(c => c.InvoicingAccount, new { @class = "SearchPanelControl", @onclick = "fnChkboxClick()" })
+                       
+</div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12  form-group text-right">
+                            @if (Model.IsActive != "false")
+                            {
+                                <button type="submit" class="btn btn-primary" name="submit" value="Save" onclick="Validate()">Save</button>
+                            }
+                            <a href="@Url.Action("SearchFIM", "FIMAccountMaintenance")" style="margin-left:10px; margin-bottom:0;" class="btn btn-orange">Cancel</a>
+                            @Html.HiddenFor(c => c.TechId)
+                            @Html.HiddenFor(c => c.VendorBranchEmail)
+                            @Html.HiddenFor(c => c.VendorBranchName)
+                            @Html.HiddenFor(c => c.ParentVendorID)
+                            @Html.HiddenFor(c => c.ParentVendorName)
+                            @Html.HiddenFor(c => c.VendorBranchCity)
+                            @Html.HiddenFor(c => c.VendorBranchState)
+                            @Html.HiddenFor(c => c.VendorBranchPhone)
+                            @Html.HiddenFor(c => c.TechType)
+                            @Html.HiddenFor(c => c.TechDesc)
+                            @Html.HiddenFor(c => c.IsActive)
+                            @Html.HiddenFor(c => c.VendorBranchID)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    
+}
+

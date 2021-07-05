@@ -1,0 +1,472 @@
+﻿@{
+    ViewBag.Title = "AssetExceptionReport";
+}
+
+@model FarmerBrothers.Models.WorkorderSearchModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var formDirty = false;
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+
+
+    function RecordClick(args)
+    {
+        if (args.columnName == "Print")
+        {
+            window.location.href = "@Url.Action("WorkorderPdf", "Workorder")" + "?workOrderId=" + args.data["WorkorderID"];
+        }
+        else if (args.columnName == "ERF ID")
+        {
+            @*window.open('@Url.Action("ErfDetails",  "ERF")' + "/" + args.data["WorkorderErfid"], 'Erf_' + args.data["WorkorderErfid"], '');*@
+            window.location.href = "@Url.Action("ErfDetails", "ERF")" + "/"+ args.data["WorkorderErfid"];
+        }
+        else
+        {
+            @*window.open('@Url.Action("WorkorderManagement", "Workorder")' + "/" + args.data["CustomerID"] + '/' + args.data["WorkorderID"], 'WorkOrder_' + args.data["WorkorderID"], '');*@
+            window.location.href = "@Url.Action("WorkorderManagement", "Workorder")" + "/"+ args.data["CustomerID"]+ "/"+ args.data["WorkorderID"];
+        }
+    }
+    function onToolbarClick(args) {
+
+        if ((args.itemName == "Excel Export")) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+            window.location.href = "@Url.Action("AssetExpReportToExcel", "Reports")";
+
+        }
+    }
+    function rowDataBound(args)
+    {
+        if (args.data.PriorityCode != null
+            && args.data.PriorityCode.indexOf('Critical') >= 0)
+        {
+            args.row.css("backgroundColor", "Red");
+        }
+    }
+
+    $(document).ready(function () {
+
+        console.debug("at page lode = "+ej.serverTimeZoneOffset)
+        $('#ReportLink').css("color", "white");
+
+        $('.StatesDropDownList').ejDropDownList({
+            dataSource : @Html.Raw(Json.Encode(Model.States)),
+            fields: { value : "StateCode", text : "StateName" },
+            //showCheckbox: true,
+            showRoundedCorner: true,
+            watermarkText: "Please Select",
+        });
+
+        var states = "@string.Join(",", Model.State)";
+        var stateList = states.split(",");
+
+        for(var count = 0; count < stateList.length; count++ )
+        {
+            $('.StatesDropDownList').data("ejDropDownList").selectItemByValue(stateList[count]);
+        }
+
+        $('.StatusDropDownList').ejDropDownList({
+            dataSource : @Html.Raw(Json.Encode(Model.WorkOrderStatusList)),
+            fields: { value : "FBStatus", text : "FBStatus" },
+            //showCheckbox: true,
+            showRoundedCorner: true,
+            watermarkText: "Please Select"
+        }).data("ejDropDownList").selectItemByValue("," + "@string.Join(",", Model.Status)");
+
+        var statuses = "@string.Join(",", Model.Status)";
+        var statusList = statuses.split(",");
+
+        for(var count = 0 ; count < statusList.length; count++)
+        {
+            $('.StatusDropDownList').data("ejDropDownList").selectItemByValue(statusList[count]);
+        }
+
+        $('.WorkorderTypeDropDownList').ejDropDownList({
+            dataSource : @Html.Raw(Json.Encode(Model.WorkOrderTypes)),
+            fields: { value : "CallTypeID", text : "Description" },
+            //showCheckbox: true,
+            showRoundedCorner: true,
+            watermarkText: "Please Select"
+        }).data("ejDropDownList").selectItemByValue("," + "@string.Join(",", Model.WOTypes)");
+
+        var workOrderTypes = "@string.Join(",", Model.WOTypes)";
+        var workOrderLists = workOrderTypes.split(",");
+
+        for(var count = 0; count < workOrderLists.length; count++)
+        {
+            $('.WorkorderTypeDropDownList').data("ejDropDownList").selectItemByValue(workOrderLists[count]);
+        }
+
+
+
+        $("#InvoiceDateTo").ejDatePicker({  value: new Date($("#InvoiceDateTo").val()) });
+        $("#InvoiceDateFrom").ejDatePicker({  value: new Date($("#InvoiceDateFrom").val()) });
+        $("#DateFrom").ejDatePicker({  value: new Date($("#DateFrom").val()) });
+        $("#DateTo").ejDatePicker({  value: new Date($("#DateTo").val()) });
+
+
+        $("#ArrivalStartDate").ejDatePicker({  value: new Date($("#ArrivalStartDate").val()) });
+        $("#ArrivalEndDate").ejDatePicker({  value: new Date($("#ArrivalEndDate").val()) });
+        $("#CompletionStartDate").ejDatePicker({  value: new Date($("#CompletionStartDate").val()) });
+        $("#CompletionEndDate").ejDatePicker({  value: new Date($("#CompletionEndDate").val()) });
+
+
+
+        $(".SavedSearchButton").click(function (){
+            $("#SelectedSavedSearchName").val(this.id);
+        });
+
+        $(".SearchPanelControl").change(function (){
+            formDirty = true;
+        });
+
+        $(".CloseButton").click(function(e){
+            var array = this.id.split('-_');
+            $.confirm({
+                title:"Warning",
+                text:"You have selected to delete Saved Search '" + array[0] +"'. Are you sure you want to delete this Saved Filter?",
+                confirmButton: "Delete",
+                cancelButton: "Cancel",
+                confirm: function(button) {
+                    $.ajax({
+                        url: "@Url.Action("DeleteSavedSearch", "Workorder")",
+                        data: { savedSearchName: array[0] }
+                    }).done(function( msg ) {
+                        $('#' + array[0] + '-_box').removeClass("box");
+                        $('#' + array[0] + '-_boxclose').removeClass("boxclose");
+                        $('#' + array[0]).remove();
+                    });
+                },
+                cancel: function(button) {
+                }
+            });
+        });
+
+        $('#activator').click(function(){
+            $('.edit_box').addClass("box");
+            $('.CloseButton').addClass("boxclose");
+            return false;
+        });
+
+        $('#AssetExceptionSearchForm').submit(function (e) {
+            var operation = $("#Operation").val();
+            if (operation == 3 || operation == 4 || operation == 1)
+            {
+                if (formDirty == true && $("#SelectedSavedSearchName").val() != "")
+                {
+                    e.preventDefault(); //prevent default form submit
+                    $.confirm({
+                        title:"Warning",
+                        text:"Changes have been made to this Save Fields. Do you wish to save these changes?",
+                        confirmButton: "Save",
+                        cancelButton: "No",
+                        backgroundDismiss : false,
+                        confirm: function(button) {
+                            $("#Operation").val(2);
+                            $('#AssetExceptionSearchForm').unbind('submit');
+                            var input = $("<input>")
+                                            .attr("type", "hidden")
+                                            .attr("name", "action:AssetExceptionReport").val("");
+                            $('#AssetExceptionSearchForm').append($(input));
+                            $('#AssetExceptionSearchForm').submit();
+                        },
+                        cancel: function(button) {
+                            $("#SelectedSavedSearchName").val("");
+                            $('#AssetExceptionSearchForm').unbind('submit');
+                            var input = $("<input>")
+                                            .attr("type", "hidden")
+                                            .attr("name", "action:AssetExceptionReport").val("");
+                            $('#AssetExceptionSearchForm').append($(input));
+                            $('#AssetExceptionSearchForm').submit();
+                        }
+                    });
+                }
+            }
+        });
+
+        $(window).on("beforeunload", function() {
+            if (formDirty == true && $("#SelectedSavedSearchName").val() != "" && $("#Operation").val() != 2)
+            {
+                return "Changes made to Search Fields not Saved!";
+            }
+        });
+    });
+
+    function SetSubmitOperation(operation)
+    {
+        $("#Operation").val(operation);
+    }
+
+    function TechTypeChange()
+    {
+        $('#ServiceCenterList').empty();
+        $.ajax({
+            url: "@Url.Action("GetServiceCenter", "Workorder")",
+            data: { TechType: $('#TechTypeList option:selected').val() }
+        }).done(function( data ) {
+            for (var i = 0 ; i < data.length; i++) {
+                $('#ServiceCenterList').append('<option value=' + data[i].Id + '>' + data[i].Name + '</option>');
+            }
+        });
+    }
+
+    function ServiceCenterChange()
+    {
+        $('#TechnicianList').empty();
+        $('#TechnicianIdList').empty();
+        $('#TeamLeadList').empty();
+
+        $.ajax({
+            url: "@Url.Action("GetTechnician", "Workorder")",
+            data: { serviceCenterId: $('#ServiceCenterList option:selected').val() }
+        }).done(function( data ) {
+            for (var i = 0 ; i < data.length; i++) {
+                $('#TechnicianList').append('<option value=' + data[i].TechId + '>' + data[i].TechName + '</option>');
+                $('#TechnicianIdList').append('<option value=' + data[i].TechId + '>' + data[i].TechId + '</option>');
+            }
+        });
+
+        $.ajax({
+            url: "@Url.Action("GetTeamLeads", "Workorder")",
+            data: { serviceCenterId: $('#ServiceCenterList option:selected').val() }
+        }).done(function( data ) {
+            for (var i = 0 ; i < data.length; i++) {
+                $('#TeamLeadList').append('<option value=' + data[i].Id + '>' + data[i].Name + '</option>');
+            }
+        });
+    }
+
+    function SearchClear() {
+        $('.form-control').val('');
+        $('#StatesDropDown').val("n/a");
+        $('#Submitclear').val('true');
+        $("#Operation").val(5);
+        $('#AssetExceptionSearchForm').submit();
+    }
+</script>
+
+
+@using (Html.BeginForm("AssetExceptionSearch", "Reports", FormMethod.Post, new { id = "AssetExceptionSearchForm" }))
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Asset Exception Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Account Number:
+                                @Html.TextBoxFor(c => c.CustomerId, new { @class = "form-control SearchPanelControl", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Parent Account#:
+                                @Html.TextBoxFor(c => c.ParentAccount, new { @class = "form-control SearchPanelControl", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                State:
+                                @Html.TextBoxFor(c => c.State, new { @class = "form-control SearchPanelControl StatesDropDownList" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Status:
+                                @Html.TextBoxFor(c => c.Status, new { @class = "form-control SearchPanelControl StatusDropDownList" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date:
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "DateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date:
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "DateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Invoice Start Date:
+                                @Html.TextBoxFor(c => c.AppointmentDateFrom, new { @class = "form-control SearchPanelControl", @Id = "InvoiceDateFrom" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Invoice End Date:
+                                @Html.TextBoxFor(c => c.AppointmentDateTo, new { @class = "form-control SearchPanelControl", @Id = "InvoiceDateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Arrival Start Date:
+                                @Html.TextBoxFor(c => c.ArrivalStartDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalStartDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Arrival End Date:
+                                @Html.TextBoxFor(c => c.ArrivalEndDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalEndDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Completion Start Date:
+                                @Html.TextBoxFor(c => c.CompletionStartDate, new { @class = "form-control SearchPanelControl", @Id = "CompletionStartDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Completion End Date:
+                                @Html.TextBoxFor(c => c.CompletionEndDate, new { @class = "form-control SearchPanelControl", @Id = "CompletionEndDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Call Type:
+                                @Html.TextBoxFor(c => c.WOTypes, new { @class = "form-control SearchPanelControl WorkorderTypeDropDownList" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2" style="margin-top: 20px;">
+                            <div class=" form-group">
+                                <button type="submit" class="btn btn-primary" onclick="SetSubmitOperation(1);" name="action:AssetExceptionSearch">Search</button>
+                                <a href="@Url.Action("AssetExceptionReport", "Reports")" style="margin-left:10px;" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @Html.HiddenFor(c => c.Operation)
+    @Html.HiddenFor(c => c.SelectedSavedSearchName)
+
+    <section class="container-fluid white-bg pad">
+        @*<div class="row top-info">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <b>Saved Search Criteria</b>
+                    @if (Model.SavedSearches.Count > 0)
+                    {
+                        <a href="#" id="activator">Delete Saved Search</a>
+                    }
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    @foreach (var item in Model.SavedSearches)
+                    {
+                        <div style="display: inline-block;margin-right:5px;">
+                            <div id="@string.Concat(item.SavedSearchName, "-_box")" class="edit_box">
+                                <a id="@string.Concat(item.SavedSearchName, "-_boxclose")" class="CloseButton"></a>
+                                <button type="submit" class="btn btn-primary SavedSearchButton" id="@item.SavedSearchName" onclick="SetSubmitOperation(4);" name="action:WorkorderSearch">@item.SavedSearchName</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>*@
+    </section>
+}
+
+@Html.HiddenFor(m => m.UtcOffset)
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+
+                <table id="AssetExceptionResults" class="display" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            @(Html.EJ().Grid<object>
+                                ("AssetExceptionResults")
+                .Datasource((IEnumerable<object>)Model.SearchResults)
+
+                .AllowPaging()
+                        .AllowScrolling()
+                .AllowSorting()
+                .AllowTextWrap(true)
+                .PageSettings(Page => Page.PageSize(25))
+                .IsResponsive(true)
+                .EnableResponsiveRow(true)
+                .Mappers(map => map.ExportToExcelAction(Url.Action("AssetExpReportToExcel", "Reports")))
+                .ToolbarSettings(toolbar =>
+                {
+                    toolbar.ShowToolbar().ToolbarItems(items =>
+                    {
+                        items.AddTool(ToolBarItems.ExcelExport);
+                    });
+                }) //.ClientSideEvents(eve => { eve.ToolbarClick("onToolbarClick"); })
+                .Columns(col =>
+                {
+                    col.Field("WorkorderID").HeaderText("EventID").Width(100).Add();
+                    col.Field("CustomerID").HeaderText("ContactID").Width(100).Add();
+                    col.Field("WorkorderCloseDate").HeaderText("CloseDateTime").Width(100).Add();
+                    col.Field("CompletionDateTime").HeaderText("CompletionDateTime").Width(100).Add();
+                    col.Field("CustomerName").HeaderText("CompanyName").Width(100).Add();
+                    col.Field("FieldServiceManager").HeaderText("FieldServiceManager").Width(100).Add();
+                    col.Field("DealerCompany").HeaderText("DealerCompany").Width(100).Add();
+                    col.Field("EventCallTypeID").HeaderText("CallTypeID").Width(100).Add();
+                    col.Field("SerialNo").HeaderText("SerialNo").Width(100).Add();
+                    col.Field("ProductNo").HeaderText("ProductNo").Width(100).Add();
+                    col.Field("Manufacturer").HeaderText("Manufacturer").Width(100).Add();
+                    col.Field("FamilyAff").HeaderText("Family Aff").Width(100).Add();
+                    col.Field("RegionNumber").HeaderText("Region Number").Width(100).Add();
+                    col.Field("CustomerBranch").HeaderText("CustomerBranch").Width(100).Add();
+                    col.Field("Branch").HeaderText("Branch").Width(100).Add();
+                    col.Field("RouteNumber").HeaderText("Route#").Width(100).Add();
+                }))
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</section>

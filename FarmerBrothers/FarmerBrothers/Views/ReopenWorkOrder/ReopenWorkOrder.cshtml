@@ -1,0 +1,69 @@
+﻿<link href="~/Content/Tpcm.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Reopen Work Order";
+}
+<script type="text/javascript">
+
+    $( document ).ready( function ()
+    {
+        $( '#ReportLink' ).css( "color", "white" );
+    } );
+</script>
+<form>
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Reopen Work Order</b>
+            </div>
+            @if (Request.QueryString["IsFromReports"] != null && Convert.ToBoolean(Request.QueryString["IsFromReports"]))
+            {
+                <div class="col-md-1">
+                    @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+                </div>
+            }
+
+        </div>
+    </section>
+    <section class="well">
+        <div>
+            <label style="width:120px;">Work Order ID:</label>
+            <input type="text" pattern="\d*" class="numbersOnly" id="txtWorkOrderid" />
+            <button type="button" class="btn btn-primary" id="btnSearch">Search</button>
+            <label style="width:250px;"></label>
+            <div></div>
+            <br /><br />
+            <div class="form-group" id="dvWorkOrder"></div>
+        </div>
+    </section>
+</form>
+
+<script type="text/javascript">
+    $( function ()
+    {
+
+        jQuery( '.numbersOnly' ).keyup( function ()
+        {
+            this.value = this.value.replace( /[^0-9\.]/g, '' );
+        } );
+
+        $( "#btnSearch" ).click( function ()
+        {
+            if ( $( "#txtWorkOrderid" ).val().trim().length == 0 )
+            {
+                AlertPopup( "|Please enter work order id to reopen" );
+            }
+            else
+            {
+                var myUrl = '@Url.Action("WorkOrder", "ReopenWorkOrder")' + "?id=" + $( "#txtWorkOrderid" ).val();
+                $.post( myUrl, function ( data )
+                {
+                    $( "#dvWorkOrder" ).html( data );
+                    if ( $( "#dvWorkOrder div.test" ).length == 0 )
+                    {
+                        AlertPopup( "|No Work Order found or Work Order is in Open Status." );
+                    }
+                } );
+            }
+        } );
+    } );
+</script>

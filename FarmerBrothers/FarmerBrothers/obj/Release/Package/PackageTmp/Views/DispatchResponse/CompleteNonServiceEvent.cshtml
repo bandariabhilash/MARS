@@ -1,0 +1,71 @@
+﻿@model NonServiceEventModel
+@{
+    Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
+}
+@using FarmerBrothers.Models;
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#completeServiceEvent").on("click", function() {
+            var completeReasonNotes = $("#ServiceEventCompleteReasonNotes").val();
+
+            if (completeReasonNotes == null || completeReasonNotes == "") {
+                AlertPopup("Update the Notes");
+            }
+
+            if (completeReasonNotes != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("completeNonServiceWorkorder", "DispatchResponse")",
+                    data: {
+                        "WorkOrderId": $('#WorkOrderID').val(),
+                        "Notes": completeReasonNotes
+                    }
+                }).done(function (response) {
+                    if(response.success == true)
+                    {
+                        $('.block').hide()
+                        $('.well').show()
+                        $('#messageTxt').text(response.message);
+                    }
+                });
+            }
+
+        })
+    });
+</script>
+@Html.HiddenFor(x => x.WorkOrderID, new { name = "workorderid" })
+<section class="block">
+    <div class="container-fluid">
+        <h4>Complete Service Event </h4>        
+        <div class="col-md-12" style="margin-top:10px;position:relative;">
+            <span class="col-md-2">Notes:</span>
+            <div class="col-md-8">
+                <div class="form-group">
+                    @*@Html.TextArea("ServiceEventCompleteReasonNotes", new { @rows = "5", @class = "form-control", @Style = "width:100%", @id = "ServiceEventCompleteReasonNotes" })*@
+                    @Html.TextArea("ServiceEventCompleteReasonNotes","" , new { @rows = "5",  @Style = "width:100%", @class = "form-control WorkOrderFields", @Id = "ServiceEventCompleteReasonNotes" })
+                </div>
+            </div>            
+        </div>
+        <button id="completeServiceEvent" style="margin-top:10px 100px 0 0;float:right;" class="btn btn-primary ">Complete Service Event</button>
+    </div>
+</section>
+
+<section class="well">
+    <div class="row top-info">
+        <div class="customer-content margin-top">
+            <div class="row customer clear-input">
+                <div class="col-md-3 sm-pad-reset">
+
+                    <div class="col-sm-6-o">
+                        <text id="messageTxt"></text>
+                    </div>
+                    <div class="col-sm-6-o">
+                    </div>
+                    <div class="col-sm-6-o">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

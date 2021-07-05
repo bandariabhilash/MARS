@@ -1,0 +1,725 @@
+﻿@{
+    ViewBag.Title = "TechnicianUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                               ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                               (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+}
+@model FarmerBrothers.Models.TechnicianUpdateModel
+
+@using FarmerBrothers.Data;
+@using FarmerBrothers.Models;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<script src="~/Content/jquery.validate.min.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>*@
+
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+<script type="text/javascript">
+
+    $( document ).ready( function ()
+    {
+        $( '#AdministratorLink' ).css( "color", "white" );
+        $( '#RegionName' ).val( "n/a" )
+
+        $( "form" ).submit( function ( event )
+        {
+            var techId = $( "#TechId" ).val();
+            var techName = $( "#TechName" ).val();
+
+            var operation = $( "#Operation" ).val();
+            //alert( operation );
+            if ( operation == 1 || operation == 2 )
+            {
+                if ( operation == 1 )
+                {
+                    var $this = $( this );
+                    var frmValues = $this.serialize();
+                    if ( ValidateNewTechnicianCriteria() == true )
+                    {
+                        if ( validateEmails( $( '#EmailCC' ).val() ) == true && validateEmails( $( '#RimEmail' ).val() ) == true )
+                        {
+                            $.ajax( {
+                                type: $this.attr( 'method' ),
+                                url: "@Url.Action("AddTechnician", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                                data: frmValues
+                            } ).done( function ( response )
+                            {
+                                if ( response.success == true )
+                                {
+                                    AlertPopup( '|Technician created Successfully!' );
+                                    window.location.href = "@Url.Action("TechnicianUpdate", "TechnicianUpdate")";
+                                }
+                                else
+                                {
+                                    if ( response.message != null )
+                                    {
+                                        AlertPopup( response.message );
+                                    }
+                                    else
+                                    {
+                                        AlertPopup( '|There is a problem to get Technician Details! Please contact support!' );
+                                    }
+
+                                }
+                            } );
+                        }
+                        else
+                        {
+                            AlertPopup( '|Please enter valid emailid !' );
+                        }
+
+                    }
+                    else
+                    {
+
+                        event.preventDefault();
+                        return false;
+                    }
+                }
+                else
+                {
+                    //alert(operation)
+                    var $this = $( this );
+                    var frmValues = $this.serialize();
+                    //alert(JSON.stringify(frmValues) );
+                    if ( ValidateSearchCriteria() == true )
+                    {
+                        var isChecked = $("#InactiveTechnicians").is(":checked") ? true : false;
+                        $.ajax( {
+                            type: $this.attr( 'method' ),
+                            url: "@Url.Action("TechnicianUpdate", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                            //data: frmValues
+                            data: {
+                                "SearchTechId": $("#SearchTechId").val(), "SearchTechName": $("#SearchTechName").val(), "FamilyAff": $("#familyAffselectBox1").val(), "InactiveTechnicians": isChecked}
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                var obj = $( "#TechnicianDetails" ).ejGrid( "instance" );
+                                obj.dataSource( response.data );
+                            }
+                            else
+                            {
+                                AlertPopup( '|There is a problem to get Technician Details! Please contact support!' );
+                            }
+                        } );
+                    }
+                    else
+                    {
+                        event.preventDefault();
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                e.preventDefault();
+            }
+
+            event.preventDefault();
+        } );
+    } );
+
+    $.validator.addMethod( "customRegex", function ( value, element, params )
+    {
+        if ( validateEmails( element.value ) )
+            return true;
+        return false;
+    }, "Please Enter Valid EmailID!" );
+
+    function validateEmail( sEmail )
+    {
+        //alert( sEmail );
+        var filter = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        if ( filter.test( sEmail ) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    function validateEmails( string )
+    {
+        //alert( string );
+        //var self = shareEmail;
+        var result = string.replace( /\s/g, "" ).split( /;/ );
+        var allOk = true;
+
+
+        for ( var i = 0; i < result.length; i++ )
+        {
+            if ( !validateEmail( result[i] ) )
+            {
+                allOk = false;
+            }
+        }
+
+        return allOk;
+    }
+
+    var TechId;
+    var TechName;
+    var City;
+    var State;
+    var IsActive;
+    var AreaCode;
+    var PhoneNumber;
+    var AlternativePhone;
+    var EmailCC;
+    var RimEmail;
+    var Zip;
+    var BranchNumber;
+    var BranchName;
+    var ParentTechnicianId;
+    var ParentTechnicianName;
+    var FieldServiceManager;
+
+    function TechnicianDetailsBegin( args )
+    {
+        $( '#TechnicianDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function TechnicianDetailsEndEdit( args )
+    {
+        //alert( JSON.stringify( args.data ) );
+        TechId = args.data.TechId;
+        TechName = args.data.TechName;
+        City = args.data.City;
+        State = args.data.State;
+        IsActive = args.data.IsActive;
+        AreaCode = args.data.AreaCode;
+        PhoneNumber = args.data.PhoneNumber;
+        AlternativePhone = args.data.AlternativePhone;
+        EmailCC = args.data.EmailCC;
+        RimEmail = args.data.RimEmail;
+        Zip = args.data.Zip;
+        BranchNumber = args.data.Number;
+        BranchName = args.data.BranchName;
+        ParentTechnicianId = args.data.ParentTechnicianId;
+        ParentTechnicianName = args.data.ParentTechnicianName;
+        FieldServiceManager = args.data.FieldServiceManager;
+
+        $( '#TechnicianDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function TechnicianDetailsEndAdd( args )
+    {
+        $( '#TechnicianDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+
+
+    function TechnicianDetailsBeginEdit( args )
+    {
+        //var children = args.row.children();
+
+
+    }
+
+    function CompleteTechnicianModels( args )
+    {
+
+        if ( args.requestType == "save" )
+        {
+            $.ajax( {
+                url: '@Url.Action("TechnicianDetailsUpdate", "TechnicianUpdate")',
+                type: 'POST',
+                data: {
+                    "TechId": TechId, "TechName": TechName, "City": City, "State": State, "IsActive": IsActive, "AreaCode": AreaCode, "PhoneNumber": PhoneNumber, "EmailCC": EmailCC, "RimEmail": RimEmail, "Zip": Zip, "BranchNumber": BranchNumber, "BranchName": BranchName, "ParentTechnicianName": ParentTechnicianName, "AlternativePhone": AlternativePhone, "FieldServiceManager": FieldServiceManager
+                },
+                success: function ( jsonResult )
+                {
+                    AlertPopup( jsonResult.message );
+                }
+            } );
+        }
+    }
+    function onToolbarClick( args )
+    {
+        if ( ( args.itemName == "Edit" ) & this.getSelectedRecords().length == 0 )
+        {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup( "|No records selected for " + args.itemName + " operation" );
+
+        }
+    }
+
+    function ValidateNewTechnicianCriteria()
+    {
+        //alert( $( '#TechName' ).val() + "--" + $( '#City' ).val() + "--" + $( '#StatesDropDown' ).val() + "--" + $( '#Zip' ).val() + "--" + $( '#PhoneNumber' ).val() + "--" + $( '#AlternativePhone' ).val() + "--" +
+        //    $( '#EmailCC' ).val() + "--" + $( '#RimEmail' ).val() + "--" + $( '#BranchAssociation' ).val() + "--" + $( '#familyAffselectBox' ).val() + "--" + $( '#AreaCode' ).val()
+        //    + "--" + $( '#FieldServiceManager' ).val() + "-1-" +$( '#BranchName' ).val() + "-2-" + $( '#RegionName' ).val());
+        var valid = true;
+        if ( $( '#TechName' ).val() == "" || $( '#City' ).val() == "" || $( '#StatesDropDown' ).val() == "n/a" || $( '#Zip' ).val() == "" || $( '#PhoneNumber' ).val() == "" || $( '#AlternativePhone' ).val() == ""
+            || $( '#EmailCC' ).val() == "" || $( '#RimEmail' ).val() == "" || $( '#BranchAssociation' ).val() == "" || $( '#familyAffselectBox' ).val() == "n/a" || $( '#AreaCode' ).val() == ""
+            || $( '#FieldServiceManager' ).val() == "n/a" || $( '#BranchName' ).val() == "n/a" || $( '#RegionName' ).val() == "n/a" )
+        {
+            AlertPopup( "|Please enter minimum details to create new technician!" );
+            valid = false;
+        }
+        return valid;
+    }
+
+    function ValidateSearchCriteria()
+    {
+        //alert( $( '#SearchTechId' ).val() + "----" + $( '#SearchTechName' ).val() );
+        var valid = true;
+        if ($('#SearchTechId').val() == "" && $('#SearchTechName').val() == "" && $('#familyAffselectBox1').val() == "n/a"  )
+        {
+            if ( $( "#InactiveTechnicians" ).prop( 'checked' ) == false )
+            {
+                AlertPopup( "|Please enter minimum details to perform search!" );
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    function SearchClear()
+    {
+        $( '#TechName' ).val( '' );
+        $( '#City' ).val( '' );
+        $( '#StatesDropDown' ).val( 'n/a' );
+        $( '#Zip' ).val( '' );
+        $( '#PhoneNumber' ).val( '' );
+        $( '#AlternativePhone' ).val( '' );
+        $( '#EmailCC' ).val( '' );
+        $( '#RimEmail' ).val( '' );
+        $( '#BranchAssociation' ).val( '' );
+        $( '#familyAffselectBox' ).val( 'n/a' );
+        $( '#FieldServiceManager' ).val( 'n/a' );
+        $( '#BranchName' ).val( 'n/a' );
+        $( '#RegionName' ).val( 'n/a' );
+    }
+    function ClearTechnicianForm()
+    {
+        $( '.form-control' ).val( '' );
+        $( '#InactiveTechnicians' ).attr( 'checked', false );
+
+        $.ajax( {
+            type: "post",
+            url: "@Url.Action("ClearSearchResults", "TechnicianUpdate")",
+        } ).done( function ( result )
+        {
+            var obj = $( "#TechnicianDetails" ).ejGrid( "instance" );
+            obj.dataSource( result );
+        } );
+        return false;
+    }
+    function SetSubmitOperation( operation )
+    {
+        $( "#Operation" ).val( operation );
+    }
+
+    var flag;
+    function dataBound(args) {
+        this.element.on("mousedown", ".e-gridheader .e-filtericon", function (args) {
+            var currentColField = $(args.target.parentNode.firstChild).attr("ej-mappingname");
+            if (currentColField == "TechId") {
+                flag = true;
+                $("#TechnicianDetails_numberDlg").ejDialog({
+                    //beforeOpen event of the filter menu dialog                     
+                    beforeOpen: function (e) {
+                        if (flag) {
+                            this.element.find(".e-numerictextbox").eq(0).val("12345").ejNumericTextbox({ decimalPlaces: 0 });
+                            //this.element.find(".e-numerictextbox").eq(0).ejNumericTextbox({ decimalPlaces: 0 });
+                            flag = false;
+                        }
+                        else {
+                            this.element.find(".e-numerictextbox").eq(0).ejNumericTextbox({ decimalPlaces: 0 });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    if (UserPrivilege["Technician Update"].ToLower() == Model.ACCESS_FULL)
+    {
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Add Technician</h2>
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span>Technician ID:</span>                                    
+                                    @Html.TextBoxFor(c => c.TechId, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Company Name:</span>
+                                    @Html.TextBoxFor(c => c.TechName, new { Value = "", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">City:</span>
+                                    @Html.TextBoxFor(c => c.City, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">State:</span>
+                                    @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Zip:</span>
+                                    @Html.TextBoxFor(c => c.Zip, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">FamilyAff:</span>                                    
+                                    @Html.DropDownListFor(c => c.FamilyAff, new SelectList(Model.FamilyAffs, "Number", "Name", "None"), new { @class = "form-control SearchPanelControl", @Id = "familyAffselectBox" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Area Code:</span>
+                                    @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Phone:</span>
+                                    @Html.TextBoxFor(c => c.PhoneNumber, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Alternative Phone:</span>
+                                    @Html.TextBoxFor(c => c.AlternativePhone, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">RimEmail:</span>
+                                    @Html.TextBoxFor(c => c.RimEmail, new { @class = "form-control" })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">EmailCC:</span>
+                                    @Html.TextBoxFor(c => c.EmailCC, new { Value = "", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Branch Associations:</span>
+                                    @Html.TextBoxFor(c => c.BranchAssociation, new { Value = "", @class = "form-control", @type = "number" })
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12 sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Equipment  Service Manager:</span>
+                                    @Html.DropDownListFor(c => c.FieldServiceManager, new SelectList(Model.FSM, "Number", "Name"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Branches:</span>
+                                    @Html.DropDownListFor(c => c.BranchName, new SelectList(Model.Branches, "Number", "Name"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Regions:</span>
+                                    @Html.DropDownListFor(c => c.RegionName, new SelectList(Model.Regions, "Number", "Name"), new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button type="submit" onclick="SetSubmitOperation(1)" class="btn btn-primary">Create</button>
+                                    <a onclick="SearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+    }
+
+    if (UserPrivilege["Technician Update"].ToLower() == Model.ACCESS_FULL || UserPrivilege["Technician Update"].ToLower() == Model.ACCESS_EDIT_ONLY)
+    { 
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Update Technician</h2>
+            <div class="customer-content margin-top">
+                <div class="row clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Technician ID:                                
+                                @Html.TextBoxFor(c => c.SearchTechId, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true", @Id = "SearchTechId" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Company Name:
+                                @Html.TextBoxFor(c => c.SearchTechName, new { @class = "form-control SearchPanelControl", @Id = "SearchTechName" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                FamilyAff:
+                                @Html.DropDownListFor(c => c.FamilyAff, new SelectList(Model.FamilyAffs, "Number", "Name", "None"), new { @class = "form-control SearchPanelControl", @Id = "familyAffselectBox1" })
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group right-inner-addon">
+                                Inactive:<br />
+                                @Html.CheckBoxFor(m => m.InactiveTechnicians, new { @class = "SearchPanelControl", @Id = "InactiveTechnicians" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" onclick="SetSubmitOperation(2)" class="btn btn-primary">Search</button>
+                                <a onclick="ClearTechnicianForm()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <h4>Technicians:</h4>
+                        <div class="table-responsive">
+                            @(Html.EJ().Grid<object>("TechnicianDetails")
+.Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.datasource).UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+ .AllowPaging().AllowFiltering()
+                            .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                            .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                            .Mappers(map => map.ExportToExcelAction(Url.Action("ExcelExportTechnicianResults", "TechnicianUpdate")))
+                            //.DataBound("databound")
+                            .ToolbarSettings(toolbar =>
+                            {
+                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                {
+                                    items.AddTool(ToolBarItems.Edit);
+                                    items.AddTool(ToolBarItems.Update);
+                                    items.AddTool(ToolBarItems.Cancel);
+                                    items.AddTool(ToolBarItems.ExcelExport);
+                                });
+                            })
+
+                .ClientSideEvents(eve =>
+                {
+                    eve.BeginEdit("TechnicianDetailsBeginEdit")
+                    .ActionBegin("TechnicianDetailsBegin")
+                    .EndEdit("TechnicianDetailsEndEdit")
+                    .EndAdd("TechnicianDetailsEndAdd")
+                    .ActionComplete("CompleteTechnicianModels")
+                    .ToolbarClick("onToolbarClick")
+                    .DataBound("dataBound");
+                })
+
+            .Columns(col =>
+            {
+            col.Field("TechId").HeaderText("Tech ID").IsPrimaryKey(true).Type("number").Format("{0:N0}").Add();
+        col.Field("TechName").HeaderText("Company Name").ValidationRules(v => v.AddRule("required", true)).Add();
+        col.Field("City").HeaderText("City").AllowEditing(false).Add();
+        col.Field("State").HeaderText("State").AllowEditing(false).Add();
+        col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+        //col.Field("AreaCode").HeaderText("Area Code").EditType(EditingType.String).Add();
+        col.Field("PhoneNumber").HeaderText("Phone Number").EditType(EditingType.String).Add();
+        col.Field("AlternativePhone").HeaderText("Alternate Phone#").EditType(EditingType.String).Add();
+        //col.Field("EmailCC").HeaderText("EmailCC").ValidationRules(r => r.AddRule("required", true)).Add();
+        col.Field("EmailCC").HeaderText("EmailCC").ValidationRules(v => v.AddRule("required", true).AddRule("customRegex", true)).Add();
+        col.Field("RimEmail").HeaderText("RimEmail").ValidationRules(v => v.AddRule("required", true).AddRule("customRegex", true)).Add();
+        //col.Field("EmailCC").HeaderText("EmailCC").EditType(EditingType.String).Add();
+        //col.Field("RimEmail").HeaderText("RimEmail").EditType(EditingType.String).Add();
+        col.Field("Zip").HeaderText("Zip").EditType(EditingType.String).Add();
+        //col.Field("BranchNumber").HeaderText("Branch Number").EditType(EditingType.String).Add();
+        col.Field("FamilyAff").HeaderText("FamilyAff").AllowEditing(false).Add();
+        //col.Field("FieldServiceManager").HeaderText("ESM").AllowEditing(false).Add();
+        col.Field("FieldServiceManager").HeaderText("ESM").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.FSM)).Add();
+        col.Field("BranchName").HeaderText("Branch Name").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.Branches)).Add();
+        col.Field("BranchNumber").HeaderText("Branch Number").ForeignKeyField("Number").ForeignKeyValue("Number").DataSource(((IEnumerable<object>)Model.Branches)).AllowEditing(false).Add();
+        col.Field("ParentTechnicianName").HeaderText("Parent Technician").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.PrimaryTech)).Add();
+
+
+    })
+                            )
+
+
+                        </div><!--end of .table-responsive-->
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    }
+    if (UserPrivilege["Technician Update"].ToLower() == Model.ACCESS_READ_ONLY)
+    {
+        <section class="block margin-top">
+            <div class="container-fluid">
+                <h2 class="customer-head arrow-down tabheader">View Technician</h2>
+                <div class="customer-content margin-top">
+                    <div class="row clear-input">
+                        <div class="col-md-12">
+                            <div class="col-md-2">
+                                <div class="form-group right-inner-addon">
+                                    Technician ID:
+                                    @Html.TextBoxFor(c => c.SearchTechId, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true", @Id = "SearchTechId" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group right-inner-addon">
+                                    Company Name:
+                                    @Html.TextBoxFor(c => c.SearchTechName, new { @class = "form-control SearchPanelControl", @Id = "SearchTechName" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group right-inner-addon">
+                                    FamilyAff:
+                                    @Html.DropDownListFor(c => c.FamilyAff, new SelectList(Model.FamilyAffs, "Number", "Name", "None"), new { @class = "form-control SearchPanelControl", @Id = "familyAffselectBox1" })
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group right-inner-addon">
+                                    Inactive:<br />
+                                    @Html.CheckBoxFor(m => m.InactiveTechnicians, new { @class = "SearchPanelControl", @Id = "InactiveTechnicians" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-2">
+                                <div class="form-group right-inner-addon" style="top:1.3em;">
+                                    <button type="submit" onclick="SetSubmitOperation(2)" class="btn btn-primary">Search</button>
+                                    <a onclick="ClearTechnicianForm()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-12">
+                            <h4>Technicians:</h4>
+                            <div class="table-responsive">
+                                @(Html.EJ().Grid<object>("TechnicianDetails")
+.Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.datasource).UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+ .AllowPaging().AllowFiltering()
+                            .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })                            
+                            .Mappers(map => map.ExportToExcelAction(Url.Action("ExcelExportTechnicianResults", "TechnicianUpdate")))
+                            .ToolbarSettings(toolbar =>
+                            {
+                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                {
+                                    items.AddTool(ToolBarItems.ExcelExport);
+                                });
+                            })
+
+                .ClientSideEvents(eve =>
+                {
+                    eve.BeginEdit("TechnicianDetailsBeginEdit")
+                    .ActionBegin("TechnicianDetailsBegin")
+                    .EndEdit("TechnicianDetailsEndEdit")
+                    .EndAdd("TechnicianDetailsEndAdd")
+                    .ActionComplete("CompleteTechnicianModels")
+                    .ToolbarClick("onToolbarClick")
+                    .DataBound("dataBound");
+                })
+
+            .Columns(col =>
+            {
+                col.Field("TechId").HeaderText("Tech ID").IsPrimaryKey(true).Add();
+                col.Field("TechName").HeaderText("Company Name").ValidationRules(v => v.AddRule("required", true)).Add();
+                col.Field("City").HeaderText("City").AllowEditing(false).Add();
+                col.Field("State").HeaderText("State").AllowEditing(false).Add();
+                col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                //col.Field("AreaCode").HeaderText("Area Code").EditType(EditingType.String).Add();
+                col.Field("PhoneNumber").HeaderText("Phone Number").EditType(EditingType.String).Add();
+                col.Field("AlternativePhone").HeaderText("Alternate Phone#").EditType(EditingType.String).Add();
+                //col.Field("EmailCC").HeaderText("EmailCC").ValidationRules(r => r.AddRule("required", true)).Add();
+                col.Field("EmailCC").HeaderText("EmailCC").ValidationRules(v => v.AddRule("required", true).AddRule("customRegex", true)).Add();
+                col.Field("RimEmail").HeaderText("RimEmail").ValidationRules(v => v.AddRule("required", true).AddRule("customRegex", true)).Add();
+                //col.Field("EmailCC").HeaderText("EmailCC").EditType(EditingType.String).Add();
+                //col.Field("RimEmail").HeaderText("RimEmail").EditType(EditingType.String).Add();
+                col.Field("Zip").HeaderText("Zip").EditType(EditingType.String).Add();
+                //col.Field("BranchNumber").HeaderText("Branch Number").EditType(EditingType.String).Add();
+                col.Field("FamilyAff").HeaderText("FamilyAff").AllowEditing(false).Add();
+                col.Field("BranchName").HeaderText("Branch Name").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.Branches)).Add();
+                col.Field("ParentTechnicianName").HeaderText("Parent Technician").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.PrimaryTech)).Add();
+
+
+            })
+                                )
+
+
+                            </div><!--end of .table-responsive-->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+}
+   

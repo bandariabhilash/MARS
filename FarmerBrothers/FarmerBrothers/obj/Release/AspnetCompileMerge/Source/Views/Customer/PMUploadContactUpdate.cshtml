@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "PMUloadConactUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FarmerBrothers.Models.PMUploadContactUpdateModel
+@using Newtonsoft.Json;
+@using FarmerBrothers.Data;
+@using FarmerBrothers.Models;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+
+        $("#pmUploadsDataSaveBtn").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("SavePMUploadsData", "Customer")',
+                type: 'GET',
+                success: function (jsonResult) {
+                    if (jsonResult.success == true) {
+
+                    }
+                    else {
+                    }
+                }
+            });
+        });
+
+    });
+
+    function PMUloadBeginedit(args) {
+        //var result = args.rowData.IsActive;
+    }
+
+    function PMUloadContactsBegin(args) {
+        $('#PMUloadContacts_WaitingPopup').css("visibility", "hidden");
+    }
+    function PMUloadContactsEndEdit(args) {
+        $('#PMUloadContacts_WaitingPopup').css("visibility", "hidden");
+    }
+    function PMUloadContactsEndAdd(args) {
+        $('#PMUloadContacts_WaitingPopup').css("visibility", "hidden");
+    }
+
+    
+
+    function onToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+    }
+
+
+</script>
+@*@using (Html.BeginForm())
+{*@
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Update Customer ZipCode</h2>
+            <div class="customer-content margin-top">
+                <button id="pmUploadsDataSaveBtn" type="button" style="display: inline-block;margin:5px;float:right;" class="btn btn-primary">Save</button>
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        
+                        @(Html.EJ().Grid<object>("PMUloadContacts")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
+                                     .UpdateURL(Url.Action("PMUploadContactDataUpdate", "Customer"))
+                                     .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .AllowPaging()
+                                    .AllowFiltering()
+                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                     .EditSettings(edit => { edit.AllowEditing(); })
+                                                                    .ToolbarSettings(toolbar =>
+                                                                    {
+                                                                        toolbar.ShowToolbar().ToolbarItems(items =>
+                                                                        {
+                                                                            items.AddTool(ToolBarItems.Edit);
+                                                                            items.AddTool(ToolBarItems.Update);
+                                                                            items.AddTool(ToolBarItems.Cancel);
+                                                                        });
+                                                                    })
+                                                                    .ClientSideEvents(eve =>
+                                                                    {
+                                                                        eve.BeginEdit("PMUloadBeginedit")
+                                                                        .ActionBegin("PMUloadContactsBegin")
+                                                                        .EndEdit("PMUloadContactsEndEdit")
+                                                                        .EndAdd("PMUloadContactsEndAdd")
+                                                                        .ToolbarClick("onToolbarClick");
+                                                                    })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("UserId").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+                                        col.Field("AccountNumber").HeaderText("Account#").ValidationRules(r => r.AddRule("required", true)).AllowEditing(false).Add();
+                                        col.Field("CustomerName").HeaderText("Customer Name").ValidationRules(r => r.AddRule("required", true)).AllowEditing(false).Add();
+                                        col.Field("ContactName").HeaderText("Contact Name").ValidationRules(r => r.AddRule("required", true)).AllowEditing(false).Add();
+                                        col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                                    })
+
+                        )
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+@*}*@
+
+

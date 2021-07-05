@@ -1,0 +1,127 @@
+﻿@model FarmerBrothers.Models.CalendarTechnicianModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+    <style>
+        .techlist {
+            width: 30%;
+            float: left;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .schedule-block {
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        .work_order_hr {
+                border-style: inset;
+        }
+        .Appointdesc {      
+    white-space: pre-wrap;
+    color: #0315ff;
+    cursor: pointer;
+}
+         
+    </style>
+
+<link href="~/Content/Tpcm.css" rel="stylesheet" />
+
+
+    <script type="text/javascript">
+        $(function () {
+            $('#AdministratorLink').css("color", "white");
+        $("#div_OnCallInternal").hide();
+    });
+  
+
+    function handleClick(myRadio) {
+
+        if ($('#rbLocalBranch').is(':checked') == true) {
+             $("#Technicianddn").show();
+            $("#div_OnCallInternal").hide();    
+            $("#div_Technicians").hide();
+           $(".ThirdPartyDropDown option:eq(0)").prop("selected", true);
+
+            
+        }
+        else {
+      
+            $("#Technicianddn").hide();
+            $("#div_OnCallInternal").show();
+            $("#div_Technicians").hide();
+           $("#OnCallDropDown option:eq(0)").prop("selected", true);
+       
+        }
+
+    }
+
+        //This is how we are calling the Calendar which is in the partial view - This is a Ajax call.
+    function CallChangefunc( val )
+    {
+        
+                if ($.trim(val).length != 0) 
+                {
+                 
+                  var timeZone=  new Date().toString().match(/\(([A-Za-z\s].*)\)/)[1] 
+                  var url = "@Url.Action("GetTechniciansByBranchId", "TechnicianCalendar")" + "?strBranchID=" + val + "&IsTechSchedule=" + $('#rbLocalBranch').is(':checked')  + "&TimeZone="+timeZone  ;
+                    $.ajax({
+                        url: url,
+                        cache: false,
+                        type: "POST",
+                        success: function (response) {
+                            ej.widget.destroyAll($("#div_Technicians .e-js"));
+                            $("#div_Technicians").empty();
+                            $("#div_Technicians").html(response);
+                            $("#div_Technicians").show();
+                            ej.widget.init($("#div_Technicians"));                         
+                        },
+                        error: function (reponse) {
+                            $("#modalpopup").show();
+                            $("p", "#modalpopup").text("Failed to retrieve the data");
+                        }
+
+                    });
+                }
+    };
+
+    </script>
+   
+<section class="well white-bg">
+    <div class="row top-info">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+            <b>Technician Schedule</b>
+        </div>
+    </div>
+</section>
+<section class="block margin-top" style="margin-bottom:20px">
+    <div class="col-lg-12">
+        <div class="schedule-block">
+            <span class="col-sm-2 row">
+                <input type="radio" name="rbShipTo" id="rbLocalBranch" value="LocalBranch" checked="checked" onclick="handleClick(this)" />
+                Work Order & Time Off
+            </span>
+            <span class="col-sm-2">
+                <input type="radio" name="rbShipTo" id="rbCustomer" value="Customer" onclick="handleClick(this)" />
+                On Call
+            </span>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div id="Technicianddn">
+            <b>Branch:</b>
+            @Html.DropDownListFor(c => c.BranchId, new SelectList(Model.BranchList.OrderBy(x => x.BranchName), "BranchId", "BranchName"), "Please select a  Branch", new { @Id = "ThirdPartyDropDown", @class = "form-control custom-select ThirdPartyDropDown", @onchange = "CallChangefunc(this.value)", style = "width:100%" })
+        </div>
+        <div id="div_OnCallInternal">
+            <b>Internal On Call Group</b>
+            @Html.DropDownListFor(c => c.BranchId, new SelectList(Model.OnCallList.OrderBy(x => x.OnCallGroupName), "OnCallGroupId", "OnCallGroupName"), "Please select a  Branch", new { @Id = "OnCallDropDown", @class = "form-control custom-select ThirdPartyDropDown", @onchange = "CallChangefunc(this.value)", style = "width:100%" })
+        </div>
+
+    </div>
+    <div style="clear:both;"></div>
+</section>
+    <div id="div_Technicians">
+
+    </div>
+

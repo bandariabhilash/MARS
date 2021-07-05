@@ -1,0 +1,342 @@
+﻿@model NonServiceEventModel
+
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+@{
+    ViewBag.Title = "NonServiceEvent";
+    var val = Json.Encode(Model);
+    var check = @Html.Raw(val);
+}
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: right;
+        height: auto;
+    }
+</style>
+<script type="text/javascript">
+    var updateUrl = null;
+
+    function SetSubmitOperation( operation )
+    {
+        $( "#Operation" ).val( operation );
+    }
+
+    $( document ).ready( function ()
+    {
+
+        $( '#CallBack' ).keypress( function ()
+        {
+            return this.value.length < 10
+        } )
+
+        $("#resendEmail").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("ReSendEmail", "NonServiceEvent")',
+                type: 'POST',
+                data: { WorkorderId: $('#nsWoId').html() },
+            }).done(function (response)
+            {
+                AlertPopup(response.message);
+            }).fail(function (response) {
+
+            });
+        });
+
+        $( "form" ).submit( function ( event )
+        {
+            //alert("1");
+            var operation = $("#Operation").val();
+
+            //var el = $('#SaveNonWorkOrderId');
+            //el.prop('disabled', true);
+            //setTimeout(function () { el.prop('disabled', false); }, 6000);
+
+
+            //alert(operation);
+            if ( operation > 0 )
+            {
+                var notesItems = [];
+                $.each( newNotesArray, function ( index, value )
+                {
+                    var item = { Text: value, Value: -1 };
+                    notesItems.push( item );
+                } );
+                //alert("2");
+                if ( $( "#ActionNonServiceEventSave" ).length )
+                {
+
+                    $( "#ActionNonServiceEventSave" ).val( "" );
+                }
+                else
+                {
+
+                    var input1 = $( "<input id='ActionNonServiceEventSave'>" )
+                        .attr( "type", "hidden" )
+                        .attr( "name", "action:NonServiceEventSave" ).val( "" );
+                    $( this ).append( $( input1 ) );
+                }
+
+                //alert("3");
+                if ( $( "#WorkOrderNotesHidden" ).length )
+                {
+
+                    $( "#WorkOrderNotesHidden" ).val( JSON.stringify( notesItems ) );
+                }
+                else
+                {
+
+                    var input5 = $( "<input id='WorkOrderNotesHidden'>" )
+                            .attr( "type", "hidden" )
+                            .attr( "name", "WorkOrderNotesHidden" ).val( JSON.stringify( notesItems ) );
+                    $( this ).append( $( input5 ) );
+                }
+            }
+            if ( operation == 1 )
+            {
+                //alert("4");
+
+                if (ValidateNonServiceWorkorderModel()) {
+                    $('#SaveNonWorkOrderId').hide();
+                    var $this = $( this );
+                var frmValues = $this.serialize();
+                if ($("#callReason").val() != "-1" || $("#CallerName").val() != "" || $("#CallBack").val() != "") {
+                     $.ajax( {
+                    url: '@Url.Action("SaveNonServiceEvent", "NonServiceEvent")',
+                    type: 'POST',
+                    data: frmValues,
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                if ( response.returnValue < 0 )
+                                {
+                                    if (response.returnValue==-1) {
+                                        AlertPopup(response.message);
+                                    }
+                                    else {
+                                        AlertPopup("|There is a problem in saving Work Order! Please contact support.");
+                                    }
+
+                                }
+                                else if ( response.returnValue >= 0 )
+                                {
+                                    if ( operation == 1 )
+                                    {
+                                        AlertPopup( "|Customer Service Work Order saved successfully! \r\n Work Order#: " + response.WorkOrderId );
+                                        updateUrl = response.Url;
+                                    }
+                                }
+                                else
+                                {
+                                    AlertPopup( response.message );
+                                }
+                                $('#SaveNonWorkOrderId').show();
+                            }
+
+                        } );
+                }
+                else {
+                    $('#SaveNonWorkOrderId').show();
+                    AlertPopup("|Please Select Call Reason to save Customer Service Work Order !");
+                }
+                }
+            }
+            $( "#Operation" ).val( 0 );
+        } );
+        event.preventDefault();
+
+
+        $( "[data-popup-close='popupalert']" ).click( function ()
+        {
+            if ( updateUrl != null )
+            {
+                window.location.href = updateUrl;
+            }
+        } );
+    } );
+
+    function PhoneValidation( evt )
+    {
+        var charCode = ( evt.which ) ? evt.which : event.keyCode;
+        //if ((charCode >= 48 && charCode <=57)|| charCode ==40 || charCode ==41 || charCode ==45)
+        if ( charCode >= 48 && charCode <= 57 )
+            return true;
+
+        return false;
+    }
+
+    function ValidateNonServiceWorkorderModel() {
+        debugger;
+        var result = true;
+        if ($('#CallerName').val().length > 100) {
+
+            result = false;
+        }
+
+        return result;
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    <section class="container-fluid white-bg pad fixedSecond header">
+        <div class="row vertical-align">
+            <div class="col-md-12">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-3">
+
+
+                        </div>
+                    </div>
+
+                    <div class="row vertical-align">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <b>Customer Service Work Order ID:</b>
+                                @if (Model.WorkOrderID > 0)
+                                {
+                                    <span id="nsWoId">@Model.WorkOrderID</span>
+                                }
+                            </div>
+
+                            <div class="col-md-4">
+                                <span>Status:</span>
+                                @if (!string.IsNullOrEmpty(Model.Status))
+                                {
+                                    <span>@Model.Status</span>
+                                }
+                            </div>
+
+                            <div class="col-md-4">
+                                <span>Created By:</span>
+
+                                @if (Model.WorkOrderID > 0)
+                                {
+                                    <span>@Model.CreatedBy</span>
+                                }
+
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <span>Created On:</span>
+                                @if (Model.CreatedDate.HasValue)
+                                {
+                                    <span>@Model.CreatedDate.Value.ToString("MM/dd/yyyy")</span>
+                                }
+                            </div>
+
+                            <div class="col-md-4">
+                                <span>Close Date:</span>
+                                @if (Model.CloseDate.HasValue)
+                                {
+                                    <span>@Model.CloseDate.Value.ToString("MM/dd/yyyy")</span>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    @{
+                        if (string.IsNullOrEmpty(Model.Status) || (Model.Status.ToLower() != "closed"))
+                        {
+                            @*<button id="btnsave" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose" onclick="SetSubmitOperation(1)" name="action:SaveNonServiceEvent">Save</button>*@
+                            <button id="SaveNonWorkOrderId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose" onclick="SetSubmitOperation(1)" name="action:NonServiceEventSave">Save</button>
+                        }
+                        @*if (Model.NonServiceWorkOrder != null)
+                            {
+                                if (Model.NonServiceWorkOrder.WorkOrderID > 0)
+                                {
+                                    @Html.ActionLink("Exit Work Order", "NonServiceEvent", "NonServiceEventCall", new { @IsBack = 1 }, new { @Class = "btn btn-primary enableonclose" })
+                                }
+                            }*@
+
+                        if (Model.WorkOrderID > 0)
+                        {
+                                @*@Html.ActionLink("Re-Send Email", "ReSendEmail", "NonServiceEvent", new { @WorkorderId = Model.WorkOrderID }, new { @Class = "btn btn-primary enableonclose" })*@
+                            <button id="resendEmail" style="margin-right:5px;" class="btn btn-primary enableonclose">Re-Send Email</button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+    @Html.HiddenFor(x => x.Customer, new { name = "customerdata" });
+
+
+
+                        @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
+                        <br />
+                        <style>
+                            .notes-details-content {
+                                display: block !important;
+                            }
+                        </style>
+                        <section class="block">
+                            <div class="container-fluid">
+                                <h2 class="notes-details-head arrow-down tabheader required1">Notes</h2>
+                                <div class="col-md-4">
+                                    @Html.Label("lblCallReason", "Call Reason", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
+                                    
+                                    @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                    {
+                                          @Html.DropDownListFor(m => m.callReason, new SelectList(Model.FBCallReasons, "SourceCode", "Description"),
+                                            new { @style = "max-width:270px;margin-top:15px;", @class = "form-control WorkOrderFields", @disabled = "disabled" })
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.callReason, new SelectList(Model.FBCallReasons, "SourceCode", "Description"),
+                                            new { @style = "max-width:270px;margin-top:15px;", @class = "form-control WorkOrderFields" })
+                                    }
+
+                             </div>
+
+
+                            <div class="col-md-4">
+                                    @Html.Label("lblCallerName", "Caller Name", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
+                                    @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                    {
+                                        @Html.TextBoxFor(c => c.CallerName, new { @class = "form-control CustomerData", @style = "float:left;margin-top:15px;margin-right:20px;", @disabled = "disabled" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(c => c.CallerName, new { @class = "form-control CustomerData", @style = "float:left;margin-top:15px;margin-right:20px;" })
+                                    }
+                                    <div class="col-md-12">
+                                        <div class="col-md-10">
+                                            @Html.ValidationMessageFor(m => m.CallerName, "", new { @class = "text-danger" })
+                                        </div>
+                                        <div class="col-md-2">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-md-4">
+                                    @Html.Label("lblCallBack", "Call Back #", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
+                                    @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                    {
+                                        @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)", @style = "float:left;margin-top:15px;margin-right:20px;", @disabled = "disabled" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)", @style = "float:left;margin-top:15px;margin-right:20px;"  })
+                                    }
+                                    @Html.ValidationMessageFor(m => m.CallBack, "", new { @class = "text-danger" })
+
+                                </div>
+                                @*<h2 class="notes-details-head arrow-down tabheader required">Notes</h2>*@
+                                @Html.Partial("_ErfNotes", Model.Notes)
+                            </div>
+                        </section>
+                        }

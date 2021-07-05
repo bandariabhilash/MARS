@@ -1,0 +1,188 @@
+﻿<link href="~/Content/Tpcm.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Home Page";
+}
+
+@model FarmerBrothers.Models.ZonePriorityModel
+
+<script type="text/javascript">
+    var searchCriteria;
+
+    function queryCellInfo(args)
+    {
+        if (args.column.field == "ZoneName") {
+            args.cell.className	+= " urlStyle";
+        }
+    }
+
+    $(document).ready(function () {
+        $("#closeclick").click(function () {
+            $("#modalpopup").hide();
+        });
+        $('#AdministratorLink').css("color", "white");
+        
+        $('#CustomerResults').ejGrid({
+            exportToExcelAction : '@Url.Action("ExcelExport","ZoneTechnician")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "ZoneName", headerText: "Zone Name"},
+                { field: "ZoneIndex", headerText: "Zone Index" },
+                { field: "ResponsibletechID", headerText: "Primary Tech ID" },
+                { field: "ResponsibleTechName", headerText: "Primary Tech Name" },
+                { field: "SecondaryTechID", headerText: "Secondary Tech ID" },
+                { field: "SecondaryTechName", headerText: "Secondary Tech Name" },
+                 { field: "OnCallGroupID", headerText: "On Call Group ID" },
+                { field: "OnCallGroup", headerText: "On Call Group" },
+                { field: "OnCallPrimarytechID", headerText: "On Call Primary Tech",width:"100px" },
+                { field: "OnCallBackupTechID", headerText: "On Call Backup Tech",width:"100px" }
+            ]
+        });
+
+        $("#CustomerResults").ejGrid({
+            recordClick: function (args) {
+                window.location.href = '@Url.Action("UpdateZoneTechnicians", "ZoneTechnician")' + "/" + args.data["ZoneIndex"];
+            }
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("Search", "ZoneTechnician")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#CustomerResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#ResponsibletechID').val() == ""
+            && $('#SecondaryTechID').val() == ""
+            && $('#PhoneSolveTechID').val() == ""
+            && $('#ZoneName').val() == ""
+            && $('#ZoneIndex').val() == ""
+            && $('#Fsm').val() == ""))
+        {
+            $('form').submit();
+        }
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#ResponsibletechID').val() == ""
+            && $('#SecondaryTechID').val() == ""
+            && $('#PhoneSolveTechID').val() == ""
+            && $('#ZoneName').val() == ""
+            && $('#ZoneIndex').val() == ""
+            && $('#Fsm').val() == "")
+        {
+            AlertPopup("|Please Select at least one Search Criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function SearchClear() {
+        $('.form-control').val('');       
+        //$('#BeforeDate').val('');
+        //$('#OnOrAfterDate').val('');
+        var gridObj = $("#CustomerResults").ejGrid("instance");
+        gridObj.dataSource('');
+    }
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Update Zone Technician</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-3">
+                                <div class="form-group">
+                                        Primary Tech ID:<br />
+                                        @Html.TextBoxFor(c => c.ResponsibletechID, new { @class = "form-control", @id = "ResponsibletechID", @type = "number" })
+                                    </div>
+                         </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                Secondary Tech ID:<br />
+                                @Html.TextBoxFor(c => c.SecondaryTechID, new { @class = "form-control", @id = "SecondaryTechID", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                On Call Group:<br />
+                                @Html.TextBoxFor(c => c.OnCallGroup, new { @class = "form-control", @id = "OnCallGroup" })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                Zone Name:<br />
+                                @Html.TextBoxFor(c => c.ZoneName, new { @class = "form-control", @id = "ZoneName", })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                Zone Index:<br />
+                                @Html.TextBoxFor(c => c.ZoneIndex, new { @class = "form-control", @id = "ZoneIndex", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                FSM ID:<br />
+                                @Html.TextBoxFor(c => c.Fsm, new { @class = "form-control", @id = "Fsm", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <br/>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a id="btnClear" href="#" style="display: inline-block; margin-bottom: 0px; margin-right: 5px;" onclick="SearchClear()" class="btn btn-p2 btn-orange">Clear</a>
+                             </div>
+                         </div>
+                     </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>Search Results</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="CustomerResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+            </div>
+        </div>
+    </section>
+}

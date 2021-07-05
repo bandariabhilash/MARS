@@ -1,0 +1,949 @@
+﻿@model FarmerBrothers.Models.DisplayPdf
+
+@{
+    Layout = null;
+
+    var gridZonerates = new WebGrid(Model.ThirdpartyConMaintenanceZonerate, canPage: true, rowsPerPage: 10, canSort: true,
+    ajaxUpdateContainerId: "main");
+
+    var gridWorkOrderParts = new WebGrid(Model.objWorkOrder.WorkorderParts, canPage: true, rowsPerPage: 10, canSort: true,
+    ajaxUpdateContainerId: "main");
+
+    var gridEquipmentList = new WebGrid(Model.Equipmentlist, canPage: true, rowsPerPage: 10, canSort: true,
+    ajaxUpdateContainerId: "main");
+    //var grid1 = new WebGrid(Model.objWorkOrder.WorkorderParts, canPage: true, rowsPerPage: 10, canSort: true,
+    //ajaxUpdateContainerId: "main1");
+}
+
+
+<!doctype html>
+<html>
+<head>
+    <title>Invoice-Search</title>
+    <meta charset="utf-8">
+    <!--media css support meta tag-->
+    <!--Bootstrap Styles-->
+    <link href="~/Content/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="bootstrap.min.css" type="text/css" rel="stylesheet">
+    <!--Bootstrap Styles-->
+
+    <style type="text/css">
+        .webGrid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #FCFCFC;
+        }
+
+        .header {
+            background-color: #C1D4E6;
+            font-weight: bold;
+            color: #FFF;
+        }
+
+        .webGrid th {
+            border: 1px solid #C0C0C0;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .webGrid td {
+            font-size: 12px;
+        }
+
+        .webGrid tr {
+            height: 12px;
+        }
+
+        .alt {
+            height: 50px;
+            background-color: #E4E9F5;
+            color: #000;
+        }
+
+        .gridHead a:hover {
+            text-decoration: underline;
+        }
+
+        .description {
+            width: auto;
+        }
+
+        .doctitle {
+            width: auto;
+        }
+
+        .total {
+            width: 171px;
+        }
+
+        .docwidth {
+            width: auto;
+        }
+
+        .select {
+            background-color: #389DF5;
+        }
+    </style>
+
+    <style type="text/css">
+        /*Customization Styles*/
+        .invoice-form .form-group {
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+            .invoice-form .form-group label {
+                font-weight: normal;
+            }
+
+        .invoice-header {
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .invoice-form .panel-heading {
+            overflow: hidden;
+        }
+
+            .invoice-form .panel-heading h4 {
+                font-weight: bold;
+                margin-top: 5px;
+            }
+
+        .margin0 {
+            margin: 0 !important;
+        }
+
+        .serilaized-items {
+            float: none;
+            margin: 0 auto;
+        }
+
+        .cust-textarea {
+            border: 1px solid;
+            height: 150px;
+            margin: 0 0 0 15px;
+            width: 100%;
+        }
+
+        td label {
+            font-weight: normal;
+        }
+
+        table.border-less tr td {
+            border: 0 none;
+        }
+
+        .table .table {
+            background: none;
+        }
+
+        .table .stripe-borders-table {
+            background: #fff;
+            margin: 0;
+        }
+
+        .stripe-borders-table th {
+            background: #ccc;
+        }
+
+        .stripe-borders-table-grid {
+            background: #8bb6dd;
+            padding: 15px;
+            margin: 0 15px;
+        }
+
+        .stripe-borders-table td, .stripe-borders-table th {
+            text-align: center;
+            font-weight: normal;
+            border: 1px solid !important;
+        }
+
+        .stripe-borders-table tr:nth-child(2n) td {
+            background: #eeeeee none repeat scroll 0 0;
+        }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            border: 0;
+        }
+
+        .logo-block {
+            float: left;
+            min-height: 1px;
+            width: 340px;
+        }
+
+        .work-order label {
+            font-size: 19px;
+        }
+
+        .small-text td {
+            font-size: 12px;
+        }
+    </style>
+
+    <style>
+        /*Here I will write some css for looks good*/
+
+        #gridT tr:nth-child(even) {
+            background: #8bb6dd none repeat scroll 0 0;
+        }
+
+            #gridT tr:nth-child(even) tr {
+                background: rgba(0, 0, 0, 0) none repeat scroll 0 0;
+            }
+
+        th, td {
+            padding: 5px;
+        }
+
+        th {
+            background-color: rgb(248, 248, 248);
+        }
+
+        #gridT, #gridT tr {
+            /*border:1px solid ;*/
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="invoice-form" style="float: left;">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table border-less">
+            <tr>
+                <td>
+                    <div class="invoice-header">
+                        <div class="logo-block">
+                            <img src="logo.gif" class="img-responisve" />
+                        </div>
+                        <div class="col-sm-5 work-order">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td>
+                                        <label>Work Order ID:</label>
+                                    </td>
+                                    <td>
+                                        <label style="color: #0000ff;">@Model.objWorkOrder.WorkorderID</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label>Customers Name:</label>
+                                    </td>
+                                    <td>
+                                        <label>@Model.objWorkOrder.CustomerName</label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="small-text">
+                                            <tr>
+                                                <td>Created on : </td>
+                                                <td>@Model.objWorkOrder.WorkorderEntryDate </td>
+                                                <td>Completed On : </td>
+                                                <td>@Model.objWorkOrder.WorkorderCloseDate </td>
+                                            </tr>
+                                        </table>
+
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                        <tr>
+                            <td>
+                                <div class="panel panel-default margin0">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">Invoice Submission</h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                            <tr>
+                                                <td width="33%">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <label>Customer ID:</label>
+                                                            </td>
+                                                            <td><b class="text-primary">@Model.objWorkOrder.CustomerID</b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <label>Customer Name:</label>
+                                                            </td>
+                                                            <td><b>@Model.objWorkOrder.CustomerName</b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <label>Service Contact:</label>
+                                                            </td>
+                                                            <td><b>@Model.objWorkOrder.WorkorderContactName</b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <label>Contact's Phone Number:</label>
+                                                            </td>
+                                                            @*<td><b>   <input type="text" value="@string.Format("{0: (###) ###-####}", Model.objWorkOrder.CustomerPhone)" /></b></td>*@
+                                                          <td><b>@Model.customerModel.PhoneNumber</b></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="33%">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                        <tr>
+                                                            <td>
+                                                                <label>Address: </label>
+                                                            </td>
+                                                            <td><b class="text-primary">@Model.objWorkOrder.CustomerAddress </b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <label>City: </label>
+                                                            </td>
+                                                            <td><b>@Model.objWorkOrder.CustomerCity</b></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <label>State: </label>
+                                                            </td>
+                                                            <td><strong>@Model.objWorkOrder.CustomerState</strong></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <label>Postal Code: </label>
+                                                            </td>
+                                                            <td><b>@Model.objWorkOrder.CustomerZipCode</b></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="33%"></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                                <div class="panel panel-default margin0">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">Work Performed</h4>
+                                    </div>
+                                    <div class="panel-body">
+
+                                        <div id="main" style="padding: 25px; background-color: white;" class="stripe-borders-table-grid">
+                                            @gridEquipmentList.GetHtml(
+                            htmlAttributes: new { id = "gridT", width = "100%" },
+                            columns: gridEquipmentList.Columns(
+                             gridEquipmentList.Column("Assetid", "Asset ID"),
+                                      gridEquipmentList.Column("WorkOrderType", "Service Code"),
+                                      gridEquipmentList.Column("Category", "Equipment Type"),
+                             gridEquipmentList.Column("Manufacturer", "Manufacturer"),
+                             gridEquipmentList.Column("Model", "Model"),
+                             gridEquipmentList.Column("Location", "Location"),
+                             //gridEquipmentList.Column("SerialNumber", "Serial Number"),
+                             //gridEquipmentList.Column("SolutionDesc", "Solution"),
+                                               gridEquipmentList.Column("SymptomID", "Symptom"),
+
+                             gridEquipmentList.Column(format: @<text>
+                                <div>
+                                    <div class="col-sm-12">
+                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="20%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Temperature:</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        @item["Temperature"]F
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>System:</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        @item["SystemDesc"]
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        Quality&nbsp;Issue:
+                                                                    </td>
+                                                                    <td>
+
+                                                                        @if (@item["QualityIssue"] == true)
+                                                                        {
+                                                                            @*<input type="checkbox" checked="checked" />*@
+                                                                            <label> True</label>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @*<input type="checkbox" />*@
+                                                                            <label> False</label>
+                                                                        }
+
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td width="20%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Settings:</label>
+                                                                    </td>
+                                                                    <td>
+                                                                        @item["Settings"]
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label></label>
+                                                                    </td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td width="20%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        Counter:
+                                                                    </td>
+                                                                    <td>@item["WorkPerformedCounter"]</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Symptom:</td>
+                                                                    <td>
+                                                                        @item["SymptomDesc"]
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label></label>
+                                                                    </td>
+                                                                    <td>&nbsp;</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td width="40%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Describe Work Performed</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <textarea class="cust-textarea">@item["WorkDescription"]</textarea>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    @{
+                                        var grid = new WebGrid(Model.objWorkOrder.WorkorderParts.Where(x => x.AssetID == item["Assetid"]), canPage: true, rowsPerPage: 10, canSort: true,
+                                    ajaxUpdateContainerId: "main");
+                                    }
+                                        <div class="col-sm-11 serilaized-items">
+                                            <label>Non Serialized Items</label>
+                                            <div id="main1" width="100%" cellspacing="0" cellpadding="0" class="table stripe-borders-table">
+                                   
+                                                    @grid.GetHtml(
+                                                                       htmlAttributes: new { id = "gridT1", width = "100%" },
+                                                                       columns: gridWorkOrderParts.Columns(
+                                                                        grid.Column("Quantity", "Quantity", style: "doctitle"),
+                                                                       grid.Column("Manufacturer", "Manufacturer", style: "doctitle"),
+                                                                       grid.Column("Sku", "Sku", style: "doctitle"),
+                                                                       grid.Column("Description", "Description", style: "doctitle"),
+                                                                       grid.Column("StandardCost", "Standard Cost ($)", style: "doctitle", format: (subitem) => string.Format("{0:0.00}", subitem.StandardCost ?? string.Empty)),
+                                                                       grid.Column("TPSPCost", "TPSP Cost ($)", style: "doctitle", format: (subitem) => string.Format("{0:0.00}", subitem.TPSPCost ?? string.Empty)),
+                                                                       grid.Column("Total", "Total ($)", style: "total", format: (subitem) => string.Format("{0:0.00}", subitem.Total ?? string.Empty))
+                                                            ))
+                                               
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+
+                                </div>
+                            </text>)
+                          ))
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="panel panel-default margin0">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">Invoice Details </h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                            <tr>
+                                                <td width="33%">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                        <tr>
+                                                            <th colspan="2" style="text-align: center;"><u>Contract Rates</u></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Standard Labor Rate: </td>
+                                                            <td>
+                                                              @if (Model.ThirdPartyContractMaintenance != null)
+                                                              {
+                                                                  if (Model.ThirdPartyContractMaintenance.LaborHourlyRate != null)
+                                                                  {
+                                                                    <label> $</label>@Html.DisplayFor(x => x.ThirdPartyContractMaintenance.LaborHourlyRate)
+                                                                  }
+                                                              }
+                                                            
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Overtime Labor Rate: </td>
+                                                            <td>
+                                                                
+                                                         @if (Model.ThirdPartyContractMaintenance != null)
+                                                         { 
+                                                               if (Model.ThirdPartyContractMaintenance.LaborOvertimeRate != null)
+                                                                {
+                                                                    <label> $</label>@Html.DisplayFor(x => x.ThirdPartyContractMaintenance.LaborOvertimeRate)
+                                                                }
+                                                         }
+
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">Zonal Rates:</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td colspan="2">
+                                                                <div class="col-sm-12">
+
+                                                                    @gridZonerates.GetHtml(tableStyle: "webGrid",
+                                 headerStyle: "header",
+                                 rowStyle: "tr",
+                                 alternatingRowStyle: "alt",
+                                 selectedRowStyle: "select",
+                                 columns: gridZonerates.Columns(
+                                 gridZonerates.Column("Description", "Description", style: "doctitle"),
+                                 gridZonerates.Column("Rate", "Rate ($)", style: "doctitle", format: (item) => string.Format("{0:0.00}", item.Rate ?? string.Empty)),
+                                 gridZonerates.Column("BasedOn", "Based On", style: "doctitle")
+            ))
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="33%">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                        <tr>
+                                                            <th colspan="2" style="text-align: center;"><u>Costs on Work Order</u></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Invoice: </td>
+                                                            <td>@Model.objWorkOrder.WorkorderDetails.SingleOrDefault().InvoiceNo</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Mileage To Customers: </td>
+                                                            <td>@Model.Invoice.Mileage</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Travel Time To Customer: </td>
+                                                            <td>@Model.TravelTime </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Labor Hours:</td>
+                                                            <td>@Model.LaborHours </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Technician Name: </td>
+                                                            <td>@Model.objWorkOrder.ResponsibleTechName</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Start Date/Time: </td>
+                                                            <td>@Model.objWorkOrder.WorkorderDetails.SingleOrDefault().StartDateTime</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Arrive Date/Time: </td>
+                                                            <td>@Model.objWorkOrder.WorkorderDetails.SingleOrDefault().ArrivalDateTime</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Completion Date/Time: </td>
+                                                            <td>@Model.objWorkOrder.WorkorderDetails.SingleOrDefault().CompletionDateTime </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Overtime Approval:</td>
+                                                            @if (Model.ThirdPartyContractMaintenance != null)
+                                                            {
+                                                                if (Model.ThirdPartyContractMaintenance.TravelOverTimeRateFlag == true)
+                                                                {
+                                                                    @*<td> Requested </td>*@
+                                                                    <td>@Model.Invoice.OverTimeRequestApproved</td>
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td> @*Not Requested*@  </td>
+                                                            }
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Invoice for Return Visit Approval: </td>
+                                                            <td> @*Not Requested*@  </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="33%">
+                                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                        <tr>
+                                                            <th colspan="2" style="text-align: center;"><u>Invoice Cost Entry</u></th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Travel Time:	</td>
+                                                            <td>@Model.TravelTime </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Round Trip Travel Included: </td>
+                                                            <td>
+                                                                @if (Model.Invoice != null)
+                                                                {
+
+                                                                    if (Model.Invoice.RoundTripIncluded == 1)
+                                                                    {
+                                                                        @*<input type="checkbox" checked="checked">*@
+                                                                        <label>Yes</label>
+                                                                    }
+
+                                                                    else
+                                                                    {
+                                                                        @*<input type="checkbox" />*@
+                                                                        <label>No</label>
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    @*<input type="checkbox" />*@
+                                                                    <label>No</label>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Labor Hours:</td>
+                                                            <td>@Model.LaborHours</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Standard Labor: </td>
+                                                            <td>@Model.StandardLabor</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Overtime Labor: </td>
+                                                            <td>@Model.OvertimeLabor</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Zone: </td>
+                                                            <td>
+                                                                @Model.ZoneDescription
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Additional Charges: </td>
+                                                            <td>
+                                                                @*@{var formatedAdditionalCharg = String.Format("{0:0.00}", Model.Invoice.AdditionalCharge);}*@
+                                                                @if(Model.Invoice.AdditionalCharge!=null)
+                                                                {
+                                                               <label>$</label> @Html.DisplayFor(x => x.Invoice.AdditionalCharge)
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Additional Charges Description: </td>
+                                                            <td>@Model.Invoice.AdditionalChargeDescription</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Invoice Comments:</td>
+                                                            <td>@Model.Invoice.InvoiceComments</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="panel panel-default margin0">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">Invoice Total: </h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table stripe-borders-table">
+                                            <tbody>
+
+                                                <tr>
+                                                    <td>
+
+                                                        @gridWorkOrderParts.GetHtml(
+                                          htmlAttributes: new { id = "gridT1", width = "100%" },
+                                          columns: gridWorkOrderParts.Columns(
+                                          gridWorkOrderParts.Column("Quantity", "Quantity", style: "doctitle"),
+                                          gridWorkOrderParts.Column("Manufacturer", "Manufacturer", style: "doctitle"),
+                                          gridWorkOrderParts.Column("Sku", "Sku", style: "doctitle"),
+                                          gridWorkOrderParts.Column("Description", "Description", style: "doctitle"),
+                                          gridWorkOrderParts.Column("StandardCost", "Standard Cost ($)", style: "doctitle", format: (subitem) => string.Format("{0:0.00}", subitem.StandardCost ?? string.Empty)),
+                                          gridWorkOrderParts.Column("TPSPCost", "TPSP Cost ($)", style: "doctitle", format: (subitem) => string.Format("{0:0.00}", subitem.TPSPCost ?? string.Empty)),
+                                          gridWorkOrderParts.Column("Total", "Total ($)", style: "total", format: (subitem) => string.Format("{0:0.00}", subitem.Total ?? string.Empty))
+
+                                                   ))
+                                                    </td>
+
+                                                </tr>
+
+                                                <tr class="pull-right">
+                                                    <td>
+                                                        <table class="table stripe-borders-table">
+                                                            <tr>
+                                                                <td style="width: 171px">Parts Total </td>
+                                                                <td style="width: 171px">
+                                                                    @{var formatedPartsTotal = String.Format("{0:0.00}", Model.Invoice.PartsTotal);}
+                                                                  @if(Model.Invoice.PartsTotal!=null)
+                                                                  {
+                                                                   <label> $</label>@Html.DisplayFor(x => x.Invoice.PartsTotal)
+                                                                  }
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Labor</td>
+                                                                <td>
+                                                                    @{var LaborTotal = String.Format("{0:0.00}", Model.Invoice.LaborTotal);}
+                                                                        @if (Model.Invoice.LaborTotal != null)
+                                                                        {
+                                                                            <label> $</label>@Html.DisplayFor(x => x.Invoice.LaborTotal)
+                                                                        }
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>TravelTotal </td>
+                                                                <td>
+                                                                    @{var TravelTotal = String.Format("{0:0.00}", Model.Invoice.TravelTotal);}
+                                                                    @if (Model.Invoice.TravelTotal != null)
+                                                                    {
+                                                                        <label> $</label>@Html.DisplayFor(x => x.Invoice.TravelTotal)
+                                                                    }
+                                                                   @*$@Html.DisplayFor(x => x.Invoice.TravelTotal)*@
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Additional Charges</td>
+                                                                <td>
+                                                                    @{var AddCharges = String.Format("{0:0.00}", Model.Invoice.AdditionalCharge);}
+                                                                    @if (Model.Invoice.AdditionalCharge != null)
+                                                                    {
+                                                                        <label> $</label>@Html.DisplayFor(x => x.Invoice.AdditionalCharge)
+                                                                    }
+
+                                                               
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Sub Total </td>
+                                                                <td>
+                                                                    @{var SubTotal = String.Format("{0:0.00}", Model.Invoice.SubTotal);}
+                                                                    @if (Model.Invoice.SubTotal != null)
+                                                                    {
+                                                                        <label> $</label>@Html.DisplayFor(x => x.Invoice.SubTotal)
+                                                                    }
+
+                                                               
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Tax</td>
+                                                                <td>
+                                                                    @{var TaxAmount = String.Format("{0:0.00}", Model.Invoice.TaxAmount);}
+                                                                    @if (Model.Invoice.TaxAmount != null)
+                                                                    {
+                                                                        <label> $</label>@Html.DisplayFor(x => x.Invoice.TaxAmount)
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Total </td>
+                                                                <td>
+                                                                    @{var TotalAmount = String.Format("{0:0.00}", Model.Invoice.InvoiceTotal);}
+                                                                    @if (Model.Invoice.InvoiceTotal != null)
+                                                                    {
+                                                                        <label> $</label>@Html.DisplayFor(x => x.Invoice.InvoiceTotal)
+                                                                    }
+
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="panel panel-default margin0">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">Invoice Status </h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <td width="33%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Submission Date:</label>
+                                                                    </td>
+                                                                    <td>@Model.Invoice.InvoiceSubmitDate </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Invoice Status: </label>
+                                                                    </td>
+                                                                    <td>@Model.Invoice.InvoiceStatus</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Date Check Created:</td>
+                                                                    <td>@Model.Invoice.PaymentCreated</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Check Number: </label>
+                                                                    </td>
+                                                                    <td>@Model.Invoice.CheckNumber</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Amount Paid: </td>
+                                                                    <td>
+                                                                        @{var formatedSubmitAmount = String.Format("{0:0.00}", Model.Invoice.SubmitAmount);}
+                                                                        @if (Model.Invoice.SubmitAmount != null)
+                                                                        {
+                                                                            <label> $</label>@Html.DisplayFor(x => x.Invoice.SubmitAmount)
+                                                                        }
+                                                                    
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+
+                                                    <td width="67%">
+                                                        <table width="100%" cellspacing="0" cellpadding="0" border="0" class="table" style="background: #ffe599; border: 1px solid;">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+                                                                        <label>Adjusted Amount Approved:</label>
+                                                                    </td>
+                                                                    <td width="80%">
+                                                                        @{var formatedPaymentAmtApproved = String.Format("{0:0.00}", Model.Invoice.PaymentAmtApproved);}
+                                                                        @if (Model.Invoice.PaymentAmtApproved != null)
+                                                                        {
+                                                                            <label> $</label>@Html.DisplayFor(x => x.Invoice.PaymentAmtApproved)
+                                                                        }
+                                                                  
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        Adjusted Comments:
+                                                                        <label class="col-sm-12">@Model.Invoice.InvoiceComments</label>
+                                                                    </td>
+                                                                </tr>
+
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+</body>
+</html>
+
+
+<script src="jquery-2.2.3.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var size = $("#main #gridT > thead > tr >th").size(); // get total column
+        $("#main #gridT > thead > tr >th").last().remove(); // remove last column
+        $("#main #gridT > thead > tr").prepend("<th></th>"); // add one column at first for collapsible column
+        $("#main #gridT > tbody > tr").each(function (i, el) {
+            $(this).prepend(
+                    $("<td></td>")
+                    .addClass("expand")
+                    .addClass("hoverEff")
+                    .attr('title', "click for show/hide")
+                );
+
+            //Now get sub table from last column and add this to the next new added row
+            var table = $("table", this).parent().html();
+            //add new row with this subtable
+            $(this).after("<tr><td></td><td style='padding:5px; margin:0px;' colspan='" + (size - 1) + "'>" + table + "</td></tr>");
+            $("table", this).parent().remove();
+
+        });
+
+    });
+</script>

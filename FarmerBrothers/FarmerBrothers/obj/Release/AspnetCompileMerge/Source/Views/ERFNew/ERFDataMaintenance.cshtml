@@ -1,0 +1,485 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FarmerBrothers.Models.ERFDataMaintenanceModel
+@using Newtonsoft.Json;
+@using FarmerBrothers.Data;
+@using FarmerBrothers.Models;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul 
+    {
+        width: 100%;
+    }
+    #ContingentsGrid_add, #ContingentsGrid_edit, #ContingentsGrid_update, #ContingentsGrid_cancel,
+    #ContingentDetailsGrid_add,#ContingentDetailsGrid_edit,#ContingentDetailsGrid_update,#ContingentDetailsGrid_cancel,
+    #orderTypeGrid_add,#orderTypeGrid_edit,#orderTypeGrid_update,#orderTypeGrid_cancel,
+    #branchGrid_add,#branchGrid_edit,#branchGrid_update, #branchGrid_cancel
+    {        
+        float: right;
+    }
+    #ContingentsGrid_excelExport,#ContingentDetailsGrid_excelExport, #orderTypeGrid_excelExport,#branchGrid_excelExport{
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#contingentSaveBtn").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("SaveContingents", "ErfNew")',
+                type: 'GET',
+                success: function (jsonResult) {
+                    if (jsonResult.success == true) {
+
+                    }
+                    else {
+                    }
+                }
+            });
+        });
+
+        $("#contingentDetailsSaveBtn").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("SaveContingentDetails", "ErfNew")',
+                type: 'GET',
+                success: function (jsonResult) {
+                    if (jsonResult.success == true) {
+
+                    }
+                    else {
+                    }
+                }
+            });
+        });
+
+        $("#orderTypeSaveBtn").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("SaveOrderTypeData", "ErfNew")',
+                type: 'GET',
+                success: function (jsonResult) {
+                    if (jsonResult.success == true) {
+
+                    }
+                    else {
+                    }
+                }
+            });
+        });
+        
+        $("#branchSaveBtn").on("click", function () {
+            $.ajax({
+                url: '@Url.Action("SaveBranchData", "ErfNew")',
+                type: 'GET',
+                success: function (jsonResult) {
+                    if (jsonResult.success == true) {
+
+                    }
+                    else {
+                    }
+                }
+            });
+        });
+
+        $("#errorLblBlock").hide();
+        $("#successBlock").hide();
+
+        $("#uploadBtn").on("click", function () {
+            var fileUpload = document.getElementById("erfFileuploadTxt");
+            if (fileUpload.value != null) {
+                var uploadFile = new FormData(fileUpload[0]);
+                var files = $("#erfFileuploadTxt").get(0).files;
+                // Add the uploaded file content to the form data collection  
+                if (files.length > 0) {
+                    uploadFile.append("CsvDoc", files[0]);
+                    $.ajax({
+                        url: "/ERFNew/BulkERFUploadFile",
+                        contentType: false,
+                        processData: false,
+                        data: uploadFile,
+                        type: 'POST',
+                        success: function (jsonData) {                            
+                            if (jsonData.success) {                               
+                                //alert(jsonData.message);
+                                $("#errorLblBlock").hide();
+                                $("#successBlock").show();
+                                
+                                var obj = $('#ERFFileUploadResults').ejGrid("instance");
+                                obj.dataSource(jsonData.data);
+
+                                clearFile();
+                            }
+                            else
+                            {
+                                $("#errorLbl").html(jsonData.Data.message);
+                                $("#errorLblBlock").show();
+                                $("#successBlock").hide();
+
+                                clearFile();
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        $("#clearBtn").on("click", function () {
+            clearFile();
+            $("#errorLbl").html("");
+            $("#errorLblBlock").hide();
+            $("#successBlock").hide();
+        });
+
+    });
+
+    function clearFile()
+    {
+        $("#erfFileuploadTxt").val("");
+    }
+
+    function beginedit(args) {
+        //var result = args.rowData.IsActive;
+    }
+
+    function ActionBegin(args) {
+        $('#ContingentsGrid_WaitingPopup').css("visibility", "hidden");
+        $('#ContingentDetailsGrid_WaitingPopup').css("visibility", "hidden");
+    }
+    function EndEdit(args) {
+        $('#ContingentsGrid_WaitingPopup').css("visibility", "hidden");
+        $('#ContingentDetailsGrid_WaitingPopup').css("visibility", "hidden");
+    }
+    function EndAdd(args) {
+        $('#ContingentsGrid_WaitingPopup').css("visibility", "hidden");
+        $('#ContingentDetailsGrid_WaitingPopup').css("visibility", "hidden");
+    }
+
+
+
+    function onToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+    }
+
+</script>
+
+@*@using (Html.BeginForm("BulkERFUploadFile", "ERFNew", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <section class="block margin-top">
+
+    <div class="container-fluid">
+        <h2 class="bulkERF-head arrow-down tabheader">Bulk ERF Upload</h2>
+        <div class="bulkERF-content margin-top" style="display:none;">
+
+            <div class="row customerUpload clear-input">
+                <div class="col-md-12">
+                    <div class="col-md-2" style="width: 30%;">
+                        <div class="form-group right-inner-addon">
+                            @Html.TextBox("file", "", new { @type = "file", @Id="erfFileuploadTxt" }) <br />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group right-inner-addon" style="top:1.3em;">
+                            <button class="btn btn-primary" id="uploadBtn">Upload</button>
+                            <button class="btn btn-primary" id="clearBtn">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row customer clear-input" id="errorLblBlock">
+                <div class="col-md-12  sm-pad-reset">
+                    <b>Error: </b>
+                    <label id="errorLbl" />
+                </div>
+            </div>
+
+            <div class="row customer clear-input" id="successBlock">
+                <div class="col-md-12  sm-pad-reset">
+                    <b>Success: </b>
+                    <div class="row customer clear-input">
+                        <div class="col-md-12  sm-pad-reset">
+                            @(Html.EJ().Grid<object>("ERFFileUploadResults")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
+                                     .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .AllowPaging()
+                                    .AllowFiltering()
+                                    .AllowTextWrap(true)
+                                    .TextWrapSettings(w => { w.WrapMode(WrapMode.Both); })
+                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("GroupId").HeaderText("Group Number").Width(100).Add();
+                                        col.Field("CustomerID").HeaderText("Customer#").Width(100).Add();
+                                        col.Field("CustomerName").HeaderText("Customer Name").Width(100).Add();
+                                        col.Field("ErfID").HeaderText("ERF#").Width(100).Add();
+                                        col.Field("WorkorderID").HeaderText("Workorder#").Width(100).Add();
+                                        col.Field("BulkUploadResult").HeaderText("Result Status").Width(60).Add();
+                                        col.Field("UploadError").HeaderText("Success/Error Message").Width(200).Add();
+                                    })
+                                     .ClientSideEvents(eve =>
+                                        {
+                                            eve.QueryCellInfo("queryCellInfo");
+                                        }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+}*@
+    <section class="block margin-top">
+
+        <div class="container-fluid">
+            <h2 class="contingent-head arrow-down tabheader">Contingent Data</h2>
+            <div class="contingent-content margin-top" style="display:none;">
+
+                <button id="contingentSaveBtn" type="button" style="display: inline-block;margin:5px;float:right;" class="btn btn-primary">Save</button>
+
+                <div class="row contingent clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+
+                        @(Html.EJ().Grid<object>
+    ("ContingentsGrid")
+     .Datasource(ds => ds.Json((IEnumerable<object>)Model.ContingentsList)//.UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+      .UpdateURL(Url.Action("ERFContingentDataUpdate", "ErfNew"))
+                    .InsertURL(Url.Action("ERFContingentDataInsert", "ErfNew"))
+                    //.RemoveURL(Url.Action("EquipmentDelete", "ErfNew"))
+                    .Adaptor(AdaptorType.RemoteSaveAdaptor))
+
+    .AllowScrolling()
+.AllowSorting()
+.AllowTextWrap(true)
+        .AllowPaging()
+        .AllowFiltering()
+        .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+         .IsResponsive(true)
+        .EnableResponsiveRow(true)
+         .Mappers(map => map.ExportToExcelAction(Url.Action("ContingentsExcelExport", "ErfNew")))
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.ExcelExport);
+                items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+            });
+        })
+        .ClientSideEvents(eve =>
+        {
+            eve.BeginEdit("beginedit")
+            .ActionBegin("ActionBegin")
+            .EndEdit("EndEdit")
+            .EndAdd("EndAdd")
+            .ToolbarClick("onToolbarClick");
+        })
+        .Columns(col =>
+        {
+            col.Field("ContingentId").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+            col.Field("ContingentName").HeaderText("Contingent Name").ValidationRules(r => r.AddRule("required", true)).Add();
+            col.Field("ContingentType").HeaderText("Contingent Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ContingentTypeList)).ValidationRules(r => r.AddRule("required", true)).Add();
+            //col.Field("ContingentItemName").HeaderText("Contingent Item Name").ValidationRules(r => r.AddRule("required", true)).Add();
+            //col.Field("LaidInCost").HeaderText("Laid In Cost").ValidationRules(r => r.AddRule("required", true)).Add();
+            //col.Field("CostSale").HeaderText("Cost Sale").ValidationRules(r => r.AddRule("required", true)).Add();
+            //col.Field("Rental").HeaderText("Rental").ValidationRules(r => r.AddRule("required", true)).Add();
+            col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+        })
+
+                        )
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="container-fluid">
+            <h2 class="contingentItem-head arrow-down tabheader">Contingent Details Data</h2>
+            <div class="contingentItem-content margin-top" style="display:none;">
+                <button id="contingentDetailsSaveBtn" type="button" style="display: inline-block;margin:5px;float:right;" class="btn btn-primary">Save</button>
+                <div class="row contingentItem clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+
+                        @(Html.EJ().Grid<object>
+                        ("ContingentDetailsGrid")
+                         .Datasource(ds => ds.Json((IEnumerable<object>)Model.ContingentItemsList)//.UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+                          .UpdateURL(Url.Action("ERFContingentDetailsDataUpdate", "ErfNew"))
+                                        .InsertURL(Url.Action("ERFContingentDetailsDataInsert", "ErfNew"))
+                                        //.RemoveURL(Url.Action("EquipmentDelete", "ErfNew"))
+                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                            .AllowPaging()
+                            .AllowFiltering()
+                            .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                            .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                             .Mappers(map => map.ExportToExcelAction(Url.Action("ContingentDetailsExcelExport", "ErfNew")))
+                            .ToolbarSettings(toolbar =>
+                            {
+                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                {
+                                    items.AddTool(ToolBarItems.ExcelExport);
+                                    items.AddTool(ToolBarItems.Add);
+                                    items.AddTool(ToolBarItems.Edit);
+                                    items.AddTool(ToolBarItems.Update);
+                                    items.AddTool(ToolBarItems.Cancel);
+                                });
+                            })
+                            .ClientSideEvents(eve =>
+                            {
+                                eve.BeginEdit("beginedit")
+                                .ActionBegin("ActionBegin")
+                                .EndEdit("EndEdit")
+                                .EndAdd("EndAdd")
+                                .ToolbarClick("onToolbarClick");
+                            })
+                            .Columns(col =>
+                            {
+                                col.Field("id").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+                                col.Field("Name").HeaderText("Contingent Item Name").ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("ContingentName").HeaderText("Contingent Name").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ContingentNamesList)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("LadinCost").HeaderText("Laid In Cost").ValidationRules(r => r.AddRule("required", true)).Format("{0:C}").Add();
+                                col.Field("CashSale").HeaderText("Cost Sale").ValidationRules(r => r.AddRule("required", true)).Format("{0:C}").Add();
+                                col.Field("Rental").HeaderText("Rental").ValidationRules(r => r.AddRule("required", true)).Format("{0:C}").Add();
+                                col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                            })
+
+                        )
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="container-fluid">
+            <h2 class="orderTypeItem-head arrow-down tabheader">Order Type Data</h2>
+            <div class="orderTypeItem-content margin-top" style="display:none;">
+                <button id="orderTypeSaveBtn" type="button" style="display: inline-block;margin:5px;float:right;" class="btn btn-primary">Save</button>
+                <div class="row orderTypeItem clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+
+                        @(Html.EJ().Grid<object>
+                        ("orderTypeGrid")
+                         .Datasource(ds => ds.Json((IEnumerable<object>)Model.OrderTypeList)
+                          .UpdateURL(Url.Action("ERFOrderTypeDataUpdate", "ErfNew"))
+                                        .InsertURL(Url.Action("ERFOrderTypeDataInsert", "ErfNew"))
+                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                            .AllowPaging()
+                            .AllowFiltering()
+                            .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                            .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                             .Mappers(map => map.ExportToExcelAction(Url.Action("OrderTypeExcelExport", "ErfNew")))
+                            .ToolbarSettings(toolbar =>
+                            {
+                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                {
+                                    items.AddTool(ToolBarItems.ExcelExport);
+                                    items.AddTool(ToolBarItems.Add);
+                                    items.AddTool(ToolBarItems.Edit);
+                                    items.AddTool(ToolBarItems.Update);
+                                    items.AddTool(ToolBarItems.Cancel);
+                                });
+                            })
+                            .ClientSideEvents(eve =>
+                            {
+                                eve.BeginEdit("beginedit")
+                                .ActionBegin("ActionBegin")
+                                .EndEdit("EndEdit")
+                                .EndAdd("EndAdd")
+                                .ToolbarClick("onToolbarClick");
+                            })
+                            .Columns(col =>
+                            {
+                                col.Field("OrderTypeId").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+                                col.Field("OrderTypeDesc").HeaderText("Order Type Description").ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                            })
+
+                        )
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="container-fluid">
+            <h2 class="branchItem-head arrow-down tabheader">Branch Data</h2>
+            <div class="branchItem-content margin-top" style="display:none;">
+                <button id="branchSaveBtn" type="button" style="display: inline-block;margin:5px;float:right;" class="btn btn-primary">Save</button>
+                <div class="row orderTypeItem clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+
+                        @(Html.EJ().Grid<object>
+                        ("branchGrid")
+                         .Datasource(ds => ds.Json((IEnumerable<object>)Model.BranchList)
+                          .UpdateURL(Url.Action("ERFBranchDataUpdate", "ErfNew"))
+                                        .InsertURL(Url.Action("ERFBranchDataInsert", "ErfNew"))
+                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                            .AllowPaging()
+                            .AllowFiltering()
+                            .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                            .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                             .Mappers(map => map.ExportToExcelAction(Url.Action("BranchDetailsExcelExport", "ErfNew")))
+                            .ToolbarSettings(toolbar =>
+                            {
+                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                {
+                                    items.AddTool(ToolBarItems.ExcelExport);
+                                    items.AddTool(ToolBarItems.Add);
+                                    items.AddTool(ToolBarItems.Edit);
+                                    items.AddTool(ToolBarItems.Update);
+                                    items.AddTool(ToolBarItems.Cancel);
+                                });
+                            })
+                            .ClientSideEvents(eve =>
+                            {
+                                eve.BeginEdit("beginedit")
+                                .ActionBegin("ActionBegin")
+                                .EndEdit("EndEdit")
+                                .EndAdd("EndAdd")
+                                .ToolbarClick("onToolbarClick");
+                            })
+                            .Columns(col =>
+                            {
+                                col.Field("Id").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+                                col.Field("Region").HeaderText("Region").ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("BranchNo").HeaderText("Branch#").ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("BranchName").HeaderText("Branch Name").ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("District").HeaderText("District").Add();
+                                col.Field("Address").HeaderText("Address").Add();
+                                col.Field("City").HeaderText("City").AllowEditing(false).Add();
+                                col.Field("State").HeaderText("State").AllowEditing(false).Add();
+                                col.Field("PostalCode").HeaderText("Postal Code").ValidationRules(r => r.AddRule("required", true)).Add();
+                                col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                            })
+
+                        )
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+

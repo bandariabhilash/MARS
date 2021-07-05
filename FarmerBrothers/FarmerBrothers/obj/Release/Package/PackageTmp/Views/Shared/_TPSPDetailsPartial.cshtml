@@ -1,0 +1,94 @@
+﻿@model FarmerBrothers.Models.CustomerModel
+
+@Html.HiddenFor(c => c.CustomerId)
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <h2 class="customer-head arrow-down tabheader">Technician / Third Party</h2>
+        <div class="customer-content margin-top">
+            <div class="row clear-input">
+                <div class="col-md-4 customer-col1 customer sm-pad-reset">
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5">Tech / TPSP Name:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control CustomerData" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5">Address:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Html.TextBoxFor(c => c.Address, new { @class = "form-control CustomerData" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5"></span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-8 customer sm-pad-reset">
+                    <div class="row">
+                        <div class="col-md-6 customer-form-cnt">
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">City:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(c => c.City, new { @class = "form-control CustomerData" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">State:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(c => c.State, new { @class = "form-control CustomerData" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Zip Code:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(c => c.ZipCode, new { @class = "form-control CustomerData" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 customer-form-cnt">
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Phone Number:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(c => c.PhoneNumber, new { @class = "form-control CustomerData" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Email Address:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.TextBoxFor(c => c.MainEmailAddress, new { @class = "form-control CustomerData" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5"></span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

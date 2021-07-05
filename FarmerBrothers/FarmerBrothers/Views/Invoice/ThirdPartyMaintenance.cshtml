@@ -1,0 +1,344 @@
+﻿@model FarmerBrothers.Models.ThirdPartyMaintenanceModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+@{
+    ViewBag.Title = "ThirdPartyMaintenance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/Tpcm.css" rel="stylesheet" />
+
+<script type="text/javascript">
+
+    function enable_rateperpallet(status) {
+        var curObj = $("#RatePerPallet").data("ejCurrencyTextbox");
+        status == true ? curObj.enable() : curObj.disable();
+        curObj.val('');
+    }
+    function enable_ratepermile(status) {
+        var curObj = $("#TravelRatePerMile").data("ejCurrencyTextbox");
+        status == true ? curObj.enable() : curObj.disable();
+    }
+    function enable_otrate(status) {
+        var curObj = $("#TravelOvertimeRate").data("ejCurrencyTextbox");
+        status == true ? curObj.enable() : curObj.disable();
+    }
+    function enable_travelhourlyrate(status) {
+        var curObj = $("#TravelHourlyRate").data("ejCurrencyTextbox");
+        status == true ? curObj.enable() : curObj.disable();
+    }
+
+    function Validate() {
+
+        if ($('#ThirdPartyDropDown').val() == 0) {
+            $("#modalpopup").show();
+            $("p", "#modalpopup").text("Please select a Third Party");
+            event.preventDefault();
+        }
+        else if ($("#txtPartsUpCharge").val() == null || $("#txtPartsUpCharge").val() == "") {
+            $("#modalpopup").show();
+            $("p", "#modalpopup").text("Please enter Parts Up Charge");
+            event.preventDefault();
+        }
+        else if ($("#LaborHourlyRate").val() == null || $("#LaborHourlyRate").val() == "") {
+            $("#modalpopup").show();
+            $("p", "#modalpopup").text("Please enter Labor Hourly Rate");
+            event.preventDefault();
+        }
+        else if ($("#LaborOvertimeRate").val() == null || $("#LaborOvertimeRate").val() == "") {
+            $("#modalpopup").show();
+            $("p", "#modalpopup").text("Please enter Labor Overtime Rate");
+            event.preventDefault();
+        }
+        else {
+            return true;
+        }
+    };
+
+    function CallChangefunc(val) {
+
+        if ($.trim(val).length != 0) {
+            var url = "@Url.Action("GetThirdPartyDataByID", "Invoice")" + "?IntThirdPartyID=" + val;
+            $.ajax({
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function (response) {
+                    window.location.assign(response.Url);
+                },
+                error: function (reponse) {
+                    //alert("error : " + reponse);
+                    $("#modalpopup").show();
+                    $("p", "#modalpopup").text("Failed to retrieve the data");
+                }
+            });
+        }
+        else {
+            $('#txtPartsUpCharge').val('');
+            $('#txtLabor_Hr_Rate').val('');
+            $('#txtLabor_OT_Rate').val('');
+        }
+    };
+
+</script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#AdministratorLink').css("color", "white");
+
+        $("#closeclick").click(function () {
+            $("#modalpopup").hide();
+        });
+
+        ThirdPartyStatus = '@TempData["StatusMessage"]'
+
+        if (ThirdPartyStatus != null && ThirdPartyStatus != "") {
+            $("#modalpopup").show();
+            $("p", "#modalpopup").text(ThirdPartyStatus);
+        }
+
+        @if (Model.TravelZoneRateFlag == false){
+
+        @: $("#GridZoneDiv").hide();
+                    }
+
+        $('#tpcmlink').css("color", "white");
+        $('#TravelZoneRateFlag').change(function () {
+            if (this.checked) {
+                $("#GridZoneDiv").show();
+
+            }
+            else
+                $("#GridZoneDiv").hide();
+        });
+
+        $("#addrecord").on("click", function () {
+            var $hidthirdpartyzonerates = $("#thirdpartyzonerates");
+            $hidthirdpartyzonerates.val(JSON.stringify($("#GridZoneRates").ejGrid("model").dataSource));
+        });
+
+    });
+
+</script>
+
+
+@using (Html.BeginForm("ThirdPartyMaintenanceInsertion", "Invoice", FormMethod.Post, new { id = "tpcm", name = "tpcm" }))
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Third Party Contract Maintenance</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="well" style="overflow: hidden; margin: 0">
+        @Html.DropDownListFor(c => c.Techid, new SelectList(Model.ThirdPartyList.OrderBy(x => x.ThirdPartyName), "ThirdPartyId", "ThirdPartyName"), "Please select a Third Party", new { @Id = "ThirdPartyDropDown", @class = "form-control custom-select", @onchange = "CallChangefunc(this.value)", style = "width:200%" })
+        <label id="lblThirdPartyList" style="color:red"></label>
+        <div class="col-sm-1 pull-right">
+            <button type="submit" class="btn btn-p2 btn-green" style="margin: 0" id="addrecord" onclick="Validate()">Save</button>
+        </div>
+    </section>
+
+    <section class="well" style="overflow: hidden">
+        <div class="dfh-form">
+            <form role="form">
+
+                <!--Left Column Starts-->
+                <div class="col-sm-6">
+                    <h4>Parts</h4>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x">Parts Cost Upcharge Percentage:</label>
+                        <div class="col-sm-2 input-text">
+                            @Html.TextBoxFor(x => x.PartsUpCharge, new { @id = "txtPartsUpCharge", @class = "form-control", @type = "number" })<b>%</b>
+                            <label id="lblPartsUpCharge" style="color: red; white-space: nowrap;"></label>
+                        </div>
+                    </div>
+
+                    <h4>Labor</h4>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x">Hourly Rate:</label>
+                        <div class="col-sm-7">
+                            @Html.EJ().CurrencyTextBoxFor(x => x.LaborHourlyRate).ShowSpinButton(false).DecimalPlaces(2).Width("60%").Height("34px")
+                            <label id="lblLaborHourlyRate" style="color:red"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x">Overtime Hourly Rate:</label>
+                        <div class="col-sm-7">
+                            @Html.EJ().CurrencyTextBoxFor(x => x.LaborOvertimeRate).ShowSpinButton(false).DecimalPlaces(2).Width("60%").Height("34px")
+                            <label id="lblLaborOverTimeRate" style="color:red"></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x">1 Hour Minimum:</label>
+                        <div class="col-sm-2 check-block">
+                            @Html.CheckBoxFor(x => x.MinOneHourFlag, new { @checked = "false" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <h4>Shipment Invoicing</h4>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.RatePerPalletFlag, new { @onchange = "enable_rateperpallet(this.checked)" })
+                            Rate Per Pallet:
+                        </label>
+                        <div class="col-sm-7 input-text">
+                            @{var formatedRatePerPallet = String.Format("{0:0.00}", Model.RatePerPallet);}
+                            @if (Model.RatePerPalletFlag == true)
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.RatePerPallet).ShowSpinButton(false).DecimalPlaces(2).Width("60%").Height("34px")
+                            }
+                            else
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.RatePerPallet).ShowSpinButton(false).DecimalPlaces(2).Width("60%").Height("34px").Enabled(false)
+                            }
+
+                        </div>
+                    </div>
+                    <h4>Travel</h4>
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.TravelRatePerMileFlag, new { @onchange = "enable_ratepermile(this.checked)" })
+                            Rate Per Mile:
+                        </label>
+                        <div class="col-sm-7">
+                            @{var formatedTravelRatePerMile = String.Format("{0:0.00}", Model.TravelRatePerMile);}
+                            @if (Model.TravelRatePerMileFlag == true)
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.TravelRatePerMile).ShowSpinButton(false).DecimalPlaces(2).Width("60%").Height("34px")
+                            }
+                            else
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.TravelRatePerMile).ShowSpinButton(false).DecimalPlaces(2).Width("60%").Height("34px").Enabled(false)
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.TravelAllowRoundTripFlag)
+                            Allow Round Trip:
+                        </label>
+                        <div class="col-sm-7">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.TravelMinOneHour)
+                            1 Hour Minimum:
+                        </label>
+                        <div class="col-sm-7">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.TravelHourlyRateFlag, new { @onchange = "enable_travelhourlyrate(this.checked)" })
+                            Hourly Rate:
+                        </label>
+                        <div class="col-sm-7 input-text">
+                            @{var formatedTravelHourlyRateFlag = String.Format("{0:0.00}", Model.TravelHourlyRate);}
+                            @if (Model.TravelHourlyRateFlag == true)
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.TravelHourlyRate).ShowSpinButton(false).DecimalPlaces(2).EnableStrictMode(true).Width("60%").Height("34px")
+                            }
+                            else
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.TravelHourlyRate).ShowSpinButton(false).DecimalPlaces(2).EnableStrictMode(true).Width("60%").Height("34px").Enabled(false)
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.TravelOverTimeRateFlag, new { @onchange = "enable_otrate(this.checked)" })
+                            Overtime Rate:
+                        </label>
+                        <div class="col-sm-7">
+                            @if (Model.TravelOverTimeRateFlag == true)
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.TravelOvertimeRate).ShowSpinButton(false).DecimalPlaces(2).EnableStrictMode(true).Width("60%").Height("34px")
+                            }
+                            else
+                            {
+                                @Html.EJ().CurrencyTextBoxFor(x => x.TravelOvertimeRate).ShowSpinButton(false).DecimalPlaces(2).EnableStrictMode(true).Width("60%").Height("34px").Enabled(false)
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-5 padding-none-x radio-inline">
+                            @Html.CheckBoxFor(x => x.TravelZoneRateFlag)
+                            Zone Rates:
+                        </label>
+                        <div class="col-sm-7">
+                            @*  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered" id="tblZoneRates">   </table>*@
+                            <div>
+                                @Html.HiddenFor(m => m.thirdpartyzonerates)
+                            </div>
+
+                            <div id="GridZoneDiv">
+                                @(Html.EJ().Grid<FarmerBrothers.Data.ThirdpartyConMaintenanceZonerate>("GridZoneRates").Datasource(Model.ThirdPartyZoneRatesList).AllowScrolling()
+                                          .AllowPaging()
+                                          .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                          .ToolbarSettings(toolbar =>
+                                        {
+                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                       {
+                                           items.AddTool(ToolBarItems.Add);
+                                           items.AddTool(ToolBarItems.Edit);
+                                           items.AddTool(ToolBarItems.Delete);
+                                           items.AddTool(ToolBarItems.Update);
+                                           items.AddTool(ToolBarItems.Cancel);
+                                       });
+                                        })
+                                  .SelectionType(SelectionType.Single)
+
+                            .Columns(col =>
+                            {
+                                col.Field("Description").HeaderText("Description").Add();
+                                col.Field("Rate").HeaderText("Rate").Format("{0:C}").Add();
+                                col.Field("BasedOn").HeaderText("Based On").EditType(EditingType.Dropdown).DataSource((IEnumerable<object>)ViewData["BasedOnDropdown"]).Add();
+
+                            }).ClientSideEvents(e => e.Load("load"))
+                                )
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Right Column Ends-->
+
+            </form>
+        </div>
+    </section>
+
+
+    <div id="modalpopup" class="modalpopup">
+        <div class="modelpopup-inner">
+            <div class="modal-header">
+                <a class="close" id="closeclick" data-dismiss="modal">×</a>
+                <h3>MARS - Third Party Management</h3>
+            </div>
+            <div class="modal-body">
+                <p>Status Updated Successfully..</p>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+

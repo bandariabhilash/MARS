@@ -1,0 +1,106 @@
+﻿@{
+    ViewBag.Title = "ReportsSearch";
+}
+
+@model FarmerBrothers.Models.ReportsModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+
+        $( '#ReportLink' ).css( "color", "white" );
+
+    } );
+
+</script>
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11 col-sm-4 col-md-3">
+                <b>Reports List</b>
+            </div>
+            
+        </div>
+    </section>
+
+    if (Model.Reports != null)
+    {
+        foreach (var item in Model.Reports)
+        {
+
+            <section class="block">
+                <div class="container-fluid">
+                    <h2 class="work-requested-details-head arrow-down tabheader">@item.ReportType</h2>
+                    <div class="work-requested-details-content margin-top" style="display:block">
+                        <div class="col-xs-12 customer sm-pad-reset">
+
+                            <section class="block margin-top">
+                                <div class="container-fluid">
+                                    @{
+                                        List<string> userReports = (List<string>)System.Web.HttpContext.Current.Session["UserReports" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                              ? Security.GetUserReports((int)System.Web.HttpContext.Current.Session["UserId"],null) :
+                              (List<string>)System.Web.HttpContext.Current.Session["UserReports" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                                        if (userReports.Count() > 0)
+                                        {
+
+                                            foreach (var name in item.ReportNames)
+                                            {
+                                        <div class="row top-info">
+                                            <div class="col-xs-12 col-sm-4 col-md-3">                                                
+                                                @if (userReports.Contains(name))
+                                                {
+                                                    if (name == "Non-Service Report")
+                                                    {
+                                                        <a href="@MvcHtmlString.Create(name.Replace(" ", "").Replace("-", ""))" title="@Html.Raw(Html.AttributeEncode(name))"> Customer Service Report</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a href="@MvcHtmlString.Create(name.Replace(" ", "").Replace("-", ""))" title="@Html.Raw(Html.AttributeEncode(name))"> @Html.Raw(Html.AttributeEncode(name))</a>
+                                                    }
+                                                }
+
+                                            </div>
+                                        </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="row top-info">
+                                                <div class="col-xs-12 col-sm-4 col-md-3">
+                                                    <label>No Access to Any Reports. Please contact Administrator</label>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+        }
+    }
+}
+

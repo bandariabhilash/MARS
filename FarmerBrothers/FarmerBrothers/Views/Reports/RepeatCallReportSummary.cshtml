@@ -1,0 +1,233 @@
+﻿@model FarmerBrothers.Models.RepeatCallReportSummaryModel
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var searchCriteria;
+
+    function queryCellInfo(args)
+    {
+        if (args.column.field == "RepeatCount") {
+            args.cell.className	+= " urlStyle";
+        }
+    }
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+        $("#repCallDateFrom").ejDatePicker({ value: new Date($("#repCallDateFrom").val()) });
+        $("#repCallDateTo").ejDatePicker({ value: new Date($("#repCallDateTo").val()) });
+
+         $("#TechID").change(function () {
+            $.ajax({
+            url: "@Url.Action("TechnicianByFamilyAff", "Reports")",
+            data: { FamilyAff: $('#TechID option:selected').val() },
+            success: function (Result) {
+                $('#TechniciansId').empty()
+                $.each(Result, function (key, value) {
+                    $("#TechniciansId").append($("<option></option>").val(value.DealerId).html(value.CompanyName));
+                });
+
+            }
+
+            })
+        });
+
+
+        $('#repCallResults').ejGrid({
+            exportToExcelAction : '@Url.Action("RepeatCallExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            queryCellInfo:"queryCellInfo",
+            pageSettings: { pageSize: 25 },
+            allowResizeToFit : true,
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "BranchId", headerText: "Customer BranchID"},
+                { field: "BranchName", headerText: "Branch Name" },
+                { field: "Region", headerText: "Region" },
+                { field: "ESM", headerText: "ESM" },
+                { field: "TechName", headerText: "Original Tech Name" },
+                { field: "TechId", headerText: "TechID" },
+                { field: "RepeatCount", headerText: "Repeat Count" }
+            ]
+        });
+
+
+
+
+
+
+        $("#repCallResults").ejGrid({
+            recordClick: function (args) {
+                var techId = $("#TechniciansId").val();
+                var familyAff = $("#TechID").val();
+                var fromDate = $('#repCallDateFrom').val();
+                var toDate = $('#repCallDateTo').val()
+                var branchId = args.data["BranchId"];
+
+                if(args.data["TechId"] == "Total")
+                {
+                    if(techId == -1) techId = 0;
+                    branchId = "All";
+                }
+                else
+                {
+                    techId = args.data["TechId"];
+                }
+
+                window.location.href = "@Url.Action("RepeatCallReport", "Reports")" + "/"+techId+"?fromdate="+fromDate+"&todate="+toDate+"&branch="+branchId +"&familyAff="+familyAff;
+
+                @*if(args.data["TechId"] != "Total")
+                    window.location.href = "@Url.Action("RepeatCallReport", "Reports")" + "/"+args.data["TechId"]+"?fromdate="+$('#repCallDateFrom').val()+"&todate="+$('#repCallDateTo').val()+"&branch="+args.data["BranchId"];
+                else
+                    window.location.href = "@Url.Action("RepeatCallReport", "Reports")" + "/"+0+"?fromdate="+$('#repCallDateFrom').val()+"&todate="+$('#repCallDateTo').val()+"&branch=All";*@
+            }
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchRepeatCall", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#repCallResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#repCallDateFrom').val() == ""
+            && $('#repCallDateTo').val() == ""
+        )) {
+            $('form').submit();
+        }
+
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#repCallDateFrom').val() == ""
+            || $('#repCallDateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearRepCallSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearRepeatCallResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#repCallResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Repeat Call Report summary</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.RepeatCallFromDate, new { @class = "form-control SearchPanelControl", @Id = "repCallDateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.RepeatCallToDate, new { @class = "form-control SearchPanelControl", @Id = "repCallDateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Family Aff :
+                                @Html.DropDownListFor(c => c.TechID, new SelectList(Model.FamilyAffs, "TechID", "TechName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Technician :
+                                @Html.DropDownListFor(t => t.DealerId, new SelectList(Model.Technicianlist, "DealerId", "CompanyName", "None"), new { @class = "form-control SearchPanelControl" , @Id = "TechniciansId" })
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearRepCallSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="repCallResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

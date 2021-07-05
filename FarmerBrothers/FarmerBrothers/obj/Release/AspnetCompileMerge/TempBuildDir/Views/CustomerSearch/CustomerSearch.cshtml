@@ -1,0 +1,526 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@model FarmerBrothers.Models.CustomerSearchModel
+
+@using FarmerBrothers.Models;
+
+<script type="text/javascript">
+    var searchCriteria;
+    var canExport   
+
+    function queryCellInfo(args)
+    {
+        if (args.column.field == "ContactID") {
+            args.cell.className	+= " urlStyle";
+        }
+        if((args.data.CompanyName != null && args.data.CompanyName.toLocaleLowerCase().indexOf("-cm") != -1) 
+            || (args.data.PricingParentDesc != null && args.data.PricingParentDesc.toLocaleLowerCase().indexOf("core-mark") != -1))
+        {
+            $($(args.cell).parent()).css({"font-weight": "bold", "color": "#FF0000"});//, "background": "#dfb37b"});
+        }
+        /*if(args.column.field == "DaysSinceLastSale")
+        {
+            if(args.data.LastSaleDate != null && args.data.LastSaleDate != 'undefined' )
+            {
+                var mydate = new Date(args.data.LastSaleDate);
+                var today = new Date();
+                $(args.cell).text(calculateNoOfDays(mydate, today));
+            }
+            else
+            {
+                $(args.cell).text("");
+            }
+        }*/
+    }
+
+    function calculateNoOfDays( date1, date2 ) {
+        //Get 1 day in milliseconds
+        var one_day=1000*60*60*24;
+
+        // Convert both dates to milliseconds
+        var date1_ms = date1.getTime();
+        var date2_ms = date2.getTime();
+
+        // Calculate the difference in milliseconds
+        var difference_ms = date2_ms - date1_ms;
+    
+        // Convert back to days and return
+        return Math.round(difference_ms/one_day); 
+    }
+
+    $(document).ready(function () {
+
+
+        $('#CustomerLink').css("color", "white");
+
+        $("#UnknownCustomerLinkId").click(function(e) {
+            //window.open('@Url.Action("WorkorderManagement", "Workorder")');
+            window.location.href = "@Url.Action("WorkorderManagement", "Workorder")";
+            e.preventDefault();
+        });
+
+
+
+        var value = '@Request.RequestContext.HttpContext.Session["CanExportSessionValue"]';
+
+        if (value ==1) {
+            $('#CustomerResults').ejGrid({
+                exportToExcelAction : '@Url.Action("ExcelExport","CustomerSearch")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                queryCellInfo:"queryCellInfo",
+                dataSource : @Html.Raw(Json.Encode(Model.CustomerSearchResults)),
+                columns: [
+                    { field: "ContactID", headerText: "Account Number"},
+                    { field: "CompanyName", headerText: "Customer Name" },
+                    { field: "SearchType", headerText: "Customer Type" },
+                    { field: "Address1", headerText: "Street Address" },
+                    { field: "Address2", headerText: "Street Address2" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", headerText: "State" },
+                    { field: "PostalCode", headerText: "Zip" },
+                    { field: "Phone", headerText: "Phone" },
+                    { field: "PricingParentID", headerText: "Parent ID" },
+                    { field: "PricingParentDesc", headerText: "Parent Name" },
+                    { field: "LastSaleDate", headerText: "Last Sale Date" },
+                    { field: "DaysSinceLastSale", headerText: "Days Since Last Sale" },
+                    { field: "LongAddressNumber", headerText: "Long Address Number" }
+
+                ]
+            });
+        }
+        else
+        {
+            $('#CustomerResults').ejGrid({
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                queryCellInfo:"queryCellInfo",
+                dataSource : @Html.Raw(Json.Encode(Model.CustomerSearchResults)),
+                columns: [
+                    { field: "ContactID", headerText: "Account Number"},
+                    { field: "CompanyName", headerText: "Customer Name" },
+                    { field: "Address1", headerText: "Street Address" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", headerText: "State" },
+                    { field: "PostalCode", headerText: "Zip" },
+                    { field: "Phone", headerText: "Phone" },
+                    { field: "PricingParentID", headerText: "Parent ID" },
+                    { field: "PricingParentDesc", headerText: "Parent Name" },
+                    { field: "LastSaleDate", headerText: "Last Sale Date" },
+                    { field: "DaysSinceLastSale", headerText: "Days Since Last Sale" },
+                    { field: "LongAddressNumber", headerText: "Long Address Number" }
+
+                ]
+            });
+        }
+
+
+        $("#CustomerResults").ejGrid({
+            recordClick: function (args) {
+                //window.open('@Url.Action("CustomerDetails", "Customer")' + "/" + args.data["ContactID"], 'Customer_' + args.data["ContactID"], '');
+                @*window.location.href = "@Url.Action("CustomerDetails", "Customer")" + "/" + args.data["ContactID"];*@
+                $("#custId").html(args.data["ContactID"]);
+
+           //     if((args.data.CompanyName != null && args.data.CompanyName.toLocaleLowerCase().indexOf("-cm") != -1) 
+                //|| (args.data.PricingParentDesc != null && args.data.PricingParentDesc.toLocaleLowerCase().indexOf("core-mark") != -1))
+                if(args.data.CompanyName.toLocaleLowerCase().startsWith("core-mark"))
+                {
+                    //$("#customerAlertTxt").html("Coremark Customer – Please call 1-877-267-3238 (proceed if request is from NGB)");
+                    $("#customerAlertTxt").html("All Core-Mark customers should contact: core-mark@ngbservice.com or by calling 1-877-Core-Bev");
+                    $('[data-popup="popup-coremark-customer"]').fadeIn(350);
+                }
+                else if(args.data.CompanyName.toLocaleLowerCase().startsWith("ampm") && args.data.CompanyName.toLocaleLowerCase().endsWith("-cm"))
+                {
+                    $("#customerAlertTxt").html("Coremark Customer – Please contact: Duke Service’s: 800-603-7922");
+                    $('[data-popup="popup-coremark-customer"]').fadeIn(350);
+                }
+
+
+                //else
+                //{
+                //    $('[data-popup="popup-customerVerify-1"]').fadeIn(350);
+                //    $("#customerAlertTxt").html("");
+                //}
+
+                //else if(NonApprovedCustomers.includes(args.data.ContactID))
+                //{
+                //    $('[data-popup="popup-nonApproved-customer"]').fadeIn(350);
+                //}
+               else if(args.data.SearchType.toUpperCase() == "CE")
+                {
+                   $("#customerAlertTxt").html("This account should not be restricted from service if greater than 60 days no sales.  \n  Are you sure you want to Open " + args.data.ContactID);
+                    $('[data-popup="popup-coremark-customer"]').fadeIn(350);
+                }               
+                else
+                {
+                    $('[data-popup="popup-customerVerify-1"]').fadeIn(350);
+                    $("#customerAlertTxt").html("");
+                }
+            }
+        });
+
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("Search", "CustomerSearch")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#CustomerResults").ejGrid("instance");
+                    obj.dataSource(result);
+                    if (result.length >= 100)
+                    {
+                        $('#ResultsMessage').text("Results Set Shows Maximum of 100 rows")
+                    }
+                    else
+                    {
+                        $('#ResultsMessage').text("")
+                    }
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#CustomerID').val() == ""
+            && $('#CustomerName').val() == ""
+            && $('#Address').val() == ""
+            && $('#City').val() == ""
+            && $('#StatesDropDown').val() == "n/a"
+            && $('#PhoneWithAreaCode').val() == ""
+            && $('#ParentId').val() == ""
+            && $('#ZipCode').val() == ""
+            && $('#LongAddressNumber').val() == ""))
+        {
+            $('form').submit();
+        }
+    });
+
+    function ValidateSearchCriteria()
+    {
+        //alert( $('#CustomerID').val() + "==="+ $('#CustomerName').val() + "==="+$('#Address').val() + "==="+ $('#City').val() + "==="+$('#StatesDropDown').val()
+        //    + "==="+$('#PostalCode').val() + "==="+ $('#PhoneWithAreaCode').val() + "==="+$('#ParentId').val());
+        var valid = true;
+        if ($('#CustomerID').val() == ""
+            && $('#CustomerName').val() == ""
+            && $('#Address').val() == ""
+            && $('#City').val() == ""
+            && $('#StatesDropDown').val() == "n/a"
+            && $('#PhoneWithAreaCode').val() == ""
+            && $('#ParentId').val() == ""
+            && $('#ZipCode').val() == ""
+            && $('#LongAddressNumber').val() == "")
+        {
+            AlertPopup("|Please Select at least one Search Criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function SearchClear() {
+        $('.form-control').val('');
+        $('#StatesDropDown').val("n/a");
+        $('#ResultsMessage').text("")
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearSearchResults", "CustomerSearch")",
+        }).done(function( result ) {
+            var obj = $("#CustomerResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+    function ShowVerifyCustomerPopup()
+    {
+        $('[data-popup="popup-customerVerify"]').fadeIn(350);
+    }
+    function HideVerifyCustomerPopup()
+    {
+        $('[data-popup="popup-customerVerify"]').fadeOut(350);
+        $('[data-popup="popup-customerVerify-1"]').fadeOut(350);
+
+        $('[data-popup="popup-coremark-customer"]').fadeOut(350);
+        $('[data-popup="popup-nonApproved-customer"]').fadeOut(350);
+       
+    }
+
+    function formSubmit()
+    {
+        if (ValidateSearchCriteria() == true) {
+            var frmValues = $("form").serialize();
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("Search", "CustomerSearch")",
+                data: frmValues
+            }).done(function( result ) {
+                var obj = $("#CustomerResults").ejGrid("instance");
+                HideVerifyCustomerPopup();
+                obj.dataSource(result);
+                if (result.length >= 100)
+                {
+                    $('#ResultsMessage').text("Results Set Shows Maximum of 100 rows")
+                }
+                else
+                {
+                    $('#ResultsMessage').text("")
+                }
+            });
+        }
+        else
+        {
+            HideVerifyCustomerPopup();
+        }
+    }
+
+    function OpenCustomerDetails()
+    {
+        $('[data-popup="popup-customerVerify-1"]').fadeOut(350);
+        window.location.href = "@Url.Action("CustomerDetails", "Customer")" + "/" + $("#custId").html();
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Customer Search</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Account Number:
+                                    @Html.TextBoxFor(c => c.CustomerID, new { Value = "", @class = "form-control", @type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Customer Name:
+                                    @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Address:
+                                    @Html.TextBoxFor(c => c.Address, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    City:
+                                    @Html.TextBoxFor(c => c.City, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    State:
+                                    @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="col-md-12 sm-pad-reset">
+
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Zip Code:
+                                    @Html.TextBoxFor(c => c.ZipCode, new { Value = "", @class = "form-control", @type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Phone#:
+                                    @Html.TextBoxFor(c => c.PhoneWithAreaCode, new { @class = "form-control" })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Parent ID:
+                                    @Html.TextBoxFor(c => c.ParentId, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Long Address Number:
+                                    @Html.TextBoxFor(c => c.LongAddressNumber, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                    @*<a onclick="ShowVerifyCustomerPopup()" class="btn btn-primary">Search</a>*@
+                                    <a onclick="SearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        @{
+                            Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                                        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                                        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                            if (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Full")
+                            {
+                                <div class="row">
+                                    <div class="col-md-12 customer-col2">
+                                        <div class="form-group">
+                                            <a id="UnknownCustomerLinkId" href="@Url.Action("WorkorderManagement", "Workorder")" style="float:right;margin-right:25px;"><u>Work Order Unknown Customer</u></a>
+                                            <a id="UnknownCustomerNonServiceLinkId" href="@Url.Action("NonServiceEventCall", "NonServiceEvent")" style="float:right;margin-right:25px;"><u>Customer Service Work Order Unknown Customer</u></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <b>Search Results</b> <span id="ResultsMessage" style="color:red"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="CustomerResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+            </div>
+        </div>
+    </section>
+                            }
+
+<div class="popup" data-popup="popup-customerVerify">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                <td>Did you verify the account information?</td>
+            </tr>           
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="formSubmit()" >Yes</button>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideVerifyCustomerPopup()">No</button>
+                </td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup-customerVerify" href="#">x</a>
+    </div>
+</div>
+
+<div class="popup" data-popup="popup-customerVerify-1">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                <td>Are you Sure you want to Open : </td>
+                <td id="custId"></td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="OpenCustomerDetails()">Yes</button>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideVerifyCustomerPopup()">No</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup-customerVerify-1" href="#">x</a>
+    </div>
+</div>
+
+<div class="popup" data-popup="popup-coremark-customer">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                @*<td></td>*@
+                <td id="customerAlertTxt"></td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="OpenCustomerDetails()">Yes</button>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideVerifyCustomerPopup()">No</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup-coremark-customer" href="#">x</a>
+    </div>
+</div>
+
+
+<div class="popup" data-popup="popup-nonApproved-customer">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                <td> Customer Not Approved for Service, Please Contact the Account Manager for any Assistance : </td>
+                <td id="customerAlertTxt"></td>
+            </tr>
+            <tr>
+                <td>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideVerifyCustomerPopup()">OK</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup-nonApproved-customer" href="#">x</a>
+    </div>
+</div>

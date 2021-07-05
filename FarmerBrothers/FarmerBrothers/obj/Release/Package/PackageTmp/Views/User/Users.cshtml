@@ -1,0 +1,1154 @@
+﻿@{ 
+    Dictionary<string, string> UserPrivilege1 = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+}
+
+@model FarmerBrothers.Models.NewProfile
+
+
+@using FarmerBrothers.Data;
+@using FarmerBrothers.Models;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+
+<script src="~/Content/jquery.validate.min.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.11.1/jquery.validate.min.js"></script>*@
+
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+<style type="text/css" class="cssStyles">
+    #control {
+        /*height: 420px;
+        width: 500px;
+        background-color: #f7f7f7;*/
+        display: flex;
+        padding: 25px;
+    }
+
+    #btns {
+        padding-left: 216px;
+    }
+
+    #sample {
+        height: 472px;
+        width: 600px;
+    }
+
+    .btn-primary {
+        color: #fff !important;
+        background-color: #572600 !important;
+        border-color: #904002 !important;
+    }
+
+    .btn-orange {
+        color: #fff !important;
+        background-color: #ff8c00 !important;
+        border-color: #ff8c00 !important;
+    }
+
+    #list2_container {
+        float: right;
+    }
+
+    #list1_container {
+        float: left;
+    }
+
+    .middlebuttons {
+        padding: 91px 25px 25px 25px;
+    }
+
+    #container1, #container2 {
+        width: 200px;
+    }
+
+    /*img {
+        padding-right: 10px;
+        padding-top: 3px;
+        width: 18px;
+        height: 15px;
+    }*/
+
+    #form1 {
+        padding: 25px;
+    }
+</style>
+
+<script type="text/javascript">
+
+    var formDirty = false;
+    var UserId = 0;
+    var updateUrl = null;
+
+    $.validator.addMethod( "customRegex", function ( value, element, params )
+    {
+        if ( ValidateEmailInGrid( element.value ) )
+            return true;
+        return false;
+    }, "Please Enter Valid EmailID!" );
+
+    function queryCellInfo(args) {
+
+        if (args.column.field == "UserPassword") {
+            args.cell.innerText = "*******";
+        }
+    } 
+
+    function create() {
+        return $("<input type='password' style='text- align: left; width: 100 %; height: 30px;'>");
+    }
+
+    function write(args) {
+        args.element.val(args.rowdata.UserPassword);
+    }
+
+    function read(args) {
+        return args.val();
+    }
+
+    function RecordClick( args )
+    {
+        if ( args.columnName == "Reports" )
+        {
+            UserId = args.data["UserId"];
+            $( "#commanddialog" ).ejDialog( "open" );
+            $( "#list1" ).ejListBox( "refresh", true );
+            $( '#list2' ).ejListBox( "removeAll" );
+            GetList2ByUserId( args.data["UserId"] );
+
+        }
+
+        if ( $( "#list2" ).data( "ejListBox" ).length )
+        {
+            //alert( "1" )
+            $( "#save" ).prop( "disabled", false );
+        }
+        else
+        {
+            //alert( "2" )
+            $( "#save" ).prop( "disabled", false );
+        }
+
+    }
+    function moveListbox()
+    {
+
+        var firstListBox = $( '#list1' ).data( "ejListBox" );
+        var selecteditems = firstListBox.getSelectedItems();
+
+        var len = selecteditems.length;
+
+        for ( var i = 0; i < len; i++ )
+        {
+
+            var target = $( '#list2' ).data( "ejListBox" );
+
+            if ( !IsValueExistinList2( selecteditems[i].value ) )
+            {
+
+                target.addItem( selecteditems[i].data );
+            }
+
+        }
+
+        firstListBox.element.children( "li" ).removeClass( "e-hover e-select" )
+
+    }
+    function IsValueExistinList2( selectedValue )
+    {
+        var exists = false;
+        var list2 = $( '#list2' ).data( "ejListBox" ).model.dataSource;
+        //alert( "3.2 =" + list2.length );
+        for ( var i = 0; i < list2.length; i++ )
+        {
+            if ( list2[i].report_name == selectedValue )
+            {
+                exists = true;
+            }
+        }
+        return exists;
+    }
+    function IsValueExistinList1( selectedValue )
+    {
+        var exists = false;
+        var list2 = $( '#list1' ).data( "ejListBox" ).model.dataSource;
+
+        for ( var i = 0; i < list2.length; i++ )
+        {
+            if ( list2[i].report_name == selectedValue )
+            {
+
+                exists = true;
+            }
+        }
+
+        return exists;
+    }
+    function removeListbox( e )
+    {
+        var secondListBox = $( '#list2' ).data( "ejListBox" );
+        var selecteditem = secondListBox.getSelectedItems();
+
+        var len = selecteditem.length;
+
+        for ( var j = 0; j < len; j++ )
+        {
+
+            var target = $( '#list1' ).data( "ejListBox" );
+            if ( !IsValueExistinList1( selecteditem[j].value ) )
+            {
+
+                target.addItem( selecteditem[j].data );
+            }
+        }
+        secondListBox.removeSelectedItems();
+    }
+
+    function onsave( e )
+    {
+        target = $( "#list2" ).data( "ejListBox" );
+        $.ajax( {
+            type: 'POST',
+            dataType: 'json',
+            url: '@Url.Action("UpdateUserReports", "User")',
+            data: {
+                listdata: JSON.stringify( target.model.dataSource ),
+                UserId: UserId
+            },
+            success: function ( response )
+            {
+                AlertPopup( response.message );
+                $( "#commanddialog" ).ejDialog( "close" );
+            },
+            error: function ( response )
+            {
+                AlertPopup( response.message );
+                $( "#commanddialog" ).ejDialog( "close" );
+            }
+        } );
+
+    }
+
+    function GetList2ByUserId( UserId )
+    {
+        var target = null;
+        target = $( "#list2" ).data( "ejListBox" );
+
+        $.ajax( {
+            type: 'GET',
+            dataType: 'json',
+            url: '@Url.Action("GetUserReports", "User")',
+            data: {
+                UserId: UserId
+            },
+            success: function ( response )
+            {
+                target.addItem( response.data );
+
+            }
+
+        } );
+
+    }
+
+
+    function oncancel( e )
+    {
+
+        $( "#commanddialog" ).ejDialog( "close" );
+
+    }
+    function SetSubmitOperation( operation )
+    {
+        $( "#Operation" ).val( operation );
+    }
+    $( "#list2" ).change( function myfunction()
+    {
+        //alert( "c1" )
+        if ( $( "#list2" ).data( "ejListBox" ).length )
+        {
+            //alert( "c2" )
+            $( "#save" ).prop( "disabled", false );
+        }
+        else
+        {
+            //alert( "c3" )
+            $( "#save" ).prop( "disabled", true );
+        }
+
+    } );
+
+
+    //function PhoneValidation( evt )
+    //{
+    //    var charCode = ( evt.which ) ? evt.which : event.keyCode;
+    //    //if ( ( charCode >= 48 && charCode <= 57 ) || charCode == 40 || charCode == 41 || charCode == 45 )
+    //    if ( charCode >= 48 && charCode <= 57 )
+    //        return true;
+
+    //    return false;
+    //}
+
+    $( document ).ready( function ()
+    {
+        //$( '#Phone' ).keypress( function ()
+        //{
+        //    return this.value.length < 10
+        //} )
+        $( '#Zip' ).keypress( function ()
+        {
+            return this.value.length < 5
+        } )
+
+        $( '#AdministratorLink' ).css( "color", "white" );
+
+        $( "#UserDetails_update" ).click( function ()
+        {
+            //alert( "1" );
+        } );
+        $( ".CustomerData" ).change( function ()
+        {
+            //alert( "formderty" );
+
+            formDirty = true;
+        } );
+
+        //$(".userType").on('change', function (e) {
+        //    if (e.target.id.toLowerCase() == 'istechuser') {
+        //        $("#TechId").prop("readonly", false);
+        //    }
+        //    else if (e.target.id.toLowerCase() == 'iserfuser') {
+        //        $("#TechId").prop("readonly", true);
+        //    }
+        //    else {
+        //        $("#TechId").prop("readonly", true);
+        //    }
+        //});
+
+        //$("#radioClearSelectionId").on('click', function () {
+        //    $(".userType").prop('checked', false);
+        //    $("#TechId").val("");
+        //    $("#TechId").prop("readonly", true);
+        //});
+
+        $( "form" ).submit( function ( e )
+        {
+            //alert( "submit click 1" );
+
+            var operation = $( "#Operation" ).val();
+            //alert( operation );
+            if ( operation == 1 )
+            {
+                //alert( "submit click 1.1" )
+                if ( $( "#ApplicationPrivilegeHidden" ).length )
+                {
+                    $( "#ApplicationPrivilegeHidden" ).val( JSON.stringify( $( "#ApplicationPrivilege" ).ejGrid( "instance" ).model.dataSource.dataSource.json ) );
+                }
+                else
+                {
+                    var input3 = $( "<input id='ApplicationPrivilegeHidden'>" )
+                        .attr( "type", "hidden" )
+                        .attr( "name", "ApplicationPrivilegeHidden" ).val( JSON.stringify( $( "#ApplicationPrivilege" ).ejGrid( "instance" ).model.dataSource.dataSource.json ) );
+                    $( this ).append( $( input3 ) );
+                }
+                //alert( "submit click 2" )
+                if ( ValidateProfile() == true && ValidatePassword() == true)
+                {
+                    if ( ( $( '#Phone' ).val() != '' && ValidatePhoneNumber( $( '#Phone' ).val() ) == true ) ||
+                     ( $( '#Phone' ).val() == '' ) )
+                    {
+                        //alert( "1" )
+                        $.ajax( {
+                            type: "GET",
+                            url: "@Url.Action("IsEmailExist", "User")",
+                            data: { "emaiId": $( '#Email' ).val() },
+                        } ).done( function ( jsonResult )
+                        {
+                            if ( jsonResult.success == true )
+                            {
+                                AlertPopup( "|User Name is Used, Please choose another User Name!" );
+
+                            }
+                            else
+                            {
+                                if ( $( '#TechId' ).val() != '' )
+                                {
+                                    $.ajax( {
+                                        url: "@Url.Action("IsValidTechnician", "User")",
+                                        type: 'GET',
+                                        data: { "TechId": $( '#TechId' ).val() },
+                                    } ).done( function ( jsonResult )
+                                    {
+                                        if ( jsonResult.success == true )
+                                        {
+                                            var frmValues = $( "form" ).serialize();
+                                            $.ajax( {
+                                                type: "post",
+                                                url: "@Url.Action("CreateProfile", "User")",
+                                                data: frmValues
+                                            } ).done( function ( response )
+                                            {                                                
+                                                if ( response != null && response.success == 0 )
+                                                {
+                                                    AlertPopup('|User Profile created Successfully!');
+                                                    updateUrl = response.Url;
+                                                    //Users();
+                                                }
+                                                else
+                                                {
+                                                    AlertPopup( '|There is a problem in user profile creation!' );
+                                                }
+                                            } );
+                                        }
+                                        else
+                                        {
+                                            AlertPopup( '|Enter Technician ID is already used or Its Invalid Technician!' );
+                                            e.preventDefault();
+                                        }
+                                    } );
+
+
+                                }
+                                else
+                                {
+                                    var frmValues = $( "form" ).serialize();
+                                    $.ajax( {
+                                        type: "post",
+                                        url: "@Url.Action("CreateProfile", "User")",
+                                        data: frmValues
+                                    } ).done( function ( response )
+                                    {
+                                        if ( response != null && response.success == 0 )
+                                        {
+                                            AlertPopup('|User Profile created Successfully!');
+                                            updateUrl = response.Url;
+                                           // Users();
+                                        }
+                                        else
+                                        {
+                                            AlertPopup( '|There is a problem in user profile creation!' );
+                                        }
+                                    } );
+                                }
+                            }
+                        } );
+                    }
+                    else
+                    {
+
+                    }
+
+                }
+                e.preventDefault();
+            }
+            else
+            {
+                //alert( "submit click 1.2" )
+                e.preventDefault();
+                //alert( "submit click 1.3" )
+            }
+
+        } );
+        //alert( "submit click 1.4" )
+        ProfileClear();
+        //alert( "submit click 1.5" )
+
+
+        $("[data-popup-close='popupalert']").click(function () {
+            if (updateUrl != null) {
+                window.location.href = updateUrl;
+            }
+        });
+    } );
+
+    function Users()
+    {
+        window.location.href = "@Url.Action("UserSearch", "User")";
+    }
+
+    function IsValidTechnician( TechId )
+    {
+
+        var valid = true;
+        $.ajax( {
+            url: "@Url.Action("IsValidTechnician", "User")",
+            type: 'GET',
+            data: { "TechId": TechId },
+        } ).done( function ( jsonResult )
+        {
+            if ( jsonResult.success == true )
+            {
+
+            }
+            else
+            {
+                AlertPopup( '|Please enter valid Technician ID!' );
+                valid = false;
+            }
+        } );
+        return valid;
+    }
+    function ValidateProfile()
+    {
+        //alert( "submit click 3" )
+        var valid = true;
+        if ( $( '#FirstName' ).val() == ''
+            || $( '#Email' ).val() == ''
+            || $( '#LastName' ).val() == ''
+            || $( '#Password' ).val() == ''
+            || $( '#Company' ).val() == ''
+            || $( '#ConfirmPassword' ).val() == '' )
+        {
+            AlertPopup( "|Please enter required information to create profile!" );
+            valid = false;
+        }
+
+        //var userType = $(".userType:checked").val();
+
+        //if (userType !== 'undefined') {
+        //    if (userType == "Tech" && $("#TechId").val() == "") {
+        //        AlertPopup("|Please enter TechId!");
+        //        valid = false;
+        //    }
+        //}
+
+        return valid;
+    }
+    function ValidatePassword()
+    {
+        //alert( "submit click 4 p=" + $( '#Password' ).val() + " c= " + $( '#ConfirmPassword' ).val() )
+        var valid = true;
+        if ( $( '#Password' ).val() != $( '#ConfirmPassword' ).val() )
+        {
+            AlertPopup( "|Password and ConfirmPassword should be same!" );
+            valid = false;
+        }
+
+        return valid;
+    }
+    function ValidatePhoneNumber( phone )
+    {
+        if ( phone.replace( /\W+/g, '' ).length == 10 )
+        {
+            return true;
+        }
+        else
+        {
+            AlertPopup( "|Please Enter Valid Phone Number" );
+            return false;
+        }
+    }
+
+    function ValidateEmailInGrid( sEmail )
+    {
+        var filter = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        if ( filter.test( sEmail ) )
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    function ValidateEmail( sEmail )
+    {
+        var filter = /^([\w-\.]+)@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        if ( filter.test( sEmail ) )
+        {
+            //alert("email check")
+            return true;
+        }
+        else
+        {
+            AlertPopup( "|Please Enter Valid Email" );
+            return false;
+        }
+    }
+    function ProfileClear()
+    {
+        $( '.form-control' ).val( '' );
+        $( '#StatesDropDown' ).val( "n/a" );
+    }
+
+    function UserSaveFailure( args )
+    {
+        alert( "Fail" );
+    }
+
+    function UserSaveComplete( args )
+    {
+        if ( args != null )
+        {
+            if ( args.requestType == "save" )
+            {
+                AlertPopup( args.data.message );
+            }
+        }
+
+    }
+
+    function beginedit( args )
+    {
+        //var result = args.rowData.IsActive;
+    }
+
+    function UserDetailsBegin( args )
+    {
+        $( '#UserDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function UserDetailsEndEdit( args )
+    {
+        $( '#UserDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function UserDetailsEndAdd( args )
+    {
+        $( '#UserDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    function UserModulePrivilegeBegin( args )
+    {
+        $( '#UserModulePrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function UserModulePrivilegeEndEdit( args )
+    {
+        $( '#UserModulePrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function UserModulePrivilegeEndAdd( args )
+    {
+        $( '#UserModulePrivilege_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    function NewProfile()
+    {
+        window.location.href = "@Url.Action("NewProfile", "User")";
+    }
+
+    function childLoad( args )
+    {
+        //alert( "Child" );
+        //var data = this.model.parentDetails.parentKeyFieldValue;
+        //alert( data );
+
+    }
+
+
+
+    function begin( args )
+    {
+        $( '.e-image' ).css( "visibility", "hidden" );
+    }
+    function endEdit( args )
+    {
+        $( '.e-image' ).css( "visibility", "hidden" );
+    }
+    function endAdd( args )
+    {
+        $( '.e-image' ).css( "visibility", "hidden" );
+    }
+
+    function onToolbarClick( args )
+    {
+        if ( ( args.itemName == "Edit" || args.itemName == "Delete" ) & this.getSelectedRecords().length == 0 )
+        {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup( "|No records selected for " + args.itemName + " operation" );
+
+        }
+    }
+
+</script>
+<script type="text/x-jsrender" id="columnTemplate">
+    <img src="@Url.Content("~/images/report_go.png")" style="width: 25px; height: 25px;" />
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    if (UserPrivilege1["User Maintenance"].ToLower() == Model.ACCESS_FULL)
+    {
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">New Profile</h2>
+            <div class="customer-content margin-top">
+                <div class="row clear-input">
+                    <div class="col-md-4 customer-col1 customer sm-pad-reset">
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">First Name:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.FirstName, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">Last Name:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.LastName, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">Company:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Company, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">User Name:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Email, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">Email:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.EmailId, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">Password:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Password, new { @class = "form-control CustomerData", @type = "password" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5 required">Confirm Password:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.ConfirmPassword, new { @class = "form-control CustomerData", @type = "password" })
+                                </div>
+                            </div>
+                        </div>
+                       
+
+                        @*<div class="col-sm-6-o">                            
+                            <span class="col-md-5">
+                                @Html.Label("Is Technician User:") @Html.RadioButtonFor(model => model.IsTechUser, "Tech",  new { @class = "userType", @id = "istechuser" }) 
+                            </span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.Label("Is ERF User:") @Html.RadioButtonFor(model => model.IsTechUser, "ERF", new { @class = "userType", @id = "iserfuser" })
+                                    <button type="button" id="radioClearSelectionId" style="margin-left:1vw; background-color:coral !important; border-color:lightcoral !important;" class="btn btn-primary">Clear Selection</button>
+                                </div>
+                            </div>
+                        </div>*@
+
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Technician ID:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.TechId, new
+                               {
+                                   @class = "form-control CustomerData",
+                                   @type = "number" @*, @readonly = "readonly"*@ })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Title:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Title, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Region:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Region, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">City:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.City, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.CheckBoxFor(m => m.IsPrimaryTechnician, new { @class = "IsPrimaryTech" }) IsPrimaryTech
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-8 customer sm-pad-reset">
+                        <div class="row">
+                            <div class="col-md-6 customer-col2">
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Phone:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Phone, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Manager:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Manager, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">M.I:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.MI, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Division:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Division, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Address:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Address, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">State:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Zip:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Zip, new { @type = "number", @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">FAX:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.Fax, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">JDE#:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(c => c.JDE, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 customer-form-cnt">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        User Roles:
+                                        <br />
+                                        <div class="table-responsive">
+                                            @Html.Partial("~/Views/Shared/_UserModulePrivilegePartial.cshtml", Model.modulePrivilegeModel)
+                                        </div><!--end of .table-responsive-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-md-3">
+                            @{
+                                Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                                            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                                            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                                if (UserPrivilege["User Maintenance"] == "Full")
+                                {
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary" onclick="SetSubmitOperation(1)" style="display: inline-block; margin-right: 10px; float: left;">Create Profile</button>
+            <a onclick="ProfileClear()" class="btn btn-orange">Clear</a>
+        </div>
+                                }
+                            }
+
+                        </div>
+                        <div class="col-md-7">
+
+                        </div>
+                        <div class="col-md-1">
+
+                        </div>
+                        <div class="col-md-1">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </section>
+                                }
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="work-requested-details-head arrow-down tabheader">User Details</h2>
+            <div class="work-requested-details-content margin-top" style="display:block;">
+                <div class="row clear-input">
+                    <div class="col-md-12">
+                        @{
+    
+    if (UserPrivilege1["User Maintenance"].ToLower() == Model.ACCESS_FULL || UserPrivilege1["User Maintenance"].ToLower() == Model.ACCESS_EDIT_ONLY)
+    {
+        <div class="table-responsive">
+            @(Html.EJ().Grid<object>("UserDetails")
+                                                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource).UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+
+                                                                    .AllowPaging().AllowFiltering()
+                                                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                                                    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                                                    .Mappers(map => map.ExportToExcelAction(Url.Action("UserListExport", "User")))
+                                                                    .ToolbarSettings(toolbar =>
+                                                                    {
+                                                                        toolbar.ShowToolbar().ToolbarItems(items =>
+                                                                        {
+                                                                            items.AddTool(ToolBarItems.Edit);
+                                                                            items.AddTool(ToolBarItems.Update);
+                                                                            items.AddTool(ToolBarItems.Cancel);
+                                                                            items.AddTool(ToolBarItems.ExcelExport);
+                                                                        });
+                                                                    })
+                                                                    .ClientSideEvents(eve =>
+                                                                    {
+                                                                        eve.BeginEdit("beginedit")
+                                                                        .ActionBegin("UserDetailsBegin")
+                                                                        .EndEdit("UserDetailsEndEdit")
+                                                                        .EndAdd("UserDetailsEndAdd")
+                                                                        .ActionFailure("UserSaveFailure")
+                                                                        .ActionComplete("UserSaveComplete")
+                                                                        .RecordClick("RecordClick")
+                                                                        .QueryCellInfo("queryCellInfo")
+                                                                        .ToolbarClick("onToolbarClick");
+                                                                    })
+
+                                                                    .Columns(col =>
+                                                                    {
+                                                                        col.Field("UserId").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+                                                                        col.HeaderText("Reports").Template(true).TemplateID("#columnTemplate").TextAlign(TextAlign.Center).Width(110).Add();
+                                                                        col.Field("Company").HeaderText("Company").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        col.Field("FirstName").HeaderText("First Name").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        col.Field("LastName").HeaderText("Last Name").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        col.Field("UserPassword").HeaderText("Password").ValidationRules(r => r.AddRule("required", true)).EditTemplate(a => { a.Create("create").Read("read").Write("write"); }).Add();
+                                                                        col.Field("Phone").HeaderText("Phone").Add();
+                                                                        //col.Field("Email").HeaderText("Email").ValidationRules(v => v.AddRule("required", true).AddRule("customRegex", true)).Add();
+                                                                        col.Field("Email").HeaderText("User Name").AllowEditing(false).Add();//.ValidationRules(v => v.AddRule("required", true)).Add();
+                                                                        col.Field("EmailId").HeaderText("Email").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        col.Field("TechId").HeaderText("Technician ID").Add();
+                                                                        col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                                                                        col.Field("CanExport").HeaderText("CanExport").EditType(EditingType.Boolean).Add();
+                                                                        col.Field("IsTechnician").HeaderText("IsTechnician").EditType(EditingType.Boolean).Add();
+                                                                    })
+                                               .ChildGrid<FarmerBrothers.Models.ApplicationRoleModel>(child =>
+                                               {
+                                                   child.Datasource(ds => ds
+                                                   .URL(Url.Action("GetUserPrivilege", "User"))
+                                                   .UpdateURL(Url.Action("UserPrivilegeUpdate", "User"))
+                                                   //.InsertURL(Url.Action("EquipmentInsert", "User"))
+                                                   //.RemoveURL(Url.Action("EquipmentDelete", "User"))
+                                                   .Adaptor(AdaptorType.UrlAdaptor))
+                                                      //Bind the URL to set the data source.
+                                                      //.ToolbarSettings(toolbar => { toolbar.ShowToolbar().ToolbarItems(items => { items.AddTool(ToolBarItems.Search); }); })
+                                                      .QueryString("UserId") // Pass the parenet key field value using Querystring
+                                                      //.AllowPaging()
+                                                       .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                                      .ToolbarSettings(toolbar =>
+                                                      {
+                                                          toolbar.ShowToolbar().ToolbarItems(items =>
+                                                          {
+                                                                                   // items.AddTool(ToolBarItems.Add);
+                                                                                   items.AddTool(ToolBarItems.Edit);
+                                                                                   //items.AddTool(ToolBarItems.Delete);
+                                                                                   items.AddTool(ToolBarItems.Update);
+                                                              items.AddTool(ToolBarItems.Cancel);
+                                                          });
+                                                      })
+                                                      .ClientSideEvents(eve => eve.Load("childLoad")
+                                                       .ActionBegin("begin")
+                                                       .EndEdit("endEdit")
+                                                       .EndAdd("endAdd")
+                                                       .ToolbarClick("onToolbarClick"))
+                                                      .Columns(col =>
+                                                      {
+                                                          col.Field("AppId").HeaderText("Application ID").IsPrimaryKey(true).Visible(false).Add();
+                                                                               //col.Field("AppName").HeaderText("Module").ForeignKeyField("ApplicationName").ForeignKeyValue("ApplicationName").DataSource(((IEnumerable<object>)Model.Modules)).AllowEditing(false).Add();
+                                                                               col.Field("AppName").HeaderText("Module").AllowEditing(false).Width(30).Add();
+                                                          col.Field("PriType").HeaderText("Privilege").ForeignKeyField("PrivilegeType").ForeignKeyValue("PrivilegeType").DataSource(((IEnumerable<object>)Model.modulePrivilegeModel.Privileges)).Width(30).Add();
+                                                      });
+                                               })
+
+            )
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            @(Html.EJ().Grid<object>("UserDetails")
+                                                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource).UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+
+                                                                    .AllowPaging().AllowFiltering()
+                                                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                                                    .Columns(col =>
+                                                                    {
+                                                                        col.Field("UserId").HeaderText("RID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Visible(false).Add();
+                                                                        col.Field("Company").HeaderText("Company").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        //col.Field("UserName").HeaderText("UserName").Add();
+                                                                        //col.Field("City").HeaderText("City").Add();
+                                                                        //col.Field("State").HeaderText("State").Add();
+                                                                        //col.Field("Zip").HeaderText("Zip").Add();
+                                                                        col.Field("FirstName").HeaderText("First Name").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        col.Field("LastName").HeaderText("Last Name").ValidationRules(r => r.AddRule("required", true)).Add();                                                                        
+                                                                        col.Field("Phone").HeaderText("Phone").Add();
+                                                                        col.Field("Email").HeaderText("User Name").AllowEditing(false).Add();//.ValidationRules(v => v.AddRule("required", true)).Add();
+                                                                        col.Field("EmailId").HeaderText("Email").ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                        col.Field("TechId").HeaderText("Technician ID").Add();
+                                                                        col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
+                                                                        col.Field("CanExport").HeaderText("CanExport").EditType(EditingType.Boolean).Add();
+                                                                        col.Field("IsTechnician").HeaderText("IsTechnician").EditType(EditingType.Boolean).Add();
+
+                                                                    })
+                                               .ChildGrid<FarmerBrothers.Models.ApplicationRoleModel>(child =>
+                                               {
+                                                   child.Datasource(ds => ds
+                                                   .URL(Url.Action("GetUserPrivilege", "User"))
+                                                   .UpdateURL(Url.Action("UserPrivilegeUpdate", "User"))
+                                                   .Adaptor(AdaptorType.UrlAdaptor))
+                                                   .QueryString("UserId") // Pass the parenet key field value using Querystring
+                                                                          //.AllowPaging()
+
+                                                   .ClientSideEvents(eve => eve.Load("childLoad")
+                                                   .ActionBegin("begin")
+                                                   .EndEdit("endEdit")
+                                                   .EndAdd("endAdd"))
+                                                      .Columns(col =>
+                                                      {
+                                                          col.Field("AppId").HeaderText("Application ID").IsPrimaryKey(true).Visible(false).Add();
+                                                          col.Field("AppName").HeaderText("Module").AllowEditing(false).Width(30).Add();
+                                                          col.Field("PriType").HeaderText("Privilege").ForeignKeyField("PrivilegeType").ForeignKeyValue("PrivilegeType").DataSource(((IEnumerable<object>)Model.modulePrivilegeModel.Privileges)).Width(30).Add();
+                                                      });
+                                               })
+
+            )
+        </div>
+    }
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="control">
+        @{Html.EJ().Dialog("commanddialog").Title("Reports").ShowOnInit(false).EnableAutoResize(true).EnableResize(true).Width("600")
+        .EnableResize(false).ContentTemplate(
+        @<div>
+            <div id="sample">
+
+                <p>
+                    Choose a report and click move button to add in group
+                </p>
+
+                <br />
+
+                <div id="control">
+
+                    <div id="container1">
+
+                        <p>
+
+                            FB Reports
+                        </p>
+
+                        @Html.EJ().ListBox("list1").AllowMultiSelection(true).Datasource((IEnumerable<FarmerBrothers.Models.FBReportModel>)ViewBag.listboxdata1).ListBoxFields(df => df.ID("report_id").Text("report_name"))
+                        
+
+
+                    </div>
+
+                    <div class="middlebuttons">
+
+                        @Html.EJ().Button("Add").Text("   Add ->").ShowRoundedCorner(true).ClientSideEvents(e => e.Click("moveListbox"))
+
+                        <br />
+
+                        <br />
+
+                        @Html.EJ().Button("Remove").Text("<- Remove").ShowRoundedCorner(true).ClientSideEvents(e => e.Click("removeListbox"))
+                        
+                    </div>
+
+                    <div id="container2">
+
+                        <p>
+
+                            User Reports
+                        </p>
+
+                        @Html.EJ().ListBox("list2").AllowMultiSelection(true).Datasource((IEnumerable<FarmerBrothers.Models.FBReportModel>)ViewBag.listboxdata2).ListBoxFields(df => df.ID("report_id").Text("report_name"))
+
+
+                    </div>
+
+                </div>
+            </div>
+            <div id="btns">
+                @Html.EJ().Button("save").Text("save").ShowRoundedCorner(true).CssClass("btn-primary").ClientSideEvents(e => e.Click("onsave"))
+                @Html.EJ().Button("cancel").Text("cancel").ShowRoundedCorner(true).CssClass("btn-orange").ClientSideEvents(e => e.Click("oncancel"))
+            </div>
+        </div>).Target("#UserDetails").ClientSideEvents(evt => evt.Close("onDialogClose")).Render();}
+
+
+    </div>
+}
+
+

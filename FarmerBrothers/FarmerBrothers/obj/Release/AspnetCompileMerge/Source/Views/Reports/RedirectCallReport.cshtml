@@ -1,0 +1,194 @@
+﻿@model FarmerBrothers.Models.RedirectCallModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+<script type="text/javascript">
+    var searchCriteria;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+        $("#rejCallDateFrom").ejDatePicker({ value: new Date($("#rejCallDateFrom").val()) });
+        $("#rejCallDateTo").ejDatePicker({ value: new Date($("#rejCallDateTo").val()) });
+
+     $("#TechID").change(function () {
+            $.ajax({
+            url: "@Url.Action("TechnicianByFamilyAff", "Reports")",
+            data: { FamilyAff: $('#TechID option:selected').val() },
+            success: function (Result) {
+                $('#TechniciansId').empty()
+                $.each(Result, function (key, value) {
+                    $("#TechniciansId").append($("<option></option>").val(value.DealerId).html(value.CompanyName));
+                });
+
+            }
+
+            })
+        });
+
+        $('#rejCallResults').ejGrid({
+                exportToExcelAction : '@Url.Action("RedirectCallExcelExport", "Reports")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+                columns: [
+                    { field: "BranchId", headerText: "BranchID"},
+                    { field: "BranchName", headerText: "Branch Name" },
+                    { field: "TechId", headerText: "TechID" },
+                    { field: "TechName", headerText: "Tech Name" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", headerText: "State" },
+                    { field: "RedirectCount", headerText: "Redirect Count" }
+                ]
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchRedirectCall", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#rejCallResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#rejCallDateFrom').val() == ""
+            && $('#rejCallDateTo').val() == ""
+        )) {
+            $('form').submit();
+        }
+
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#rejCallDateFrom').val() == ""
+            || $('#rejCallDateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearRejCallSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearRedirectCallResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#rejCallResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Redirect Call Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.RedirectCallFromDate, new { @class = "form-control SearchPanelControl", @Id = "rejCallDateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.RedirectCallToDate, new { @class = "form-control SearchPanelControl", @Id = "rejCallDateTo" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Family Aff :
+                                @Html.DropDownListFor(c => c.TechID, new SelectList(Model.FamilyAffs, "TechID", "TechName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Technician :
+                                @Html.DropDownListFor(t => t.DealerId, new SelectList(Model.Technicianlist, "DealerId", "CompanyName", "None"), new { @class = "form-control SearchPanelControl", @Id = "TechniciansId" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearRejCallSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="rejCallResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

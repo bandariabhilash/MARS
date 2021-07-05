@@ -1,0 +1,268 @@
+﻿@model FarmerBrothers.Models.RepeatCallReportResult
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    //var searchCriteria;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+        //$("#repCallDateFrom").ejDatePicker({ value: new Date($("#repCallDateFrom").val()) });
+        //$("#repCallDateTo").ejDatePicker({ value: new Date($("#repCallDateTo").val()) });
+
+
+        @*$('#repCallreportResults').ejGrid({
+            exportToExcelAction : '@Url.Action("RepeatCallReportExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            pageSettings: { pageSize: 25 },
+            allowResizeToFit : true,
+            queryCellInfo:"RepeatCallDetailsEventId",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            recordClick: function (args) {
+                window.location.href = "@Url.Action("OriginalEventDetails", "Reports")" + "/"+args.data["originalWorkorderID"];
+            },
+            columns: [
+                { field: "CustomerID", headerText: "Customer ID"},
+                { field: "CustomerType", headerText: "Customer Type" },
+                { field: "CustomerName", headerText: "Customer Name" },
+                { field: "CustomerBranchID", headerText: "Customer Branch ID" },
+                { field: "BranchName", headerText: "Branch Name" },
+                { field: "Region", headerText: "Region" },
+                { field: "ESM", headerText: "ESM" },
+                { field: "SerialNumber", headerText: "Serial Number" },
+                { field: "Manufacturer", headerText: "Make" },
+                { field: "WorkorderID", headerText: "Event ID" },
+                { field: "EntryDate", headerText: "Entry Date" },
+                { field: "originalWorkorderID", headerText: "Original Event ID" },
+                { field: "OriginalWrkorderEntryDate", headerText: "Original Event Entry Date" },
+                { field: "OriginalWrkorderClosedDate", headerText: "Original Event Close Date" },
+                { field: "OrgTechName", headerText: "Original Tech Name" },
+                { field: "OrgTechId", headerText: "Original Tech ID" },
+                { field: "FamilyAff", headerText: "FamilyAff" }
+            ]
+        });*@
+    })
+
+    function RepeatCallGridRecordClick(args)
+    {
+        window.location.href = "@Url.Action("OriginalEventDetails", "Reports")" + "/"+args.data["originalWorkorderID"];
+    }
+
+    function RepeatCallDetailsEventId(args)
+    {
+        if (args.column.field == "originalWorkorderID")
+        {
+            args.cell.className	+= " urlStyle";
+        }
+    }
+</script>
+        @*$("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchRepeatCall", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#repCallResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#repCallDateFrom').val() == ""
+            && $('#repCallDateTo').val() == ""
+        )) {
+            $('form').submit();
+        }
+
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#repCallDateFrom').val() == ""
+            || $('#repCallDateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearRepCallSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearRepeatCallResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#repCallResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Repeat Call Report summary</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.RepeatCallFromDate, new { @class = "form-control SearchPanelControl", @Id = "repCallDateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.RepeatCallToDate, new { @class = "form-control SearchPanelControl", @Id = "rejCallDateTo" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Technician :
+                                @Html.DropDownListFor(t => t.DealerId, new SelectList(Model.Technicianlist, "DealerId", "CompanyName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Family Aff :
+                                @Html.DropDownListFor(c => c.TechID, new SelectList(Model.FamilyAffs, "TechID", "TechName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearRepCallSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}*@
+
+<section class="container-fluid white-bg pad">
+    <div class="row top-info">
+        <div class="col-md-11">
+            <b>Repeat Call Report</b>
+        </div>
+        <div class="col-md-1">
+            @Html.ActionLink("Back", "RepeatCallReportSummary", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+        </div>
+    </div>
+
+</section>
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="repCallreportResults" class="display" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            @(Html.EJ().Grid<object>
+                                    ("repCallreportResults")
+                                    .Datasource((IEnumerable<object>)ViewBag.datasource)
+                                    .AllowPaging()
+                                            .AllowScrolling()
+                                    .AllowSorting()
+                                    .AllowTextWrap(true)
+                                    .PageSettings(Page => Page.PageSize(25))
+                                    .IsResponsive(true)
+                                    .EnableResponsiveRow(true)
+                                    .Mappers(map => map.ExportToExcelAction(Url.Action("RepeatCallReportExcelExport", "Reports")))
+                                    .ToolbarSettings(toolbar =>
+                                    {
+                                        toolbar.ShowToolbar().ToolbarItems(items =>
+                                        {
+                                            items.AddTool(ToolBarItems.ExcelExport);
+                                        });
+                                    })
+                                    .ClientSideEvents(eve => { eve.RecordClick("RepeatCallGridRecordClick").QueryCellInfo("RepeatCallDetailsEventId"); })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("EventID").HeaderText("Workorder ID").Width(100).Add();
+                                        col.Field("CustomerID").HeaderText("Customer ID").Width(100).Add();
+                                        col.Field("CustomerType").HeaderText("Customer Type" ).Width(100).Add();
+                                        col.Field("CustomerName").HeaderText("Customer Name" ).Width(100).Add();
+                                        col.Field("CustomerBranchID").HeaderText("Customer Branch ID" ).Width(100).Add();
+                                        col.Field("BranchName").HeaderText("Branch Name" ).Width(100).Add();
+                                        col.Field("Region").HeaderText("Region" ).Width(100).Add();
+                                        col.Field("ESM").HeaderText("ESM" ).Width(100).Add();
+                                        col.Field("SerialNumber").HeaderText("Serial Number" ).Width(100).Add();
+                                        col.Field("Manufacturer").HeaderText("Make" ).Width(100).Add();
+                                        col.Field("EntryDate").HeaderText("Entry Date" ).Width(100).Add();
+                                        col.Field("originalWorkorderID").HeaderText("Original Event ID" ).Width(100).Add();
+                                        col.Field("OriginalWrkorderEntryDate").HeaderText("Original Event Entry Date" ).Width(100).Add();
+                                        col.Field("OriginalWrkorderClosedDate").HeaderText("Original Event Close Date" ).Width(100).Add();
+                                        col.Field("OrgTechName").HeaderText("Original Tech Name" ).Width(100).Add();
+                                        col.Field("OrgTechId").HeaderText("Original Tech ID" ).Width(100).Add();
+                                        col.Field("FamilyAff").HeaderText("FamilyAff").Width(100).Add();
+                                    }))
+                        </td>
+                    </tr>
+                </table>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</section>

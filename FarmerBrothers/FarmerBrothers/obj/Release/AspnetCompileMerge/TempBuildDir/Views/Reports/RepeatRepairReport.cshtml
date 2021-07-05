@@ -1,0 +1,113 @@
+﻿@model FarmerBrothers.Models.RepeatCallReportResult
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">  
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+    })
+
+    function RepeatRepairGridRecordClick(args)
+    {
+        window.location.href = "@Url.Action("OriginalEventDetails", "Reports")" + "/"+args.data["originalWorkorderID"];
+    }
+
+    function RepeatRepairDetailsEventId(args)
+    {
+        if (args.column.field == "originalWorkorderID")
+        {
+            args.cell.className	+= " urlStyle";
+        }
+    }
+</script>       
+
+<section class="container-fluid white-bg pad">
+    <div class="row top-info">
+        <div class="col-md-11">
+            <b>Repeat Repair Report</b>
+        </div>
+        <div class="col-md-1">
+            @Html.ActionLink("Back", "RepeatRepairReportSummary", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+        </div>
+    </div>
+
+</section>
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="repCallreportResults" class="display" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            @(Html.EJ().Grid<object>
+                                    ("repRepairreportResults")
+                                    .Datasource((IEnumerable<object>)ViewBag.datasource)
+                                    .AllowPaging()
+                                            .AllowScrolling()
+                                    .AllowSorting()
+                                    .AllowTextWrap(true)
+                                    .PageSettings(Page => Page.PageSize(25))
+                                    .IsResponsive(true)
+                                    .EnableResponsiveRow(true)
+                                    .Mappers(map => map.ExportToExcelAction(Url.Action("RepeatRepairReportExcelExport", "Reports")))
+                                    .ToolbarSettings(toolbar =>
+                                    {
+                                        toolbar.ShowToolbar().ToolbarItems(items =>
+                                        {
+                                            items.AddTool(ToolBarItems.ExcelExport);
+                                        });
+                                    })
+                                    .ClientSideEvents(eve => { eve.RecordClick("RepeatRepairGridRecordClick").QueryCellInfo("RepeatRepairDetailsEventId"); })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("EventID").HeaderText("Workorder ID").Width(100).Add();
+                                        col.Field("CustomerID").HeaderText("Customer ID").Width(100).Add();
+                                        col.Field("CustomerType").HeaderText("Customer Type" ).Width(100).Add();
+                                        col.Field("CustomerName").HeaderText("Customer Name" ).Width(100).Add();
+                                        col.Field("CustomerBranchID").HeaderText("Customer Branch ID" ).Width(100).Add();
+                                        col.Field("BranchName").HeaderText("Branch Name" ).Width(100).Add();
+                                        col.Field("Region").HeaderText("Region" ).Width(100).Add();
+                                        col.Field("ESM").HeaderText("ESM" ).Width(100).Add();
+                                        col.Field("SerialNumber").HeaderText("Serial Number" ).Width(100).Add();
+                                        col.Field("Manufacturer").HeaderText("Make" ).Width(100).Add();
+                                        col.Field("EntryDate").HeaderText("Entry Date" ).Width(100).Add();
+                                        col.Field("originalWorkorderID").HeaderText("Original Event ID" ).Width(100).Add();
+                                        col.Field("OriginalWrkorderEntryDate").HeaderText("Original Event Entry Date" ).Width(100).Add();
+                                        col.Field("OriginalWrkorderClosedDate").HeaderText("Original Event Close Date" ).Width(100).Add();
+                                        col.Field("OrgTechName").HeaderText("Original Tech Name" ).Width(100).Add();
+                                        col.Field("OrgTechId").HeaderText("Original Tech ID" ).Width(100).Add();
+                                        col.Field("FamilyAff").HeaderText("FamilyAff").Width(100).Add();
+                                    }))
+                        </td>
+                    </tr>
+                </table>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewBag.Title = "WorkOrderInvoiceUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                              ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                              (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+}
+
+@model FarmerBrothers.Models.WorkorderInvoiceModel
+@using Newtonsoft.Json;
+@using FarmerBrothers.Models;
+<script type="text/javascript">
+    var updateUrl = null;
+
+    $(document).ready(function () {
+        $("#InvoiceNumber").hide();
+        $("#btnUpdateInvoice").hide();
+        $("#btnClearInvoice").hide();
+        $("#lblInvoiceNumber").hide();
+        $("#btnGetInvoice").click(function (e) {
+            if ($('#WorkOrderId').val() != "") {
+
+                $.ajax({
+                    type: 'GET',
+                    url: "@Url.Action("GetWorkOrderInvoice", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                            data: {"workOrderId": $("#WorkOrderId").val()}
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                if (response.message !="") {
+                                    AlertPopup(response.message);
+                                }
+                                else {
+                                    $("#InvoiceNumber").val(response.data);
+                                    $("#InvoiceNumber").show();
+                                    $("#btnUpdateInvoice").show();
+                                    $("#btnClearInvoice").show();
+                                    $("#lblInvoiceNumber").show();
+                                }
+                            }
+                            else
+                            {
+                                AlertPopup('|There is a problem to get Invoice Details! Please contact support!');
+
+                            }
+                        } );
+            }
+            else {
+                AlertPopup("|Please Enter WorkOrder Id")
+                e.preventDefault();
+            }
+            e.preventDefault();
+        });
+
+        $("#btnUpdateInvoice").click(function (e) {
+            if ($('#WorkOrderId').val() != "" && $('#InvoiceNumber').val() != "") {
+
+                        $.ajax( {
+                            type: 'POST',
+                            url: "@Url.Action("SaveWorkOrderInvoice", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                            data: { "workOrderId": $("#WorkOrderId").val(), "invoiceNumber": $("#InvoiceNumber").val()}
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                if (response.message == "") {
+                                    AlertPopup("|Successfully Updated Work Order Invoice Details!");
+                                    updateUrl = "@Url.Action("WorkOrderInvoiceUpdate", "WorkOrderInvoiceUpdate")"
+                                }
+                                else
+                                {
+                                    AlertPopup(response.message);
+                                }
+                            }
+                            else
+                            {
+                                AlertPopup('|There is a problem to get Invoice Details! Please contact support!');
+
+                            }
+                        } );
+            }
+            else {
+                AlertPopup("|Please enter Work order id and invoice number")
+                e.preventDefault();
+            }
+            e.preventDefault();
+        });
+
+        $("[data-popup-close='popupalert']").click(function () {
+            if (updateUrl != null) {
+                window.location.href = updateUrl;
+            }
+        });
+    });
+
+    function WOSearchClear() {
+        $('#WorkOrderId').val('');
+    }
+    function InvoiceSearchClear() {
+        $('#InvoiceNumber').val('');
+    }
+</script>
+@using (Html.BeginForm())
+{
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Update WorkOrder Invoice Number</h2>
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">WorkOrder ID:</span>
+                                    @Html.TextBoxFor(c => c.WorkOrderId, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button id="btnGetInvoice" type="submit" class="btn btn-primary">Get Invoice</button>
+                                    <a id="btnWOClear" onclick="WOSearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-12  sm-pad-reset">
+
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span id="lblInvoiceNumber" class="required">Invoice Number:</span>
+                                    @Html.TextBoxFor(c => c.InvoiceNumber, new { Value = "", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (UserPrivilege["WO Invoice Update"].ToLower() == Model.ACCESS_FULL || UserPrivilege["WO Invoice Update"].ToLower() == Model.ACCESS_EDIT_ONLY)
+                        {
+                        <div class="col-sm-6">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button id="btnUpdateInvoice" type="submit" class="btn btn-primary">Update Invoice</button>
+                                    <a id="btnClearInvoice" onclick="InvoiceSearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+}
+

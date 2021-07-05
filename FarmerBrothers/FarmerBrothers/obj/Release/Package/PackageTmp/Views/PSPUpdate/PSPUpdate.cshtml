@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewBag.Title = "PSPUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model FarmerBrothers.Models.CustomerModel
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("form").submit(function (event) {
+            var operation = $("#Operation").val();
+            if (operation == 1) {
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("IsValidCustomer", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                    data: frmValues
+                }).done(function (response) {
+                    if (response.success == true) {
+                        return true;
+                    }
+                    else {
+                        AlertPopup('|Please enter valid Account Number!');
+
+                    }
+                }
+
+
+            }
+            if (operation == 2) {
+            }
+        });
+
+    });
+
+
+    function SetSubmitOperation(operation) {
+        alert("1");
+        $("#Operation").val(operation);
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    <div class="customer-content margin-top">
+        <div class="row clear-input">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    Account Number:
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        @Html.TextBoxFor(c => c.CustomerId, new { @class = "form-control SearchPanelControl", style = "width: 200px;", @type = "number" })
+                        @Html.HiddenFor(c => c.CustomerId)
+                        <button type="submit" class="btn btn-primary" onclick="SetSubmitOperation(1);">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="col-sm-6-o">
+                    <span class="col-md-5">Customer Name:</span>
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            @Html.ValueFor(c => c.CustomerName)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6-o">
+                    <span class="col-md-5">Address:</span>
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            @Html.ValueFor(c => c.Address)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6-o">
+                    <span class="col-md-5">City:</span>
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            @Html.ValueFor(c => c.City)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6-o">
+                    <span class="col-md-5">Zip Code:</span>
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            @Html.ValueFor(c => c.ZipCode)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6-o">
+                    <span class="col-md-5">PSP:</span>
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            @Html.TextBoxFor(c => c.ZipCode, new { @class = "form-control CustomerData" })
+                            @*<button type="submit" class="btn btn-primary" onclick="SetSubmitOperation(2);" name="action:Reports">Update</button>*@
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}

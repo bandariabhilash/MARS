@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "ERF Shipped";
+    Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
+}
+
+<script type="text/javascript">
+    var erfId, status,ESM;
+
+    $(document).ready(function () {
+        erfId = @ViewBag.erfId;
+        status = "Shipped";
+        ESM = @ViewBag.ESM;
+
+        $("#btnERFShippedSubmit").on("click", onERFStatusShipped)
+    } );
+
+    function onERFStatusShipped()
+    {
+        if ( $( '#NotesHistory' ).val() == "" )
+        {           
+            AlertPopup( "Please Enter Notes" );
+            return;
+        }
+        else
+        {
+            $.ajax( {
+                type: 'GET',
+                url: "@Url.Action("ERFShippedStatus", "DispatchResponse")",
+                data: { ERFID: erfId, ESM: ESM, Status: status, Notes: $("#NotesHistory").val() },
+                contentType: "application/json",
+                success: function ( response )
+                {
+                    $(".ShippedNotesSec").hide();
+                    $(".ShippedNotesResponseSec").show();
+
+                    $(".displayResponse").html(response.message);
+
+                    if ( response.message != '' )
+                    {
+                        //AlertPopup( "|" + response.message );
+                    }
+                    else
+                    {
+                      //  AlertPopup(" Status Updated to Shipped ");
+                    }
+
+                },
+                error: function ( reponse )
+                {
+                }
+            } );
+        }
+    }
+
+
+</script>
+@using (Html.BeginForm("DispatchResponse", "DispatchResponse", FormMethod.Post, null))
+{
+    <section class="container-fluid white-bg pad fixedSecond header ShippedNotesSec">
+        <div class="row vertical-align">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-3">
+                        <span class="col-md-1  required">Notes:</span>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.TextArea("Notes", "", new { @class = "form-control", @rows = 10, @style = "overflow-x:scroll;resize:none;", @Id = "NotesHistory" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        @*<input type="submit" id="btnTransmitTechnicians" style="display: inline-block;margin-right:5px;float:left;" class="btn btn-primary" value="Transmit" disabled />*@
+                        <button type="button" class="btn btn-primary" style="margin-left:40px" id="btnERFShippedSubmit" >Submit</button>
+                    </div>
+                    <div class="col-md-3">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <section class="container-fluid white-bg pad fixedSecond header ShippedNotesResponseSec" style="display:none;">
+        <section class="container-fluid white-bg pad">
+            <div class="row top-info">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>ERF Update Response</b>
+                </div>
+            </div>
+        </section>
+
+        <section class="well">
+            <div class="row top-info">
+                <div class="customer-content margin-top">
+                    <div class="row customer clear-input">
+                        <div class="col-md-3 sm-pad-reset">
+
+                            <div class="col-sm-6-o displayResponse">
+                                
+                            </div>
+                            <div class="col-sm-6-o">
+                            </div>
+                            <div class="col-sm-6-o">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </section>
+
+}
+

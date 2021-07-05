@@ -1,0 +1,387 @@
+﻿<link href="~/Content/Tpcm.css" rel="stylesheet" />
+@{
+    ViewBag.Title = "Holiday";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model FarmerBrothers.Models.HolidayModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+        $( "#closeclick" ).click( function ()
+        {
+            $( "#modalpopup" ).hide();
+        } );
+        //$("#modalpopup").hide();
+        $( '#btnUpdate' ).hide();
+        $( '#btnCancel' ).hide();
+        $( '#AdministratorLink' ).css( "color", "white" );
+        $( "#Status" ).prop( "checked", true );
+
+        $( '#HolidayCalendarResults' ).ejGrid( {
+            width: 500,
+            allowPaging: true,
+            allowSorting: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            pageSettings: { pageSize: 15 },
+            allowTextWrap: true,
+            //rowDataBound: "rowDataBound",
+            queryCellInfo: "queryCellInfo",
+            dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.SearchResults, Formatting.Indented, new JsonSerializerSettings
+        {
+                                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        })) ),
+            columns: [
+                { field: "HolidayUniqueId", headerText: "Invoice Unique ID ", visible: false },
+                { field: "HolidayDatestring", headerText: "Holiday Date", width: 40 },
+                { field: "HolidayName", headerText: "Holiday Name", width: 100 },
+            { field: "Status", headerText: "Active", width: 40 }
+
+            ]
+        } );
+
+
+        $( '#HolidayCalendarResults' ).ejGrid( {
+            recordClick: function ( args )
+            {
+                $( '#UniqueId' ).val( args.data["HolidayUniqueId"] );
+                $( '#HolidayName' ).val( args.data["HolidayName"] );
+                $( '#HolidayDate' ).val( args.data["HolidayDatestring"] );
+                $( "#Status" ).prop( "checked", args.data["Status"] );
+                $( '#btnUpdate' ).show();
+                $( '#btnCancel' ).show();
+                $( '#btnSave' ).hide();
+            }
+        } );
+
+    } );
+
+
+
+
+</script>
+
+<script>
+
+    function fnInsertHoliday()
+    {
+
+        if ( $.trim( $( "#HolidayName" ).val() ) === "" || $( '#HolidayDate' ).val() == "" )
+        {
+
+            if ( $( '#HolidayDate' ).val() == "" )
+            {
+                AlertPopup( "|Please Select Holiday Date." );
+                //$( "#modalpopup" ).show();
+                //$( "p", "#modalpopup" ).text( "Please Select Holiday Date." );
+                //alert('Please Select Holiday Date');
+            }
+            else if ( $( '#HolidayName' ).val() == "" )
+            {
+                AlertPopup( "|Please Enter Holiday Name." );
+                //alert('Please Enter Holiday Name');
+                //$( "#modalpopup" ).show();
+                //$( "p", "#modalpopup" ).text( "Please Enter Holiday Name." );
+            }
+            return;
+        }
+        else
+        {
+            var url = "@Url.Action("InsertHolidayList", "Holiday")" + "?HolidayName=" + $( '#HolidayName' ).val() + "&HolidayDate=" + $( '#HolidayDate' ).val() + "&year=" + $( "#YearDropdown option:selected" ).text() + "&HolidayStatus=" + $( "#Status" ).is( ':checked' );
+            $.ajax( {
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function ( response )
+                {
+                    var gridObj = $( '#HolidayCalendarResults' ).ejGrid( "instance" );
+                    gridObj.dataSource( response.holidayList );
+
+                    $.each( response.years, function ()
+                    {
+                        $( "#YearDropdown" ).append( "<option>" + this.toString() + "</option>" );
+                    } );
+
+                    $( '#HolidayName' ).val( "" );
+                    $( '#HolidayDate' ).val( '' );
+                    $( "#Status" ).prop( "checked", true );
+
+                    //$( "#modalpopup" ).show();
+                    //$( "p", "#modalpopup" ).text( response.message );
+                    AlertPopup( "|" + response.message );
+
+
+                },
+                error: function ( reponse )
+                {
+                    //alert("error : " + reponse);
+
+                }
+            } );
+        }
+
+    };
+
+    function fnUpdateHoliday()
+    {
+        if ( $.trim( $( "#HolidayName" ).val() ) === "" || $( '#HolidayDate' ).val() == "" )
+        {
+
+            if ( $( '#HolidayDate' ).val() == "" )
+            {
+                AlertPopup( "|Please Select Holiday Date.");
+                // alert('Please Select Holiday Date');
+                //$( "#modalpopup" ).show();
+                //$( "p", "#modalpopup" ).text( "Please Select Holiday Date." );
+            }
+            else if ( $( '#HolidayName' ).val() == "" )
+            {
+                AlertPopup( "|Please Enter Holiday Name." );
+                //alert('Please Enter Holiday Name');
+                //$( "#modalpopup" ).show();
+                //$( "p", "#modalpopup" ).text( "Please Enter Holiday Name." );
+            }
+            return;
+        }
+        else
+        {
+
+            var url = "@Url.Action("UpdateHolidayList", "Holiday")" + "?HolidayName=" + $( '#HolidayName' ).val() + "&HolidayDate=" + $( '#HolidayDate' ).val() + "&UniqueId=" + $( '#UniqueId' ).val() + "&year=" + $( "#YearDropdown option:selected" ).text() + "&HolidayStatus=" + $( "#Status" ).is( ':checked' );
+
+            $.ajax( {
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function ( response )
+                {
+                    var gridObj = $( '#HolidayCalendarResults' ).ejGrid( "instance" );
+                    gridObj.dataSource( response.holidayList );
+                    //$('#HolidayDate').val() = '';
+                    $( '#HolidayName' ).val( "" );
+                    $( '#HolidayDate' ).val( '' );
+                    $( "#Status" ).prop( "checked", true );
+                    $( '#btnUpdate' ).hide();
+                    $( '#btnSave' ).show();
+                    $( '#btnCancel' ).hide();
+
+                    //$( "#modalpopup" ).show();
+                    //$( "p", "#modalpopup" ).text( response.message );
+                    AlertPopup( "|" + response.message );
+
+                },
+                error: function ( reponse )
+                {
+                    //alert("error : " + reponse);
+
+                }
+            } );
+        }
+
+    };
+    function fnCancel()
+    {
+        $( '#HolidayName' ).val( "" );
+        $( '#HolidayDate' ).val( '' );
+        $( "#Status" ).prop( "checked", true );
+        $( '#btnUpdate' ).hide();
+        $( '#btnCancel' ).hide();
+        $( '#btnSave' ).show();
+        var gridObj = $( '#HolidayCalendarResults' ).ejGrid( "instance" );
+        gridObj.refreshContent();
+    }
+
+
+
+    function YearChangefunc( val )
+    {
+
+        $( '#HolidayName' ).val( "" );
+        $( '#HolidayDate' ).val( '' );
+        $( '#btnUpdate' ).hide();
+        $( '#btnCancel' ).hide();
+        $( '#btnSave' ).show();
+        if ( $.trim( val ).length != 0 )
+        {
+            var url = "@Url.Action("SortHolidayList", "Holiday")" + "?year=" + val;
+            $.ajax( {
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function ( response )
+                {
+                    var gridObj = $( '#HolidayCalendarResults' ).ejGrid( "instance" );
+                    gridObj.dataSource( response );
+                },
+                error: function ( reponse )
+                {
+                    //alert("error : " + reponse);
+
+                }
+            } );
+        }
+    }
+</script>
+@using (Html.BeginForm("InsertHolidayList", "Holiday", FormMethod.Post, new { id = "HolidayForm" }))
+{
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Holiday List</b>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section>
+        <div class="container-fluid">
+            <div class="row" style=" font-size:14px ">
+                <div class=" col-md-5 form-horizontal">
+
+
+                    <div class="form-group ">
+                        <span class="col-sm-4 control-label" style="text-align:left">Date:</span>
+                        <div class="col-sm-6">
+                            @Html.EJ().DatePickerFor(c => c.HolidayDate).ClientSideEvents(e => e.BeforeDateCreate("disablePrevDates"))
+                            <script>
+                                function disablePrevDates(args) {
+                                    var prevDay = new Date();
+                                    prevDay.setDate(prevDay.getDate() - 1);
+                                    if (args.date.getTime() < prevDay)
+                                    {
+                                        $(args.element).addClass('e-hidedate e-disable').removeClass('current-month other-month');
+                                    }
+                                }
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <span class="col-sm-4 control-label" style="text-align:left">Holiday Name:</span>
+                        <div class="col-sm-6">
+                            @Html.TextBoxFor(c => c.HolidayName, new { @class = "form-control SearchPanelControl" })
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span class="col-sm-4 control-label" style="text-align:left">Status:</span>
+                        <div class="col-sm-6">
+                            @Html.CheckBoxFor(c => c.Status, new { @checked = "checked" })
+
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            @{
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+    if (UserPrivilege["Holiday List Maintenance"] == "Edit-Only" || UserPrivilege["Holiday List Maintenance"] == "Full")
+    {
+        <button type="button" class="btn btn-primary" id="btnUpdate" onclick="fnUpdateHoliday();">Update</button>
+                                <button type="button" style="margin-left:40px" class="btn btn-primary" id="btnCancel" onclick="fnCancel();">Cancel</button>
+    }
+    if (UserPrivilege["Holiday List Maintenance"] == "Full")
+    {
+        <button type="button" class="btn btn-primary" id="btnSave" onclick="fnInsertHoliday();">Create</button>
+    }
+                            }
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <div class="col-md-5 pull-right">
+
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <span class="col-sm-2" style="margin-top:5px">Year:</span>
+                            <div class="col-sm-5">
+                                @Html.DropDownListFor(c => c.year, new SelectList(Model.Years), new { @Id = "YearDropdown", @class = "form-control custom-select ThirdPartyDropDown", @onchange = "YearChangefunc(this.value)", style = "width:100%" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="HolidayCalendarResults" class="display" cellspacing="0" width="40%"></div>
+                    @Html.Hidden("UniqueId")
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!--
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-5 sm-pad-reset">
+                        <div class="col-sm-3-o">
+                            <span class="col-md-1 text-right">Holiday Name:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.HolidayName, new { @class = "form-control SearchPanelControl", type = "" })
+                                    @Html.ValidationMessageFor(m => m.HolidayName)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3-o">
+                            <span class="col-md-2 text-right">Location Name:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.EJ().DatePickerFor(c => c.HolidayDate, new { })
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+
+                            @Html.DropDownListFor(c => c.year, new SelectList(Model.Years), new { @Id = "YearDropdown", @class = "form-control custom-select ThirdPartyDropDown", @onchange = "YearChangefunc(this.value)", style = "width:100%" })
+                        </div>
+                        <div class="col-sm-3-o">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="button" id="details" value="(Project path).ModelObjectA" onclick="hello(value);">
+                                        Details
+                                    </button>
+                                    <button type="button" class="btn btn-primary" id="btnSave" onclick="fnInsertHoliday();">Save</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="block margin-top">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <div id="HolidayCalendarResults" class="display" cellspacing="0" width="60%"></div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+    <div id="modalpopup" class="modalpopup">
+        <div class="modelpopup-inner">
+            <div class="modal-header">
+                <a class="close" id="closeclick" data-dismiss="modal">×</a>
+                <h3>MARS - Holiday Maintenance</h3>
+            </div>
+            <div class="modal-body">
+                <p>Status Updated Successfully..</p>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,253 @@
+﻿@{
+    ViewBag.Title = "ReportsSearch";
+}
+
+@model FarmerBrothers.Models.ClosurePartsModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var formDirty = false;
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+        console.debug("at page lode = " + ej.serverTimeZoneOffset)
+        $('#ReportsLink').css("color", "white");
+
+        $("#CloseDateStart").ejDatePicker({ value: new Date($("#CloseDateStart").val()) });
+        $("#CloseDateEnd").ejDatePicker({ value: new Date($("#CloseDateEnd").val()) });
+
+        @*$('#ClosurePartResults').ejGrid({
+            exportToExcelAction : '@Url.Action("ClosurePartsExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "FBNo", headerText: "Work Order ID" ,width: 110},
+                { field: "JDENo", headerText: "Account Number" ,width: 100},
+                { field: "FBStatus", headerText: "Workorder Call Status",width: 100 },
+                { field: "EntryDate", headerText: "Entry Date" ,width: 100},
+                { field: "CloseDate", headerText: "Close Date" ,width: 100},
+                { field: "CustomerType", headerText: "Customer Type",width: 100 },
+                { field: "ServiceCenterID", headerText: "Service Center ID" ,width: 100},
+                { field: "ServiceCompany", headerText: "Service Company" ,width: 100},
+                { field: "FamilyAff", headerText: "Family Aff" ,width: 100},
+                { field: "CallTypeID", headerText: "Call Type ID" ,width: 100},
+                { field: "SolutionID", headerText: "Solution ID" ,width: 100},
+                { field: "EntryNo", headerText: "Entry No" ,width: 100},
+                { field: "ItemNo", headerText: "Item#" ,width: 100},
+                { field: "VendorNo", headerText: "Vendor#" ,width: 100},
+                { field: "Description", headerText: "Description",width: 100 },                
+                { field: "OrderSource", headerText: "OrderSource" ,width: 100},
+                { field: "Quantity", headerText: "Quantity" ,width: 100},
+                { field: "Supplier", headerText: "Supplier" ,width: 100},
+                { field: "Route", headerText: "Route" ,width: 100},
+                { field: "Branch", headerText: "Branch" ,width: 100}
+            ]
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchClosureParts", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#ClosurePartResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });*@
+    });
+
+    function SearchClear() {
+        $('.form-control').val('');
+        //$('#StatesDropDown').val("n/a");
+        //$('#Submitclear').val('true');
+        //$("#Operation").val(5);
+        //$('#reportSearchForm').submit();
+    }
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#CloseDateStart').val() == ""&& $('#CloseDateEnd').val() == ""&& $('#JDENo').val() == ""&& $('#EntryNo').val() == "")
+        {
+            AlertPopup("|Please select atleast one search criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearClosurePartsSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearClosurePartsResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#ClosurePartResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+</script>
+
+
+@*@using (Html.BeginForm())*@
+@using (Html.BeginForm("SearchClosureParts", "Reports", FormMethod.Post, new { id = "ClosurePartsSearchForm" }))
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Closure Parts Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Close Date Start :
+                                @Html.TextBoxFor(c => c.CloseDateStart, new { @class = "form-control SearchPanelControl", @Id = "CloseDateStart" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Close Date End :
+                                @Html.TextBoxFor(c => c.CloseDateEnd, new { @class = "form-control SearchPanelControl", @Id = "CloseDateEnd" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                JDE No :
+                                @Html.TextBoxFor(c => c.JDENo, new { @class = "form-control SearchPanelControl", @Id = "JDENo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Entry No :
+                                @Html.TextBoxFor(c => c.EntryNo, new { @class = "form-control SearchPanelControl", @Id = "EntryNo" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary"  name="action:SearchClosureParts">Search</button>
+                                @*<a onclick="ClearClosurePartsSearchResults()" class="btn btn-orange">Clear</a>*@
+                                <a href="@Url.Action("ClosurePartsReport", "Reports")" style="margin-left:10px;" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                @*<table id="ClosurePartResults" class="display" cellspacing="0" width="100%"></table>*@
+                <table id="ClosurePartResults" class="display" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            @(Html.EJ().Grid<object>
+                                ("ClosurePartResults")
+                .Datasource((IEnumerable<object>)Model.SearchResults)
+
+                .AllowPaging()
+                        .AllowScrolling()
+                .AllowSorting()
+                .AllowTextWrap(true)
+                .PageSettings(Page => Page.PageSize(25))
+                .IsResponsive(true)
+                .EnableResponsiveRow(true)
+                .Mappers(map => map.ExportToExcelAction(Url.Action("ClosurePartsExcelExport", "Reports")))
+                .ToolbarSettings(toolbar =>
+                {
+                    toolbar.ShowToolbar().ToolbarItems(items =>
+                    {
+                        items.AddTool(ToolBarItems.ExcelExport);
+                    });
+                })
+                .Columns(col =>
+                {
+                    col.Field("FBNo").HeaderText("Work Order ID").Width(110).Add();
+                    col.Field("JDENo").HeaderText("Account No").Width(100).Add();
+                    col.Field("FBStatus").HeaderText("Workorder Call Status").Width(100).Add();
+                    col.Field("EntryDate").HeaderText("Entry Date").Width(100).Add();
+                    col.Field("CloseDate").HeaderText("Close Date").Width(100).Add();
+                    col.Field("CustomerType").HeaderText("Customer Type").Width(100).Add();
+                    col.Field("ServiceCenterID").HeaderText("Service Center ID").Width(100).Add();
+                    col.Field("ServiceCompany").HeaderText("Service Company").Width(100).Add();
+                    col.Field("FamilyAff").HeaderText("Family Aff").Width(100).Add();
+                    col.Field("CallTypeID").HeaderText("Call Type ID").Width(100).Add();
+                    col.Field("SolutionID").HeaderText("Solution ID").Width(100).Add();
+                    col.Field("EntryNo").HeaderText("Entry No").Width(100).Add();
+                    col.Field("ItemNo").HeaderText("Item#").Width(100).Add();
+                    col.Field("VendorNo").HeaderText("Vendor#").Width(100).Add();
+                    col.Field("Description").HeaderText("Description").Width(100).Add();
+                    col.Field("OrderSource").HeaderText("OrderSource").Width(100).Add();
+                    col.Field("Quantity").HeaderText("Quantity").Width(100).Add();
+                    col.Field("Supplier").HeaderText("Supplier").Width(100).Add();
+                    col.Field("Route").HeaderText("Route").Width(100).Add();
+                    col.Field("Branch").HeaderText("Branch").Width(100).Add();
+
+                }))
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</section>

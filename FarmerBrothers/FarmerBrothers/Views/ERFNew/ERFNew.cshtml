@@ -1,0 +1,329 @@
+﻿@{
+    ViewBag.Title = "ERF New";
+}
+
+@model FarmerBrothers.Models.CustomerSearchModel
+
+@using FarmerBrothers.Models;
+
+<script type="text/javascript">
+    var searchCriteria;
+    var canExport
+    function queryCellInfo(args)
+    {
+        if (args.column.field == "ContactID") {
+            args.cell.className	+= " urlStyle";
+        }
+    }
+
+    $(document).ready(function () {
+
+
+        $('#CustomerLink').css("color", "white");
+
+        $("#UnknownCustomerLinkId").click(function(e) {
+            //window.open('@Url.Action("WorkorderManagement", "Workorder")');
+            window.location.href = "@Url.Action("WorkorderManagement", "Workorder")";
+            e.preventDefault();
+        });
+
+
+
+        var value = '@Request.RequestContext.HttpContext.Session["CanExportSessionValue"]';
+
+        if (value ==1) {
+            $('#CustomerResults').ejGrid({
+                exportToExcelAction : '@Url.Action("ExcelExport","CustomerSearch")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                queryCellInfo:"queryCellInfo",
+                dataSource : @Html.Raw(Json.Encode(Model.CustomerSearchResults)),
+                columns: [
+                    { field: "ContactID", headerText: "Account Number"},
+                    { field: "CompanyName", headerText: "Customer Name" },
+                    { field: "Address1", headerText: "Street Address" },
+                    { field: "Address2", headerText: "Street Address2" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", headerText: "State" },
+                    { field: "PostalCode", headerText: "Zip" },
+                    { field: "Phone", headerText: "Phone" },
+                    { field: "PricingParentID", headerText: "Parent ID" },
+                    { field: "PricingParentDesc", headerText: "Parent Name" },
+                    { field: "LastSaleDate", headerText: "Last Sale Date" },
+                    { field: "LongAddressNumber", headerText: "Long Address Number" }
+
+                ]
+            });
+        }
+        else
+        {
+            $('#CustomerResults').ejGrid({
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                queryCellInfo:"queryCellInfo",
+                dataSource : @Html.Raw(Json.Encode(Model.CustomerSearchResults)),
+                columns: [
+                    { field: "ContactID", headerText: "Account Number"},
+                    { field: "CompanyName", headerText: "Customer Name" },
+                    { field: "Address1", headerText: "Street Address" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", headerText: "State" },
+                    { field: "PostalCode", headerText: "Zip" },
+                    { field: "Phone", headerText: "Phone" },
+                    { field: "PricingParentID", headerText: "Parent ID" },
+                    { field: "PricingParentDesc", headerText: "Parent Name" },
+                    { field: "LastSaleDate", headerText: "Last Sale Date" },
+                    { field: "LongAddressNumber", headerText: "Long Address Number" }
+
+                ]
+            });
+        }
+
+
+        $("#CustomerResults").ejGrid({
+            recordClick: function (args) {
+                //window.open('@Url.Action("CustomerDetails", "Customer")' + "/" + args.data["ContactID"], 'Customer_' + args.data["ContactID"], '');
+                window.location.href = "@Url.Action("CustomerDetails", "Customer")" + "/" + args.data["ContactID"];
+            }
+        });
+
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("Search", "CustomerSearch")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#CustomerResults").ejGrid("instance");
+                    obj.dataSource(result);
+                    if (result.length >= 100)
+                    {
+                        $('#ResultsMessage').text("Results Set Shows Maximum of 100 rows")
+                    }
+                    else
+                    {
+                        $('#ResultsMessage').text("")
+                    }
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#CustomerID').val() == ""
+            && $('#CustomerName').val() == ""
+            && $('#Address').val() == ""
+            && $('#City').val() == ""
+            && $('#StatesDropDown').val() == "n/a"
+            && $('#PhoneWithAreaCode').val() == ""
+            && $('#ParentId').val() == ""
+            && $('#ZipCode').val() == ""
+            && $('#LongAddressNumber').val() == ""))
+        {
+            $('form').submit();
+        }
+    });
+
+    function ValidateSearchCriteria()
+    {
+        //alert( $('#CustomerID').val() + "==="+ $('#CustomerName').val() + "==="+$('#Address').val() + "==="+ $('#City').val() + "==="+$('#StatesDropDown').val()
+        //    + "==="+$('#PostalCode').val() + "==="+ $('#PhoneWithAreaCode').val() + "==="+$('#ParentId').val());
+        var valid = true;
+        if ($('#CustomerID').val() == ""
+            && $('#CustomerName').val() == ""
+            && $('#Address').val() == ""
+            && $('#City').val() == ""
+            && $('#StatesDropDown').val() == "n/a"
+            && $('#PhoneWithAreaCode').val() == ""
+            && $('#ParentId').val() == ""
+            && $('#ZipCode').val() == ""
+            && $('#LongAddressNumber').val() == "")
+        {
+            AlertPopup("|Please Select at least one Search Criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function SearchClear() {
+        $('.form-control').val('');
+        $('#StatesDropDown').val("n/a");
+        $('#ResultsMessage').text("")
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearSearchResults", "CustomerSearch")",
+        }).done(function( result ) {
+            var obj = $("#CustomerResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Customer Search</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Account Number:
+                                    @Html.TextBoxFor(c => c.CustomerID, new { Value = "", @class = "form-control", @type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Customer Name:
+                                    @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Address:
+                                    @Html.TextBoxFor(c => c.Address, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    City:
+                                    @Html.TextBoxFor(c => c.City, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    State:
+                                    @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    <div class="col-md-12 sm-pad-reset">
+
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Zip Code:
+                                    @Html.TextBoxFor(c => c.ZipCode, new { Value = "", @class = "form-control", @type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Phone#:
+                                    @Html.TextBoxFor(c => c.PhoneWithAreaCode, new { @class = "form-control" })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Parent ID:
+                                    @Html.TextBoxFor(c => c.ParentId, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Long Address Number:
+                                    @Html.TextBoxFor(c => c.LongAddressNumber, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                    <a onclick="SearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        @{
+                            Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                                        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                                        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                            if (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Full")
+                            {
+                                <div class="row">
+                                    <div class="col-md-12 customer-col2">
+                                        <div class="form-group">
+                                            <a id="UnknownCustomerLinkId" href="@Url.Action("WorkorderManagement", "Workorder")" style="float:right;margin-right:25px;"><u>Work Order Unknown Customer</u></a>
+                                            <a id="UnknownCustomerNonServiceLinkId" href="@Url.Action("NonServiceEventCall", "NonServiceEvent")" style="float:right;margin-right:25px;"><u>Non Service Work Order Unknown Customer</u></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <b>Search Results</b> <span id="ResultsMessage" style="color:red"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="CustomerResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+            </div>
+        </div>
+    </section>
+                            }

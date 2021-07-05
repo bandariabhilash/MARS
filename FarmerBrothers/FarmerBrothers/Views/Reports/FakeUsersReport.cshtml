@@ -1,0 +1,196 @@
+﻿
+@model FarmerBrothers.Models.UnknownCustomerSearchModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var searchCriteria;
+    //var canExport
+    //function queryCellInfo(args)
+    //{
+    //    if (args.column.field == "UnknownCustWrkOrderId") {
+    //        args.cell.className	+= " urlStyle";
+    //    }
+    //}
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+        $("#DateFrom").ejDatePicker({ value: new Date($("#DateFrom").val()) });
+        $("#DateTo").ejDatePicker({ value: new Date($("#DateTo").val()) });
+
+
+
+
+
+            $('#FakeJDEResults').ejGrid({
+                exportToExcelAction : '@Url.Action("FakeJDEExcelExport", "Reports")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                //queryCellInfo:"queryCellInfo",
+                dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+                columns: [
+                    { field: "AccountId", headerText: "Account Number"},
+                    { field: "Company", headerText: "Company Name" },
+                    { field: "Address", headerText: "Address" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", headerText: "State" },
+                    { field: "Zip", headerText: "Zip" },
+                    { field: "Phone", headerText: "Phone" }
+                ]
+            });
+
+
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("UnknownCustomerSearch", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    //alert(result.SearchResults);
+                    var obj = $("#FakeJDEResults").ejGrid("instance");
+                    obj.dataSource(result.SearchResults);
+                    //if (result.length >= 100)
+                    //{
+                    //    $('#ResultsMessage').text("Results Set Shows Maximum of 100 rows")
+                    //}
+                    //else
+                    //{
+                    //    $('#ResultsMessage').text("")
+                    //}
+                });
+            }
+
+            e.preventDefault();
+        });
+
+        if (!($('#DateFrom').val() == ""
+            && $('#DateTo').val() == ""
+            ))
+        {
+            $('form').submit();
+        }
+    });
+
+    function ValidateSearchCriteria()
+    {
+        //alert( $('#CustomerID').val() + "==="+ $('#CustomerName').val() + "==="+$('#Address').val() + "==="+ $('#City').val() + "==="+$('#StatesDropDown').val()
+        //    + "==="+$('#PostalCode').val() + "==="+ $('#PhoneWithAreaCode').val() + "==="+$('#ParentId').val());
+        var valid = true;
+        if ($('#DateFrom').val() == ""
+            || $('#DateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function SearchClear() {
+        $('.form-control').val('');
+        //$('#StatesDropDown').val("n/a");
+        //$('#ResultsMessage').text("")
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearSearchResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#FakeJDEResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Fake Users Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "DateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                END Date :
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "DateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="SearchClear()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="FakeJDEResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

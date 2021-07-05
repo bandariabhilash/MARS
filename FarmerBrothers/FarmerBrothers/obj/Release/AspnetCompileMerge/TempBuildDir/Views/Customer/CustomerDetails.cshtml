@@ -1,0 +1,171 @@
+﻿@model FarmerBrothers.Models.CustomerModel
+
+@{
+    ViewBag.Title = "CustomerDetails";
+}
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: right;
+        height: auto;
+    }
+</style> 
+
+<script type="text/javascript">
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+    $( document ).ready( function ()
+    {
+
+        $( '#CustomerLink' ).css( "color", "white" );
+
+        $( "#ServiceHistory" ).ejGrid( {
+            recordClick: function ( args )
+            {
+                //window.open( '@Url.Action("WorkorderManagement", "Workorder")/' + @Model.CustomerId + '/' + args.data["WorkOrderID"] );
+                window.location.href = "@Url.Action("WorkorderManagement", "Workorder")"+'/' + @Model.CustomerId + '/' + args.data["WorkOrderID"]+"/false/false";
+            }
+        } );
+
+        $( ".work-performed-head" ).trigger( "click" );
+    } );
+
+    function queryCellInfo( args )
+    {
+        if ( args.column.field == "WorkOrderID" )
+        {
+            args.cell.className += " urlStyle";
+        }
+
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+
+
+
+    <section class="container-fluid white-bg pad fixedSecond header">
+        <div class="row top-info">
+            <div class="col-md-12">
+                <b>@Model.CustomerName</b>
+                @Html.ActionLink("Back", "CustomerSearch", "CustomerSearch", new { @isBack = 1 }, new { @Style = "float:right;", @Class = "btn btn-primary" })
+            </div>
+        </div>
+    </section>
+
+    @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model)
+
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="work-performed-head arrow-down tabheader">Service History</h2>
+            <div class="work-performed-content margin-top">
+                <div class="row">
+                    <div class="col-xs-12">
+                        @*<table id="ServiceHistory" class="display" cellspacing="0" width="100%"></table>*@
+                        @{
+                            Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                                        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                                        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                            if (UserPrivilege["Work Order"] != "No-Permission"/* || (Session["IsERFUser"] != null && Convert.ToInt32(Session["IsERFUser"]) == 1)*/)
+                            {
+                                if ((int)System.Web.HttpContext.Current.Session["CanExportSessionValue"]==1)
+                                {
+                                        @(Html.EJ().Grid<object>
+                                        ("ServiceHistory")
+                                        .Datasource(((IEnumerable<object>
+                                            )Model.ServiceHistory))
+                                            .AllowSorting()
+                                            .AllowPaging()
+                                            .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+                                                {
+                                                    items.AddTool(ToolBarItems.ExcelExport);
+                                                }))
+                                                .Mappers(map => map.ExportToExcelAction(Url.Action("ServiceHistoryExcelExport", "Customer") + "/" + Model.CustomerId))
+                                                .ClientSideEvents(eve => { eve.QueryCellInfo("queryCellInfo"); })
+                                            .Columns(col =>
+                                            {
+                                                col.Field("WorkOrderID").HeaderText("Work Order ID").IsPrimaryKey(true).Visible(true).Add();
+                                                col.Field("WorkOrderType").HeaderText("Service Code").Add();
+                                                col.Field("WorkOrderStatus").HeaderText("Work Order Status").Add();
+                                                col.Field("DateCreated").HeaderText("Date Created").Format("{0:MM/dd/yyyy hh:mm tt}").Add();
+                                                col.Field("AppointmentDate").HeaderText("Appointment Date").Add();
+                                                col.Field("Technician").HeaderText("Technician").Add();
+                                            })
+                                        )
+                                    }
+                                    else{
+                                        @(Html.EJ().Grid<object>
+                                        ("ServiceHistory")
+                                        .Datasource(((IEnumerable<object>
+                                            )Model.ServiceHistory))
+                                            .AllowSorting()
+                                            .AllowPaging()
+                                            .ClientSideEvents(eve => { eve.QueryCellInfo("queryCellInfo"); })
+                                            .Columns(col =>
+                                            {
+                                                col.Field("WorkOrderID").HeaderText("Work Order ID").IsPrimaryKey(true).Visible(true).Add();
+                                                col.Field("WorkOrderType").HeaderText("Service Code").Add();
+                                                col.Field("WorkOrderStatus").HeaderText("Work Order Status").Add();
+                                                col.Field("DateCreated").HeaderText("Date Created").Format("{0:MM/dd/yyyy hh:mm tt}").Add();
+                                                col.Field("AppointmentDate").HeaderText("Appointment Date").Add();
+                                                col.Field("Technician").HeaderText("Technician").Add();
+                                            })
+                                        )
+                                    }
+
+                                }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="eqp-summary-head arrow-down tabheader">Equipment Summary</h2>
+            <div class="eqp-summary-content margin-top">
+                <div class="row">
+                    <div class="col-xs-12">
+                        @{
+                                @(Html.EJ().Grid<object>
+                                    ("EquipmentSummary")
+                                    .Datasource(((IEnumerable<object>
+                                        )Model.EquipmentSummary))
+                                        .AllowSorting()
+                                        .AllowPaging()
+                                        .PageSettings(Page => Page.PageSize(10))
+                                        .Columns(col =>
+                                        {
+                                            col.Field("CustomerId").HeaderText("Current Customer").Width("10%").IsPrimaryKey(true).Visible(true).Add();
+                                            col.Field("ItemNumber").HeaderText("Item Number").Width("10%").Add();
+                                            col.Field("ItemDescription").HeaderText("Item Description").Width("20%").Add();
+                                            col.Field("SerialNumber").HeaderText("Serial Number").Width("10%").Add();
+                                            col.Field("AssetStatus").HeaderText("Asset Status").Width("10%").Add();
+                                            col.Field("Age").HeaderText("Age").Width("15%").Add();
+                                            col.Field("YearsInService").HeaderText("Years in Service").Width("15%").Add();
+                                            col.Field("InitialDate").HeaderText("Initial Date").Format("{0:MM/dd/yyyy hh:mm tt}").Visible(false).Width("15%").Add(); // Removed this column as per Mike(email on Aug 19, 2020. Email Subject: RE: MAI Updates 072320.pptx - [EXTERNAL])
+                                            col.Field("TransDate").HeaderText("Trans Date").Format("{0:MM/dd/yyyy hh:mm tt}").Width("15%").Add();
+                                        })
+                                )
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+            <div>
+
+
+            </div>
+        }

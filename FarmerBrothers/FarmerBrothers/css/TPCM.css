@@ -1,0 +1,53 @@
+﻿
+/*Customization Styles*/
+.dfh-form .form-group {
+overflow:hidden;
+margin-bottom: 10px;
+}
+.dfh-form .form-group label {
+font-weight:normal;
+margin-top: 10px;
+font-size: 14px;
+    color: #333;
+}
+.input-text {
+    position: relative;
+}
+.input-text b {
+    position: absolute;
+    right: 0;
+    top: 5px;
+	font-weight:normal;
+}
+.input-text i {
+    position: absolute;
+    left: 0;
+    top: 5px;
+	font-style:normal;
+}
+.padding-none-x {
+padding-left:0 !important;
+padding-right:0 !important;
+}
+.check-block [type="checkbox"] {
+    margin-top: 15px;
+}
+.dfh-form h4 {
+    margin-bottom: 0;
+    margin-top: 30px;
+}
+.dfh-form .table td {
+    padding: 5px;
+}
+.dfh-form td .form-control {
+    padding: 5px;
+}
+.bg-grey {
+background-color:#f9f9f9;
+}
+.padding-left-15px {
+padding-left:15px !important;
+}
+#tab_logic {
+    display:none;
+}

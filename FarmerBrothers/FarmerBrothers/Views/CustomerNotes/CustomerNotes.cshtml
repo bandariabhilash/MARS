@@ -1,0 +1,710 @@
+﻿@{
+    ViewBag.Title = "CustomerNotes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                              ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                              (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+}
+@model FarmerBrothers.Models.CustomerNotesModel
+
+
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: right;
+        height: auto;
+    }
+</style>
+
+<script type="text/javascript">
+    $( document ).ready( function ()
+    {
+        $( '#btnUpdate' ).hide();
+        $( '#btnCancel' ).hide();
+        $( '#AdministratorLink' ).css( "color", "white" );
+        $( "#Status" ).prop( "checked", true );
+
+        $('#IdSubmit').attr('disabled', true);
+        //$('#PSPUpdateIdSubmit1').attr('disabled', true);
+        $('#PSPUpdateIdSubmit').attr('disabled', true);
+        $('#branchSubmit').attr('disabled', true);
+
+        $( '#CustomerId' ).keyup( function ()
+        {
+            if ( $( this ).val().length != 0 )
+                $( '#IdSubmit' ).attr( 'disabled', false );
+            else
+                $( '#IdSubmit' ).attr( 'disabled', true );
+        })
+
+        $('#PspUpdateCustomerId').keyup(function () {
+            if ($(this).val().length != 0)
+                $('#PSPUpdateIdSubmit').attr('disabled', false);
+            else
+                $('#PSPUpdateIdSubmit').attr('disabled', true);
+        })
+        /*$('#FBPreferProvider').keyup(function () {
+            if ($(this).val().length != 0)
+                $('#PSPUpdateIdSubmit1').attr('disabled', false);
+            else
+                $('#PSPUpdateIdSubmit1').attr('disabled', true);
+        })*/
+
+        $('#PspUpdateBranch').keyup(function () {
+            if ($(this).val().length != 0)
+                $('#branchSubmit').attr('disabled', false);
+            else
+                $('#branchSubmit').attr('disabled', true);
+        })
+
+
+        $( "#IdSubmit" ).click( function ( e )
+        {
+            GetUserNotes();
+            e.preventDefault();
+        });
+
+        $("#PSPUpdateIdSubmit").click(function (e) {
+
+            GetCustomerDetails();
+            e.preventDefault();
+        });
+
+        $("#branchSubmit").click(function (e) {
+
+            GetBranchPSPDetails();
+            e.preventDefault();
+        });
+
+        $("#PSPUpdateIdSubmit1").click(function (e) {
+
+            //if ($("#FBPreferProvider").val() != "" && $("#PspUpdateCustomerId").val() != "") {
+            if ($("#PspUpdateCustomerId").val() != "") {
+                UpdateCustomerFBProvider("customer");
+            }
+            else {
+                AlertPopup("|You miss to Enter Account Number !");
+            }
+
+            e.preventDefault();
+        });
+
+
+        $("#PSPBranchUpdate").click(function (e) {
+            if ($("#PspUpdateBranch").val() != "") {
+                UpdateCustomerFBProvider("branch");
+            }
+            else {
+                AlertPopup("|Please Enter Branch Number !");
+            }
+
+            e.preventDefault();
+        });
+        
+
+        $( '#CustomerNotesResults' ).ejGrid( {
+            allowPaging: true,
+            allowSorting: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            pageSettings: { pageSize: 15 },
+            allowTextWrap: true,
+            //rowDataBound: "rowDataBound",
+            queryCellInfo: "queryCellInfo",
+            dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.CustomerNotesResults, Formatting.Indented, new JsonSerializerSettings
+            {
+                                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            })) ),
+            columns: [
+                { field: "CustomerNotesId", headerText: "Notes Unique ID ", visible: false },
+                { field: "Notes", headerText: "Notes", width: 380 },
+                { field: "Status", headerText: "Active", width: 40 }
+
+            ]
+        } );
+
+
+        $( '#CustomerNotesResults' ).ejGrid( {
+            recordClick: function ( args )
+            {
+                $( '#UniqueId' ).val( args.data["CustomerNotesId"] );
+                $( '#NotesHistory' ).val( args.data["Notes"] );
+                $( "#Status" ).prop( "checked", args.data["Status"] );
+                $( "#CustomerId" ).val( args.data["CustomerId"] );
+                $( '#btnUpdate' ).show();
+                $( '#btnCancel' ).show();
+                $( '#btnSave' ).hide();
+                $( "#CustomerId" ).attr( "disabled", true );
+            }
+        } );
+    } );
+</script>
+
+<script>
+
+    function fnInsertCustomerNotes()
+    {
+        if ( $.trim( $( "#CustomerId" ).val() ) === "" || $( '#NotesHistory' ).val() == "" )
+        {
+            if ( $( '#CustomerId' ).val() == "" )
+            {
+                AlertPopup( "|Please Enter Account Number." );
+            }
+            else if ( $( '#NotesHistory' ).val() == "" )
+            {
+                AlertPopup( "|Please Enter Notes" );
+            }
+            return;
+        }
+        else
+        {
+
+            var model = {
+                CustomerNotesId: 0,
+                UserId: 0,
+                UserName: null,
+                EntryDate: null,
+                Notes: $( '#NotesHistory' ).val(),
+                CustomerId: $( "#CustomerId" ).val(),
+                Status: $( "#Status" ).is( ':checked' )
+            };
+
+            var url = "@Url.Action("InsertCustomerNotesList", "CustomerNotes")" + "?NotesHistory=" + $( '#NotesHistory' ).val() + "&CustomerId=" + $( "#CustomerId" ).val() + "&NotesStatus=" + $( "#Status" ).is( ':checked' );
+            $.ajax( {
+                type: 'POST',
+                url: "@Url.Action("InsertCustomerNotesList", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                data: JSON.stringify( model ),
+                contentType: "application/json",
+                success: function ( response )
+                {
+                    var gridObj = $( '#CustomerNotesResults' ).ejGrid( "instance" );
+                    gridObj.dataSource( response.notesList );
+
+                    $( '#NotesHistory' ).val( "" );
+                    $( '#CustomerId' ).val( '' );
+                    $( "#Status" ).prop( "checked", true );
+
+                    //$( "#modalpopup" ).show();
+                    //$( "p", "#modalpopup" ).text( response.message );
+                    AlertPopup( "|" + response.message );
+
+
+                },
+                error: function ( reponse )
+                {
+                    //alert("error : " + reponse);
+
+                }
+            } );
+        }
+
+    };
+
+    function UpdateCustomerFBProvider(UpdateType)
+    {
+        if (UpdateType.toLowerCase() == "customer") {
+            var custNumber = $("#PspUpdateCustomerId").val();
+            var fbProviderId = $("#CustomerPSPTxt").val() == "" ? 0 : $("#CustomerPSPTxt").val();
+
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("UpdateCustomerFBProvider", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                data: { CustomerId: custNumber, Branch: "", FBProviderId: fbProviderId },
+                contentType: "application/json",
+                success: function (response) {
+
+                    if (response.message != '') {
+                        AlertPopup("|" + response.message);
+                    }
+                    else {
+
+                        AlertPopup("| Preferred Provider Number Updated Successfully! ");
+                    }
+
+                },
+                error: function (reponse) {
+                }
+            });
+        }
+        else if (UpdateType.toLowerCase() == "branch") {
+            var branchNumber = $("#PspUpdateBranch").val();
+            var fbProviderId = $("#BranchPSPTxt").val() == "" ? 0 : $("#BranchPSPTxt").val();
+
+            if (branchNumber != null && branchNumber.length <= 3) {
+                if (branchNumber.length == 1) branchNumber = "00" + branchNumber;
+
+                if (branchNumber.length == 2) branchNumber = "0" + branchNumber;
+            }
+            else if (branchNumber != null && branchNumber.length > 3) {
+                AlertPopup("| Please Enter Valid Branch Number of 3 digits! ");
+            }
+
+            if (branchNumber != null && branchNumber != "") {
+                $.ajax({
+                    type: 'GET',
+                    url: "@Url.Action("UpdateCustomerFBProvider", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                    data: { CustomerId: 0, Branch: branchNumber, FBProviderId: fbProviderId },
+                    contentType: "application/json",
+                    success: function (response) {
+
+                        if (response.message != '') {
+                            AlertPopup("|" + response.message);
+                        }
+                        else {
+
+                            AlertPopup("| Preferred Provider Number Updated Successfully! ");
+                        }
+
+                    },
+                    error: function (reponse) {
+                    }
+                });
+            }
+        }
+    }
+
+    function GetCustomerDetails()
+    {
+
+       $.ajax( {
+            type: 'GET',
+            url: "@Url.Action("GetCustomerDetails", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+            data: {CustomerId: $("#PspUpdateCustomerId").val()},
+            contentType: "application/json",
+            success: function ( response )
+            {
+
+                if ( response.message != '' )
+                {
+                    AlertPopup( "|" + response.message );
+                }
+                else
+                {
+
+                    $('#CustomerName').text(response.data.CustomerName);
+                    $('#Address').text(response.data.Address);
+                    $('#City').text(response.data.City);
+                    $('#ZipCode').text(response.data.ZipCode);
+                    $('#FBPreferProvider').val(response.data.FBPreferProvider);
+                    /*if ($('#FBPreferProvider').val()!='') {
+
+                        $('#PSPUpdateIdSubmit1').attr('disabled', false);
+                    }*/
+                }
+
+            },
+            error: function ( reponse )
+            {
+            }
+        } );
+    }
+
+    function GetBranchPSPDetails() {
+        var branchNumber =$("#PspUpdateBranch").val()
+
+        if (branchNumber != null && branchNumber.length <= 3) {
+            if (branchNumber.length == 1) branchNumber = "00" + branchNumber;
+
+            if (branchNumber.length == 2) branchNumber = "0" + branchNumber;
+        }
+        else if (branchNumber != null && branchNumber.length > 3) {
+            AlertPopup("| Please Enter Valid Branch Number of 3 digits! ");
+        }
+        
+        if (branchNumber != null && branchNumber != "") {
+            $.ajax({
+                type: 'GET',
+                url: "@Url.Action("GetBranchPSP", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                data: { Branch: branchNumber },
+                contentType: "application/json",
+                success: function (response) {
+
+                    if (response.message != '') {
+                        AlertPopup("|" + response.message);
+                    }
+                    else {
+                        $('#branchPspLblTxt').text(response.data.FBPreferProvider);
+                    }
+
+                },
+                error: function (reponse) {
+                }
+            });
+        }
+    }
+
+    function GetUserNotes()
+    {
+        var model = {
+            CustomerNotesId: 0,
+            UserId: 0,
+            UserName: null,
+            EntryDate: null,
+            Notes: $( '#NotesHistory' ).val(),
+            CustomerId: $( "#CustomerId" ).val(),
+            Status: $( "#Status" ).is( ':checked' )
+        };
+
+        var url = "@Url.Action("InsertCustomerNotesList", "CustomerNotes")" + "?NotesHistory=" + $( '#NotesHistory' ).val() + "&CustomerId=" + $( "#CustomerId" ).val() + "&NotesStatus=" + $( "#Status" ).is( ':checked' );
+        $.ajax( {
+            type: 'POST',
+            url: "@Url.Action("GetUserNotes", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+            data: JSON.stringify( model ),
+            contentType: "application/json",
+            success: function ( response )
+            {
+                //alert( response.message );
+                var gridObj = $( '#CustomerNotesResults' ).ejGrid( "instance" );
+                gridObj.dataSource( response.notesList );
+
+                $( '#NotesHistory' ).val( "" );
+                $( '#CustomerId' ).val( '' );
+                $( "#Status" ).prop( "checked", true );
+                $( '#IdSubmit' ).attr( 'disabled', true );
+                if ( response.message != '' )
+                {
+                    AlertPopup( "|" + response.message );
+                }
+
+            },
+            error: function ( reponse )
+            {
+            }
+        } );
+    }
+    function fnUpdateCustomerNotes()
+    {
+        if ( $.trim( $( "#CustomerId" ).val() ) === "" || $( '#NotesHistory' ).val() == "" )
+        {
+
+            if ( $( '#CustomerId' ).val() == "" )
+            {
+                AlertPopup( "|Please Enter Account Number." );
+            }
+            else if ( $( '#NotesHistory' ).val() == "" )
+            {
+                AlertPopup( "|Please Enter Notes" );
+            }
+            return;
+        }
+        else
+        {
+
+            var model = {
+                CustomerNotesId: $( '#UniqueId' ).val(),
+                UserId: 0,
+                UserName: null,
+                EntryDate: null,
+                Notes: $( '#NotesHistory' ).val(),
+                CustomerId: $( "#CustomerId" ).val(),
+                Status: $( "#Status" ).is( ':checked' )
+            };
+
+
+            $.ajax( {
+                type: 'POST',
+                url: "@Url.Action("UpdateCustomerNotes", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                data: JSON.stringify( model ),
+                contentType: "application/json",
+                success: function ( response )
+                {
+                    var gridObj = $( '#CustomerNotesResults' ).ejGrid( "instance" );
+                    gridObj.dataSource( response.notesList );
+
+                    $( '#NotesHistory' ).val( "" );
+                    $( '#CustomerId' ).val( '' );
+                    $( "#Status" ).prop( "checked", true );
+                    $( '#IdSubmit' ).attr( 'disabled', true );
+                    if ( response.message != '' )
+                    {
+                        AlertPopup( "|" + response.message );
+                    }
+
+                },
+                error: function ( reponse )
+                {
+                    //alert("error : " + reponse);
+
+                }
+            } );
+        }
+
+    };
+    function fnCancel()
+    {
+        $( '#NotesHistory' ).val( "" );
+        $( '#CustomerId' ).val( '' );
+        $( "#Status" ).prop( "checked", true );
+        $( '#btnUpdate' ).hide();
+        $( '#btnCancel' ).hide();
+        $( '#btnSave' ).show();
+        var gridObj = $( '#CustomerNotesResults' ).ejGrid( "instance" );
+        //gridObj.refreshContent();
+        $( "#CustomerNotesResults" ).ejGrid( "option", { dataSource: [] } );
+        $( "#CustomerId" ).attr( "disabled", false );
+    }
+
+
+
+    function YearChangefunc( val )
+    {
+
+        $( '#HolidayName' ).val( "" );
+        $( '#HolidayDate' ).val( '' );
+        $( '#btnUpdate' ).hide();
+        $( '#btnCancel' ).hide();
+        $( '#btnSave' ).show();
+        if ( $.trim( val ).length != 0 )
+        {
+            var url = "@Url.Action("SortHolidayList", "Holiday")" + "?year=" + val;
+            $.ajax( {
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function ( response )
+                {
+                    var gridObj = $( '#HolidayCalendarResults' ).ejGrid( "instance" );
+                    gridObj.dataSource( response );
+                },
+                error: function ( reponse )
+                {
+                    //alert("error : " + reponse);
+
+                }
+            } );
+        }
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Customer Notes</h2>
+            <div class="customer-content margin-top">
+                <div class="row clear-input">
+                    <div class="col-md-12">
+                        <div class="col-sm-6-o">
+                            <span class="col-md-1 required">AccountNumber:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.CustomerId, new { Value = "", @class = "form-control", @type = "number" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button id="IdSubmit" type="submit" class="btn btn-primary" style="float:left;">Submit</button>
+                            </div>
+                            <div class="col-md-1">
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 customer-col2">
+                        <div class="col-md-6 col-sm-6-o">
+                            <span class="col-md-1  required">Notes:</span>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    @Html.TextArea("Notes", "", new { @class = "form-control", @rows = 10, @style = "overflow-x:scroll;resize:none;", @Id = "NotesHistory" })
+                                </div>
+                                <span class="col-md-1">Status:</span>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @Html.CheckBoxFor(c => c.Status, new { @checked = true })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-4 col-sm-8">
+                                        @{                                            
+                                            if (UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_EDIT_ONLY || UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_FULL)
+                                            {
+                                        <button type="button" class="btn btn-primary" style="margin-left:40px" id="btnUpdate" onclick="fnUpdateCustomerNotes();">Update</button>
+                                        <button type="button" style="margin-left:40px" class="btn btn-primary" id="btnCancel" onclick="fnCancel();">Cancel</button>
+                                            }
+                                            if (UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_FULL)
+                                            {
+                                        <button type="button" class="btn btn-primary" style="margin-left:40px" id="btnSave" onclick="fnInsertCustomerNotes();">Create</button>
+                                            }
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pull-right">
+
+                            <div id="CustomerNotesResults" class="display" cellspacing="0" width="100%"></div>
+                            @Html.Hidden("UniqueId")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="closure-head arrow-down tabheader">PSP Update By AccountNumber</h2>
+            <div class="closure-content margin-top" style="display:block;">
+                <div class="row clear-input">
+                    <div class="col-md-12">
+                        <div class="col-sm-6-o">
+                            <span class="col-md-1 required">AccountNumber:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.CustomerId, new { Value = "", @class = "form-control", @type = "number", @Id = "PspUpdateCustomerId" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button id="PSPUpdateIdSubmit" type="submit" class="btn btn-primary" style="float:left;">Submit</button>
+                            </div>
+                            <div class="col-md-1">
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-sm-12">
+                            <div class="col-md-1" style="padding:0px;">
+                                <div class="form-group">
+                                    <span>Customer Name:</span>
+                                </div>
+                            </div>
+                            <div class="col-md-5" style="clear:inherit;">
+                                <div class="form-group">
+                                    @Html.LabelFor(c => c.CustomerName, " ", htmlAttributes: new { @Id = "CustomerName" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-md-1" style="padding:0px;">
+                                <div class="form-group">
+                                    <span>Address:</span>
+                                </div>
+                            </div>
+                            <div class="col-md-5" style="clear:inherit;">
+                                <div class="form-group">
+                                    @Html.LabelFor(c => c.Address, " ", htmlAttributes: new { @Id = "Address" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-md-1" style="padding:0px;">
+                                <div class="form-group">
+                                    <span>City:</span>
+                                </div>
+                            </div>
+                            <div class="col-md-5" style="clear:inherit;">
+                                <div class="form-group">
+                                    @Html.LabelFor(c => c.City, " ", htmlAttributes: new { @Id = "City" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="col-md-1" style="padding:0px;">
+                                <div class="form-group">
+                                    <span>Zip Code:</span>
+                                </div>
+                            </div>
+                            <div class="col-md-5" style="clear:inherit;">
+                                <div class="form-group">
+                                    @Html.LabelFor(c => c.ZipCode, " ", htmlAttributes: new { @Id = "ZipCode" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="col-md-1" style="padding:0px;">
+                                <div class="form-group">
+                                    <span class="required">PSP:</span>
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="clear:inherit;">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.FBPreferProvider, new { @class = "form-control CustomerData", @Id = "CustomerPSPTxt" })
+                                </div>
+                            </div>
+                            @if (UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_EDIT_ONLY || UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_FULL)
+                            {
+                            <div class="col-md-2">
+                                <button id="PSPUpdateIdSubmit1" type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="branchPSP-head arrow-down tabheader">PSP Update By Branch</h2>
+            <div class="branchPSP-content margin-top" style="display:block;">
+                <div class="row clear-input">
+                    <div class="col-md-12">
+                        <div class="col-sm-6-o">
+                            <span class="col-md-1 required">Branch:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.Branch, new { Value = "", @class = "form-control", @type = "number", @Id = "PspUpdateBranch" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button id="branchSubmit" class="btn btn-primary" style="float:left;">Submit</button>
+                            </div>
+                            <div class="col-md-1">
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-sm-12">
+                                <div class="col-md-1" style="padding:0px;">
+                                    <div class="form-group">
+                                        <span>Branch PSP:</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5" style="clear:inherit;">
+                                    <div class="form-group">
+                                        @Html.LabelFor(c => c.CustomerName, " ", htmlAttributes: new { @Id = "branchPspLblTxt" })
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                         @*</div>
+                    <div class="col-md-12">*@
+                        <div class="col-sm-12">
+                            <div class="col-md-1" style="padding:0px;">
+                                <div class="form-group">
+                                    <span class="required">PSP:</span>
+                                </div>
+                            </div>
+                            <div class="col-md-2" style="clear:inherit;">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.FBPreferProvider, new { @class = "form-control CustomerData", @Id="BranchPSPTxt" })
+                                </div>
+                            </div>
+                            @if (UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_EDIT_ONLY || UserPrivilege["Customer Notes"].ToLower() == Model.ACCESS_FULL)
+                            {
+                            <div class="col-md-2">
+                                <button id="PSPBranchUpdate" type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                        </div>
+                    </div>
+        </div>
+    </section>
+
+}

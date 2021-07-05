@@ -1,0 +1,338 @@
+﻿@{
+    ViewBag.Title = "ERFSearch";
+}
+
+@model FarmerBrothers.Models.ErfSearchModel
+@using Newtonsoft.Json;
+
+
+<script type="text/javascript">
+    var formDirty = false;
+    var searchCriteria;
+
+    function queryCellInfo(args)
+    {
+        if (args.column.field == "ErfID") {
+            args.cell.className	+= " urlStyle";
+        }
+    }
+
+    $(document).ready(function () {
+
+        $("#ErfLink").css("color", "white");
+
+        $("#entryDate").ejDatePicker();
+        $("#closeDate").ejDatePicker();
+
+        $('.EsmDropDownList').ejDropDownList({
+            dataSource : @Html.Raw(Json.Encode(Model.EsmList)),
+            fields: { value : "ESMName", text : "ESMName" },
+            showCheckbox: true,
+            showRoundedCorner: true,
+            watermarkText: "Please Select"
+        }).data("ejDropDownList").selectItemByValue("," + "@string.Join(",", Model.Esm)");
+
+        var esms = "@string.Join(",", Model.Esm)";
+        var EsmList = esms.split(",");
+
+        for(var count = 0 ; count < EsmList.length; count++)
+        {
+            $('.EsmDropDownList').data("ejDropDownList").selectItemByValue(EsmList[count]);
+        }
+
+
+
+        var value = '@Request.RequestContext.HttpContext.Session["CanExportSessionValue"]';
+
+        if ( value == 1 )
+        {
+            $('#ERFResults').ejGrid({
+                exportToExcelAction : '@Url.Action("ExcelExport","Erf")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+                allowPaging: true,
+                isResponsive: true,
+                allowTextWrap: true,
+                allowSorting:true,
+                pageSettings: { pageSize: 25 },
+                queryCellInfo:"queryCellInfo",
+                enableResponsiveRow: true,
+                columns: [
+                    { field: "ErfID", headerText: "ERF#"},
+                    { field: "WorkorderId", headerText: "Workorder#"},
+                    { field: "ERFEntryDate", headerText: "ERF Entry Date" },
+                    { field: "CustomerID", headerText: "Account Number"},
+                    { field: "CustomerName", headerText: "Customer Name",width:300 },
+                    { field: "Address", headerText: "Address" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", width:80, headerText: "State" },
+                    { field: "ApprovalStatus", width:80, headerText: "Approval Status"},
+                     { field: "Status", width:80, headerText: "ERF Status" },
+                    //{ field: "Reason", headerText: "Reason" },
+                    { field: "OriginatorName", headerText: "Originator" }
+                ],
+            });
+        }
+        else
+        {
+            $('#ERFResults').ejGrid({
+                dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+                allowPaging: true,
+                isResponsive: true,
+                allowTextWrap: true,
+                allowSorting:true,
+                pageSettings: { pageSize: 25 },
+                queryCellInfo:"queryCellInfo",
+                enableResponsiveRow: true,
+                columns: [
+                    { field: "ErfID", headerText: "ERF#"},
+                    { field: "WorkorderId", headerText: "Workorder#"},
+                    { field: "ERFEntryDate", headerText: "ERF Entry Date" },
+                    { field: "CustomerID", headerText: "Account Number"},
+                    { field: "CustomerName", headerText: "Customer Name",width:300 },
+                    { field: "Address", headerText: "Address" },
+                    { field: "City", headerText: "City" },
+                    { field: "State", width:80, headerText: "State" },
+                    { field: "ApprovalStatus", width:80, headerText: "Approval Status"},
+                    { field: "Status", width:80, headerText: "ERF Status" },
+                    //{ field: "Reason", headerText: "Reason" },
+                    { field: "OriginatorName", headerText: "Originator" }
+                ],
+            });
+        }
+
+
+
+        $("#ERFResults").ejGrid({
+            recordClick: function (args) {
+                @*window.open('@Url.Action("ErfDetails",  "ERF")' + "/" + args.data["ErfID"], 'Erf_' + args.data["ErfID"], '');*@
+                window.location.href = "@Url.Action("ErfDetails", "ERF")"+'/' + args.data["ErfID"];
+            }
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria()==true) {
+                $.post($(this).attr("action"),
+                           $(this).serialize(),
+                           function (result) {
+                               var obj = $("#ERFResults").ejGrid("instance");
+                               obj.dataSource(result);
+                           });
+            }
+
+            e.preventDefault();
+        });
+    });
+
+    function ValidateSearchCriteria()
+    {
+        //alert($('#txtcustomerid').val() +"|==="+  $('#txtcustomerPhone').val()+"|==="+  $('#txtcustomername').val() +"|==="+  $('#entryDate').val() +"|==="+  $('#closeDate').val()
+        //    +"|==="+  $('#txtERFID').val() +"|==="+  $('#txtAddressid').val()+"|==="+  $('#txtworkorderID').val() +"|==="+  $('#txtAddressid').val()
+        //    +"|==="+  $('#StatesDropDown').val() +"|==="+  $('#txtzipcode').val() +"|==="+  $('#ReasonsDropDown').val())
+        var valid = true;
+        if ($('#txtcustomerid').val() == ""
+            //&& $('#txtcustomerPhone').val() == ""
+            && $('#txtOriginator').val() == ""
+            && $('#txtcustomername').val() == ""
+            && $('#entryDate').val() == ""
+            && $('#closeDate').val() == ""
+            && $('#txtERFID').val()  == ""
+            && $('#txtAddressid').val()  == ""
+            && $('#txtworkorderID').val() == ""
+            && $('#txtCityid').val() == ""
+            && $('#StatesDropDown').val() =="n/a"
+            && $('#txtzipcode').val() == ""
+            && $('#ReasonsDropDown').val() == "-1"
+            && $('#Esm').val() == "")
+        {
+            AlertPopup("|Please Select at least one Search Criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+    function SearchClear() {
+        $('.form-control').val('');
+        var obj = $("#ERFResults").ejGrid("instance");
+        obj.dataSource('');
+        $('#ReasonsDropDown').val(-1);
+        $('#StatesDropDown').val("n/a");
+        //$('.EsmDropDownList').val("");
+        $('.EsmDropDownList').data("ejDropDownList").selectItemByValue("");
+    }
+
+</script>
+@using (Html.BeginForm("ERFSearch", "ERF", FormMethod.Post, new { @id = "formSearch" }))
+{
+    <section class="well">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>ERF Search</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="col-md-12">
+            <div class="customer-content margin-top">
+                <div>
+                    <div class="col-md-12 customer-col1 sm-pad-reset">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Account Number:
+                                    @Html.TextBoxFor(a => a.CustomerId, new { @id = "txtcustomerid", @Value = "", @class = "form-control" ,@style="max-width:100%" , onkeypress = "return isNumberKey(event)" })
+                                </div>
+                            </div>
+                            @*<div class="col-md-3">
+                                <div class="form-group">
+                                    Customer Phone:
+                                    @Html.TextBoxFor(a => a.Phone, new { @id = "txtcustomerPhone", @class = "form-control", @style = "max-width:100%", @type = "number" })
+                                </div>
+                            </div>*@
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Originator Name:
+                                    @Html.TextBoxFor(a => a.OriginatorName, new { @id = "txtOriginator", @class = "form-control", @style = "max-width:100%" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Customer Name:
+                                    @Html.TextBoxFor(a => a.CustomerName, new { @id = "txtcustomername", @Value = "", @style = "max-width:100%", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Created From:
+                                    @Html.TextBoxFor(a => a.CreatedFrom, new { @id = "entryDate", @Value = "", @style = "max-width:100%", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Created To:
+                                    @Html.TextBoxFor(a => a.CreatedTo, new { @id = "closeDate", @class = "form-control", @style = "max-width:100%" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    ERF ID:
+                                    @Html.TextBoxFor(a => a.ERFID, new { @id = "txtERFID", @class = "form-control", @style = "max-width:100%" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Address:
+                                    @Html.TextBoxFor(a => a.Address, new { @id = "txtAddressid", @Value = "", @class = "form-control", @style = "max-width:100%" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Work Order ID:
+                                    @Html.TextBoxFor(a => a.WorkOrderID, new { @id = "txtworkorderID", @class = "form-control", @style = "max-width:100%" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    City:
+                                    @Html.TextBoxFor(a => a.City, new { @id = "txtCityid", @Value = "", @class = "form-control", @style = "max-width:100%" })
+                                </div>
+                            </div>
+                            @*<div class="col-sm-6">
+                                    <span class="col-md-5">FEAST Movement ID:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(a => a.FeastMovement, new { @id = "txtfeastmovementID", @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    State:
+                                    @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Placement Reason:
+                                    @Html.DropDownListFor(a => a.Reason, new SelectList(Model.Reasons, "FBStatusID", "FBStatus"), new { @Id = "ReasonsDropDown", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Zip Code:
+                                    @Html.TextBoxFor(a => a.ZipCode, new { @id = "txtzipcode", @Value = "", @class = "form-control", @style="max-width:100%" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    ESM:
+                                    @Html.TextBoxFor(c => c.Esm, new { @class = "form-control SearchPanelControl EsmDropDownList" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" style="margin-top: 19px;">
+                                    <button type="submit" class="btn btn-primary btn-p2 btn-blue">Search</button> &nbsp;&nbsp;
+                                    <a href="#" onclick="SearchClear()" class="btn btn-primary btn-p2 btn-orange">Clear</a>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group"><br/>
+                                    @*@Html.ActionLink("Create ERF", "ERFManagement", "ERF", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </section>
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>ERF Search Results</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="ERFResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+
+@*<div id="myERFModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="gridSystemModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="gridSystemModalLabel">Validation Message</h4>
+            </div>
+            <div class="modal-body">
+                Please enter at least one search criteria.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->*@
+
+<style>
+    .e-toolbar > .e-horizontal.e-ul {
+        float: right;
+    }
+</style>

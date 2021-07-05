@@ -1,0 +1,12 @@
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\Smuckers.Data.dll.config
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\Smuckers.Data.dll
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\Smuckers.Data.pdb
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\EntityFramework.dll
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\EntityFramework.SqlServer.dll
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\Newtonsoft.Json.dll
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\EntityFramework.xml
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\EntityFramework.SqlServer.xml
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\bin\Release\Newtonsoft.Json.xml
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\obj\Release\Smuckers.Data.dll
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\obj\Release\Smuckers.Data.pdb
+D:\MAI\EquipmentAndMaintenance\Mars\Trunk\Smuckers\Smuckers.Data\obj\Release\Smuckers.Data.csprojResolveAssemblyReference.cache

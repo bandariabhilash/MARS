@@ -1,0 +1,105 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using Newtonsoft.Json;
+@using FarmerBrothers.Data;
+@using FarmerBrothers.Models;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //$("#errorLblBlock").hide();
+        //$("#successBlock").hide();
+
+
+        $("#clearBtn").on("click", function (e) {
+            clearFile();
+            $("#errorLbl").html("");
+            $("#errorLblBlock").hide();
+            $("#successBlock").hide();
+
+            e.preventDefault();
+        });
+
+    });
+
+    function clearFile() {
+        $("#erfFileuploadTxt").val("");
+    }
+</script>
+
+@using (Html.BeginForm("BulkERFUploadFile", "ERFNew", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <section class="block margin-top">
+
+    <div class="container-fluid">
+        <h2 class="bulkERF-head arrow-down tabheader">Bulk ERF Upload</h2>
+        <div class="bulkERF-content margin-top" style="display:block;">
+
+            <div class="row customerUpload clear-input">
+                <div class="col-md-12">
+                    <div class="col-md-2" style="width: 30%;">
+                        <div class="form-group right-inner-addon">
+                            @Html.TextBox("file", "", new { @type = "file", @Id = "erfFileuploadTxt" }) <br />
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group right-inner-addon" style="top:1.3em;">
+                            <button class="btn btn-primary" id="uploadBtn">Upload</button>
+                            <button class="btn btn-primary" id="clearBtn">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            @if (ViewBag.isSuccess != null && !(ViewBag.isSuccess))
+            {
+                <div class="row customer clear-input" id="errorLblBlock">
+                    <div class="col-md-12  sm-pad-reset">
+                        <b>Error: </b>
+                        @Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))
+                    </div>
+                </div>
+            }
+            else if (ViewBag.isSuccess != null && (ViewBag.isSuccess))
+            {
+            <div class="row customer clear-input" id="successBlock">
+                <div class="col-md-12  sm-pad-reset">
+                    <b>Success: </b>
+                    <div class="row customer clear-input">
+                        <div class="col-md-12  sm-pad-reset">
+                            @(Html.EJ().Grid<object>("ERFFileUploadResults")
+    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
+     .Adaptor(AdaptorType.RemoteSaveAdaptor))
+    .AllowPaging()
+    .AllowFiltering()
+    .AllowTextWrap(true)
+    .TextWrapSettings(w => { w.WrapMode(WrapMode.Both); })
+    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+    .Columns(col =>
+    {       
+        col.Field("CustomerID").HeaderText("Customer#").Width(100).Add();
+        col.Field("CustomerName").HeaderText("Customer Name").Width(100).Add();
+        col.Field("ErfID").HeaderText("ERF#").Width(100).Add();
+        col.Field("WorkorderID").HeaderText("Workorder#").Width(100).Add();
+        col.Field("BulkUploadResult").HeaderText("Result Status").Width(60).Add();
+        col.Field("UploadError").HeaderText("Success/Error Message").Width(200).Add();
+    })
+     .ClientSideEvents(eve =>
+     {
+         eve.QueryCellInfo("queryCellInfo");
+     }))
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</section>
+}

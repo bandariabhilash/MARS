@@ -1,0 +1,229 @@
+﻿@{
+    ViewBag.Title = "SerialNumberReport";
+}
+
+@model FarmerBrothers.Models.SerialNumberModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var formDirty = false;
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+        console.debug("at page lode = " + ej.serverTimeZoneOffset)
+        $('#ReportsLink').css("color", "white");
+
+        $("#CloseDateStart").ejDatePicker({ value: new Date($("#CloseDateStart").val()) });
+        $("#CloseDateEnd").ejDatePicker({ value: new Date($("#CloseDateEnd").val()) });
+
+        @*$('#SerialNumberResults').ejGrid({
+            exportToExcelAction: '@Url.Action("SerialNumberExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting: true,
+            allowTextWrap: true,
+            allowResizeToFit: true,
+            queryCellInfo: "queryCellInfo",
+            dataSource: @Html.Raw(Json.Encode(Model.SearchResults)),
+        columns: [
+            { field: "EventID", headerText: "Workorder ID" },
+            { field: "SerialNo", headerText: "Serial#" },
+            { field: "ContactID", headerText: "Account No" },
+            { field: "SearchType", headerText: "Customer Type" },
+            { field: "CompanyName", headerText: "Customer Name" },
+            { field: "EntryDate", headerText: "Entry Date" },
+            { field: "CloseDate", headerText: "Close Date" },
+            { field: "CallTypeId", headerText: "Call TypeID" },
+            { field: "CallTypeDesc", headerText: "Call Type" }
+        ]
+        });
+
+    $("form").submit(function (e) {
+
+        if (ValidateSearchCriteria() == true) {
+            var frmValues = $("form").serialize();
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("SearchSerialNumber", "Reports")",
+                data: frmValues
+            }).done(function (result) {
+                var obj = $("#SerialNumberResults").ejGrid("instance");
+                obj.dataSource(result);
+            });
+        }
+
+        e.preventDefault();
+    });*@
+    });
+
+    function SearchClear() {
+        $('.form-control').val('');
+        //$('#StatesDropDown').val("n/a");
+        //$('#Submitclear').val('true');
+        //$("#Operation").val(5);
+        //$('#reportSearchForm').submit();
+    }
+
+    function ValidateSearchCriteria() {
+        var valid = true;
+        if ($('#CloseDateStart').val() == ""&& $('#CloseDateEnd').val() == ""&& $('#JDENo').val() == ""&& $('#EntryNo').val() == "")
+        {
+            AlertPopup("|Please select atleast one search criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearSerialNumberSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearSerialNumberResults", "Reports")",
+        }).done(function (result) {
+            var obj = $("#SerialNumberResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+</script>
+
+
+@using (Html.BeginForm("SearchSerialNumber", "Reports", FormMethod.Post, new { id = "SerialNumberSearchForm" }))
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Serial Number Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Close Start Date:
+                                @Html.TextBoxFor(c => c.CloseDateStart, new { @class = "form-control SearchPanelControl", @Id = "CloseDateStart" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Close End Date:
+                                @Html.TextBoxFor(c => c.CloseDateEnd, new { @class = "form-control SearchPanelControl", @Id = "CloseDateEnd" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Account Number:
+                                @Html.TextBoxFor(c => c.JDENo, new { @class = "form-control SearchPanelControl", @Id = "JDENo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Serial#:
+                                @Html.TextBoxFor(c => c.SerialNumber, new { @class = "form-control SearchPanelControl", @Id = "EntryNo" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary" name="action:SearchSerialNumber">Search</button>
+                                @*<a onclick="ClearSerialNumberSearchResults()" class="btn btn-orange">Clear</a>*@
+                                <a href="@Url.Action("SerialNumberReport", "Reports")" style="margin-left:10px;" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="SerialNumberResults" class="display" cellspacing="0" width="100%">
+                    <tr>
+                        <td>
+                            @(Html.EJ().Grid<object>
+                                ("SerialNumberResults")
+                .Datasource((IEnumerable<object>)Model.SearchResults)
+
+                .AllowPaging()
+                        .AllowScrolling()
+                .AllowSorting()
+                .AllowTextWrap(true)
+                .PageSettings(Page => Page.PageSize(25))
+                .IsResponsive(true)
+                .EnableResponsiveRow(true)
+                .Mappers(map => map.ExportToExcelAction(Url.Action("SerialNumberExcelExport", "Reports")))
+                .ToolbarSettings(toolbar =>
+                {
+                    toolbar.ShowToolbar().ToolbarItems(items =>
+                    {
+                        items.AddTool(ToolBarItems.ExcelExport);
+                    });
+                })
+                .Columns(col =>
+                {
+                    col.Field("EventID").HeaderText("Workorder ID").Width(100).Add();
+                    col.Field("SerialNo").HeaderText("Serial#").Width(100).Add();
+                    col.Field("ContactID").HeaderText("Account No").Width(100).Add();
+                    col.Field("SearchType").HeaderText("Customer Type").Width(100).Add();
+                    col.Field("CompanyName").HeaderText("Customer Name").Width(100).Add();
+                    col.Field("EntryDate").HeaderText("Entry Date").Width(100).Add();
+                    col.Field("CloseDate").HeaderText("Close Date").Width(100).Add();
+                    col.Field("CallTypeId").HeaderText("Call TypeID").Width(100).Add();
+                    col.Field("CallTypeDesc").HeaderText("Call Type").Width(100).Add();
+                    
+                }))
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+

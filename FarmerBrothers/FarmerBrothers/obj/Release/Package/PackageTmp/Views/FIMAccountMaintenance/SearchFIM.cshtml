@@ -1,0 +1,147 @@
+﻿@{
+    ViewBag.Title = "FIM Account Maintenance";
+}
+
+@model FarmerBrothers.Models.FIMAccountSearchModel
+@using Newtonsoft.Json;
+
+
+<style type="text/css">
+    .customcss.e-rowcell {
+        color: blue;
+        text-decoration: underline;
+    }     
+
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#AdministratorLink').css("color", "white");
+        function queryCellInfo(args) {
+            if (args.column.field == "Active") {
+                args.cell.style.backgroundColor = "lightblue";
+                args.cell.style.color = "green";
+            }
+        }
+
+        $('#FIMAccountSearchResults').ejGrid({
+            allowPaging: true,
+            allowSorting: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            pageSettings: { pageSize: 25 },
+            allowTextWrap: true,
+            //rowDataBound: "rowDataBound",
+            queryCellInfo: "queryCellInfo",
+            dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.SearchResults, Formatting.Indented, new JsonSerializerSettings
+            {
+                                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }))),
+            columns: [
+                 { field: "TechId", headerText: "TechId", width: 100, visible: false },
+                { field: "Active", headerText: "Active", width: 80 },
+                { field: "InvoicingAccount", headerText: "Invoicing Account", width: 80, textAlign : "center"},
+                { field: "TechnicianAccount", headerText: "Technician Account", width: 100, textAlign: "center" },
+                { field: "TechId", headerText: "Location ID", cssClass: "customcss", width: 100 },
+                { field: "LocationName", headerText: "Location Name", width: 100 },
+                { field: "City", headerText: "City", width: 80 },
+                { field: "State", headerText: "State", width: 80 }
+                   ]
+        });
+
+        $("#FIMAccountSearchResults").ejGrid({
+            recordClick: function (args) {
+                if (args.columnName == "Location ID")
+                {
+                    window.location.href = "@Url.Action("EditFIM", "FIMAccountMaintenance")" + "?TechId=" + args.data["TechId"];;
+                }                
+            }
+        });
+        $("form").submit(function (e)
+        {
+            if ($('#VendorName').val() == "" && $('#VendorID').val() == "")
+            {
+                var gridObj = $("#FIMAccountSearchResults").ejGrid("instance");
+                gridObj.dataSource('')
+                e.preventDefault();
+            }
+        })
+    })
+</script>
+
+@using (Html.BeginForm("SearchFIM", "FIMAccountMaintenance", FormMethod.Post, new { id = "FIMAccountSearchForm" }))
+{
+    <section class="well">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>FIM Account Maintenance</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12 sm-pad-reset">
+                        <div class="col-sm-3-o">
+                            <span class="col-md-1 text-right">Location ID:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.VendorID, new { @class = "form-control SearchPanelControl" ,type = "number" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3-o">
+                            <span class="col-md-2 text-right">Location Name:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.VendorName, new { @class = "form-control SearchPanelControl" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3-o">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary" name="action:SearchFIM">Search</button>
+                                    @*<a href="@Url.Action("SearchFIM", "FIMAccountMaintenance")" style="margin-left:10px;" class="btn btn-orange">Clear</a>*@
+                                </div>
+                            </div>
+                        </div>                        
+                    </div>
+
+                    @*<div class="col-md-12 sm-pad-reset">
+                        <div class="col-sm-3-o">
+                            <span class="col-md-1">JMS Login:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(c => c.JMSLogin, new { @class = "form-control SearchPanelControl" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3-o">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <a href="#" style="margin-left:10px;" class="btn btn-orange">Find</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="FIMAccountSearchResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

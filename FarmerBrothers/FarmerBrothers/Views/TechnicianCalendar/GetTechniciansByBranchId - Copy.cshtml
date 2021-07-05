@@ -1,0 +1,756 @@
+﻿@model FarmerBrothers.Models.CalendarTechnicianModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+<script>
+    //$(function () {
+    //    window.addEventListener("resize", function () {
+    //        onCreate();
+    //    });
+    //});
+
+    $(document).ready(function ()
+    {
+        $(document).on('click', '.Appointdesc', function(){
+            var el = document.querySelector(".e-quicksubject");
+            //      window.open('@Url.Action("WorkorderManagement", "Workorder")' + "/"+ '/' + , 'WorkOrder_' + args.data["WorkorderID"], '');
+            //window.open('@Url.Action("ErfDetails", "ERF")' + "/" + args.data["WorkorderErfid"], 'Erf_' + args.data["WorkorderErfid"], '');
+            @*window.open('@Url.Action("WorkorderManagement", "Workorder")' + "?workOrderId=" + Number(el.textContent.substr(3).trim()), '');*@
+            window.location.href = "@Url.Action("WorkorderManagement", "Workorder")" + "?workOrderId=" + Number(el.textContent.substr(3).trim());
+
+        });
+
+    } )
+
+
+    function OnAppointmentClick(args) {
+        debugger;
+        if(args.appointment.Subject.toString().indexOf("IWO") >= 0 || args.appointment.Subject.toString().indexOf("PWO") >= 0 || args.appointment.Subject.toString().indexOf("RWO") >= 0)
+        {
+            var Appointdesc="";
+            if(args.appointment.Subject.toString().includes("IWO"))
+            {
+                Appointdesc=args.appointment.Subject.toString();
+                Appointdesc=Appointdesc.replace("IWO", "Installation Work Order ");
+            }
+            else if(args.appointment.Subject.toString().includes("PWO"))
+            {
+                Appointdesc=args.appointment.Subject.toString();
+                Appointdesc=Appointdesc.replace("PWO", "Preventative Maintenance Work Order ");
+            }
+            else if(args.appointment.Subject.toString().includes("RWO"))
+            {
+                Appointdesc=args.appointment.Subject.toString();
+                Appointdesc=Appointdesc.replace("RWO", "Removal Work Order ");
+            }
+
+
+            $('#TechSchedule_quickAppDetailswindow').children().last().hide();
+            $("table.e-qappwindow tr#desc").remove();
+
+            $("table.e-qappwindow tr:nth-child(1)").after("<tr id='desc'><td><div class='Appointdesc'>" + Appointdesc + "</div> </td></tr>")
+            //args.appointment.Subject=args.appointment.Subject.toString().replace("IWO", "Installation Work Order ");
+            //args.appointment.Subject=args.appointment.Subject.toString().replace("PWO", "Preventative Maintenance Work Order ");
+            //args.appointment.Subject=args.appointment.Subject.toString().replace("RWO", "Removal Work Order ");
+        }
+        else  if(args.appointment.Subject.toString().indexOf("Installation Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Preventative Maintenance Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Removal Work Order") >= 0)
+        {
+            $('#TechSchedule_quickAppDetailswindow').children().last().hide();
+        }
+        else
+        {
+            $("table.e-qappwindow tr#desc").remove();
+            $('#TechSchedule_quickAppDetailswindow').children().last().show();
+            $('#OnCall_AddEditForm table tr:nth-child(2)').hide();
+            $('#OnCall_AddEditForm table tr:nth-child(3)').hide();
+        }
+    }
+    function onCellClick(args)
+    {
+        if (args.type == "cellClick")
+            $('#TechSchedule_AddEditForm table tr:nth-child(2)').show();
+
+        $('#TechSchedule_AddEditForm table tr:nth-child(3)').show();
+        args.cancel = true;
+
+    }
+    function ReadOnlyonCellClick(args)
+    {
+        args.cancel = true;
+    }
+
+
+
+    function OnCallonCellClick(args)
+    {
+        //alert("OnCallonCellClick");
+        if (args.type == "cellClick")
+            $('#OnCall_AddEditForm table tr:nth-child(2)').show();
+
+        $('#OnCall_AddEditForm table tr:nth-child(3)').show();
+        args.cancel = true;
+
+    }
+    function ReadOnlyOnCallonCellClick(args)
+    {
+
+        args.cancel = true;
+
+    }
+
+    function  OnAppointmentHover(args)
+    {
+        //alert(args.appointment.Subject);
+        // alert(args.appointment.Subject);
+        if(args.appointment.Subject.toString().indexOf("IWO") >= 0 || args.appointment.Subject.toString().indexOf("PWO") >= 0 || args.appointment.Subject.toString().indexOf("RWO") >= 0)
+        {
+            args.cancel = true;
+        }
+        else  if(args.appointment.Subject.toString().indexOf("Installation Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Preventative Maintenance Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Removal Work Order") >= 0)
+        {
+            args.cancel = true;;
+        }
+        else
+        {
+            args.cancel = false;
+        }
+    }
+    function  OnAppointmentOpen(args)
+    {
+        //  alert(args);
+        if(typeof args.appointment=='undefined')
+            args.cancel = false;
+        else if(args.appointment.Subject.toString().indexOf("Installation Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Preventative Maintenance Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Removal Work Order") >= 0)
+        {
+            args.cancel =true;
+        }
+
+    }
+    function  OnNavigation(args)
+    {
+        var schObj = $("#TechSchedule").data("ejSchedule");         //Create schedule object to use refreshAppointments method
+        schObj.refreshAppointments();
+    }
+
+    function  OnCallOnNavigation(args)
+    {
+        var schObj = $("#OnCall").data("ejSchedule");         //Create schedule object to use refreshAppointments method
+        schObj.refreshAppointments();
+    }
+
+    function onCellHover(args) {
+        //   debugger
+        //alert(args.currentDate);
+        if (args.currentDate.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            args.cancel = true
+    }
+    function OnCallonCellHover(args) {
+        //alert("OnCallonCellHover");
+        if (args.startTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            args.cancel = true
+    }
+    function onCellClick(args) {
+
+        ////alert("cell click =" +args.startTime.setHours(0, 0, 0, 0) + "------------"+new Date().setHours(0, 0, 0, 0));
+        //    debugger
+        if (args.currentDate.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+        {    args.cancel = true;
+
+        }
+    }
+
+    function OnCallonCellClick(args) {
+        if ( args.currentDate != undefined &&  args.currentDate.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            args.cancel = true
+    }
+
+    function OnCallonCreate() {
+        debugger;
+        var scheduleObj = $("#OnCall").data("ejSchedule");
+        if (scheduleObj.currentView() == "month") {
+            var monthElements = scheduleObj.element.find(".e-monthcells");
+            var dayIndex = scheduleObj._dateRender.indexOf(new Date().setHours(0, 0, 0, 0));
+            for (var a = 0, len = scheduleObj._dateRender.length; a < len; a++) {
+                if (scheduleObj._dateRender[a] < new Date().setHours(0, 0, 0, 0))
+                    monthElements.eq(a).addClass("e-othermonths e-disable");
+            }
+        }
+        else {
+            var allDayElements = scheduleObj.element.find(".e-alldaycells");
+            for (var b = 0, len = scheduleObj._dateRender.length; b < len; b++) {
+                if (scheduleObj._dateRender[b] < new Date().setHours(0, 0, 0, 0)) {
+                    scheduleObj.element.find(".e-workcellstab tr td:nth-child(" + (b + 1) + ")").addClass("e-disable");
+                    allDayElements.eq(b).addClass("e-disable");
+                }
+                else {
+                    scheduleObj.element.find(".e-workcellstab tr td:nth-child(" + (b + 1) + ")").removeClass("e-disable");
+                    allDayElements.eq(b).removeClass("e-disable");
+                }
+            }
+        }
+
+		if (ej.isNullOrUndefined(this._appointmentAddWindow)) this._renderAppointmentWindow();
+        this._appointmentAddWindow.find(".allday").ejCheckBox({
+            change: function (args) {
+                args.cancel = true;
+                var schObj = $("#OnCall").ejSchedule("instance");
+                if (args.isChecked == true) {
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: $("#OnCallStartTime").val(), enabled: false });
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: $("#OnCallEndTime").val(),enabled: false  });
+                }
+                else
+                {
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: "12:00 AM", enabled: true });
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: "11:59 PM",enabled: true  });
+                }
+            }
+        });
+
+
+    }
+
+    function onCreate() {
+        var scheduleObj = $("#TechSchedule").data("ejSchedule");
+        if (scheduleObj.currentView() == "month") {
+            var monthElements = scheduleObj.element.find(".e-monthcells");
+            var dayIndex = scheduleObj._dateRender.indexOf(new Date().setHours(0, 0, 0, 0));
+            for (var a = 0, len = scheduleObj._dateRender.length; a < len; a++) {
+                if (scheduleObj._dateRender[a] < new Date().setHours(0, 0, 0, 0))
+                    monthElements.eq(a).addClass("e-othermonths e-disable");
+            }
+        }
+        else {
+            var allDayElements = scheduleObj.element.find(".e-alldaycells");
+            for (var b = 0, len = scheduleObj._dateRender.length; b < len; b++) {
+                if (scheduleObj._dateRender[b] < new Date().setHours(0, 0, 0, 0)) {
+                    scheduleObj.element.find(".e-workcellstab tr td:nth-child(" + (b + 1) + ")").addClass("e-disable");
+                    allDayElements.eq(b).addClass("e-disable");
+                }
+                else {
+                    scheduleObj.element.find(".e-workcellstab tr td:nth-child(" + (b + 1) + ")").removeClass("e-disable");
+                    allDayElements.eq(b).removeClass("e-disable");
+                }
+            }
+        }
+
+        if (ej.isNullOrUndefined(this._appointmentAddWindow)) this._renderAppointmentWindow();
+        this._appointmentAddWindow.find(".allday").ejCheckBox({
+            change: function (args) {
+                args.cancel = true;
+                var schObj = $("#TechSchedule").ejSchedule("instance");
+                if (args.isChecked == true) {
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: $("#OnCallStartTime").val(), enabled: false });
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: $("#OnCallEndTime").val(), enabled: false });
+                }
+                else {
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: "12:00 AM", enabled: true });
+                    schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: "11:59 PM", enabled: true });
+                }
+            }
+        });
+    }
+    function onComplete(args) {
+        if (args.requestType == "dateNavigate" || args.requestType == "viewNavigate")
+            onCreate();
+    }
+    function ReadOnlyonComplete(args) {
+        args.cancel = true
+    }
+
+    function OnCallonComplete(args) {
+        //alert("OnCallonComplete");
+        if (args.requestType == "dateNavigate" || args.requestType == "viewNavigate")
+            OnCallonCreate();
+    }
+    function ReadOnlyOnCallonComplete(args) {
+        //args.cancel = true
+    }
+
+    function onBegin(args) {
+        /*if (args.requestType == "appointmentResize" || args.requestType == "appointmentDrag") {
+            if (args.data.appointment.StartTime.getMonth() != this.currentDate().getMonth())
+                args.cancel = true
+        }*/
+    }
+    function ReadOnlyonBegin(args) {
+        //args.cancel = true
+    }
+    function OnCallonBegin(args) {
+        /*if (args.requestType == "appointmentResize" || args.requestType == "appointmentDrag") {
+           if (args.data.appointment.StartTime.getMonth() != this.currentDate().getMonth())
+               args.cancel = true
+        }*/
+    }
+    function ReadOnlyOnCallonAppClick(args) {
+    //    args.cancel = true
+    }
+    function ReadOnlyOnCallonOpen(args) {
+      //  args.cancel = true
+    }
+    function ReadOnlyOnCallonBegin(args) {
+        //args.cancel = true
+    }
+
+    function ReadOnlyonOpen(args) {
+
+          //      args.cancel = true
+
+
+    }
+
+    function onOpen(args) {
+        //debugger
+
+        //  debugger
+        //if(ej.isNullOrUndefined(args.appointment)){
+          //  if (args.startTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            //    args.cancel = true
+        //}
+        //else
+        //{
+          //  if (args.appointment.StartTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            //    args.cancel = true
+        //}
+        $(this._appointmentAddWindow.find(".subject")).focus(function (args) {
+            var schObj = $("#TechSchedule").ejSchedule("instance");
+            var checkBoxObj = $(".allday").data("ejCheckBox");
+            var allday = checkBoxObj.isChecked();
+            if (allday) {
+                schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: $("#OnCallStartTime").val(), enabled: false });
+                schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: $("#OnCallEndTime").val(), enabled: false });
+            }
+            else {
+                schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: "12:00 AM", enabled: true });
+                schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: "11:59 PM", enabled: true });
+            }
+        });
+
+    }
+    function OnCallonOpen(args) {
+        //debugger
+        //if(ej.isNullOrUndefined(args.appointment)){
+          //  if (args.startTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            //    args.cancel = true
+        //}
+        //else
+        //{
+          //  if (args.appointment.StartTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+            //    args.cancel = true
+        //}
+		$(this._appointmentAddWindow.find("#OnCallstartdate")).focus(function (args) {
+            var schObj = $("#OnCall").ejSchedule("instance");
+            var checkBoxObj = $(".allday").data("ejCheckBox");
+            var allday = checkBoxObj.isChecked();
+            if (allday) {
+                schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: $("#OnCallStartTime").val(), enabled: false });
+                schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: $("#OnCallEndTime").val(), enabled: false });
+            }
+            else
+            {
+                schObj._appointmentAddWindow.find("#" + schObj._id + "starttime").ejTimePicker({ value: "12:00 AM", enabled: true });
+                schObj._appointmentAddWindow.find("#" + schObj._id + "endtime").ejTimePicker({ value: "11:59 PM", enabled: true });
+            }
+
+            var startDate = new Date($("#OnCallstartdate").ejDatePicker("getValue"));
+            var newDate = new Date();
+            newDate.setDate(startDate.getDate() + 1);
+            schObj._appointmentAddWindow.find("#" + schObj._id + "enddate").ejDatePicker({ value: newDate.toLocaleDateString(), enabled: true });
+        });
+    }
+    function ReadOnlyonAppClick(args) {
+     //       args.cancel = true
+    }
+
+    function onAppClick(args) {
+        // debugger
+
+        //  debugger
+        //if (args.appointment.StartTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+       //     args.cancel = true
+    }
+    function OnCallonAppClick(args) {
+        // debugger
+
+        //  debugger
+        //if (args.appointment.StartTime.setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0))
+          //  args.cancel = true
+
+    }
+    function onHover(args) {
+        //debugger
+        //if (args.appointment.StartTime.getMonth() != new Date().getMonth())
+          //  args.cancel = true
+    }
+    function OnCallonHover(args) {
+        //debugger
+        //if (args.appointment.StartTime.getMonth() != new Date().getMonth())
+          //  args.cancel = true
+    }
+    function onAction(args) {
+        //if ((args.appointment.StartTime.getMonth() != this.currentDate().getMonth()) || (args.appointment.EndTime.getMonth() != this.currentDate().getMonth()))
+          //  args.cancel = true
+    }
+    function OnCallonAction(args) {
+        //if ((args.appointment.StartTime.getMonth() != this.currentDate().getMonth()) || (args.appointment.EndTime.getMonth() != this.currentDate().getMonth()))
+          //  args.cancel = true
+    }
+
+    function change(args) {
+        var uploadedList = @Html.Raw(Json.Encode(Model.ResourceList));
+        var IsTechSchedule=@Html.Raw(Json.Encode(Model.IsTechSchedule));
+        var TimeZone=@Html.Raw(Json.Encode(Model.TimeZone));
+        var Resourcelist="";
+        if(IsTechSchedule)
+        {
+            var schObj = $("#TechSchedule").data("ejSchedule");
+        }
+        else
+        {
+            var schObj = $("#OnCall").data("ejSchedule");
+        }
+
+        for (var i = 0; i < uploadedList.length; i++) {
+
+            if($("#"+uploadedList[i].Id+"").ejCheckBox("isChecked"))
+            {
+
+                Resourcelist+=$("#"+uploadedList[i].Id+"").attr("id");
+                if(i!=uploadedList.length-1)
+                    Resourcelist+=",";
+            }
+        }
+        if($("#"+args.model.id+"").ejCheckBox("isChecked"))
+        {
+            var resourceObject = ej.DataManager(uploadedList).executeLocal(ej.Query().where("Id", ej.FilterOperators.equal, args.model.id));
+            schObj.model.resources[0].resourceSettings.dataSource.push(resourceObject[0]);
+        }
+        else
+        {
+            var resourceObject = ej.DataManager(uploadedList).executeLocal(ej.Query().where("Id", ej.FilterOperators.equal, args.model.id));
+            ej.DataManager(schObj.model.resources[0].resourceSettings.dataSource).remove("Id", resourceObject[0].Id);
+        }
+
+        var resVal = schObj.model.resources[0].resourceSettings.dataSource;
+        var IsTechSchedule=@Html.Raw(Json.Encode(Model.IsTechSchedule));
+
+        if(IsTechSchedule)
+        {
+
+            var dataManager = ej.DataManager({
+                url: "../TechnicianCalendar/TechScheduleGetData?Resourcelist="+Resourcelist +"&TimeZone="+TimeZone,
+                crudUrl: "../TechnicianCalendar/TechScheduleBatch?Resourcelist="+Resourcelist +"&TimeZone="+TimeZone,
+                adaptor: new ej.UrlAdaptor()
+            });
+
+            $("#TechSchedule").ejSchedule({
+                showCurrentTimeIndicator: false,
+                showAllDayRow: true,
+                minDate: new Date(),
+                timeZone: "UTC -05:00",
+                isDST: true,
+                appointmentSettings: {
+                    dataSource: dataManager,
+                    id: "Id",
+                    subject: "Subject",
+                    startTime: "StartTime",
+                    endTime: "EndTime",
+                    startTimeZone:"StartTimeZone",
+                    endTimeZone:"EndTimeZone",
+                    description: "Description",
+                    allday: "AllDay",
+                    recurrence: "Recurrence",
+                    recurrenceRule: "RecurrenceRule"
+                },
+                create: "onCreate",
+                actionBegin: "onBegin",
+                cellClick: "onOpen",
+                appointmentWindowOpen: "onOpen",
+                appointmentHover: "onHover",
+                dragStop: "onAction",
+                resizeStop: "onAction",
+                actionComplete: "onComplete",
+                cellHover: "onOpen",
+
+                resources: [{
+                    field: "OwnerId",
+                    title: "Owner",
+                    name: "Owners", allowMultiple: true,
+                    resourceSettings: {
+                        dataSource: resVal,
+                        text: "Text", id: "Id", color:"Color"
+                    }
+                }],
+            });
+        }
+        else
+        {
+            var dataManager = ej.DataManager({
+                url: "../TechnicianCalendar/OnTechCallGetData?Resourcelist="+Resourcelist +"&TimeZone="+TimeZone,
+                crudUrl: "../TechnicianCalendar/OnTechCallBatch?Resourcelist="+Resourcelist+"&TimeZone="+TimeZone,
+                adaptor: new ej.UrlAdaptor()
+            });
+
+            $("#OnCall").ejSchedule({
+                showCurrentTimeIndicator: false,
+                timeZone: "UTC -05:00",
+                isDST: true,
+                showAllDayRow: true,
+                minDate: new Date(),
+                appointmentSettings: {
+                    dataSource: dataManager,
+                    id: "Id",
+                    subject: "Subject",
+                    startTime: "StartTime",
+                    endTime: "EndTime",
+                    description: "Description",
+                    endTimeZone:"StartTimeZone",
+                    startTimeZone:"EndTimeZone",
+                    allday: "AllDay",
+                    recurrence: "Recurrence",
+                    recurrenceRule: "RecurrenceRule"
+                },
+                create: "OnCallonCreate",
+                actionBegin: "OnCallonBegin",
+                cellClick: "OnCallonOpen",
+                appointmentWindowOpen: "OnCallonOpen",
+                appointmentHover: "OnCallonHover",
+                dragStop: "OnCallonAction",
+                resizeStop: "OnCallonAction",
+                actionComplete: "OnCallonComplete",
+                cellHover: "OnCallonOpen",
+                resources: [{
+                    field: "OwnerId",
+                    title: "Owner",
+                    name: "Owners", allowMultiple: true,
+                    resourceSettings: {
+                        dataSource: resVal,
+                        text: "Text", id: "Id", color:"Color"
+                    }
+                }],
+            });
+        }
+    };
+
+
+</script>
+<style>
+    /*.OnCallallDay {
+        display: none;
+    }*/
+
+    #TechSchedule_AddEditForm table tr:nth-child(3) td:last-child,
+    #OnCall_AddEditForm table tr:nth-child(3) td:last-child,
+    .TechScheduleallDay .e-table tr td:nth-child(3),
+    .TechScheduleallDay .e-table tr td:nth-child(4),
+    .OnCallallDay .e-table tr td:nth-child(3),
+    .OnCallallDay .e-table tr td:nth-child(4),
+    #TechSchedule_AddEditForm table tr:last-child,
+    #OnCall_AddEditForm table tr:last-child,
+    #TechSchedule_AddEditForm table tr:nth-child(2) td:last-child,
+    #OnCall_AddEditForm table tr:nth-child(2) td:last-child,
+    #OnCall_AddEditForm table tr:first-child,
+    #TechSchedule_AddEditForm table tr:nth-child(5),
+    #OnCall_AddEditForm table tr:nth-child(5),
+    .e-editseries.e-textellipsis.e-disable {
+        display: none;
+    }
+
+    #TechSchedule_AddEditForm table table tr:last-child {
+        display: initial;
+    }
+
+    #OnCall_AddEditForm table table tr:last-child {
+        display: initial;
+    }
+
+    .e-ul {
+        list-style-type: square;
+    }
+</style>
+<div>
+    @Html.HiddenFor(m => m.OnCallStartTime)
+    @Html.HiddenFor(m => m.OnCallEndTime)
+    <div>
+        @Html.HiddenFor(m => m.TimeZone, new { id = "TimeZoneId" })
+    </div>
+
+    <div class="techlist">
+        <p style="text-align:left;margin-left:50px">
+            <b>Technician List</b>
+        </p>
+        @if (Model.ResourceList != null)
+        {
+            foreach (var item in Model.ResourceList)
+            {
+                <p style="text-align:left;margin-left:50px">
+                    <span style="background-color:@item.Color">
+                        @Html.EJ().CheckBox(@item.Id).Text(@item.Text).Checked(@item.IsChecked).ClientSideEvents(eve => eve.Change("change"))
+                    </span>
+                </p>
+            }
+        }
+    </div>
+
+
+    @if (!Model.IsTechSchedule)
+    {
+        <p style="margin-top:20px">
+            <label>On Call 4.30PM to 7.00AM the next day</label>
+        </p>
+    }
+
+    @{Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+    if (UserPrivilege != null)
+    {
+        if (UserPrivilege["Technician Schedule"] == "Edit-Only" || UserPrivilege["Technician Schedule"] == "Full")
+        {
+
+            <div class="Schedular">
+                @if (Model.IsTechSchedule)
+                {
+                    @(Html.EJ().Schedule("TechSchedule")
+                                .Width("60%")
+                                .Height("525px")
+                                .TimeZone("UTC -05:00")
+                                .IsDST(true)
+                                .ShowQuickWindow(false)
+                                 .AllowDragAndDrop(false).
+                                TimeMode(TimeMode.Hour12)
+                                .CurrentView(CurrentView.Month).
+                                ShowAllDayRow(true)
+                                //.MinDate(DateTime.Now)
+                        .ScheduleClientSideEvents(ev => ev.ActionComplete("onComplete").CellHover("onCellHover").CellClick("onCellClick")
+                        .DragStop("onAction").ResizeStop("onAction").AppointmentClick("onAppClick").AppointmentWindowOpen("onOpen")
+                        .Create("onCreate").ActionBegin("onBegin").AppointmentHover("onHover"))
+                               .ShowCurrentTimeIndicator().
+                                ShowNextPrevMonth(false)
+                                .Resources(res => { res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true).ResourceSettings(flds => flds.Datasource(Model.ResourceList).Text("Text").Id("Id").Color("Color")).Add(); })
+                                 .AppointmentSettings(fields => fields.Datasource(ds => ds.URL("../TechnicianCalendar/TechScheduleGetData?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + (Model.TimeZone)).CrudURL("../TechnicianCalendar/TechScheduleBatch?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).Adaptor("UrlAdaptor"))
+                                 .ResourceFields("TechnicianId")
+                                 .Id("Id")
+                                 .Subject("Subject")
+                                 .StartTime("StartTime")
+                                 .StartTimeZone("StartTimeZone")
+                                 .EndTimeZone("EndTimeZone")
+                                 .EndTime("EndTime")
+                                  .AllDay("AllDay")
+                                  .Recurrence("Recurrence")
+                                  .RecurrenceRule("RecurrenceRule"))
+
+                    )
+                }
+                else
+                {
+                    @(Html.EJ().Schedule("OnCall")
+                                .Width("60%")
+                                .Height("525px")
+                                .TimeZone("UTC -05:00")
+                                .IsDST(true)
+                                .ShowQuickWindow(false)
+                            .AllowDragAndDrop(false)
+                            .TimeMode(TimeMode.Hour12)
+                            .CurrentView(CurrentView.Month)
+                            .ShowAllDayRow(true)
+                            .TimeScale(ts => ts.Enable(false))
+                            .ShowCurrentTimeIndicator(false)
+                            //.MinDate(DateTime.Now)
+                        //.ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").CellClick("OnCellClick1").CellDoubleClick("OnCellDoubleClick"))
+                                  .ScheduleClientSideEvents(ev => ev.ActionComplete("OnCallonComplete").CellHover("OnCallonCellHover").CellClick("OnCallonCellClick")
+                        .DragStop("OnCallonAction").ResizeStop("OnCallonAction").AppointmentClick("OnCallonAppClick").AppointmentWindowOpen("OnCallonOpen")
+                            .Create("OnCallonCreate").ActionBegin("OnCallonBegin").AppointmentHover("OnCallonHover"))
+                            .Resources(res => { res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true).ResourceSettings(flds => flds.Datasource(Model.ResourceList).Text("Text").Id("Id").Color("Color")).Add(); })
+                            .AppointmentSettings(fields => fields.Datasource(ds => ds.URL("../TechnicianCalendar/OnTechCallGetData?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).CrudURL("../TechnicianCalendar/OnTechCallBatch?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).Adaptor("UrlAdaptor")).ResourceFields("Technid")
+                             .Id("Id")
+                            .Subject("Subject")
+                            .StartTime("StartTime")
+                            .StartTimeZone("StartTimeZone")
+                            .EndTimeZone("EndTimeZone")
+                            .EndTime("EndTime")
+                            .Description("Description")
+                            .AllDay("AllDay")
+                            .Recurrence("Recurrence")
+                            .RecurrenceRule("RecurrenceRule")
+                            .ResourceFields("TechnicianId"))
+                    )
+                }
+                @Html.EJ().ScriptManager()
+            </div>
+        }
+        else
+        {
+            <div class="Schedular">
+                @if (Model.IsTechSchedule)
+                {
+                    @(Html.EJ().Schedule("TechSchedule")
+                            .Width("60%")
+                            .Height("525px")
+                            .TimeZone("UTC -05:00")
+                            .ShowQuickWindow(false)
+                             .AllowDragAndDrop(false).
+                            TimeMode(TimeMode.Hour12)
+                            .CurrentView(CurrentView.Month).
+                            ShowAllDayRow(true)
+                            //.MinDate(DateTime.Now)
+                                .ScheduleClientSideEvents(ev => ev.ActionComplete("ReadOnlyonComplete").CellHover("onCellHover").CellClick("ReadOnlyonCellClick")
+                                    .DragStop("onAction").ResizeStop("onAction").AppointmentClick("ReadOnlyonAppClick").AppointmentWindowOpen("ReadOnlyonOpen")
+                            .ActionBegin("ReadOnlyonBegin").AppointmentHover("onHover"))
+                           .ShowCurrentTimeIndicator().
+                            ShowNextPrevMonth(false)
+                            .Resources(res => { res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true).ResourceSettings(flds => flds.Datasource(Model.ResourceList).Text("Text").Id("Id").Color("Color")).Add(); })
+                             .AppointmentSettings(fields => fields.Datasource(ds => ds.URL("../TechnicianCalendar/TechScheduleGetData?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + (Model.TimeZone)).CrudURL("../TechnicianCalendar/TechScheduleBatch?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).Adaptor("UrlAdaptor"))
+                             .ResourceFields("TechnicianId")
+                             .Id("Id")
+                             .Subject("Subject")
+                             .StartTime("StartTime")
+                             .StartTimeZone("StartTimeZone")
+                             .EndTimeZone("EndTimeZone")
+                             .EndTime("EndTime")
+                              .AllDay("AllDay")
+                              .Recurrence("Recurrence")
+                              .RecurrenceRule("RecurrenceRule"))
+
+                    )
+                }
+                else
+                {
+                    @(Html.EJ().Schedule("OnCall")
+                            .Width("60%")
+                            .Height("525px")
+                            .TimeZone("UTC -05:00")
+                            .ShowQuickWindow(false)
+                            .AllowDragAndDrop(false)
+                            .TimeMode(TimeMode.Hour12)
+                            .CurrentView(CurrentView.Month)
+                            .ShowAllDayRow(true)
+                          //  .MinDate(DateTime.Now)
+                        //.ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").CellClick("OnCellClick1").CellDoubleClick("OnCellDoubleClick"))
+                                      .ScheduleClientSideEvents(ev => ev.ActionComplete("ReadOnlyOnCallonComplete").CellHover("OnCallonCellHover").CellClick("ReadOnlyOnCallonCellClick")
+                        .DragStop("OnCallonAction").ResizeStop("OnCallonAction").AppointmentClick("ReadOnlyOnCallonAppClick").AppointmentWindowOpen("ReadOnlyOnCallonOpen")
+                            .ActionBegin("ReadOnlyOnCallonBegin").AppointmentHover("OnCallonHover"))
+                            .Resources(res => { res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true).ResourceSettings(flds => flds.Datasource(Model.ResourceList).Text("Text").Id("Id").Color("Color")).Add(); })
+                            .AppointmentSettings(fields => fields.Datasource(ds => ds.URL("../TechnicianCalendar/OnTechCallGetData?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).CrudURL("../TechnicianCalendar/OnTechCallBatch?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).Adaptor("UrlAdaptor")).ResourceFields("Technid")
+                             .Id("Id")
+                            .Subject("Subject")
+                            .StartTime("StartTime")
+                            .StartTimeZone("StartTimeZone")
+                            .EndTimeZone("EndTimeZone")
+                            .EndTime("EndTime")
+                            .Description("Description")
+                            .AllDay("AllDay")
+                            .Recurrence("Recurrence")
+                            .RecurrenceRule("RecurrenceRule")
+                            .ResourceFields("TechnicianId"))
+                    )
+                }
+                @Html.EJ().ScriptManager()
+            </div>
+        }
+    }
+    }
+
+
+
+</div>

@@ -1,0 +1,154 @@
+﻿@{
+    ViewBag.Title = "ESMCCMRSM";
+}
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#uploadBtn").on("click", function () {
+            $(".modal").show();
+        })
+        
+        @*$("form").submit(function (e) {
+            $(".modal").show();
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("UploadFile", "ESMCCMRSM")",
+                    data: frmValues
+            }).done(function( result ) {
+                $(".modal").hide();
+            }).fail(function () {
+                $(".modal").hide();
+            });
+        }
+
+           e.preventDefault();
+    });*@
+
+    });
+
+</script>
+
+@using (Html.BeginForm("UploadFile", "ESMCCMRSM", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+<section class="container-fluid white-bg pad">
+    <div class="row top-info">
+        <div class="col-md-11">
+            <b>ESMCCMRSM File Upload</b>
+        </div>
+    </div>
+</section>
+
+<section class="well">
+    <div class="row top-info">
+        <div class="customer-content margin-top">
+            <div class="row customer clear-input">
+                <div class="col-md-12">
+                    <div class="col-md-2" style="width: 30%;">
+                        <div class="form-group right-inner-addon">
+                            @Html.TextBox("file", "", new { type = "file" }) <br />
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <div class="form-group right-inner-addon" style="top:1.3em;">
+                            <button type="submit" class="btn btn-primary" id="uploadBtn">Upload</button>
+                            @*<a onclick="ClearPMScheduleSearchResults()" class="btn btn-orange">Clear</a>*@
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        @*<div class="row top-info">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>Search Results</b>
+                </div>
+            </div>*@
+
+
+
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <section class="block margin-top">
+                    <div class="container-fluid">
+                        @*<h2 class="customer-head arrow-down tabheader">Update Customer ZipCode</h2>*@
+                        <div class="customer-content margin-top">
+
+                            @if (ViewBag.isSuccess != null && ViewBag.isSuccess)
+                            {                                
+                                <div class="row customer clear-input">
+                                    <div class="col-md-12  sm-pad-reset">
+
+                                        @(Html.EJ().Grid<object>("ESMCCMRSMFileUploadResults")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
+                                     .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .AllowPaging()
+                                    .AllowFiltering()
+                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("PostalCode").HeaderText("Postal Code").Add();
+                                        col.Field("Country").HeaderText("Country").Add();
+                                        col.Field("ESMId").HeaderText("ESM#").Add();
+                                        col.Field("ESMName").HeaderText("ESM Name").Add();
+                                        col.Field("ESMEmail").HeaderText("ESM Email").Add();
+                                        col.Field("ESMPhone").HeaderText("ESM Phone").Add();
+                                        col.Field("CCMId").HeaderText("CCM#").Add();
+                                        col.Field("CCMName").HeaderText("CCM Name").Add();
+                                        col.Field("CCMEmail").HeaderText("CCM Email").Add();
+                                        col.Field("CCMPhone").HeaderText("CCM Phone").Add();
+                                        col.Field("RSMId").HeaderText("RSM#").Add();
+                                        col.Field("RSMName").HeaderText("RSM Name").Add();
+                                        col.Field("RSMEmail").HeaderText("RSM Email").Add();
+                                        col.Field("RSMPhone").HeaderText("RSM Phone").Add();
+                                    })
+                                        )
+                                    </div>
+                                </div>
+                            }
+                            else if (ViewBag.isSuccess != null && !(ViewBag.isSuccess))
+                            {
+                                <div class="row customer clear-input">
+                                    <div class="col-md-12  sm-pad-reset">
+                                        <b>Error: </b>
+                                        @Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))
+                                    </div>
+                                </div>
+                            }
+                            //else if (ViewBag != null || ViewBag.IsSuccess == null)
+                            else
+                            {
+                                <div class="row customer clear-input">
+                                    <div class="col-md-12  sm-pad-reset">
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                                </div>
+</section>
+
+
+            </div>
+        </div>
+    </div>
+</section>

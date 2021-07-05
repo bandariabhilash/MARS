@@ -1,0 +1,492 @@
+﻿@model FarmerBrothers.Models.InvoiceSearchModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+@{
+    ViewBag.Title = "DisplayInvoice";
+}
+
+<style type="text/css">
+    .right-text td:last-child {
+        text-align: right;
+    }
+</style>
+
+<link href="~/Content/InvoiceDisplay.css" rel="stylesheet" />
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Invoice</b>
+            </div>
+        </div>
+    </section>
+
+    <div>
+        <input type="hidden" id="hdnInvoiceStatus" value="@Model.displayInvoiceModel.InvoiceStatus" />
+        <input type="hidden" id="hdnInvoiceTotal" value="@Model.displayInvoiceModel.InvoiceTotal" />
+        <input type="hidden" id="hdnInvoiceid" value="@Model.displayInvoiceModel.Invoiceid" />
+        <input type="hidden" id="hdnInvoiceUniqueId" value="@Model.displayInvoiceModel.InvoiceUniqueid" />
+    </div>
+
+    <div class="container invoice-form">
+        <div class="invoice-header">
+            <h2 class="col-sm-4">
+                Invoice: <span>@Model.displayInvoiceModel.Invoiceid</span>
+                <b>Status:  <span>@Model.displayInvoiceModel.InvoiceStatus</span></b>
+            </h2>
+            <div class="pull-right right-btn-blk">
+                <button id="btnSave" type="button" class="btn btn-sm btn-success">Save</button>
+                <a href="@Url.Action("InvoiceSearch", "Invoice")" class="btn btn-sm btn-primary">Exit Invoice</a>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a href="@Url.Action("DisplayPdfInvoice", "Invoice", new { InvoiceUniqueid = @Model.displayInvoiceModel.InvoiceUniqueid, WorkorderID = @Model.displayInvoiceModel.WorkorderID })">
+                    <h4 class="panel-title col-sm-4">View Invoice</h4>
+                </a>
+                <div class="pull-right">
+                    <button id="btnPay" type="button" class="btn btn-sm btn-success">Pay</button>
+                    <button id="btnReturnToVendor" type="button" class="btn btn-sm btn-success">Return To Vendor</button>
+                    <button id="btnSecondLevelApproval" type="button" class="btn btn-sm btn-success">Second Level Approval</button>
+                    <button id="btnNotApproved" type="button" class="btn btn-sm btn-success">Not Approved</button>
+                </div>
+            </div>
+            <div class="panel-body">
+                <form role="form">
+                    <div class="col-sm-12 row">
+
+                        <!--Left Column Starts-->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Work Order ID:</label>
+                                <div class="col-sm-7">
+                                    <a href="@Url.Action("WorkorderManagement", "Workorder")?workOrderId=@Model.displayInvoiceModel.WorkorderID"  target="_blank">
+                                        <b class="text-primary"><span id="spanWorkOrderId"><span>@Model.displayInvoiceModel.WorkorderID</span></span></b>
+                                        </a>
+</div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Vendor ID:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.TPSPVendorID</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Vendor Name:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.TPSPVendorName</span>
+                                </div>
+                            </div>
+                            @*<div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Vendor State:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.BranchState</span>
+                                </div>
+                            </div>*@
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">FSM:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.FSM</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Left Column Ends-->
+                        <!--Center Column Starts-->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Customer ID:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.CustomerID</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Customer Name:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.CustomerName</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Customer State:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.CustomerState</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Distance to Customer from Branch:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.Mileage</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Phone Solves:</label>
+                                <div class="col-sm-7">
+                                    <span>@Model.displayInvoiceModel.PhoneSolveID</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Center Column Ends-->
+                        <!--Right Column Starts-->
+                        <div class="col-sm-4">
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Project ID:</label>
+                                <div class="col-sm-7">
+                                    <b><span></span></b>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Flat Rate:</label>
+                                <div class="col-sm-7">
+                                    <b><span></span></b>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Invoice Amount:</label>
+                                <div class="col-sm-7">
+                                    <b><span id="InvoiceTotal">$ @Html.DisplayFor(c => c.displayInvoiceModel.InvoiceTotal) </span></b>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Authorized Amount:</label>
+                                <div class="col-sm-7">
+                                    @if (Model.displayInvoiceModel.InvoiceStatus == "Paid" || Model.displayInvoiceModel.InvoiceStatus == "Paid with Adjustments" || Model.displayInvoiceModel.InvoiceStatus == "Submitted for Payment")
+
+                                    {
+                                        @Html.EJ().CurrencyTextBoxFor(x => x.displayInvoiceModel.AuthorizedAmount).ReadOnly(true).ShowSpinButton(false).DecimalPlaces(2).Width("100%").Height("34px")
+                                    }
+                                    else if (Model.displayInvoiceModel.InvoiceStatus == "Contested")
+
+                                    {
+                                        @Html.EJ().CurrencyTextBoxFor(x => x.displayInvoiceModel.AdjustmentAmount).ReadOnly(true).ShowSpinButton(false).DecimalPlaces(2).Width("100%").Height("34px")
+                                    }
+                                    else
+                                    {
+                                        @Html.EJ().CurrencyTextBoxFor(x => x.displayInvoiceModel.SubmitAmount).ShowSpinButton(false).DecimalPlaces(2).Width("100%").Height("34px")
+
+                                    }
+                                    @Html.HiddenFor(model => model.displayInvoiceModel.InvoiceTotal, new { id = "hiddenamount" })
+                                    <label id="lblAuthorizedAmnt" style="color: red"></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-5 padding-none-x">Vendor Contested Status:</label>
+                                <div class="col-sm-7">
+                                    <b><span></span></b>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Right Column Ends-->
+
+                        <div class="col-sm-12 row adj-invc-blk">
+                            <div class="col-sm-8 adj-cmnts">
+                                <h5>Adjustment Comments:</h5>
+                                <label id="lblInvoiceComments" style="color: red; font-weight: normal; font-size: 14px"></label>
+                                @Html.TextAreaFor(c => c.displayInvoiceModel.Comments, new { @id = "InvoiceComments", @class = "form-control", @maxlength = "500" })
+
+                            </div>
+                            <div class="col-sm-4 invoice-charges">
+                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-striped right-text">
+                                    <tr>
+                                        <th colspan="2" class="bg-primary">Invoice Charges</th>
+                                    </tr>
+                                    <tr>
+                                        <td>Parts Total </td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.PartsTotal, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Labor </td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.LaborTotal, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Travel</td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.TravelTotal, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                    @*<tr>
+                                        <td>Mileage</td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.MileageTotal, new { @style = "text-align:right" }) </span></td>
+                                    </tr>*@
+                                    <tr>
+                                        <td>Project Flat Rate </td>
+                                        <td style="text-align: right"><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Phone Solves </td>
+                                        <td style="text-align: right"><span></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Additional Charges </td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.AdditionalCharge, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sub Total </td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.SubTotal, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tax</td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.TaxAmount, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total</td>
+                                        <td style="text-align: right"><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.InvoiceTotal, new { @style = "text-align:right" }) </span></td>
+                                    </tr>
+                                </table>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#invoiceLink').css("color", "white");
+        var varInvoiceStatus=$("#hdnInvoiceStatus").val();
+        var varInvoiceTotal=$("#hdnInvoiceTotal").val();
+
+        if(varInvoiceTotal>=750)
+        {
+            document.getElementById('btnPay').disabled=true;
+        }
+        if(varInvoiceTotal<750)
+        {
+            document.getElementById('btnSecondLevelApproval').disabled=true;
+        }
+        if(varInvoiceStatus=="Paid" || varInvoiceStatus=="Paid with Adjustments" || varInvoiceStatus=="Submitted for Payment")
+        {
+            document.getElementById('btnSave').disabled=true;
+            document.getElementById('btnPay').disabled=true;
+            document.getElementById('btnReturnToVendor').disabled=true;
+            document.getElementById('btnSecondLevelApproval').disabled=true;
+            document.getElementById('btnNotApproved').disabled=true;
+        }
+        if(varInvoiceStatus=="Contested")
+        {
+            document.getElementById('btnReturnToVendor').disabled=true;
+        }
+        if(varInvoiceStatus=="Awaiting 2nd Level Approval")
+        {
+            document.getElementById('btnSecondLevelApproval').disabled=true;
+            document.getElementById('btnPay').disabled=false;
+        }
+        if(varInvoiceStatus=="Not Approved")
+        {
+            document.getElementById('btnNotApproved').disabled=true;
+        }
+
+    });
+
+
+
+    /* To Save the data */
+    $("#btnSave").click(function () {
+
+        var intInvoiceUniqueId = $("#hdnInvoiceUniqueId").val();
+        var varInvoiceComments = $("#InvoiceComments").val();
+        var varInvoiceAuthorizedAmnt =   $('#displayInvoiceModelSubmitAmount').val();
+        var varInvoiceId = $("#hdnInvoiceid").val();
+
+        $("#lblInvoiceComments").hide();
+        $("#lblAuthorizedAmnt").hide();
+
+        if (varInvoiceComments.length > 0  && varInvoiceAuthorizedAmnt.length > 0)
+        {
+            var url = "@Url.Action("SaveInvoice", "Invoice")" + "?intInvoiceUniqueId=" + intInvoiceUniqueId + "&InvoiceComments=" + varInvoiceComments + "&AuthorizedAmnt=" + varInvoiceAuthorizedAmnt;
+            $.ajax({
+                url: url,
+                cache: false,
+                type: "POST",
+                success: function (data) {
+
+                    //$("#modalpopup").show();
+                    //$("p", "#modalpopup").text("Successfully data saved for " + varInvoiceId);
+                    AlertPopup("|Invoice Message: Successfully data saved for " + varInvoiceId);
+
+                },
+                error: function (reponse) {
+                    // alert("error : " + reponse);
+                    AlertPopup("|Insertion Failed");
+                }
+            });
+        }
+        else if(varInvoiceAuthorizedAmnt.length > 0)
+        {
+            AlertPopup("|Comments are mandatory for save");
+            event.preventDefault();
+        }
+        else if(varInvoiceComments.length > 0)
+        {
+            AlertPopup("|Authorised Amount is  mandatory for save");
+            event.preventDefault();
+        }
+        else
+        {
+            AlertPopup("|Comments and Authorised Amount are mandatory for save");
+            event.preventDefault();
+        }
+
+    });
+
+    /* For Pay Button */
+    $("#btnPay").click(function ()
+    {
+        var invoiceAmount = @Html.Raw(Json.Encode(Model.displayInvoiceModel.InvoiceTotal));
+        var invoiceStatus = @Html.Raw(Json.Encode(Model.displayInvoiceModel.InvoiceStatus));
+
+        var intInvoiceUniqueId = $("#hdnInvoiceUniqueId").val();
+        var varInvoiceId = $("#hdnInvoiceid").val();
+        var varInvoiceComments = $("#InvoiceComments").val();
+        var varInvoiceAuthorizedAmnt =  $('#displayInvoiceModelSubmitAmount').val();
+        var varStatus = "Submitted for Payment";
+
+        if(invoiceAmount>750 && invoiceStatus!="Awaiting 2nd Level Approval" )
+        {
+            return false;
+        }
+        if(Math.floor(varInvoiceAuthorizedAmnt)==0 )
+        {
+            AlertPopup("|Authorised Amount is  mandatory");
+            return false;
+        }
+        if(Math.floor( $("#hiddenamount").val()) !=Math.floor( $('#displayInvoiceModelSubmitAmount').val()))
+        {
+            var amounthidden=Math.floor( $("#hiddenamount").val());
+            var amount=Math.floor( $('#displayInvoiceModelSubmitAmount').val());
+            //   alert(amounthidden);
+            //alert(amount);
+            //varStatus = "Paid with Adjustments";
+            varStatus = "Submitted for Payment";
+        }
+        $.ajax({
+
+            url : "@Url.Action("UpdateInvoiceStatus", "Invoice")" + "?intInvoiceUniqueId=" + intInvoiceUniqueId + "&strInvoiceStatus=" + varStatus + "&strInvoiceComments=" + varInvoiceComments + "&strInvoiceAuthorizedAmnt=" + varInvoiceAuthorizedAmnt,
+            cache: false,
+            type: "POST",
+            success: function (data) {
+
+                if(data=="Success")
+                {
+                    AlertPopup("|Invoice Message: Status of " + varStatus + " is successfully updated for " + varInvoiceId);
+                }
+                else
+                {
+                    AlertPopup("|Updation Failed");
+                }
+            },
+            error: function (reponse) {
+                //alert("error : " + reponse);
+                AlertPopup("|Updation Failed");
+            }
+        });
+
+    });
+
+    $("#btnReturnToVendor").click(function () {
+
+        var intInvoiceUniqueId = $("#hdnInvoiceUniqueId").val();
+        var varStatus = "Contested";
+        var InvoiceComments = $("#InvoiceComments").val();
+        var varInvoiceId = $("#hdnInvoiceid").val();
+        var varInvoiceAuthorizedAmnt =  $('#displayInvoiceModelSubmitAmount').val();
+
+        var invoiceStatus = @Html.Raw(Json.Encode(Model.displayInvoiceModel.InvoiceStatus));
+
+        if(invoiceStatus=="Contested" )
+        {
+            return false;
+        }
+        if (InvoiceComments.length > 0)
+        {
+            $.ajax({
+
+                url : "@Url.Action("UpdateInvoiceStatus", "Invoice")" + "?intInvoiceUniqueId=" + intInvoiceUniqueId + "&strInvoiceStatus=" + varStatus + "&strInvoiceComments=" + InvoiceComments + "&strInvoiceAuthorizedAmnt=" + varInvoiceAuthorizedAmnt,
+                cache: false,
+                type: "POST",
+                success: function (data) {
+
+                    AlertPopup("|Invoice Message: Status of " + varStatus + " is successfully updated for " + varInvoiceId);
+                },
+                error: function (reponse) {
+                    // alert("error : " + reponse);
+                    AlertPopup("|Updation Failed");
+                }
+            });
+        }
+        else
+        {
+            AlertPopup("|Comments are mandatory for Return To Vendor");
+            event.preventDefault();
+        }
+
+    });
+
+    /* For SecondLevelApproval Button */
+    $("#btnSecondLevelApproval").click(function () {
+
+        var intInvoiceUniqueId = $("#hdnInvoiceUniqueId").val();
+        var varStatus = "Awaiting 2nd Level Approval";
+        var InvoiceComments = $("#InvoiceComments").val();
+        var varInvoiceAuthorizedAmnt =  $('#displayInvoiceModelSubmitAmount').val();
+        var varInvoiceId = $("#hdnInvoiceid").val();
+
+        $.ajax({
+
+            url : "@Url.Action("UpdateInvoiceStatus", "Invoice")" + "?intInvoiceUniqueId=" + intInvoiceUniqueId + "&strInvoiceStatus=" + varStatus + "&strInvoiceComments=" + InvoiceComments + "&strInvoiceAuthorizedAmnt=" + varInvoiceAuthorizedAmnt,
+            cache: false,
+            type: "POST",
+            success: function (data) {
+
+                AlertPopup("|Invoice Message: Status of " + varStatus + " is successfully updated for " + varInvoiceId);
+            },
+            error: function (reponse) {
+                // alert("error : " + reponse);
+                AlertPopup("|Updation Failed");
+            }
+        });
+    });
+
+    /* For NotApproved Button */
+    $("#btnNotApproved").click(function () {
+
+        var intInvoiceUniqueId = $("#hdnInvoiceUniqueId").val();
+        var varStatus = "Not Approved";
+        var InvoiceComments = $("#InvoiceComments").val();
+        var varInvoiceAuthorizedAmnt = $('#displayInvoiceModelSubmitAmount').val();
+        var varInvoiceId = $("#hdnInvoiceid").val();
+
+        if(InvoiceComments.length>0)
+        {
+            $.ajax({
+                url : "@Url.Action("UpdateInvoiceStatus", "Invoice")" + "?intInvoiceUniqueId=" + intInvoiceUniqueId + "&strInvoiceStatus=" + varStatus + "&strInvoiceComments=" + InvoiceComments + "&strInvoiceAuthorizedAmnt=" + varInvoiceAuthorizedAmnt,
+                cache: false,
+                type: "POST",
+                success: function (data) {
+
+                    AlertPopup("|Invoice Message: Status of " + varStatus + " is successfully updated for " + varInvoiceId);
+                },
+                error: function (reponse) {
+                    //alert("error : " + reponse);
+                    AlertPopup("|Updation Failed");
+                }
+            });
+        }
+        else
+        {
+            AlertPopup("|Comments are mandatory for Not Approved.");
+            event.preventDefault();
+        }
+
+    });
+
+
+</script>

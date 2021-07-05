@@ -1,0 +1,73 @@
+﻿@*@{
+    Layout = null;
+}
+
+
+<body>
+    <h2>Upload Excel File</h2>
+    <div>
+        @using (Html.BeginForm("FileUpload", "ZoneZip", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+
+            <input type="file" name="file" id="file" /><br><br>
+            <input type="submit" value="Upload file" />
+            <br><br>
+            
+           if (TempData["Message"] != null)
+           {
+            <span style="color:red">@TempData["Message"]</span>
+
+           }
+            if (TempData["Sucess"]!=null)
+           {
+            <span style="color:green">@TempData["Sucess"]</span>
+
+           }
+        }
+
+    </div>
+</body>*@
+
+@{
+    ViewBag.Title = "ZoneZip";
+}
+
+@using Syncfusion.MVC.EJ;
+@using (Html.BeginForm("FileUpload", "ZoneZip", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Zone Zip</b>
+            </div>
+        </div>
+    </section>
+    <section class="well">
+        <h4>Upload Excel File</h4>
+        <br />
+        @Html.EJ().Uploadbox("file").SaveUrl(@Url.Action("FileUpload")).RemoveUrl(@Url.Action("RemoveDefault")).ClientSideEvents(e => e.Complete("complete"))
+        @*<input type="file" name="file" id="file" /<br><br>
+    <input type="submit" class="btn btn-primary" value="Upload File" />>*@
+        <br /><br />
+
+        @if (TempData["Message"] != null)
+        {
+        <span style="color:red">@TempData["Message"]</span>
+
+        }
+        @if (TempData["Sucess"]!=null)
+        {
+        <span style="color:green">@TempData["Sucess"]</span>
+
+        }
+         
+    </section>
+}
+<script type="text/javascript">
+function complete(args) {
+        var url = "@Url.Action("ZoneZip", "ZoneZip")" ;
+        window.location.href = url;
+}
+</script>
+
+

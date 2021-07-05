@@ -1,0 +1,223 @@
+﻿@model FarmerBrothers.Models.ErfModel
+
+@{
+    ViewBag.Title = "ERF Details";
+}
+
+@using Newtonsoft.Json;
+@using FarmerBrothers.Models;
+
+
+<script type="text/javascript">
+    var saveErfOperation = false;
+    var updateUrl = null;
+
+    $(document).ready(function () {
+        $("#ErfLink").css("color", "white");
+
+        $("form").submit(function (event) {
+            var operation = $("#Operation").val();
+            if (operation > 0) {
+                //if ( ( ( $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ) != null
+                //       && $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json != null
+                //       && $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json.length != 0 ) ||
+                //        ( $( "#FBERFExpendableDetails" ).ejGrid( "instance" ) != null
+                //       && $( "#FBERFExpendableDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json != null
+                //       && $( "#FBERFExpendableDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json.length != 0 ) ) )
+                //{
+                if (saveErfOperation == true) {
+                    //var input = $( "<input>" )
+                    //    .attr( "type", "hidden" )
+                    //    .attr( "name", "action:ErfSave" ).val( "" );
+                    //$( this ).append( $( input ) );
+
+
+                    var notesItems = [];
+
+                    $.each(newNotesArray, function (index, value) {
+                        var item = { Text: value, Value: -1 };
+                        notesItems.push(item);
+                    });
+                    // alert( JSON.stringify( notesItems ) );
+
+                    if ($("#FBERFEquipmentDetailsHidden").length) {
+                        $("#FBERFEquipmentDetailsHidden").val(JSON.stringify($("#FBERFEquipmentDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                    }
+                    else {
+                        var input3 = $("<input id='FBERFEquipmentDetailsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "FBERFEquipmentDetailsHidden").val(JSON.stringify($("#FBERFEquipmentDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                        $(this).append($(input3));
+                    }
+
+                    if ($("#FBERFExpendableDetailsHidden").length) {
+                        $("#FBERFExpendableDetailsHidden").val(JSON.stringify($("#FBERFExpendableDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                    }
+                    else {
+                        var input3 = $("<input id='FBERFExpendableDetailsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "FBERFExpendableDetailsHidden").val(JSON.stringify($("#FBERFExpendableDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                        $(this).append($(input3));
+                    }
+
+
+
+                    if ($("#ERFNotesHidden").length) {
+                        $("#ERFNotesHidden").val(JSON.stringify(notesItems));
+                    }
+                    else {
+                        var input5 = $("<input id='ERFNotesHidden'>")
+                                .attr("type", "hidden")
+                                .attr("name", "ERFNotesHidden").val(JSON.stringify(notesItems));
+                        $(this).append($(input5));
+                    }
+
+                    var input = $("<input>")
+                           .attr("type", "hidden")
+                           .attr("name", "action:ErfSave").val("");
+                    $(this).append($(input));
+
+
+                    var $this = $(this);
+                    var frmValues = $this.serialize();
+                    $.ajax({
+                        type: $this.attr('method'),
+                        url: "@Url.Action("SaveErf", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                        data: frmValues
+                    }).done(function (response) {
+                        if (response != null && response.success == true) {
+                            if (response.returnValue > 0) {
+                                AlertPopup('|ERF Saved Successfully!');
+                                updateUrl = response.Url;
+                            }
+                            else {
+                                AlertPopup(response.message);
+                            }
+
+                        }
+                        else {
+                            AlertPopup('|There is a problem in saving ERF! Please contact support!');
+                        }
+                    });
+                    saveErfOperation = false;
+                }
+                //}
+                //else
+                //{
+                //    AlertPopup( '|Please add minimum one Equipment or Expendable to processed !' );
+                //}
+                $("#Operation").val(0);
+
+            }
+            event.preventDefault();
+        });
+
+        $(".work-requested-details-head").trigger("click");
+        $(".notes-details-head").trigger("click");
+
+        $("[data-popup-close='popupalert']").click(function () {
+            if (updateUrl != null) {
+                window.location.href = updateUrl;
+            }
+        });
+
+        $("#btnApprove").on("click", function () {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CreateERFEvent", "ERFNew")",
+                data: { erfId: $("#ErfAssetsModel_Erf_ErfID").val() }
+            }).done(function (jsonResult) {
+                AlertPopup(jsonResult.message);
+            });
+            e.preventDefault();
+        });
+
+    });
+
+   
+
+    function SetErfSaveOperation( operation )
+    {
+        saveErfOperation = true;
+        $( "#Operation" ).val( operation );
+    }
+</script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    <section class="container-fluid white-bg pad fixedSecond header">
+        <div class="row vertical-align">
+            <div class="col-md-12">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <b>ERF ID:</b>
+                            <span>@Model.ErfAssetsModel.Erf.ErfID</span>
+                            @Html.HiddenFor(w => w.ErfAssetsModel.Erf.ErfID)
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-2" style="align-items:center">
+                                Created By: @Model.CreatedBy
+                            </div>
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-8">
+                                Created On: @Model.ErfAssetsModel.Erf.EntryDate.Value.ToString("MM/dd/yyyy")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-2">
+                    </div>
+                    @{
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+    ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+    (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+    if (UserPrivilege["ERF"] == "Edit-Only" || UserPrivilege["ERF"] == "Full")
+    {
+        <div class="col-md-4">
+            <button type="submit" style="display: inline-block;margin-right:5px;float:right;" class="btn btn-primary" onclick="SetErfSaveOperation(1);" name="action:ErfSave">Save</button>
+        </div>
+    }
+                    }
+
+                    <div class="col-md-4">
+                        @Html.ActionLink("Back", "ERFSearch", "Erf", new { @IsBack = 1 }, new { @Class = "btn btn-primary btn-orange" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
+
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="work-requested-details-head arrow-down tabheader">Assets</h2>
+            <div class="work-requested-details-content margin-top">
+                <div class="col-xs-12 customer sm-pad-reset">
+                    @Html.Partial("_ERFAssests", Model.ErfAssetsModel)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="notes-details-head arrow-down tabheader">Notes</h2>
+            @Html.Partial("_ErfNotes", Model.Notes)
+        </div>
+    </section>
+}

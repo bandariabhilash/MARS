@@ -1,0 +1,3741 @@
+﻿@model FarmerBrothers.Models.WorkorderManagementModel
+@{
+    ViewBag.Title = "CallCloserManagement";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+<link href="~/Content/ej/web/responsive-css/ej.responsive.css" rel="stylesheet" />
+<link href="~/Content/ej/web/responsive-css/ejgrid.responsive.css" rel="stylesheet" />
+<script src="~/Scripts/jsrender.min.js"></script>
+<script src="~/Content/jquery.validate.min.js"></script>
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: right;
+        height: auto;
+    }
+
+    .table-responsive {
+        overflow: none !important;
+    }
+
+    .e-gnextforward {
+        font-size: 12px;
+    }
+
+     .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
+     position: inherit; 
+    min-height: 1px;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+</style>
+
+<script type="text/javascript">
+    var gridData = @Html.Raw(Json.Encode(Model.CloserPartsOrSKUs));
+    var workOrderOperation = 0;
+    var updateUrl = null;
+    var SelectedBranches = "";
+    var formDirty = false;
+    var workOrderStatus = "";
+    var files;
+    var serverBranchIds = [];
+    var serverAssistIds = [];
+    var selectedAssistIds = [];
+    var selectedResponsibleIds = [];
+
+
+    function onclear() {
+        var sign = $("#CustomerSignatureArea").ejSignature("instance");
+        sign.clear();
+    }
+    function onTechSignatureclear() {
+        var sign = $("#TechnicianSignatureArea").ejSignature("instance");
+        sign.clear();
+    }
+
+    $(document).ready(function () {
+
+        $("#hideDetails").hide();
+
+        workOrderStatus = "@Model.WorkOrder.WorkorderCallstatus";
+
+        if (!$("#CustomerSignatureImage").length) {
+            ImageNotFound();
+        }
+        if (!$("#TechnicianSignatureImage").length) {
+            TechSignatureImageNotFound()();
+        }
+
+        $("#RemovalDate").ejDatePicker({minDate : new Date(), dateFormat: "MM/dd/yyyy" });
+
+        if ($("#AppointmentDate").val() != null && $("#AppointmentDate").val() != "")
+        {
+            $("#AppointmentDate").ejDatePicker({
+                value: new Date($("#AppointmentDate").val()),
+                dateFormat: "MM/dd/yyyy"
+            });
+        }
+        else
+        {
+            $("#AppointmentDate").ejDatePicker({
+                minDate : new Date(), dateFormat: "MM/dd/yyyy"
+            });
+        }
+
+        if ($("#PartsOrderDateNeeded").val() != null && $("#PartsOrderDateNeeded").val() != "")
+        {
+            $("#PartsOrderDateNeeded").ejDatePicker({  value: new Date($("#PartsOrderDateNeeded").val()), dateFormat: "MM/dd/yyyy", minDate : new Date() });
+        }
+        else
+        {
+            $("#PartsOrderDateNeeded").ejDatePicker({ minDate : new Date(), dateFormat: "MM/dd/yyyy" });
+        }
+
+        var workorderDate = new Date($("#WorkOrder_WorkorderEntryDate").val());
+        var minutes = (((workorderDate.getMinutes() + 7.5)/15 | 0) * 15) % 60;
+        workorderDate.setMinutes(minutes);
+
+        var startDate = new Date($("#StartDateTime").val());
+        var startMinutes = (((startDate.getMinutes() + 7.5)/15 | 0) * 15) % 60;
+        startDate.setMinutes(startMinutes);
+
+        if ($("#StartDateTime").val() != null && $("#StartDateTime").val() != "")
+        {
+            $("#StartDateTime").ejDateTimePicker(
+                {
+                    //value: startDate,
+                    minDateTime: workorderDate,
+                    value: new Date($("#StartDateTime").val()),
+                    maxDateTime: new Date($("#CurrentDateTime").val()),
+                    interval : 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d,  interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                        }
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d,  interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                        }
+                    }
+                }).attr('readonly', 'true');
+        }
+        else
+        {
+            $("#StartDateTime").ejDateTimePicker(
+                {
+                    minDateTime: workorderDate,
+                    maxDateTime: new Date($("#CurrentDateTime").val()),
+                    //value: new Date($("#CurrentDateTime").val()),
+                    interval : 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d, interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value:'', interval : 15 }).attr('readonly', 'true');
+                        }
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d, interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                        }
+                    }
+                }).attr('readonly', 'true');
+        }
+
+        var arrivalDate = new Date($("#ArrivalDateTime").val());
+        var arrivalMinutes = (((arrivalDate.getMinutes() + 7.5)/15 | 0) * 15) % 60;
+        arrivalDate.setMinutes(arrivalMinutes);
+
+        var strtDate = new Date($("#StartDateTime").val());
+        strtDate.setHours(strtDate.getHours() + 4, strtDate.getMinutes(), strtDate.getSeconds());
+
+        if ($("#ArrivalDateTime").val() != null && $("#ArrivalDateTime").val() != "")
+        {
+            $("#ArrivalDateTime").ejDateTimePicker(
+                {
+                    //value: arrivalDate,
+                    value: new Date($("#ArrivalDateTime").val()),
+                    minDateTime: new Date($("#StartDateTime").val()),
+                    maxDateTime: strtDate,//new Date($("#CurrentDateTime").val()),
+                    interval : 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/,interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                        }
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d /*new Date($("#CurrentDateTime").val())*/, interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                        }
+                    }
+                }).attr('readonly', 'true');
+        }
+        else
+        {
+            $("#ArrivalDateTime").ejDateTimePicker(
+                {
+                    minDateTime: new Date($("#StartDateTime").val()),
+                    maxDateTime: strtDate,//new Date($("#CurrentDateTime").val()),
+                    //value: new Date($("#CurrentDateTime").val()),
+                    interval : 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null)
+                        {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval : 15 }).attr('readonly', 'true');
+                        }
+                        else
+                        {
+                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value:'', interval : 15 }).attr('readonly', 'true');
+                        }
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var start_actual_time = new Date($("#StartDateTime").val());
+                            var end_actual_time = new Date($("#ArrivalDateTime").val());
+
+                            var diff = end_actual_time - start_actual_time;
+
+                            var diffSeconds = diff / 1000;
+                            var HH = Math.floor(diffSeconds / 3600);
+                            var MM = Math.floor(diffSeconds % 3600) / 60;
+
+                            //var formatted = ((HH < 10)?("0" + HH):HH) + ":" + ((MM < 10)?("0" + MM):MM)
+                            $("#TravelTimeHours").val(HH);
+                            $("#Closure_TravelMinutes").val(MM);
+
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d /*new Date($("#CurrentDateTime").val())*/,interval: 15 });
+                        }
+                        else {
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                    }
+                }).attr('readonly', 'true');
+        }
+
+        if ($("#CompletionDateTime").val() != null && $("#CompletionDateTime").val() != "")
+        {
+            var d = new Date($("#ArrivalDateTime").val());
+            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+            //$("#CompletionDateTime").ejDateTimePicker({ value: new Date($("#CompletionDateTime").val()), enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()),interval : 15 }).attr('readonly', 'true');
+            $("#CompletionDateTime").ejDateTimePicker({ value: new Date($("#CompletionDateTime").val()), minDateTime: new Date($("#ArrivalDateTime").val()), maxDateTime: d /*new Date($("#CurrentDateTime").val())*/, enabled: true, interval: 15 }).attr('readonly', 'true');
+        }
+        else
+        {
+            if ($("#StartDateTime").val() != '' && $("#StartDateTime").val() != null)
+            {
+                //alert("2.1");
+                $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()), interval : 15 }).attr('readonly', 'true');
+
+                if ($("#ArrivalDateTime").val() != '' && $("#ArrivalDateTime").val() != null)
+                {
+                    //alert("2.1");
+                    //$("#CompletionDateTime").ejDateTimePicker({ enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()),interval : 15 }).attr('readonly', 'true');
+                    //$("#CompletionDateTime").ejDateTimePicker({ enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()), value: new Date($("#CurrentDateTime").val()), interval: 15 }).attr('readonly', 'true');
+                    $("#CompletionDateTime").ejDateTimePicker({ enabled: true, interval: 15 });
+                }
+                else{
+                    $("#CompletionDateTime").ejDateTimePicker({ enabled: false, interval : 15 });
+                }
+            }
+            else{
+                //alert("2.2");
+                $("#CompletionDateTime").ejDateTimePicker({ enabled: false, interval : 15 });
+                $("#ArrivalDateTime").ejDateTimePicker({ enabled: false, interval : 15 });
+            }
+
+        }
+
+        $('#CallClosureLink').css("color", "white");
+
+        $('#KnownEquipments').ejGrid({
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowPaging: true,
+            allowScrolling:true,
+            allowTextWrap: true,
+            dataSource : @Html.Raw(Json.Encode(Model.KnownEquipments)),
+            columns: [
+                { field: "Status", headerText: "Status" },
+                { field: "Category", headerText: "Category" },
+                { field: "Manufacturer", headerText: "Manufacturer" },
+                { field: "Model", headerText: "Model" },
+                { field: "CatalogID", headerText: "Catalog ID" },
+                { field: "Location", headerText: "Location" },
+                { field: "SerialNumber", headerText: "Serial Number" }
+            ]
+        });
+
+        if ($("#DispatchBranches").length)
+        {
+
+            $("#DispatchBranches").ejGrid({
+                dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.Branches, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }))),
+                allowPaging: true,
+                pageSettings: { pageSize: 6 },
+                allowSorting:true,
+                allowTextWrap: true,
+                allowFiltering : true,
+                filterSettings : {
+                    filterType : "menu"
+                },
+                actionBegin: "DispatchBranchesActionBegin",
+                actionComplete: "DispatchBranchesActionComplete",
+                //recordClick: function (args) {
+                //    if (args.data["Type"] == "3rd Party")
+                //    {
+                //        $('#TransmitButton').removeAttr('disabled');
+                //    }
+                //},
+                columns: [
+                        { headerText: "Select", template: true, templateID: "#checkBoxColumnTemplate", textAlign: "center", width: 110 },
+                        { field: "Id", headerText: "Id", visible: false},
+                        { field: "Distance", headerText: "Distance"},
+                        { field: "Type", headerText: "Type" },
+                        { field: "Name", headerText: "Branch" },
+                        { field: "Phone", headerText: "Phone" }
+                ]
+            });
+
+            $("#Technicians").ejGrid({
+                dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.Technicians, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }))),
+                allowPaging: true,
+                pageSettings: { pageSize: 6 },
+                allowSorting:true,
+                allowTextWrap: true,
+                recordClick: function (args) {
+                    if ((($(".assistCheckBox[data-branchid=" + args.data["TechId"] + "]").is(':checked')
+                        || $(".responsibleRaidoButton[data-branchid=" + args.data["TechId"] + "]").is(':checked')))
+                        && workOrderStatus.localeCompare("Closed") != 0
+                        && workOrderStatus.localeCompare("Invoiced") != 0
+                        && workOrderStatus.localeCompare("Completed") != 0
+                        && workOrderStatus.localeCompare("Attempting") != 0)
+                    {
+                        $('#TransmitButton').removeAttr('disabled');
+                    }
+                    else{
+                        $('#TransmitButton').attr('disabled', 'disabled');
+                    }
+                },
+                columns: [
+                        { headerText: "Responsible", template: true, templateID: "#responsibleRaidoButtonTemplate", textAlign: "center", width: 100 },
+                        { headerText: "Assist", template: true, templateID: "#assistCheckBoxTemplate", textAlign: "center", width: 80 },
+                        { field: "Id", headerText: "Id", visible: false},
+                        { field: "TechId", headerText: "Tech ID", visible: false},
+                        { field: "Branch", headerText: "Branch"},
+                        { field: "TechName", headerText: "Tech Name" },
+                        { field: "TechPhone", headerText: "Tech Phone" },
+                        { field: "AssignedStatus", headerText: "Assigned Status" },
+                        { field: "LastCommunication", headerText: "Last Communication", width: 120 }
+                ]
+            });
+
+            @foreach (var d in Model.BranchIds)
+            {
+                @:serverBranchIds.push("@d");
+
+            }
+
+            $(".branchCheckBox").each(function() {
+                if (serverBranchIds.indexOf($(this).attr("data-branchid")) >= 0)
+                {
+                    this.checked = true;
+                }
+            });
+
+            if (serverBranchIds.length > 0)
+            {
+
+                var uniqueBranchIds = [];
+                $.each(serverBranchIds, function(i, el){
+                    if($.inArray(el, uniqueBranchIds) === -1) uniqueBranchIds.push(el);
+                });
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetTechnician", "Workorder")",
+                    data: { branchIds: uniqueBranchIds, workOrderId : $("#WorkOrder_WorkorderID").val() }
+                }).done(function (jsonResult) {
+
+                    if (jsonResult.success == true)
+                    {
+                        var obj = $("#Technicians").ejGrid("instance");
+                        obj.dataSource(jsonResult.data);
+
+                        @foreach (var d in Model.AssistTechIds)
+                        {
+                            @:serverAssistIds.push("@d");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }
+
+                        $(".assistCheckBox").each(function() {
+                            if (serverAssistIds.indexOf($(this).attr("data-branchid")) >= 0)
+                            {
+                                this.checked = true;
+                            }
+                        });
+
+                        var responsibleTech = "@Model.ResponsibleTechId";
+                        $(".responsibleRaidoButton").each(function() {
+                            if (responsibleTech == $(this).attr("data-branchid"))
+                            {
+                                this.checked = true;
+                            }
+                        });
+                        responsibleRaidoButtonclick();
+                    }
+                    else
+                    {
+                        AlertPopup("|There is a problem in getting Technician details!");
+                    }
+                });
+            }
+
+            $(".branchCheckBox").change(function () {
+                if ($(this).is(':checked') ==  false)
+                {
+                    var uniqueNames = [];
+                    $.each(serverBranchIds, function(i, el){
+                        if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+                    });
+
+                    var location = uniqueNames.indexOf($(this).attr("data-branchid"));
+                    if(location != -1) {
+                        uniqueNames.splice(location, 1);
+                    }
+                    serverBranchIds = uniqueNames;
+                }
+                else if (jQuery.inArray( $(this).attr("data-branchid"), serverBranchIds ) < 0) {
+                    serverBranchIds.push($(this).attr("data-branchid"));
+                }
+
+                SelectBranchesAndTechs();
+                $('#TransmitButton').attr('disabled', 'disabled');
+            });
+        }
+
+        var dataManagerParts = ej.DataManager({
+            url: '@Url.Action("GetPartsData","Workorder")'
+        });
+
+        $('.SolutionsDropDownList').ejDropDownList({
+            dataSource : @Html.Raw(Json.Encode(Model.Solutions)),
+            width: 300,
+            fields: { value : "SolutionId", text : "Description" },
+            showRoundedCorner: true,
+            enableFilterSearch: true,
+            watermarkText: "Please Select"
+        }).data("ejDropDownList")
+
+        $('#AppointmentReasonDropdown').ejDropDownList({
+            dataSource : @Html.Raw(Json.Encode(Model.AppointmentReasons)),
+            width: 300,
+            fields: { value : "FBStatusID", text : "FBStatus" },
+            showRoundedCorner: true,
+            enableFilterSearch: true,
+            watermarkText: "Please Select"
+        }).data("ejDropDownList")
+
+        $("form").submit(function (event) {
+
+            var operation = $("#Operation").val();
+            if (operation > 0) {
+
+                if ($("#ActionWorkorderSave").length)
+                {
+                    $("#ActionWorkorderSave").val("");
+                }
+                else
+                {
+                    var input1 = $("<input id='ActionWorkorderSave'>")
+                        .attr("type", "hidden")
+                        .attr("name", "action:WorkorderSave").val("");
+                    $(this).append($(input1));
+                }
+
+                var assistIds = [];
+                $(".assistCheckBox:checked").each(function() {
+                    assistIds.push($(this).attr("data-branchid"));
+                });
+
+                if ($("#AssistTechIdsHidden").length)
+                {
+                    $("#AssistTechIdsHidden").val(JSON.stringify(assistIds));
+                }
+                else
+                {
+                    var input6 = $("<input id='AssistTechIdsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "AssistTechIdsHidden").val(JSON.stringify(assistIds));
+                    $(this).append($(input6));
+                }
+
+                var responsibleId = [];
+                $(".responsibleRaidoButton:checked").each(function() {
+                    responsibleId.push($(this).attr("data-branchid"));
+                });
+
+                if ($("#ResponsibleTechIdsHidden").length)
+                {
+                    $("#ResponsibleTechIdsHidden").val(JSON.stringify(assistIds));
+                }
+                else
+                {
+                    var input7 = $("<input id='ResponsibleTechIdsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ResponsibleTechIdsHidden").val(JSON.stringify(responsibleId));
+                    $(this).append($(input7));
+                }
+
+                //Added Hidden value for Closure section
+
+                if ($("#WorkOrderClosureHidden").length)
+                {
+                    $("#WorkOrderClosureHidden").val(JSON.stringify($("#ClosureAssets").ejGrid("instance").model.dataSource.dataSource.json));
+                }
+                else
+                {
+                    if ($("#ClosureAssets").ejGrid("instance").model!=undefined) {
+                        var input8 = $("<input id='WorkOrderClosureHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "WorkOrderClosureHidden").val(JSON.stringify($("#ClosureAssets").ejGrid("instance").model.dataSource.dataSource.json));
+                        $(this).append($(input8));
+                    }
+                }
+
+
+                var gridDataArr = new Array();
+
+                $.each($("[class*='gridcls_']"),function(i,item){
+                    gridDataArr.push(($(item).ejGrid("instance")._currentJsonData));
+                });
+
+                if ($("#ChildGridDataHidden").length)
+                {
+                    $("#ChildGridDataHidden").val(JSON.stringify(gridDataArr));
+                }
+                else
+                {
+                    var input12 = $("<input id='ChildGridDataHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ChildGridDataHidden").val(JSON.stringify(gridDataArr));
+                    $(this).append($(input12));
+                }
+
+                var systeminfos = '';
+                var symptomdrps = '';
+                var qualityIssueChecks = '';
+                var nemwNumbers = '';
+                var electricalPhases= '';
+                var machineAmperage='';
+                var unitFitSpace='';
+                var voltage='';
+                var counterUnitSpace='';
+                var waterLine='';
+                var comments = '';
+                var locations = '';
+                var temperatures = '';
+                var weights = '';
+                var ratios = '';
+                var settings = '';
+                var counters = '';
+                var emails = '';
+                var works = '';
+                var noParts = '';
+
+
+                var rows = $("#ClosureAssets").find($("[role='row']"));
+                $.each(rows, function () {
+
+                    var closestClosurePanel = $(this).closest($(".ClosurePanel"));
+                    if (!closestClosurePanel.hasClass("NonSurveyPanel"))
+                    {
+                        var nextRow = $(this).closest('tr').next('tr');
+                        if (nextRow.hasClass("e-detailrow"))
+                        {
+                            var systeminfodropdown          =       nextRow.find($(".systeminfodrp"));
+                            var symptomdrpdropdown          = 		nextRow.find($(".symptomdrp"));
+                            var qualityIssueChecksdropdown  =		nextRow.find($(".QualityIssueChecks"));
+                            var nemwNumberdropdown          = 		nextRow.find($(".NemwNumber"));
+                            var electricalPhasedropdown     = 		nextRow.find($(".ElectricalPhase"));
+                            var machineAmperagedropdown     = 		nextRow.find($(".MachineAmperage"));
+                            var unitFitSpacedropdown        = 		nextRow.find($(".UnitFitSpace"));
+                            var voltagedropdown             = 		nextRow.find($(".Voltage"));
+                            var counterUnitSpacedropdown    = 		nextRow.find($(".CounterUnitSpace"));
+                            var waterLinedropdown           = 		nextRow.find($(".WaterLine"));
+                            var commentstextbox             =       nextRow.find($(".Comments"));
+                            var locationtextbox             =       nextRow.find($(".AssetLocation"));
+                            var temperaturestextbox         =       nextRow.find($(".Temparture"));
+                            var weightstextbox         =       nextRow.find($(".Weight"));
+                            var ratiostextbox         =       nextRow.find($(".Ratio"));
+                            var settingstextbox             =       nextRow.find($(".Settings"));
+                            var counterstextbox             =       nextRow.find($(".Counter"));
+                            var emailstextbox               =       nextRow.find($(".Email"));
+                            var workstextbox                =       nextRow.find($(".WorkPerformed"));
+                            var noPartsCheckbox             =       nextRow.find($(".NoPartsNeeded"));
+                            var imageControl                =       nextRow.find($(".issuepicturecls"));
+
+
+                            if (systeminfodropdown != null && systeminfodropdown != "undefined" && systeminfodropdown.length > 0)
+                            {
+                                systeminfos = systeminfos + systeminfodropdown.val() + "|";
+                            }
+                            else{
+                                systeminfos = systeminfos + "|";
+                            }
+
+                            if (symptomdrpdropdown != null && symptomdrpdropdown != "undefined" && symptomdrpdropdown.length > 0)
+                            {
+                                symptomdrps = symptomdrps + symptomdrpdropdown.val() + "|";
+                            }
+                            else{
+                                symptomdrps = symptomdrps + "|";
+                            }
+
+                            if (qualityIssueChecksdropdown != null && qualityIssueChecksdropdown != "undefined" && qualityIssueChecksdropdown.length > 0)
+                            {
+                                qualityIssueChecks = qualityIssueChecks + qualityIssueChecksdropdown.is(':checked') + "|";
+                            }
+                            else{
+                                qualityIssueChecks = qualityIssueChecks + "|";
+                            }
+
+                            if (nemwNumberdropdown != null && nemwNumberdropdown != "undefined" && nemwNumberdropdown.length > 0)
+                            {
+                                nemwNumbers = nemwNumbers + nemwNumberdropdown.val() + "|";
+                            }
+                            else{
+                                nemwNumbers = nemwNumbers + "|";
+                            }
+
+                            if (electricalPhasedropdown != null && electricalPhasedropdown != "undefined" && electricalPhasedropdown.length > 0)
+                            {
+                                electricalPhases = electricalPhases + electricalPhasedropdown.val() + "|";
+                            }
+                            else{
+                                electricalPhases = electricalPhases + "|";
+                            }
+
+                            if (machineAmperagedropdown != null && machineAmperagedropdown != "undefined" && machineAmperagedropdown.length > 0)
+                            {
+                                machineAmperage = machineAmperage + machineAmperagedropdown.val() + "|";
+                            }
+                            else{
+                                machineAmperage = machineAmperage + "|";
+                            }
+
+                            if (unitFitSpacedropdown != null && unitFitSpacedropdown != "undefined" && unitFitSpacedropdown.length > 0)
+                            {
+                                unitFitSpace = unitFitSpace + unitFitSpacedropdown.val() + "|";
+                            }
+                            else{
+                                unitFitSpace = unitFitSpace + "|";
+                            }
+
+                            if (voltagedropdown != null && voltagedropdown != "undefined" && voltagedropdown.length > 0)
+                            {
+                                voltage = voltage + voltagedropdown.val() + "|";
+                            }
+                            else{
+                                voltage = voltage + "|";
+                            }
+
+                            if (counterUnitSpacedropdown != null && counterUnitSpacedropdown != "undefined" && counterUnitSpacedropdown.length > 0)
+                            {
+                                counterUnitSpace = counterUnitSpace + counterUnitSpacedropdown.val() + "|";
+                            }
+                            else{
+                                counterUnitSpace = counterUnitSpace + "|";
+                            }
+
+                            if (waterLinedropdown != null && waterLinedropdown != "undefined" && waterLinedropdown.length > 0)
+                            {
+                                waterLine = waterLine + waterLinedropdown.val() + "|";
+                            }
+                            else{
+                                waterLine = waterLine + "|";
+                            }
+
+                            if (commentstextbox != null && commentstextbox != "undefined" && commentstextbox.length > 0)
+                            {
+                                comments = comments + commentstextbox.val() + "|";
+                            }
+                            else{
+                                comments = comments + "|";
+                            }
+
+                            if (locationtextbox != null && locationtextbox != "undefined" && locationtextbox.length > 0)
+                            {
+                                locations = locations + locationtextbox.val() + "|";
+                            }
+                            else{
+                                locations = locations + "|";
+                            }
+
+                            if (temperaturestextbox != null && temperaturestextbox != "undefined" && temperaturestextbox.length > 0)
+                            {
+                                temperatures = temperatures + temperaturestextbox.val() + "|";
+                            }
+                            else{
+                                temperatures = temperatures + "|";
+                            }
+
+                            if (weightstextbox != null && weightstextbox != "undefined" && weightstextbox.length > 0)
+                            {
+                                weights = weights + weightstextbox.val() + "|";
+                            }
+                            else{
+                                weights = weights + "|";
+                            }
+
+                            if (ratiostextbox != null && ratiostextbox != "undefined" && ratiostextbox.length > 0)
+                            {
+                                ratios = ratios + ratiostextbox.val() + "|";
+                            }
+                            else{
+                                ratios = ratios + "|";
+                            }
+
+                            if (settingstextbox != null && settingstextbox != "undefined" && settingstextbox.length > 0)
+                            {
+                                settings = settings + settingstextbox.val() + "|";
+                            }
+                            else{
+                                settings = settings + "|";
+                            }
+
+                            if (counterstextbox != null && counterstextbox != "undefined" && counterstextbox.length > 0)
+                            {
+                                counters = counters + counterstextbox.val() + "|";
+                            }
+                            else{
+                                counters = counters + "|";
+                            }
+
+                            if (emailstextbox != null && emailstextbox != "undefined" && emailstextbox.length > 0)
+                            {
+                                emails = emails + emailstextbox.val() + "|";
+                            }
+                            else{
+                                emails = emails + "|";
+                            }
+
+                            if (workstextbox != null && workstextbox != "undefined" && workstextbox.length > 0)
+                            {
+                                works = works + workstextbox.val() + "|";
+                            }
+                            else{
+                                works = works + "|";
+                            }
+
+                            if (noPartsCheckbox != null && noPartsCheckbox != "undefined" && noPartsCheckbox.length > 0)
+                            {
+                                noParts = noParts + noPartsCheckbox.is(':checked') + "|";
+                            }
+                            else{
+                                noParts = noParts + "|";
+                            }
+                        }
+                        else{
+                            systeminfos         = systeminfos + "|";
+                            symptomdrps         = symptomdrps + "|";
+                            qualityIssueChecks  = qualityIssueChecks + "|";
+                            nemwNumbers         = nemwNumbers + "|";
+                            electricalPhases    = electricalPhases + "|";
+                            machineAmperage     = machineAmperage + "|";
+                            unitFitSpace        = unitFitSpace + "|";
+                            voltage             = voltage + "|";
+                            counterUnitSpace    = counterUnitSpace + "|";
+                            waterLine           = waterLine + "|";
+                            comments            = comments + '|';
+                            locations           = locations + '|';
+                            temperatures        = temperatures + '|';
+                            weights        = weights + '|';
+                            ratios             = ratios + '|'
+                            settings            = settings + '|';
+                            counters            = counters + '|';
+                            emails              = emails + '|';
+                            works               = works + '|';
+                            noParts             = noParts + '|';
+                        }
+                    }
+                });
+
+                if ($("#SystemsHidden").length)
+                {
+                    $("#SystemsHidden").val(JSON.stringify(systeminfos));
+                }
+                else
+                {
+                    var input9 = $("<input id='SystemsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "SystemsHidden").val(JSON.stringify(systeminfos));
+                    $(this).append($(input9));
+                }
+
+                if ($("#SymptomsHidden").length)
+                {
+                    $("#SymptomsHidden").val(JSON.stringify(symptomdrps));
+                }
+                else
+                {
+                    var input10 = $("<input id='SymptomsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "SymptomsHidden").val(JSON.stringify(symptomdrps));
+                    $(this).append($(input10));
+                }
+
+                if ($("#QualityIssueHidden").length)
+                {
+                    $("#QualityIssueHidden").val(JSON.stringify(qualityIssueChecks));
+                }
+                else
+                {
+                    var input11 = $("<input id='QualityIssueHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "QualityIssueHidden").val(JSON.stringify(qualityIssueChecks));
+                    $(this).append($(input11));
+                }
+
+                if ($("#NemwNumberHidden").length)
+                {
+                    $("#NemwNumberHidden").val(JSON.stringify(nemwNumbers));
+                }
+                else
+                {
+                    var input13 = $("<input id='NemwNumberHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "NemwNumberHidden").val(JSON.stringify(nemwNumbers));
+                    $(this).append($(input13));
+                }
+
+                if ($("#ElectricalPhaseHidden").length)
+                {
+                    $("#ElectricalPhaseHidden").val(JSON.stringify(electricalPhases));
+                }
+                else
+                {
+                    var input14 = $("<input id='ElectricalPhaseHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ElectricalPhaseHidden").val(JSON.stringify(electricalPhases));
+                    $(this).append($(input14));
+                }
+
+                if ($("#MachineAmperageHidden").length)
+                {
+                    $("#MachineAmperageHidden").val(JSON.stringify(machineAmperage));
+                }
+                else
+                {
+                    var input15 = $("<input id='MachineAmperageHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "MachineAmperageHidden").val(JSON.stringify(machineAmperage));
+                    $(this).append($(input15));
+                }
+
+                if ($("#UnitFitSpaceHidden").length)
+                {
+                    $("#UnitFitSpaceHidden").val(JSON.stringify(unitFitSpace));
+                }
+                else
+                {
+                    var input16 = $("<input id='UnitFitSpaceHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "UnitFitSpaceHidden").val(JSON.stringify(unitFitSpace));
+                    $(this).append($(input16));
+                }
+
+                if ($("#VoltageHidden").length)
+                {
+                    $("#VoltageHidden").val(JSON.stringify(voltage));
+                }
+                else
+                {
+                    var input17 = $("<input id='VoltageHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "VoltageHidden").val(JSON.stringify(voltage));
+                    $(this).append($(input17));
+                }
+
+                if ($("#CounterUnitSpaceHidden").length)
+                {
+                    $("#CounterUnitSpaceHidden").val(JSON.stringify(counterUnitSpace));
+                }
+                else
+                {
+                    var input18 = $("<input id='CounterUnitSpaceHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "CounterUnitSpaceHidden").val(JSON.stringify(counterUnitSpace));
+                    $(this).append($(input18));
+                }
+
+                if ($("#WaterLineHidden").length)
+                {
+                    $("#WaterLineHidden").val(JSON.stringify(waterLine));
+                }
+                else
+                {
+                    var input19 = $("<input id='WaterLineHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "WaterLineHidden").val(JSON.stringify(waterLine));
+                    $(this).append($(input19));
+                }
+
+                if ($("#CommentsHidden").length)
+                {
+                    $("#CommentsHidden").val(JSON.stringify(comments));
+                }
+                else
+                {
+                    var input20 = $("<input id='CommentsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "CommentsHidden").val(JSON.stringify(comments));
+                    $(this).append($(input20));
+                }
+
+                if ($("#LocationsHidden").length)
+                {
+                    $("#LocationsHidden").val(JSON.stringify(locations));
+                }
+                else
+                {
+                    var input21 = $("<input id='LocationsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "LocationsHidden").val(JSON.stringify(locations));
+                    $(this).append($(input21));
+                }
+
+                if ($("#TemperaturesHidden").length)
+                {
+                    $("#TemperaturesHidden").val(JSON.stringify(temperatures));
+                }
+                else
+                {
+                    var input22 = $("<input id='TemperaturesHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "TemperaturesHidden").val(JSON.stringify(temperatures));
+                    $(this).append($(input22));
+                }
+
+                var data = new FormData();
+                $.each(files, function(key, value)
+                {
+                    data.append(key, value);
+                });
+
+                if ($("#SettingsHidden").length)
+                {
+                    $("#SettingsHidden").val(JSON.stringify(settings));
+                }
+                else
+                {
+                    var input23 = $("<input id='SettingsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "SettingsHidden").val(JSON.stringify(settings));
+                    $(this).append($(input23));
+                }
+
+                if ($("#CountersHidden").length)
+                {
+                    $("#CountersHidden").val(JSON.stringify(counters));
+                }
+                else
+                {
+                    var input24 = $("<input id='CountersHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "CountersHidden").val(JSON.stringify(counters));
+                    $(this).append($(input24));
+                }
+
+                if ($("#EmailsHidden").length)
+                {
+                    $("#EmailsHidden").val(JSON.stringify(emails));
+                }
+                else
+                {
+                    var input25 = $("<input id='EmailsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "EmailsHidden").val(JSON.stringify(emails));
+                    $(this).append($(input25));
+                }
+
+                if ($("#WorksHidden").length)
+                {
+                    $("#WorksHidden").val(JSON.stringify(works));
+                }
+                else
+                {
+                    var input26 = $("<input id='WorksHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "WorksHidden").val(JSON.stringify(works));
+                    $(this).append($(input26));
+                }
+
+                if ($("#NoPartsHidden").length)
+                {
+                    $("#NoPartsHidden").val(JSON.stringify(noParts));
+                }
+                else
+                {
+                    var input27 = $("<input id='NoPartsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "NoPartsHidden").val(JSON.stringify(noParts));
+                    $(this).append($(input27));
+                }
+
+                if ($("#NewWorkorderCallstatusHidden").length)
+                {
+                    $("#NewWorkorderCallstatusHidden").val($('#WorkorderCallStatus').text());
+                }
+                else
+                {
+                    var input28 = $("<input id='NewWorkorderCallstatusHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "NewWorkorderCallstatusHidden").val($('#WorkorderCallStatus').text());
+                    $(this).append($(input28));
+
+                }
+
+                if ($("#SpawnReasonHidden").length)
+                {
+                    $("#SpawnReasonHidden").val($('#SpawnReasonDropdown').val());
+                }
+                else
+                {
+                    var input29 = $("<input id='SpawnReasonHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "SpawnReasonHidden").val($('#SpawnReasonDropdown').val());
+                    $(this).append($(input29));
+                }
+
+                if ($("#SpanReasonNotesHidden").length)
+                {
+                    $("#SpanReasonNotesHidden").val($('#SpanReasonNotes').val());
+                }
+                else
+                {
+                    var input30 = $("<input id='SpanReasonNotesHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "SpanReasonNotesHidden").val($('#SpanReasonNotes').val());
+                    $(this).append($(input30));
+                }
+
+                if ($("#NSRReasonHidden").length)
+                {
+                    $("#NSRReasonHidden").val($('#NSRReasonDropdown').val());
+                }
+                else
+                {
+                    var input45 = $("<input id='NSRReasonHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "NSRReasonHidden").val($('#NSRReasonDropdown').val());
+                    $(this).append($(input45));
+                }
+
+                if ($("#NSRReasonNotesHidden").length)
+                {
+                    $("#NSRReasonNotesHidden").val($('#NSRReasonNotes').val());
+                }
+                else
+                {
+                    var input46 = $("<input id='NSRReasonNotesHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "NSRReasonNotesHidden").val($('#NSRReasonNotes').val());
+                    $(this).append($(input46));
+                }
+                if ($("#RemovalCountHidden").length)
+                {
+                    $("#RemovalCountHidden").val($('#RemovalCount').val());
+                }
+                else
+                {
+                    var input31 = $("<input id='RemovalCountHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "RemovalCountHidden").val($('#RemovalCount').val());
+                    $(this).append($(input31));
+                }
+
+                if ($("#RemovalDateHidden").length)
+                {
+                    $("#RemovalDateHidden").val($('#RemovalDate').val());
+                }
+                else
+                {
+                    var input32 = $("<input id='RemovalDateHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "RemovalDateHidden").val($('#RemovalDate').val());
+                    $(this).append($(input32));
+                }
+
+                if ($("#RemovaAllHidden").length)
+                {
+                    $("#RemovaAllHidden").val($("input[name='RemovaAll']:checked").val());
+                }
+                else
+                {
+                    var input33 = $("<input id='RemovaAllHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "RemovaAllHidden").val($("input[name='RemovaAll']:checked").val());
+                    $(this).append($(input33));
+                }
+
+                if ($("#RemovalReasonHidden").length)
+                {
+                    $("#RemovalReasonHidden").val($('#RemovalReason').val());
+                }
+                else
+                {
+                    var input34 = $("<input id='RemovalReasonHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "RemovalReasonHidden").val($('#RemovalReason').val());
+                    $(this).append($(input34));
+                }
+
+                if ($("#BeveragesSupplierHidden").length)
+                {
+                    $("#BeveragesSupplierHidden").val($('#BeveragesSupplier').val());
+                }
+                else
+                {
+                    var input35 = $("<input id='BeveragesSupplierHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "BeveragesSupplierHidden").val($('#BeveragesSupplier').val());
+                    $(this).append($(input35));
+                }
+
+                if ($("#ClosingBusinessHidden").length)
+                {
+                    $("#ClosingBusinessHidden").val($('#ClosingBusiness').is(':checked'));
+                }
+                else
+                {
+                    var input36 = $("<input id='ClosingBusinessHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ClosingBusinessHidden").val($('#ClosingBusiness').is(':checked'));
+                    $(this).append($(input36));
+                }
+
+                if ($("#FlavorOrTasteOfCoffeeHidden").length)
+                {
+                    $("#FlavorOrTasteOfCoffeeHidden").val($('#FlavorOrTasteOfCoffee').is(':checked'));
+                }
+                else
+                {
+                    var input37 = $("<input id='FlavorOrTasteOfCoffeeHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "FlavorOrTasteOfCoffeeHidden").val($('#FlavorOrTasteOfCoffee').is(':checked'));
+                    $(this).append($(input37));
+                }
+
+                if ($("#EquipmentServiceReliabilityorResponseTimeHidden").length)
+                {
+                    $("#EquipmentServiceReliabilityorResponseTimeHidden").val($('#EquipmentServiceReliabilityorResponseTime').is(':checked'));
+                }
+                else
+                {
+                    var input38 = $("<input id='EquipmentServiceReliabilityorResponseTimeHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "EquipmentServiceReliabilityorResponseTimeHidden").val($('#EquipmentServiceReliabilityorResponseTime').is(':checked'));
+                    $(this).append($(input38));
+                }
+
+                if ($("#CostPerCupHidden").length)
+                {
+                    $("#CostPerCupHidden").val($('#CostPerCup').is(':checked'));
+                }
+                else
+                {
+                    var input39 = $("<input id='CostPerCupHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "CostPerCupHidden").val($('#CostPerCup').is(':checked'));
+                    $(this).append($(input39));
+                }
+
+                if ($("#ChangingGroupPurchasingProgramHidden").length)
+                {
+                    $("#ChangingGroupPurchasingProgramHidden").val($('#ChangingGroupPurchasingProgram').is(':checked'));
+                }
+                else
+                {
+                    var input40 = $("<input id='ChangingGroupPurchasingProgramHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ChangingGroupPurchasingProgramHidden").val($('#ChangingGroupPurchasingProgram').is(':checked'));
+                    $(this).append($(input40));
+                }
+
+                if ($("#ChangingDistributorHidden").length)
+                {
+                    $("#ChangingDistributorHidden").val($('#ChangingDistributor').is(':checked'));
+                }
+                else
+                {
+                    var input41 = $("<input id='ChangingDistributorHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ChangingDistributorHidden").val($('#ChangingDistributor').is(':checked'));
+                    $(this).append($(input41));
+                }
+
+                if ($("#RowIdHidden").length)
+                {
+                    $("#RowIdHidden").val($('#RowId').val());
+                }
+                else
+                {
+                    var input42 = $("<input id='RowIdHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "RowIdHidden").val($('#RowId').val());
+                    $(this).append($(input42));
+                }
+
+                if ($("#AppointmentReasonHidden").length)
+                {
+                    $("#AppointmentReasonHidden").val($('#AppointmentReasonDropdown').val());
+                }
+                else
+                {
+                    var input43 = $("<input id='AppointmentReasonHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "AppointmentReasonHidden").val($('#AppointmentReasonDropdown').val());
+                    $(this).append($(input43));
+                }
+
+                if ($("#CustomerSignatureDetailsHidden").length)
+                {
+                    var sign = $("#CustomerSignatureArea").ejSignature("instance");
+                    if (sign._canvas === undefined) {
+
+                    }
+                    else
+                    {
+                        image = sign._canvas[0].toDataURL();
+                        $("#CustomerSignatureDetailsHidden").val(image);
+                    }
+                }
+                else
+                {
+
+                    var sign = $("#CustomerSignatureArea").ejSignature("instance");
+
+                    if (sign._canvas === undefined) {
+
+                    }
+                    else
+                    {
+                        image = sign._canvas[0].toDataURL();
+                        var input44 = $("<input id='CustomerSignatureDetailsHidden'>")
+                          .attr("type", "hidden")
+                          .attr("name", "CustomerSignatureDetailsHidden").val(image);
+                        $(this).append($(input44));
+                    }
+                }
+
+                if ($("#FBBillableDetailsHidden").length) {
+                    $("#FBBillableDetailsHidden").val(JSON.stringify($("#FBBillableDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                }
+                else {
+                    if ($("#FBBillableDetails").ejGrid("instance").model != undefined) {
+                        var input45 = $("<input id='FBBillableDetailsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "FBBillableDetailsHidden").val(JSON.stringify($("#FBBillableDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                        $(this).append($(input45));
+                    }
+                }
+
+                if ($("#IsBillableFeedHidden").length)
+                {
+                    $("#IsBillableFeedHidden").val(JSON.stringify($(".IsBillableFeed").is(':checked')));
+                }
+                else
+                {
+                    var input47 = $("<input id='IsBillableFeedHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "IsBillableFeedHidden").val(JSON.stringify($(".IsBillableFeed").is(':checked')));
+                    $(this).append($(input47));
+                }
+
+                if ($("#WaterTestedHidden").length)
+                {
+                    $("#WaterTestedHidden").val(JSON.stringify($(".WaterTested").is(':checked')));
+                }
+                else
+                {
+                    var input48 = $("<input id='WaterTestedHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "WaterTestedHidden").val(JSON.stringify($(".WaterTested").is(':checked')));
+                    $(this).append($(input48));
+                }
+
+                if ($("#FilterReplacedHidden").length)
+                {
+                    $("#FilterReplacedHidden").val(JSON.stringify($(".FilterReplaced").is(':checked')));
+                }
+                else
+                {
+                    var input48 = $("<input id='FilterReplacedHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "FilterReplacedHidden").val(JSON.stringify($(".FilterReplaced").is(':checked')));
+                    $(this).append($(input48));
+                }
+
+                if ($("#WeightsHidden").length)
+                {
+                    $("#WeightsHidden").val(JSON.stringify(weights));
+                }
+                else
+                {
+                    var input49 = $("<input id='WeightsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "WeightsHidden").val(JSON.stringify(weights));
+                    $(this).append($(input49));
+                }
+
+                if ($("#RatiosHidden").length)
+                {
+                    $("#RatiosHidden").val(JSON.stringify(ratios));
+                }
+                else
+                {
+                    var input50 = $("<input id='RatiosHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "RatiosHidden").val(JSON.stringify(ratios));
+                    $(this).append($(input50));
+                }
+
+                if ($("#TechnicianSignatureDetailsHidden").length)
+                {
+                    var sign = $("#TechnicianSignatureArea").ejSignature("instance");
+                    if (sign._canvas === undefined) {
+
+                    }
+                    else
+                    {
+                        image = sign._canvas[0].toDataURL();
+                        $("#TechnicianSignatureDetailsHidden").val(image);
+                    }
+                }
+                else
+                {
+
+                    var sign = $("#TechnicianSignatureArea").ejSignature("instance");
+
+                    if (sign._canvas === undefined) {
+
+                    }
+                    else
+                    {
+                        image = sign._canvas[0].toDataURL();
+                        var input51 = $("<input id='TechnicianSignatureDetailsHidden'>")
+                          .attr("type", "hidden")
+                          .attr("name", "TechnicianSignatureDetailsHidden").val(image);
+                        $(this).append($(input51));
+                    }
+                }
+
+                if ($("#TechnicianSignatureDetailsHidden").length)
+                {
+                    var sign = $("#TechnicianSignatureArea").ejSignature("instance");
+                    if (sign._canvas === undefined) {
+
+                    }
+                    else
+                    {
+                        image = sign._canvas[0].toDataURL();
+                        $("#TechnicianSignatureDetailsHidden").val(image);
+                    }
+                }
+                else
+                {
+
+                    var sign = $("#TechnicianSignatureArea").ejSignature("instance");
+
+                    if (sign._canvas === undefined) {
+
+                    }
+                    else
+                    {
+                        image = sign._canvas[0].toDataURL();
+                        var input51 = $("<input id='TechnicianSignatureDetailsHidden'>")
+                          .attr("type", "hidden")
+                          .attr("name", "TechnicianSignatureDetailsHidden").val(image);
+                        $(this).append($(input51));
+                    }
+                }
+
+                if (ValidateCloserWorkorderModel()) {
+                     var $this = $(this);
+                var frmValues = $this.serialize();
+                $.ajax({
+                    type: $this.attr('method'),
+                    url: "@Url.Action("SaveWorkOrder",HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                    data: frmValues
+                }).done(function (response) {
+                    if (response != null && response.success == true) {
+
+                        if (response.returnValue == -2)
+                        {
+                            AlertPopup("|ERF ID is not valid. Please reenter correct ERF ID!");
+                        }
+                        else if (response.returnValue > 0 && response.message == '')
+                        {
+                            AlertPopup("|Work Order completed successfully! "+" \r  |Work Order Confirmation Code#: "+response.WOConfirmationCode);
+                            updateUrl = response.Url;
+                        }
+                        else
+                        {
+                            if (operation == 6 || operation == 1 || operation == 8 )
+                            {
+                                if (response.WOConfirmationCode == undefined) {
+                                    AlertPopup(response.message);
+                                }
+                                else {
+                                    AlertPopup(response.message + " \r  |Work Order Confirmation Code#: " + response.WOConfirmationCode);
+                                }
+
+                                if (response.Url!='') {
+                                    updateUrl = response.Url;
+                                }
+
+                            }
+                        }
+                    }
+                    else if (operation == 6)
+                    {
+                        AlertPopup(response.message);
+                        if (response.Url != '') {
+                            updateUrl = response.Url;
+                        }
+
+                    }
+                });
+                }
+
+            }
+            $("#Operation").val(0);
+
+            event.preventDefault();
+        });
+
+        function ValChange(args) {
+            var ob = $(".e-grid").ejGrid("instance");//Gets the grid object,
+            if (this._id == "GridCategoryName") {//when the value of the category field is altered.
+                var text = ej.DataManager(ob.model.dataSource).executeLocal(ej.Query().where("CategoryName", "equal", args.selectedText, false).select("Description"));//Gets the value of the corresponding description filed value for the selected CategoryName from the dataSource.
+
+                var gridDescriptionObj = $('#GridDescription').ejDropDownList().data("ejDropDownList");
+                gridDescriptionObj.selectItemByText(text[0]);
+            }
+            else {
+                var text = ej.DataManager(ob.model.dataSource).executeLocal(ej.Query().where("Description", "equal", args.selectedText, false).select("CategoryName"));
+
+                var gridCategoryNameObj = $('#GridCategoryName').ejDropDownList().data("ejDropDownList");
+                gridCategoryNameObj.selectItemByText(text[0]);
+            }
+        }
+
+        $("[data-popup-close='popupalert']").click(function() {
+            if (updateUrl != null)
+            {
+                window.location.href = updateUrl;
+            }
+        });
+
+
+        $("input[name$='ShipTo']").click(function() {
+            var radioValue = $(this).val();
+            $("#PartsShipTo").val(radioValue);
+            $("div.ShipToDiv").hide();
+            $("#ShipTo" + radioValue).show();
+        });
+
+        $(".WorkOrderFields").change(function (){
+            formDirty = true;
+        });
+
+        if ($("#PartsShipTo").val() == 1)
+        {
+            $("input[name$='ShipTo'][value$=1]").trigger("click");
+        }
+        else if ($("#PartsShipTo").val() == 2) {
+            $("input[name$='ShipTo'][value$=2]").trigger("click");
+        }
+        else if ($("#PartsShipTo").val() == 3) {
+            $("input[name$='ShipTo'][value$=3]").trigger("click");
+        }
+        else if ($("#PartsShipTo").val() == 4) {
+            $("input[name$='ShipTo'][value$=4]").trigger("click");
+        }
+        else{
+            $("input[name$='ShipTo'][value$=2]").trigger("click");
+            $("#PartsShipTo").val(2);
+        }
+
+        if ($("#WorkOrder_WorkorderCallstatus").val() == "Accepted")
+        {
+            $(".work-order-details-head").trigger( "click" );
+            $(".notes-details-head").trigger( "click" );
+            $(".work-order-dispatch-head").trigger( "click" );
+            //$(".closure-head").trigger("click");
+            $(".billable-head").trigger("click");
+        }
+        else if ($("#WorkOrder_WorkorderCallstatus").val() == "Closed"
+            || $("#WorkOrder_WorkorderCallstatus").val() == "Completed") {
+            $(".work-order-details-head").trigger( "click" );
+            $(".notes-details-head").trigger( "click" );
+            $(".work-order-dispatch-head").trigger( "click" );
+            //$(".closure-head").trigger("click");
+            $(".billable-head").trigger("click");
+        }
+        else if ($("#WorkOrder_WorkorderCallstatus").val() == "Open") {
+            $(".work-order-details-head").trigger( "click" );
+            $(".work-requested-details-head").trigger( "click" );
+            $(".notes-details-head").trigger( "click" );
+            $(".work-order-dispatch-head").trigger( "click" );
+        }
+        else{
+            $(".work-requested-details-head").trigger( "click" );
+            $(".work-order-details-head").trigger( "click" );
+            $(".notes-details-head").trigger( "click" );
+        }
+
+        $("#TransmitButton").click(function () {
+
+            if (workOrderStatus.localeCompare("Closed") != 0
+                && workOrderStatus.localeCompare("Invoiced") != 0
+                && workOrderStatus.localeCompare("Completed") != 0
+                && $(this).attr('disabled') != 'disabled')
+            {
+                var isResponsible = false;
+
+                if ($(".responsibleRaidoButton[data-branchid=" + $("#Technicians").ejGrid("instance").getSelectedRecords()[0]["TechId"] + "]").is(':checked'))
+                {
+                    isResponsible = true;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("DispatchMail", "Workorder")",
+                    data: { "workOrderId": $("#WorkOrder_WorkorderID").val(),
+                        "techId": $("#Technicians").ejGrid("instance").getSelectedRecords()[0]["TechId"],
+                        "isResponsible" : isResponsible
+                    }
+                }).done(function (response) {
+                    if (response.success == true && response.returnValue == 1)
+                    {
+                        $('#WorkorderCallStatus').text(response.WorkorderCallstatus);
+                        $('#WorkOrder.WorkorderCallstatus').val(response.WorkorderCallstatus);
+
+                        SelectBranchesAndTechs();
+
+                        AlertPopup("|Work Order transmitted successfully!");
+                    }
+                    else{
+                        AlertPopup("|There is a problem in transmitting Work Order. Please contact Help Desk.");
+                    }
+                });
+            }
+        });
+
+        if (workOrderStatus.localeCompare("Closed") == 0
+            || workOrderStatus.localeCompare("Invoiced") == 0)
+        {
+            $('.WorkOrderFields').prop("readonly", true);
+            $('.WorkOrderFields').attr("disabled", true);
+            $("#AppointmentDate").ejDatePicker({ enabled: false });
+            $("#PartsOrderDateNeeded").ejDatePicker({  enabled: false });
+            $("#StartDateTime").ejDateTimePicker({  enabled: false });
+            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false });
+            $("#CompletionDateTime").ejDateTimePicker({  enabled: false });
+            $('.CustomerData').prop("readonly", true);
+            $('.CustomerData').attr("disabled", true);
+            $('.btn').attr("disabled", true);
+            $('.enableonclose').attr("disabled", false);
+            $('.addtonotes').attr("disabled", false);
+            $("#CustomerSignatureArea").ejSignature("disable");
+            $("#TechnicianSignatureArea").ejSignature("disable");
+            $('#signclear').attr("disabled", true);
+        }
+
+        $('input[type=file]').on('change', prepareUpload);
+
+        $("input[name='RemovaAll']").change(function(e){
+
+            var selectedValue = $("input[name='RemovaAll']:checked").val();
+            if (selectedValue == 'true')
+            {
+                $('#AdditionalQuestions').show();
+            }
+            else
+            {
+                $('#AdditionalQuestions').hide();
+            }
+        });
+
+        $("#SendMailButton").click(function () {
+            if(checkEmail())
+            {
+                $('[data-popup-close]').trigger("click");
+                $.ajax({
+                    url: '@Url.Action("EmailEvent", "Workorder")',
+                    type: 'GET',
+                    data: { "workOrderId": $("#WorkOrder_WorkorderID").val(), "emailAddress": $("#EmailEventEmail").val() },
+                    success: function (jsonResult) {
+                        $("#EmailEventEmail").val("");
+                        if (jsonResult.success == true)
+                        {
+                            if (jsonResult.data     == true)
+                            {
+                                AlertPopup("|Email sent successfully!");
+                            }
+                            else{
+                                AlertPopup("|There is a problem in sending event mail! Please contact support!");
+                            }
+                        }
+                        else{
+                            AlertPopup("|There is a problem in sending event mail! Please contact support!");
+                        }
+                    }
+                });
+            }
+            else
+            {
+                AlertPopup("|Please enter valid email address.");
+            }
+        });
+
+        CustomerAlternateAddressChange();
+        BranchAlternateAddressChange();
+
+        if ("@Model.IsOpen" == "True") {
+            AlertPopup("|WO is being viewed by User " + "@Model.WorkOrder.CurrentUserName" + " and changes cannot be made");
+        }
+
+        $("#InvoiceGenerateBtn").on('click', function(){
+            $.ajax({
+                url: '@Url.Action("CreateInvoice", "Workorder")',
+                type: 'GET',
+                data: { "workOrderId": $("#WorkOrder_WorkorderID").val() },
+                success: function (jsonResult) {
+                    if (jsonResult.success == true)
+                    {
+                        $("#Closure_InvoiceNo").val(jsonResult.data);
+                    }
+                    else{
+                        AlertPopup("|Problem in creating the Invoice");
+                    }
+                }
+            });
+        });
+    });
+
+    function CustomerAlternateAddressChange()
+    {
+        if ($("#IsCustomerAlternateAddress").is(':checked') ==  true)
+        {
+            $("#CustomerAlternateAddressSection").show();
+        }
+        else
+        {
+            $("#CustomerAlternateAddressSection").hide();
+        }
+    }
+
+    function BranchAlternateAddressChange()
+    {
+        if ($("#IsBranchAlternateAddress").is(':checked') ==  true)
+        {
+            $("#BranchAlternateAddressSection").show();
+        }
+        else
+        {
+            $("#BranchAlternateAddressSection").hide();
+        }
+    }
+
+    function SpecialClosureChange()
+    {
+        if ($("#Closure_SpecialClosure").val() != '')
+        {
+            $("#CreateFeastMovement").hide();
+            $("#CloseWorkOrder").show();
+        }
+        else
+        {
+            $("#CreateFeastMovement").show();
+            $("#CloseWorkOrder").hide();
+        }
+    }
+
+    function EquipmentDetailsActionComplete(args)
+    {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $("#EquipmentDetailsCallTypeID").ejDropDownList({ popupHide: "CallTypeIDChange" });
+        }
+    }
+
+    function EquipmentDetailsBegin(args) {
+        $('#EquipmentDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function EquipmentDetailsEndEdit(args) {
+        $('#EquipmentDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function EquipmentDetailsEndAdd(args) {
+        $('#EquipmentDetails_WaitingPopup').css("visibility", "hidden");
+    }
+
+    function NonEquipmentDetailsBegin(args) {
+        $('#NonEquipmentDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function NonEquipmentDetailsEndEdit(args) {
+        $('#NonEquipmentDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function NonEquipmentDetailsEndAdd(args) {
+        $('#NonEquipmentDetails_WaitingPopup').css("visibility", "hidden");
+    }
+
+    function ClosureAssetsBegin(args) {
+        $('#ClosureAssets_WaitingPopup').css("visibility", "hidden");
+    }
+    function ClosureAssetsEndEdit(args) {
+        $('#ClosureAssets_WaitingPopup').css("visibility", "hidden");
+    }
+    function ClosureAssetsEndAdd(args) {
+        $('#ClosureAssets_WaitingPopup').css("visibility", "hidden");
+        ClosureAssetsDataBound(args);
+    }
+
+    function WorkorderPartsBegin(args) {
+        $('#WorkOrderParts_WaitingPopup').css("visibility", "hidden");
+    }
+    function WorkorderPartsEndEdit(args) {
+        $('#WorkOrderParts_WaitingPopup').css("visibility", "hidden");
+    }
+    function WorkorderPartsEndAdd(args) {
+        $('#WorkOrderParts_WaitingPopup').css("visibility", "hidden");
+    }
+
+    function prepareUpload(event)
+    {
+        files = event.target.files;
+    }
+
+    function DetailRowExpand(args)
+    {
+        var noPartsNeededHidden = $(args.detailsRow).find('.NoPartsNeededHidden');
+
+        if (noPartsNeededHidden.val() == "true")
+        {
+            $(args.detailsRow).find('.NoPartsNeeded').attr("checked", true);
+        }
+
+        if (workOrderStatus.localeCompare("Closed") == 0
+            || workOrderStatus.localeCompare("Invoiced") == 0)
+        {
+            $('.WorkOrderFields').prop("readonly", true);
+            $('.WorkOrderFields').attr("disabled", true);
+            $("#AppointmentDate").ejDatePicker({ enabled: false });
+            $("#PartsOrderDateNeeded").ejDatePicker({  enabled: false });
+            $("#StartDateTime").ejDateTimePicker({  enabled: false });
+            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false });
+            $("#CompletionDateTime").ejDateTimePicker({  enabled: false });
+            $('.issuepicturecls').prop('disabled', false);
+        }
+    }
+
+    function onToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+    }
+    function onBillableToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+        if (args.itemName == "Add") {
+            if ($("#IsBillableFeed").is(":checked")) {
+            }
+            else {
+                AlertPopup("|Please select IsBillable checkbox before adding sku's");
+                return false;
+            }
+        }
+    }
+
+
+    function responsibleRaidoButtonclick()
+    {
+        var techId;
+        $(".responsibleRaidoButton:checked").each(function() {
+            techId = $(this).attr("data-branchid");
+        });
+
+        $(".assistCheckBox").removeAttr("disabled");
+
+        $(".assistCheckBox[data-branchid=" + techId + "]").attr("checked", false);
+        $(".assistCheckBox[data-branchid=" + techId + "]").attr("disabled", true);
+    }
+
+    function DispatchBranchesActionBegin(args) {
+        if (args.requestType == "filtering" || args.requestType == "paging")
+        {
+            //$(".branchCheckBox:checked").each(function() {
+            //    selectedBranchIds.push($(this).attr("data-branchid"));
+            //});
+
+            $(".assistCheckBox:checked").each(function() {
+                selectedAssistIds.push($(this).attr("data-branchid"));
+            });
+
+            $(".responsibleRaidoButton:checked").each(function() {
+                selectedResponsibleIds.push($(this).attr("data-branchid"));
+            });
+        }
+    }
+
+    function CallTypeIDChange(e)
+    {
+        var removalCount = $('#RemovalCount').val();
+        if (removalCount <= 0)
+        {
+            var row = this.element.closest(".e-editedrow");
+            if (row.index() < 0)
+            {
+                var row = this.element.closest(".e-addedrow");
+            }
+
+            $('#RowId').val(row.index());
+            if (e.value == 1400)
+            {
+                $('[data-popup="popup-6"]').fadeIn(350);
+            }
+        }
+    }
+
+    function SelectBranchesAndTechs()
+    {
+        //$(".branchCheckBox:checked").each(function() {
+        //    selectedBranchIds.push($(this).attr("data-branchid"));
+        //});
+
+        $(".assistCheckBox:checked").each(function() {
+            selectedAssistIds.push($(this).attr("data-branchid"));
+        });
+
+        $(".responsibleRaidoButton:checked").each(function() {
+            selectedResponsibleIds.push($(this).attr("data-branchid"));
+        });
+
+        if (serverBranchIds.length > 0)
+        {
+            var uniqueBranchIds = [];
+            $.each(serverBranchIds, function(i, el){
+                if($.inArray(el, uniqueBranchIds) === -1) uniqueBranchIds.push(el);
+            });
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetTechnician", "Workorder")",
+                data: { branchIds: uniqueBranchIds, workOrderId : $("#WorkOrder_WorkorderID").val() }
+            }).done(function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+                    var obj = $("#Technicians").ejGrid("instance");
+                    obj.dataSource(jsonResult.data);
+
+                    $(".assistCheckBox").each(function() {
+                        if (selectedAssistIds.indexOf($(this).attr("data-branchid")) >= 0)
+                        {
+                            this.checked = true;
+                        }
+                    });
+
+                    $(".responsibleRaidoButton").each(function() {
+                        if (selectedResponsibleIds.indexOf($(this).attr("data-branchid")) >= 0)
+                        {
+                            this.checked = true;
+                        }
+                    });
+                    responsibleRaidoButtonclick();
+                }
+                else
+                {
+                    AlertPopup("|There is a problem in getting Technician details!");
+                }
+            });
+
+            $(".branchCheckBox").each(function() {
+                if (serverBranchIds.indexOf($(this).attr("data-branchid")) >= 0)
+                {
+                    this.checked = true;
+                }
+            });
+
+            $(".branchCheckBox:checked").each(function() {
+                serverBranchIds.push($(this).attr("data-branchid"));
+            });
+        }
+        else{
+            var uniqueBranchIds = [];
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetTechnician", "Workorder")",
+                data: { branchIds: uniqueBranchIds, workOrderId : $("#WorkOrder_WorkorderID").val() }
+            }).done(function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+                    var obj = $("#Technicians").ejGrid("instance");
+                    obj.dataSource(jsonResult.data);
+
+                    $(".assistCheckBox").each(function() {
+                        if (selectedAssistIds.indexOf($(this).attr("data-branchid")) >= 0)
+                        {
+                            this.checked = true;
+                        }
+                    });
+
+                    $(".responsibleRaidoButton").each(function() {
+                        if (selectedResponsibleIds.indexOf($(this).attr("data-branchid")) >= 0)
+                        {
+                            this.checked = true;
+                        }
+                    });
+                    responsibleRaidoButtonclick();
+                }
+                else
+                {
+                    AlertPopup("|There is a problem in getting Technician details!");
+                }
+            });
+        }
+    }
+
+    function DispatchBranchesActionComplete(args) {
+        if (args.requestType == "filtering" || args.requestType == "paging")
+        {
+            $(".branchCheckBox").change(function () {
+
+                if ($(this).is(':checked') ==  false)
+                {
+                    var uniqueNames = [];
+                    $.each(serverBranchIds, function(i, el){
+                        if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+                    });
+
+                    var location = uniqueNames.indexOf($(this).attr("data-branchid"));
+                    if(location != -1) {
+                        uniqueNames.splice(location, 1);
+                    }
+                    serverBranchIds = uniqueNames;
+
+                }
+                else if (jQuery.inArray( $(this).attr("data-branchid"), serverBranchIds ) < 0) {
+                    serverBranchIds.push($(this).attr("data-branchid"));
+                }
+
+                SelectBranchesAndTechs();
+            });
+
+            SelectBranchesAndTechs();
+            responsibleRaidoButtonclick();
+        }
+    }
+
+    function SetSubmitOperation(operation)
+    {
+        $("#Operation").val(operation);
+    }
+
+    function CellEdit(args)
+    {
+        if (args.columnName == "AssetImage")
+        {
+            args.cancel = true;
+        }
+    }
+
+    function ClosureAssetsDataBound(args) {
+
+        //alert("1.1")
+        var gridObj = $("#ClosureAssets").data("ejGrid");
+        gridObj.expandAll();
+        //gridObj.collapseAll();
+    }
+
+    var closureAssetsCallTypeIdValue;
+    var closureAssetsCategoryValue;
+    var closureAssetsManufacturerValue;
+    var closureAssetsModelValue;
+    var closureAssetsSolutionValue;
+
+    function ClosureAssetsBeginEdit(args)
+    {
+        //alert("1");
+        var children = args.row.children();
+        closureAssetsCallTypeIdValue = $(children[3]).text();
+        closureAssetsSolutionValue = $(children[4]).text();
+        closureAssetsCategoryValue = $(children[5]).text();
+        closureAssetsManufacturerValue = $(children[6]).text();
+        closureAssetsModelValue = $(children[7]).text();
+    }
+
+    function ClosureAssetsComplete(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+           // alert("2");
+            $("#ClosureAssetsManufacturer").ejDropDownList({ change: "ManufacturerChange", enableFilterSearch: true });
+            //$("#ClosureAssetsCallTypeID").ejDropDownList({change : "CallTypeChange", enableFilterSearch: true });
+            $("#ClosureAssetsSolution").ejDropDownList({popupHide : "SolutionChange", enableFilterSearch: true });
+            $("#ClosureAssetsSerialNumber").ejDropDownList({popupHide : "SerilNumberChange", enableFilterSearch: true });
+
+            var DropDownselectedItem  = $("#ClosureAssetsSerialNumber option:selected").text();
+            if(DropDownselectedItem.toLowerCase() != "other")
+            {
+                $("#ClosureAssetsSerialNumberManual").attr('disabled','disabled');
+                $("#ClosureAssetsSerialNumberManual").addClass('e-disable');
+            }
+
+            //alert("3");
+            $("#ClosureAssetsSerialNumber").focusout(function(e){
+                $.ajax({
+                    url: '@Url.Action("GetKnownEquipment", "Workorder")',
+                    type: 'GET',
+                    data: { "serialNumber": $(this).val() },
+                    success: function (jsonResult) {
+
+                        if (jsonResult.success == true)
+                        {
+                            if (jsonResult.data != null)
+                            {
+                                $("#ClosureAssetsManufacturer").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data.Manufacturer);
+                                closureAssetsModelValue = jsonResult.data.Model;
+                                //$("#ClosureAssetsModel").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data.Model);
+                                $("#ClosureAssetsModel").val(jsonResult.data.Model);
+                                $("#ClosureAssetsLocation").val(jsonResult.data.Location);
+                            }
+                        }
+                        else
+                        {
+                            AlertPopup("|There is a problem in getting Known Equipment!");
+                        }
+                    }
+                })
+            });
+            //alert("4");
+            if (args.requestType == "beginedit")
+            {
+                if (closureAssetsCallTypeIdValue == '')
+                {
+                    $("#ClosureAssetsCallTypeID").ejDropDownList("clearText");
+                }
+
+                if (closureAssetsCategoryValue == '')
+                {
+                    $("#ClosureAssetsCategory").ejDropDownList("clearText");
+                }
+
+                if (closureAssetsManufacturerValue == '')
+                {
+                    $("#ClosureAssetsManufacturer").ejDropDownList("clearText");
+                }
+
+                //if (closureAssetsModelValue == '')
+                //{
+                //    $("#ClosureAssetsModel").ejDropDownList("clearText");
+                //}
+
+                if (closureAssetsSolutionValue == '')
+                {
+                    $("#ClosureAssetsSolution").ejDropDownList("clearText");
+                }
+            }
+        }
+    }
+
+    function SerilNumberChange(e)
+    {
+        if(e.value != "Other" )
+        {
+            $("#ClosureAssetsSerialNumberManual").attr('disabled','disabled');
+            $("#ClosureAssetsSerialNumberManual").addClass('e-disable');
+            $.ajax({
+                url: '@Url.Action("GetItemNumber", "Workorder")',
+                type: 'GET',
+                data: { "serialNumber": e.value },
+                success: function (jsonResult) {
+
+                    if (jsonResult.success == true)
+                    {
+                        $("#ClosureAssetsModel").val(jsonResult.data);
+                        $("#ClosureAssetsSerialNumberManual").val("");
+                    }
+                    else{
+                        AlertPopup("|There is a problem in getting ItemDescription for serial Number!");
+                    }
+                }
+            });
+        }
+        else
+        {
+            $("#ClosureAssetsModel").val("");
+            $("#ClosureAssetsSerialNumberManual").removeAttr('disabled');
+            $("#ClosureAssetsSerialNumberManual").removeClass('e-disable');
+        }
+    }
+
+    var workOrderPartsQty;
+    var workOrderPartsManufacturerValue;
+    var workOrderPartsSku;
+    var workOrderPartsDescription;
+
+    function WorkorderPartsBeginEdit(args)
+    {
+
+        var children = args.row.children();
+        workOrderPartsQty = $(children[1]).text();
+        workOrderPartsManufacturerValue = $(children[2]).text();
+        workOrderPartsSku = $(children[3]).text();
+        workOrderPartsDescription = $(children[4]).text();
+    }
+
+    function CompleteWorkOrderParts(args) {
+
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $("#WorkOrderPartsSku").ejDropDownList({ change: "WorkOrderPartsSkuChange", enableFilterSearch: true });
+            $("#WorkOrderPartsManufacturer").ejDropDownList({ change: "WorkOrderPartsManufacturerChange", enableFilterSearch: true });
+
+            if (args.requestType == "beginedit") {
+
+                var manufacturerObj = $("#WorkOrderPartsManufacturer").val();
+                var currentSku = $("#WorkOrderPartsSku").val();
+
+                @*$.ajax({
+                    url: '@Url.Action("GetNonTaggedSkus", "Workorder")',
+                    type: 'GET',
+                    data: { "manufacturer": manufacturerObj },
+                    success: function (data1) {
+                        $("#WorkOrderPartsSku").ejDropDownList({ dataSource: data1, enableFilterSearch: true });
+                        var skuDropDownListObj = $('#WorkOrderPartsSku').ejDropDownList().data("ejDropDownList");
+                        skuDropDownListObj.selectItemByText(currentSku);
+                    }
+                });*@
+
+                $.ajax({
+                    url: '@Url.Action("GetNonTaggedManufacturer", "Workorder")',
+                    type: 'GET',
+                    data: { "skuValue": currentSku },
+                    success: function (jsonResult) {
+
+                        if (jsonResult.success == true)
+                        {
+                            //$("#WorkOrderPartsManufacturer").ejDropDownList({ dataSource: data1, enableFilterSearch: true });
+                            $("#WorkOrderPartsManufacturer").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data[0].text);
+                        }
+                        else
+                        {
+                            AlertPopup("|There is a problem in getting Manufacturer details!");
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("GetSkuDescription", "Workorder")',
+                    type: 'GET',
+                    data: { "skuValue": currentSku },
+                    success: function (jsonResult) {
+                        if (jsonResult.success == true)
+                        {
+                            $("#WorkOrderPartsDescription").val(jsonResult.data);
+                        }
+                        else{
+                            AlertPopup("|There is a problem in getting Model Description!");
+                        }
+
+                    }
+                });
+
+                $("#WorkOrderPartsQuantity").attr("type", "number");
+            }
+
+            $("#WorkOrderPartsQuantity").keyup(function() {
+                var val = $("#WorkOrderPartsQuantity").val();
+                if (parseInt(val) < 0 || isNaN(val)) {
+                    $("#WorkOrderPartsQuantity").val("");
+                    $("#WorkOrderPartsQuantity").focus();
+                }
+            });
+        }
+    }
+
+    function ManufacturerChange(e) {
+        @*$.ajax({
+            url: '@Url.Action("GetTaggedSkus", "Workorder")',
+            type: 'GET',
+            data: { "manufacturer": e.value },
+            success: function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+
+                    $("#ClosureAssetsModel").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: true });
+
+                    if (closureAssetsModelValue != '')
+                    {
+                        $("#ClosureAssetsModel").ejDropDownList().data("ejDropDownList").selectItemByText(closureAssetsModelValue);
+                    }
+                }
+                else{
+                    AlertPopup("There is a problem in getting Models!");
+                }
+            }
+        })*@
+    }
+
+    function SolutionChange(e)
+    {
+        if (e.value == 5160 || e.value == 5191)
+        {
+            $.ajax({
+                url: '@Url.Action("GetSpawnReasons", "Workorder")',
+                type: 'GET',
+                data: { "solutionId": e.value },
+                success: function (jsonResult) {
+
+                    if (jsonResult.success == true)
+                    {
+                        $('[data-popup="popup-9"]').fadeIn(350);
+
+                        $('#SpawnReasonDropdown').ejDropDownList({
+                            dataSource : jsonResult.data,
+                            width: 300,
+                            fields: { value : "FBStatusID", text : "FBStatus" },
+                            showRoundedCorner: true,
+                            enableFilterSearch: true,
+                            watermarkText: "Please Select"
+                        }).data("ejDropDownList");
+                    }
+                    else{
+                        AlertPopup("|There is a problem in getting Spawn Reasons!");
+                    }
+                }
+            })
+        }
+        else if(e.value == 9999)
+        {
+            $.ajax({
+                url: '@Url.Action("GetSpawnReasons", "Workorder")',
+                type: 'GET',
+                data: { "solutionId": e.value },
+                success: function (jsonResult) {
+
+                    if (jsonResult.success == true)
+                    {
+                        $('[data-popup="popup-11"]').fadeIn(350);
+
+                        $('#NSRReasonDropdown').ejDropDownList({
+                            dataSource : jsonResult.data,
+                            width: 300,
+                            fields: { value : "FBStatusID", text : "FBStatus" },
+                            showRoundedCorner: true,
+                            enableFilterSearch: true,
+                            watermarkText: "Please Select"
+                        }).data("ejDropDownList");
+                    }
+                    else{
+                        AlertPopup("|There is a problem in getting NSR Reasons!");
+                    }
+                }
+            })
+        }
+    }
+
+    function CallTypeChange(e)
+    {
+        $.ajax({
+            url: '@Url.Action("GetSolutions", "Workorder")',
+            type: 'GET',
+            data: { "calltypeId": e.value },
+            success: function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+                    $("#ClosureAssetsSolution").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: true,
+                        watermarkText: "Please Select", fields: { value : "SolutionId", text : "Description" }});
+                }
+                else
+                {
+                    AlertPopup("|There is a problem in getting Solutions!");
+                }
+            }
+        })
+
+        var nextRow = $('#'+this._id).closest('tr').parent().closest('tr').next('tr');
+        if (nextRow.hasClass("e-detailrow"))
+        {
+            if (e.value == 1600)
+            {
+                nextRow.find("#NonSurveyPanel").hide();
+                nextRow.find("#SurveyPanel").show();
+            }
+            else
+            {
+                nextRow.find("#SurveyPanel").hide();
+                nextRow.find("#NonSurveyPanel").show();
+            }
+        }
+    }
+
+    function WorkOrderPartsManufacturerChange(e) {
+        @*var currentSku = $("#WorkOrderPartsSku").val();
+
+        $.ajax({
+            url: '@Url.Action("GetNonTaggedSkus", "Workorder")',
+            type: 'GET',
+            data: { "manufacturer": e.value },
+            success: function (data1) {
+                $("#WorkOrderPartsSku").ejDropDownList({ dataSource: data1, enableFilterSearch: true });
+                var skuDropDownListObj = $('#WorkOrderPartsSku').ejDropDownList().data("ejDropDownList");
+                skuDropDownListObj.selectItemByText(currentSku);
+            }
+        });*@
+    }
+
+    function WorkOrderPartsSkuChange(e) {
+
+        $.ajax({
+            url: '@Url.Action("GetNonTaggedManufacturer", "Workorder")',
+            type: 'GET',
+            data: { "skuValue": e.value },
+            success: function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+                    //$("#WorkOrderPartsManufacturer").ejDropDownList({ dataSource: data1, enableFilterSearch: true });
+                    $("#WorkOrderPartsManufacturer").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data[0].text);
+                }
+                else{
+                    AlertPopup("|There is a problem in getting Manufacturer!");
+                }
+            }
+        });
+
+        $.ajax({
+            url: '@Url.Action("GetSkuDescription", "Workorder")',
+            type: 'GET',
+            data: { "skuValue": e.value },
+            success: function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+                    $("#WorkOrderPartsDescription").val(jsonResult.data);
+                }
+                else
+                {
+                    AlertPopup("|There is a problem in getting Description!");
+                }
+            }
+        });
+    }
+
+    function GeneratePdf()
+    {
+        window.location.href = "@Url.Action("WorkorderPdf", "Workorder")" + "?workOrderId=" +  $("#WorkOrder_WorkorderID").val();
+    }
+
+    function SetRemainingSolutions()
+    {
+        var obj = $("#ClosureAssets").ejGrid("instance");
+
+        for(var i = 0; i < obj.model.dataSource.dataSource.json.length; i ++)
+        {
+            if (obj.model.dataSource.dataSource.json[i].Solution == "" || obj.model.dataSource.dataSource.json[i].Solution == null)
+            {
+                obj.model.dataSource.dataSource.json[i].Solution  = $('#SolutionsDropDownList').val();
+            }
+        }
+        obj.dataSource(obj.model.dataSource.dataSource.json);
+        $('[data-popup-close]').trigger("click");
+    }
+
+    function queryCellInfoEquipment( args )
+    {
+        if ( args.column.headerText === "Category" )
+        {
+            $( args.cell ).text( "OTHER" );
+        }
+
+    }
+
+
+
+    function FBBillableDetailsBegin( args )
+    {
+        $( '#FBBillableDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function FBBillableDetailsEndEdit( args )
+    {
+        $( '#FBBillableDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function FBBillableDetailsEndAdd( args )
+    {
+        $( '#FBBillableDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    var BillableSku;
+    var BillableQty;
+    var BillableUnitPrice;
+
+
+    function FBBillableDetailsBeginEdit(args) {
+        var children = args.row.children();
+        BillableSku = $(children[1]).text();
+        BillableDesc = $(children[2]).text();
+        BillableQty = $(children[3]).text();
+        BillableUnitPrice = $(children[4]).text();
+
+    }
+   function CompleteBillableModels( args )
+    {
+        //alert(args.requestType);
+        if ( args.requestType == "beginedit" || args.requestType == "add" )
+        {
+            if ( args.requestType == "beginedit" )
+            {
+
+                $("#FBBillableDetailsSKU").ejDropDownList().data("ejDropDownList").selectItemByText(BillableSku);
+                $("#FBBillableDetailsDescription").val(BillableDesc)
+                $("#FBBillableDetailsQty").val(BillableQty )
+                $("#FBBillableDetailsUnitPrice").val(BillableUnitPrice )
+                $.ajax( {
+                    url: '@Url.Action("GetBillableSkuDetails", "Workorder")',
+                    type: 'GET',
+                    data: { "sku": BillableSku },
+                    success: function ( jsonResult )
+                    {
+                        if ( jsonResult.success == true )
+                        {
+                            debugger;
+                            $("#FBBillableDetailsUnitPrice").val(jsonResult.data)
+                            $("#FBBillableDetailsDescription").val(jsonResult.desc)
+
+                        }
+                        else
+                        {
+                            AlertPopup( "|There is a problem in getting Billable SKU details!" );
+                        }
+                    }
+                } );
+            }
+
+            $( "#FBBillableDetailsSKU" ).ejDropDownList( { change: "FBBillableDetailsModelNoChange", enableFilterSearch: true } );
+            //$( "#FBERFEquipmentDetailsProdNo" ).ejDropDownList( { change: "FBERFEquipmentDetailsProductNoChange", enableFilterSearch: true } );
+        }
+    }
+
+    function FBBillableDetailsModelNoChange( e )
+    {
+        var selectedModel;
+        $.ajax( {
+            url: '@Url.Action("GetBillableSkuDetails", "Workorder")',
+            type: 'GET',
+            data: { "sku": e.value },
+            success: function ( jsonResult )
+            {
+                if ( jsonResult.success == true )
+                {
+                    $("#FBBillableDetailsUnitPrice").val(jsonResult.data)
+                    $("#FBBillableDetailsDescription").val(jsonResult.desc)
+
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Billable SKU details!" );
+                }
+            }
+        } );
+
+
+    }
+
+    function queryCellInfoBillable(args) {
+
+        if (args.column.headerText === "Total Line Amount") {
+            //alert(args.row.children().length);
+            //alert((args.data.Qty === null || args.data.Qty == 0) && (args.row.children().length > 0));
+            var Qty = args.data.Qty;
+            if ((args.data.Qty === null || args.data.Qty == 0)) {
+                Qty = 1;
+            }
+            if (args.data.UnitPrice !== null && args.data.UnitPrice != 0) {
+                debugger;
+                $(args.cell).text("$" + (Qty * Number(args.data.UnitPrice)).toFixed(2));
+            }
+            else {
+
+                $(args.cell).text("$" + (Qty * Number(args.data.UnitPrice).toFixed(2)));
+            }
+
+
+        }
+        if (args.column.headerText === "Unit Price") {
+            debugger;
+            if (args.data.UnitPrice !== null && args.data.UnitPrice != 0) {
+
+                $(args.cell).text("$" + Number(args.data.UnitPrice).toFixed(2));
+            }
+            else {
+
+                $(args.cell).text("$" + Number(args.data.UnitPrice).toFixed(2));
+            }
+
+        }
+        if (args.column.headerText === "Qty") {
+            if ((args.data.Qty === null || args.data.Qty == 0)) {
+                $(args.cell).text(1);
+            }
+        }
+    }
+
+
+
+    function onToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete")) {
+
+            if(this.getSelectedRecords().length == 0)
+            {
+                //prevent the default alert popup
+                alert = function () { };
+
+                //here you can call your own customize alert method
+                AlertPopup("|No records selected for " + args.itemName + " operation");
+            }
+            else
+            {
+                if(args.itemId=="EquipmentDetails_edit" || args.itemId=="ClosureAssets_edit")
+                {
+                        GetCategoryDetails(args.itemId);
+                }
+            }
+
+        }
+        else  if(args.itemName == "Add")
+        {
+            if(args.itemId=="EquipmentDetails_add" || args.itemId=="ClosureAssets_add")
+            {
+                GetCategoryDetails(args.itemId);
+            }
+        }
+    }
+
+    function GetCategoryDetails(gridType)
+    {
+        $.ajax( {
+            url: '@Url.Action("GetCategoryDetails", "Workorder")',
+            type: 'GET',
+            success: function ( jsonResult )
+            {
+                if ( jsonResult.success == true )
+                {
+                    if(gridType == "EquipmentDetails_edit" || gridType == "EquipmentDetails_add")
+                    {
+                        $("#EquipmentDetailsCategory").ejDropDownList({ dataSource: jsonResult.data });
+                    }
+                    else
+                    {
+                        $("#ClosureAssetsCategory").ejDropDownList({ dataSource: jsonResult.data });
+                    }
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Contingents!" );
+                }
+            }
+        } );
+    }
+
+    function ValidateCloserWorkorderModel() {
+        debugger;
+        var result = true;
+
+        if ($("#Closure_InvoiceNo").length) {
+            if ($("#Closure_InvoiceNo").val().length > 50) {
+                return false;
+            }
+
+        }
+        if ($("#ResponsibleTechName").length) {
+            if ($("#ResponsibleTechName").val().length > 70) {
+                return false;
+            }
+
+        }
+
+        if ($("#Closure_CustomerName").length) {
+            if ($("#Closure_CustomerName").val().length > 90) {
+                return false;
+            }
+
+        }
+
+        if ($("#Closure_CustomerEmail").length) {
+            if ($("#Closure_CustomerEmail").val().length > 90) {
+                return false;
+            }
+
+        }
+        return result;
+    }
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    @Html.HiddenFor(m => m.WorkOrder.WorkorderCalltypeid)
+    @Html.HiddenFor(m => m.WorkOrder.WorkorderCalltypeDesc)
+    @Html.HiddenFor(m => m.IsNewPartsOrder)
+    @Html.HiddenFor(m => m.WorkOrder.SpawnCounter)
+    @Html.HiddenFor(m => m.WorkOrder.OriginalWorkorderid)
+    @Html.HiddenFor(m => m.WorkOrder.ParentWorkorderid)
+    @Html.HiddenFor(m => m.WorkOrder.EntryUserName)
+    @Html.HiddenFor(m => m.Customer.ZipCode)
+    @Html.HiddenFor(m => m.WorkOrder.WorkorderTimeZone)
+    @Html.HiddenFor(m => m.WorkOrder.WorkorderDaylightSaving)
+    @Html.HiddenFor(m => m.WorkOrder.WorkorderClosureConfirmationNo)
+    @Html.HiddenFor(m => m.WorkOrder.CoverageZone)
+    @Html.HiddenFor(w => w.WorkOrder.WorkorderID)
+    @Html.HiddenFor(w => w.WorkOrder.WorkorderCallstatus)
+    @Html.HiddenFor(c => c.Customer.CustomerId)
+
+
+    <section class="container-fluid white-bg pad">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-2">
+                    <b>Work Order ID:</b>
+                    @if (Model.WorkOrder.WorkorderID > 0)
+                    {
+                        if (@Model.WorkOrder.SpawnCounter.HasValue)
+                        {
+                            <span>@Model.WorkOrder.WorkorderID - @Model.WorkOrder.SpawnCounter</span>
+                        }
+                        else
+                        {
+                            <span>@Model.WorkOrder.WorkorderID</span>
+                        }
+                    }
+                    @Html.HiddenFor(w => w.WorkOrder.WorkorderID)
+                </div>
+                <div class="col-md-2">
+                    <b> Account Number:</b>@Model.Customer.CustomerId
+                </div>
+                <div class="col-md-3">
+                    <b> Customer Company Name:</b> @Model.Customer.CustomerName
+                </div>
+                <div class="col-md-2">
+                    <b> City:</b>@Model.Customer.City
+                </div>
+                <div class="col-md-2">
+                    <b> State:</b>@Model.Customer.State
+                </div>
+                <div>
+                    @Html.ActionLink("Back", "CallClosure", "CallClosure", new { @Style = "float:right;", @Class = "btn btn-primary" })
+                </div>
+
+                @Html.HiddenFor(w => w.WorkOrder.WorkorderCloseDate)
+                @Html.HiddenFor(w => w.CurrentDateTime)
+                @Html.HiddenFor(w => w.WorkOrder.WorkorderEntryDate)
+            </div>
+        </div>
+
+        @*<div class="row top-info">
+                <div class="col-md-12">
+                    @Html.ActionLink("Back", "CallClosure", "CallClosure", new { @Style = "float:right;", @Class = "btn btn-primary" })
+                </div>
+            </div>*@
+    </section>
+
+    <style>
+        .billable-content {
+            display: block !important;
+        }
+    </style>
+    if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1300))
+    {
+        <section class="block">
+            <div class="container-fluid">
+                <h2 class="erf-details-head arrow-down tabheader">ERF</h2>
+                <div class="erf-details-content margin-top" style="display: block;">
+                    <div class="col-md-12 customer-col2">
+                        <div class="col-sm-6-o">
+                            <span class="col-md-1">ERF #:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @if (!string.IsNullOrWhiteSpace(Model.WorkOrder.WorkorderErfid))
+                                    {
+                                        @Html.TextBoxFor(w => w.WorkOrder.WorkorderErfid, new { @class = "form-control WorkOrderFields", @readonly = "true" })
+                                    }
+                                    else
+                                    {
+                                        @Html.TextBoxFor(w => w.WorkOrder.WorkorderErfid, new { @class = "form-control WorkOrderFields" })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 customer-col2">
+                        <div class="col-xs-6-o">
+                            <span class="col-sm-4 col-md-4 m-b-more">
+                                Event Date:
+                                @if (Model.Erf != null && Model.Erf.EntryDate.HasValue)
+                                {
+                                    <span>@Model.Erf.EntryDate.Value.Date.ToString("MM/dd/yyyy")</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="col-xs-6-o">
+                            <span class="col-sm-4 col-md-4 m-b-more">
+                                Date ERF Rec:
+                                @if (Model.Erf != null && Model.Erf.DateERFReceived.HasValue)
+                                {
+                                    <span>@Model.Erf.DateERFReceived.Value.Date.ToString("MM/dd/yyyy")</span>
+                                }
+                            </span>
+                        </div>
+                        <div class="col-xs-6-o">
+                            <span class="col-sm-4 col-md-4 m-b-more">
+                                Org. Request Date:
+                                @if (Model.Erf != null && Model.Erf.OriginalRequestedDate.HasValue)
+                                {
+                                    <span>@Model.Erf.OriginalRequestedDate.Value.Date.ToString("MM/dd/yyyy")</span>
+                                }
+                            </span>
+                        </div>
+
+                       @if (Model.Erf != null)
+                       {
+                           DateTime dt1 = DateTime.Now.Date;
+                           DateTime dt2 = Model.Erf.OriginalRequestedDate == null ? DateTime.Now.Date : Convert.ToDateTime(Model.Erf.OriginalRequestedDate).Date;
+                           if (dt1 > dt2 || (Model.ReasonCode != null && Model.ReasonCode != 0))
+                           {
+                            <div class="col-sm-6-o">
+                                <span class="col-sm-4 col-md-4 m-b-more">
+                                    Reschedule Reason Code:<br />
+                                    @Html.DropDownListFor(w => w.ReasonCode, new SelectList(Model.RescheduleReasonCodesList, "FBStatusID", "FBStatus", Model.ReasonCode), new { @class = "form-control WorkOrderFields reasonCodeDrp" })
+                                </span>
+                            </div>
+                           }
+                       }
+
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="billable-head arrow-down tabheader">Billable</h2>
+            <div class="billable-content margin-top" style="display:block !important;">
+                <div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
+                    <div class="col-sm-6-o">
+                        <div class="col-md-6">
+                            @*@Html.CheckBoxFor(m => m.IsBillable, new { @class = "WorkOrderFields" }) Is Billable*@
+                            Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsBillableFeed" })
+                            @Html.Hidden("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsBillableFeed}}", new { @class = "IsBillableFeedHidden" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
+                    @(Html.EJ().Grid<FarmerBrothers.Models.FbWorkorderBillableSKUModel>
+                                    ("FBBillableDetails")
+                                        .Datasource(ds => ds.Json((IEnumerable<object>)Model.BillableSKUList)
+                                        .UpdateURL(Url.Action("BillableUpdate", "Workorder"))
+                                        .InsertURL(Url.Action("BillableInsert", "Workorder"))
+                                        .RemoveURL(Url.Action("BillableDelete", "Workorder"))
+                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                        .AllowPaging()
+                                        .ToolbarSettings(toolbar =>
+                                        {
+                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                            {
+                                                items.AddTool(ToolBarItems.Add);
+                                                items.AddTool(ToolBarItems.Edit);
+                                                items.AddTool(ToolBarItems.Delete);
+                                                items.AddTool(ToolBarItems.Update);
+                                                items.AddTool(ToolBarItems.Cancel);
+                                            });
+                                        })
+                                        .Columns(col =>
+                                        {
+                                            col.Field("WorkOrderSKUId").HeaderText("SKU ID").IsPrimaryKey(true).Visible(false).Add();
+                                            col.Field("SKU").HeaderText("SKU").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.SKUList))
+                                                .ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("Description").HeaderText("Description").AllowEditing(false).Add();
+                                            col.Field("Qty").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
+                                            col.Field("UnitPrice").HeaderTextAlign(TextAlign.Right).HeaderText("Unit Price").TextAlign(TextAlign.Right).AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
+                                            col.Field("UnitPrice").HeaderTextAlign(TextAlign.Right).HeaderText("Total Line Amount").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:n2}").Add();
+
+                                        })
+                                        .ClientSideEvents(eve =>
+                                        {
+                                            eve.ActionComplete("CompleteBillableModels")
+                                                .BeginEdit("FBBillableDetailsBeginEdit")
+                                                .ActionBegin("FBBillableDetailsBegin")
+                                                .EndEdit("FBBillableDetailsEndEdit")
+                                                .EndAdd("FBBillableDetailsEndAdd")
+                                                .QueryCellInfo("queryCellInfoBillable")
+                                                .ToolbarClick("onBillableToolbarClick");
+                                        }))
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="closure-head arrow-down tabheader">Closure</h2>
+            <div class="closure-content margin-top" style="display:block !important;">
+                <div class="row customer">
+                    <div class="col-md-12 customer-col2">
+                        <h4 class="customer-head">Call Details</h4>
+                    </div>
+                    <div class="col-md-12 customer-col2">
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Start Date/Time:<br />
+                                    @Html.TextBoxFor(w => w.Closure.StartDateTime, new { @class = "form-control WorkOrderFields", @Id = "StartDateTime" })
+                                </div>
+                            </div>                           
+                            <div class="col-sm-6-o">
+                                <div class="form-group" style="height: 55px;">
+                                    <span class="required1"> Invoice:</span> <br />
+                                    <div class="col-md-5" style="padding:0px;">                                        
+                                            @Html.TextBoxFor(w => w.Closure.InvoiceNo, new { @class = "form-control WorkOrderFields" })
+                                        @Html.ValidationMessageFor(m => m.Closure.InvoiceNo, "", new { @class = "text-danger" })
+                                    </div>
+                                    <div class="col-md-6"><button class="btn btn-primary" id="InvoiceGenerateBtn">AutoGen Invoice</button></div>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Technician Name:<br />
+                                    @Html.TextBoxFor(w => w.Closure.ResponsibleTechName, new { @class = "form-control WorkOrderFields", @Id = "ResponsibleTechName" })
+                                    @Html.ValidationMessageFor(m => m.Closure.ResponsibleTechName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*Billable: @Html.CheckBox("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), false, new { onchange = "BillableFeedOnChange(this)", @class = "IsBillableFeed" })*@
+                                    @*Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsBillableFeed", onchange = "BillableFeedOnChange(this)" })
+                                    @Html.Hidden("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsBillableFeed}}", new { @class = "IsBillableFeedHidden" })*@
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    <br />
+                                    Water Tested: @Html.CheckBoxFor(w => w.Closure.WaterTested, new { @class = "WorkOrderFields WaterTested" })
+                                    @Html.Hidden("WaterTested_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:WaterTested}}", new { @class = "WaterTestedHidden" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Arrival Date/Time:<br />
+                                    @Html.TextBoxFor(w => w.Closure.ArrivalDateTime, new { @class = "form-control WorkOrderFields", @Id = "ArrivalDateTime" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group" style=" height: 54px;">
+                                    Travel Time:<br />
+                                    <div class="col-md-5" style="padding:0px;"><span style="float:left;margin-top:6px;">Hrs.</span>@Html.TextBoxFor(w => w.Closure.TravelHours, new { @class = "form-control WorkOrderFields", @style = "width:80px;float:left;", @Id = "TravelTimeHours" })</div>
+
+                                    <div class="col-md-6"><span style="float:left;margin-top:6px;">Mins.</span>@Html.DropDownListFor(w => w.Closure.TravelMinutes, new SelectList(Model.Closure.MinutesList, "Description", "Description", Model.Closure.TravelMinutes), new { @style = "width:80px;float:left;", @class = "form-control WorkOrderFields" })</div>
+                                    <div class="clear"></div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Customer Name:<br />
+                                    @Html.TextBoxFor(w => w.Closure.CustomerName, new { @class = "form-control WorkOrderFields" })
+                                    @Html.ValidationMessageFor(m => m.Closure.CustomerName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    <br />
+                                    Filter Replaced: @Html.CheckBoxFor(w => w.Closure.FilterReplaced, new { @class = "WorkOrderFields FilterReplaced" })
+                                    @Html.Hidden("FilterReplaced_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:FilterReplaced}}", new { @class = "FilterReplacedHidden" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Completion Date/Time:<br />
+                                    @Html.TextBoxFor(w => w.Closure.CompletionDateTime, new { @class = "form-control WorkOrderFields", @Id = "CompletionDateTime" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Mileage to Customer:<br />
+                                    @Html.TextBoxFor(w => w.Closure.Mileage, new { @class = "form-control WorkOrderFields" })
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Customer Email:<br />
+                                    @Html.TextBoxFor(w => w.Closure.CustomerEmail, new { @class = "form-control WorkOrderFields" })
+                                    @Html.ValidationMessageFor(m => m.Closure.CustomerEmail, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    Hardness Rating:<br />
+                                    @Html.DropDownListFor(w => w.Closure.HardnessRating, new SelectList(Model.Closure.HardnessRatingList, null, null, Model.Closure.HardnessRating), new { @class = "form-control WorkOrderFields" })
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-md-3 customer-col1 sm-pad-reset">
+
+                            <div class="col-sm-6-o">
+                                Customer Signature:<br />
+                                <div class="form-group">
+                                    <img id="CustomerSignatureImage" height="100" width="250" onerror='ImageNotFound()' alt="Customer Signature" src=@Html.DisplayFor(w => w.Closure.CustomerSignatureDetails) />
+                                </div>
+                                <div class="form-group">
+                                    @Html.EJ().Signature("CustomerSignatureArea").Height("100px").Width("250px").StrokeWidth(3).IsResponsive(true)
+                                </div>
+
+                                <button class="btn btn-primary" onclick="onclear()">Clear</button>
+                            </div>
+                        </div>*@
+                        <div class="col-md-3 customer-col1 sm-pad-reset" style="background: #b5b4b440;  width: auto;">
+                            <div class="col-sm-6-o">
+                                <br />
+                                Signature By: <br />
+                                <div class="form-group">
+                                    @Html.TextBoxFor(w => w.Closure.CustomerSignedBy, new { @class = "form-control WorkOrderFields" })
+                                </div>
+                                <br />
+                                @*<div class="col-md-5">*@
+                                Customer Signature:
+                                @*</div>
+                <div class="col-md-7">*@
+                                <div class="form-group">
+                                    <img id="CustomerSignatureImage" height="100" width="250" onerror='ImageNotFound()' alt="Customer Signature" src=@Html.DisplayFor(w => w.Closure.CustomerSignatureDetails) />
+                                </div>
+                                <div class="form-group">
+                                    @Html.EJ().Signature("CustomerSignatureArea").Height("100px").Width("250px").StrokeWidth(3).IsResponsive(true)
+                                </div>
+
+                                <button class="btn btn-primary" onclick="onclear()">Clear</button><br />
+                            </div>
+                            @*</div>*@
+                        </div>
+                        <div class="col-md-3 customer-col1 sm-pad-reset" style="background: #b5b4b440;  width: auto;">
+                            <div class="col-sm-6-o">
+                                @*<div class="col-md-5">*@
+                                <br />
+                                Technician Signature:
+                                @*</div>
+                <div class="col-md-7">*@
+                                <div class="form-group">
+                                    <img id="TechnicianSignatureImage" height="100" width="250" onerror='TechSignatureImageNotFound()' alt="Technician Signature" src=@Html.DisplayFor(w => w.Closure.TechnicianSignatureDetails) />
+                                </div>
+                                <div class="form-group">
+                                    @Html.EJ().Signature("TechnicianSignatureArea").Height("100px").Width("250px").StrokeWidth(3).IsResponsive(true)
+                                </div>
+
+                                <button class="btn btn-primary" onclick="onTechSignatureclear()">Clear</button><br />
+                            </div>
+                            @*</div>*@
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 customer-col2">
+                        <div class="col-md-12 customer-col2">
+                            <h4 class="customer-head required">Asset Details</h4>
+                        </div>
+                        @*<div class="col-md-12 customer-col2">
+            <div class="col-md-6">
+                <h4 class="customer-head required">Asset Details</h4>
+            </div>
+
+        </div>*@
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            @if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Invoiced", true) == 0)
+                            {
+                                @(Html.EJ().Grid<FarmerBrothers.Models.WorkOrderManagementEquipmentModel>
+                                ("ClosureAssets")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)Model.WorkOrderEquipments).UpdateURL(Url.Action("ClosureEquipmentsUpdate", "Workorder")).InsertURL(Url.Action("ClosureEquipmentsInsert", "Workorder")).RemoveURL(Url.Action("ClosureEquipmentsDelete", "Workorder")).Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .EditSettings(edit => { edit.AllowAdding(false).AllowDeleting(false).AllowEditing(false); })
+                                    .IsResponsive(true)
+                                    .EnableResponsiveRow(true)
+                                    .AllowPaging()
+                                    .AllowScrolling(false)
+                                    .AllowKeyboardNavigation(false)
+                                    .AllowFiltering(false)
+                                .ToolbarSettings(toolbar =>
+                                {
+                                    toolbar.ShowToolbar().ToolbarItems(items =>
+                                    {
+                                        items.AddTool(ToolBarItems.Add);
+                                        items.AddTool(ToolBarItems.Edit);
+                                        items.AddTool(ToolBarItems.Delete);
+                                        items.AddTool(ToolBarItems.Update);
+                                        items.AddTool(ToolBarItems.Cancel);
+                                    });
+                                })
+                                    .ClientSideEvents(e => e.DetailsExpand("DetailRowExpand").ToolbarClick("onToolbarClick"))
+                                .Columns(col =>
+                                {
+                                    //col.Field("SequenceNumber").HeaderText("Asset").IsIdentity(true).Width(50).Add();
+                                    col.Field("AssetId").HeaderText("Asset").IsPrimaryKey(true).Visible(false).Add();
+                                    col.Field("FeastMovementId").Visible(false).Add();
+                                    col.Field("CallTypeID").HeaderText("Service Code").ForeignKeyField("CallTypeID").ForeignKeyValue("Description").DataSource(((IEnumerable<object>
+                                        )Model.ClosureCallTypes)).DefaultValue("").Add();
+                                    col.Field("Solution").HeaderText("Completion Code").ForeignKeyField("SolutionId").ForeignKeyValue("Description").DataSource(((IEnumerable<object>
+                                       )Model.Solutions)).DefaultValue("").Add();
+                                    col.Field("Category").HeaderText("Equipment Type").ForeignKeyField("Category").ForeignKeyValue("Category").DataSource(((IEnumerable<object>
+                                        )Model.TaggedCategories)).DefaultValue("").Add();
+                                    col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>
+                                        )Model.TaggedManufacturer)).DefaultValue("").Add();
+                                    //col.Field("Model").HeaderText("Model").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>
+                                    //    )Model.TaggedModels)).DefaultValue("").Add();
+                                    col.Field("Model").HeaderText("Model").Type(ColumnType.String).Add();
+                                    col.Field("Location").HeaderText("Location").Width(0).Add();
+                                    col.Field("SerialNumber").HeaderText("Serial Number").Type(ColumnType.String).Add();
+
+                                    col.Field("IsSlNumberImageExist").HeaderText("IsSlNumberImageExist").Visible(false).Add();
+                                    //col.Field("AssetImage").HeaderText("Asset Image").AllowEditing(false).TextAlign(TextAlign.Center).Template("#assetImageTemplate").Add();
+                                })
+                                                    .DetailsTemplate("#tabGridContents")
+                                                    .ClientSideEvents(e => e.DetailsDataBound("detailGridData"))
+                                                    .ClientSideEvents(eve => { eve.ActionComplete("ClosureAssetsComplete").BeginEdit("ClosureAssetsBeginEdit").DataBound("ClosureAssetsDataBound").ActionBegin("ClosureAssetsBegin").EndEdit("ClosureAssetsEndEdit").EndAdd("ClosureAssetsEndAdd"); })
+                                                    .CssClass("")
+                                )
+                            }
+                            else
+                            {
+                                @(Html.EJ().Grid<FarmerBrothers.Models.WorkOrderManagementEquipmentModel>
+                                                        ("ClosureAssets")
+                                                                        .Datasource(ds => ds.Json((IEnumerable<object>)Model.WorkOrderEquipments).UpdateURL(Url.Action("ClosureEquipmentsUpdate", "Workorder")).InsertURL(Url.Action("ClosureEquipmentsInsert", "Workorder")).RemoveURL(Url.Action("ClosureEquipmentsDelete", "Workorder")).Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                                            .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing().AllowEditOnDblClick(false); })
+                                                            //.IsResponsive(true)
+                                                            //.EnableResponsiveRow(true)
+                                                            .AllowPaging()
+                                                            .EnableTouch(true)
+                                                             .AllowScrolling(false)
+                                                             .AllowKeyboardNavigation(false)
+                                                                .AllowFiltering(false)
+                                                                .AllowTextWrap()
+                                                                .TextWrapSettings(wrap => { wrap.WrapMode(WrapMode.Both); })
+                                                            .ToolbarSettings(toolbar =>
+                                                            {
+                                                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                                                {
+                                                                    items.AddTool(ToolBarItems.Add);
+                                                                    items.AddTool(ToolBarItems.Edit);
+                                                                    items.AddTool(ToolBarItems.Delete);
+                                                                    items.AddTool(ToolBarItems.Update);
+                                                                    items.AddTool(ToolBarItems.Cancel);
+                                                                });
+                                                            })
+                                                            .ClientSideEvents(e => e.DetailsExpand("DetailRowExpand").ToolbarClick("onToolbarClick"))
+                                                            .Columns(col =>
+                                                            {
+                                                                //col.Field("SequenceNumber").HeaderText("Asset").IsIdentity(true).Width(50).Add();
+                                                                col.Field("AssetId").HeaderText("Asset").IsPrimaryKey(true).Visible(false).Add();
+                                                                col.Field("FeastMovementId").Visible(false).Add();
+                                                                col.Field("CallTypeID").HeaderText("Service Code").ForeignKeyField("CallTypeID").ForeignKeyValue("Description").DataSource(((IEnumerable<object>
+                                                                    )Model.ClosureCallTypes)).DefaultValue("").Add();
+                                                                col.Field("Solution").HeaderText("Completion Code").ForeignKeyField("SolutionId").ForeignKeyValue("Description").DataSource(((IEnumerable<object>
+                                                                   )Model.Solutions)).DefaultValue("").Add();
+                                                                col.Field("Category").HeaderText("Equipment Type").ForeignKeyField("Category").ForeignKeyValue("Category").DataSource(((IEnumerable<object>
+                                                                    )Model.TaggedCategories)).DefaultValue("").Add();
+                                                                col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>
+                                                                    )Model.TaggedManufacturer)).DefaultValue("").Add();
+                                                                //col.Field("Model").HeaderText("Model").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>
+                                                                //    )Model.TaggedModels)).DefaultValue("").Add();
+                                                                col.Field("Model").HeaderText("Model").Type(ColumnType.String).Add();
+                                                                col.Field("Location").HeaderText("Location").Width(0).Add();
+                                                                //col.Field("SerialNumber").HeaderText("Serial Number").Type(ColumnType.String).Add();
+
+                                                                col.Field("SerialNumber").HeaderText("Serial Number").ForeignKeyField("SerialNumber").ForeignKeyValue("SerialNumber").DataSource(((IEnumerable<object>
+                                                                    )Model.SerialNumberList)).DefaultValue("").Add();
+                                                                col.Field("SerialNumberManual").HeaderText("Serial Number (Manual Entry, if 'Other' option is selected)").Type(ColumnType.String).Add();
+
+                                                                col.Field("IsSlNumberImageExist").HeaderText("IsSlNumberImageExist").Visible(false).Add();
+                                                                //col.Field("AssetImage").HeaderText("Asset Image").AllowEditing(false).TextAlign(TextAlign.Center).Template("#assetImageTemplate").Add();
+                                                            })
+                                                                                .DetailsTemplate("#tabGridContents")
+                                                                                .ClientSideEvents(e => e.DetailsDataBound("detailGridData"))
+                                                                                                .ClientSideEvents(eve => { eve.ActionComplete("ClosureAssetsComplete").BeginEdit("ClosureAssetsBeginEdit").DataBound("ClosureAssetsDataBound").ActionBegin("ClosureAssetsBegin").EndEdit("ClosureAssetsEndEdit").EndAdd("ClosureAssetsEndAdd"); })
+                                                                                .CssClass("")
+                                )
+                            }
+                        </div>
+                    </div>
+                    @{
+
+                        //if (UserPrivilege["Work Order"] == "Edit-Only" || UserPrivilege["Work Order"] == "Full")
+                        {
+                            <div class="col-md-12 customer-col2">
+                                @if (Model.IsOpen == false)
+                                {
+                                    <button type="submit" style="float:right;margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
+                                }
+
+                            </div>
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script id="tabGridContents" type="text/x-jsrender">
+        <div id="SurveyPanel" class="SurveyPanel">
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <span class="col-md-6">Wall Plug NEMW Number:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("NemwNumberDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.NmeaNumbers, "NemaNumberID", "NemaNumberDescription", "{{:NemwNumber}}"), new { @class = "form-control WorkOrderFields NemwNumberDropDown_{{:NemwNumber}} NemwNumber SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <span class="col-md-6">Electrical Phase:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("ElectricalPhaseDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.ElectricalPhases, "ElectricalPhaseID", "ElectricalPhase", "{{:ElectricalPhase}}"), new { @class = "form-control WorkOrderFields ElectricalPhaseDropDown_{{:ElectricalPhase}} ElectricalPhase SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <span class="col-md-6">Machine Amperage:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("MachineAmperageDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.Amps, "AMPSID", "AMPSDescription", "{{:MachineAmperage}}"), new { @class = "form-control WorkOrderFields MachineAmperageDropDown_{{:MachineAmperage}} MachineAmperage SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <span class="col-md-6">Will the unit fit in the space provided:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("UnitFitSpaceDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.YesNoList, "Id", "Description", "{{:UnitFitSpace}}"), new { @class = "form-control WorkOrderFields UnitFitSpaceDropDown_{{:UnitFitSpace}} UnitFitSpace SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <span class="col-md-6">Voltage:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("VoltageDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.Voltages, "VoltageID", "Voltage", "{{:Voltage}}"), new { @class = "form-control WorkOrderFields VoltageDropDown_{{:Voltage}} Voltage SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <span class="col-md-6">Will the counter support the space of the unit:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("CounterUnitSpaceDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.YesNoList, "Id", "Description", "{{:CounterUnitSpace}}"), new { @class = "form-control WorkOrderFields CounterUnitSpaceDropDown_{{:CounterUnitSpace}} CounterUnitSpace SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <span class="col-md-6">Water Line:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.DropDownList("WaterLineDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.WaterLines, "WaterLineID", "WaterLine", "{{:WaterLine}}"), new { @class = "form-control WorkOrderFields WaterLineDropDown_{{:WaterLine}} WaterLine SurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="col-md-6">
+                    <span class="col-md-6">Comment:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.TextArea("Comments", "{{:Comments}}", new { @class = "form-control WorkOrderFields Comments SurveyPanel", @rows = "5" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <span class="col-md-6">What is the specific Location of the Asset:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.TextArea("AssetLocation", "{{:AssetLocation}}", new { @class = "form-control WorkOrderFields AssetLocation SurveyPanel", @rows = "5" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="NonSurveyPanel" class="NonSurveyPanel ClosurePanel">
+            <div class="col-md-8">
+                <div class="col-md-12">
+                    <span class="col-md-2">Temperature:</span>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            @Html.TextBox("Temparture", "{{:Temperature}}", new { @class = "form-control WorkOrderFields Temparture NonSurveyPanel" })
+                        </div>
+                    </div>
+                    @*<span class="col-md-2">Settings:</span>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.TextBox("Settings", "{{:Settings}}", new { @class = "form-control WorkOrderFields Settings NonSurveyPanel" })
+                            </div>
+                        </div>
+                        <span class="col-md-2">Counter:</span>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                @Html.TextBox("Counter", "{{:Counter}}", new { @class = "form-control WorkOrderFields Counter NonSurveyPanel" })
+                            </div>
+                        </div>*@
+                    <span class="col-md-2">Weight:</span>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            @Html.TextBox("Weight", "{{:Weight}}", new { @class = "form-control WorkOrderFields Weight NonSurveyPanel" })
+                        </div>
+                    </div>
+
+                    <span class="col-md-2">Ratio:</span>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            @Html.TextBox("Ratio", "{{:Ratio}}", new { @class = "form-control WorkOrderFields Ratio NonSurveyPanel" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <span class="col-md-2">System:</span>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                @Html.DropDownList("SystemDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.SystemInfoes, "SystemId", "Description"), new { @class = "form-control WorkOrderFields SystemDropDown_{{:System}} systeminfodrp" })
+                            </div>
+                        </div>
+                        <span class="col-md-2">Symptom:</span>
+                        <div class="col-md-4">
+                            <div class=" form-group">
+                                @Html.DropDownList("SymptomDropDown_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), new SelectList(Model.Symptoms, "SymptomID", "Description"), new { @class = "form-control WorkOrderFields SymptomDropDown_{{:Symptom}} symptomdrp" })
+                            </div>
+                        </div>
+                </div>
+                <div class="col-md-12" id="gridTab{{:AssetId}}">
+                    <span class="col-md-4"> Non Serialized Items:</span>
+
+                    <div id="detailGrid" class="gridcls_@DateTime.Now.ToString("ddMMyyyyHHmmss")"></div>
+
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            @Html.CheckBox("QualityIssue_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), false, new { onchange = "QualityIssueOnChange(this)", @class = "QualityIssueChecks NonSurveyPanel", style = "visibility:hidden" })
+                        </div>
+                    </div>
+                    @*<div id="QualityIssuesDiv">
+                            <span class="col-md-2">Picture of Issue:</span>
+                            <div class="col-md-3">
+                                <input type="file" id="FileUpload" name="FileUpload" style="max-width:200px;overflow-x:hidden" class="issuepicturecls" />
+                            </div>
+                            <span class="col-md-2">Submitter's Email:</span>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    @Html.TextBox("Email", "{{:Email}}", new { @class = "form-control WorkOrderFields Email NonSurveyPanel" })
+                                </div>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+            <div class="col-md-4">
+                <span class="col-md-3">Describe Work Performed:</span>
+                <div class="col-md-8" style="margin-left:10px;">
+                    <div class="form-group">
+                        @Html.TextArea("WorkPerformed", "{{:WorkPerformed}}", new { @class = "form-control WorkOrderFields WorkPerformed NonSurveyPanel", @style = "width:300px;height:150px" })
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-10">
+                @*Non Serialized Items:*@
+            </div>
+            <div class="col-md-2">
+                @*<div class="form-group">
+                        No Parts Needed: @Html.CheckBox("NoPartsNeeded_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), false, new { onchange = "NoPartsNeededOnChange(this)", @class = "NoPartsNeeded NonSurveyPanel" })
+                        @Html.Hidden("NoPartsNeeded_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:NoPartsNeeded}}", new { @class = "NoPartsNeededHidden NonSurveyPanel" })
+                    </div>*@
+            </div>
+        </div>
+    </script>
+
+    <script type="text/javascript">
+
+
+
+    function ImageNotFound()
+    {
+        $('#CustomerSignatureArea').show();
+        $('#CustomerSignatureImage').hide();
+    }
+    function TechSignatureImageNotFound()
+    {
+        $('#TechnicianSignatureArea').show();
+        $('#TechnicianSignatureImage').hide();
+    }
+
+    function NoPartsNeededOnChange(element)
+    {
+        var gridcls = "gridcls_"+$(element).attr("id").split('_')[1];
+        var gridObj = $("."+gridcls).data("ejGrid");
+        if(element.checked)
+        {
+            gridObj.visible = true;
+        }
+        else
+        {
+            gridObj.visible = false;
+        }
+    }
+
+    function DetailGridManufacturerChange(e) {
+
+    }
+
+    function DetailGridSkuChange(e)
+    {
+        var gridId = this._id.substring(0, this._id.length - 3);
+        $.ajax({
+            url: '@Url.Action("GetCloserNonTaggedManufacturer", "CallClosure")',
+            type: 'GET',
+            data: { "skuValue": e.value },
+            success: function (jsonResult) {
+                if (jsonResult.success == true)
+                {
+                    if (jsonResult.data.length>0) {
+                        //$("#" + gridId + "Manufacturer").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data[0].text);
+                        $("#" + gridId + "Manufacturer").val(jsonResult.data[0].Manufacturer);
+                        $("#" + gridId + "Description").val(jsonResult.data[0].Description);
+                    }
+                }
+            }
+        });
+
+        @*$.ajax({
+            url: '@Url.Action("GetCloserSkuDescription", "Workorder")',
+            type: 'GET',
+            data: { "skuValue": e.value },
+            success: function (jsonResult) {
+                //debugger;
+                if (jsonResult.success == true)
+                {
+                    $("#" + gridId + "Description").val(jsonResult.data);
+                }
+                else
+                {
+                    AlertPopup("|There is a problem in getting Model description!");
+                }
+            }
+        });*@
+    }
+
+    function detailGridActionComplete(args)
+    {
+        //alert("1");
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            //alert("1.1");
+            //$("#" + this._id + "Manufacturer").ejDropDownList({ change: "DetailGridManufacturerChange", enableFilterSearch: true });
+            $("#" + this._id + "Sku").ejAutocomplete({change : "DetailGridSkuChange", enableFilterSearch: true });
+
+            @*if (args.requestType == "beginedit") {
+                var manufacturerObj = $("#" + this._id + "Manufacturer").data("ejDropDownList");
+                if (manufacturerObj.currentValue != null && manufacturerObj.currentValue != "undefined")
+                {
+                    $.ajax({
+                        url: '@Url.Action("GetTaggedSkus", "Workorder")',
+                        type: 'GET',
+                        data: { "manufacturer": manufacturerObj.currentValue  },
+                        success: function (jsonResult) {
+
+                            if (jsonResult.success == true)
+                            {
+                                $("#" + this._id + "Sku").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: true });
+                            }
+                            else{
+                                AlerPopup("There is a problem in getting Models!");
+                            }
+                        }
+                    });
+                }
+            }*@
+        }
+    }
+
+    function detailGridData(e)
+    {
+        //alert("3")
+        var filteredData = e.data["AssetId"];
+
+        $("#detailGrid").attr("id","detailGrid_"+ filteredData);
+
+        e.detailsElement.find($("[id^='QualityIssue_']")).attr("id","QualityIssue_"+ filteredData);
+        e.detailsElement.find($("[id^='QualityIssuesDiv']")).attr("id","QualityIssuesDiv_"+ filteredData);
+
+        if (e.data["QualityIssue"] == true)
+        {
+            $("#QualityIssue_" + filteredData)[0].checked = true;
+            $("#QualityIssuesDiv_" + filteredData).show();
+        }
+        else
+        {
+            $("#QualityIssue_" + filteredData)[0].checked = false;
+            $("#QualityIssuesDiv_" + filteredData).hide();
+        }
+
+        var newDetailGrid = e.detailsElement.find("#detailGrid_"+ filteredData);
+
+        var query = new ej.Query().addParams("AssetId", filteredData);
+        var dm = ej.DataManager({ url: '@Url.Action("GetPartsForAsset", "Workorder")', adaptor: new ej.UrlAdaptor() });
+            var promise = dm.executeQuery(query);
+            promise.done(function (e) {
+                var dataResults = e.result;
+                newDetailGrid.ejGrid({
+                    //allowScrolling:true,
+                    isResponsive: true,
+                    enableResponsiveRow: true,
+                    allowSelection: true,
+                    toolbarSettings : {	showToolbar : true, toolbarItems : ["add","edit", "delete", "update", "cancel"] },
+                    toolbarClick: function (args) {
+                        if(args.itemName == "Add"){
+                            var iheight="";
+                            if ($(window).width() < 420) {
+                                iheight=$('.e-scroller  div').height()+110;
+                            }else{iheight=$('.e-scroller  div').height();}
+                            $('.e-scroller').css('height', iheight+'px');
+                        }
+                        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+                            var iheight="";
+                            if ($(window).width() < 420) {
+                                iheight=$('.e-scroller  div').height()+110;
+                            }else{iheight=$('.e-scroller  div').height();}
+                            $('.e-scroller').css('height', iheight+'px');
+                            //prevent the default alert popup
+                            alert = function () { };
+
+                            //here you can call your own customize alert method
+                            AlertPopup( "|No records selected for " + args.itemName + " operation" );
+
+                        }
+                    },
+                    dataSource : dataResults,
+                    columns: [
+                        { field: "Issue",headerText: "Issue",template: true, width: 80, templateID: "#checkboxTemplate", visible: false, textAlign:ej.TextAlign.Center,allowEditing: false,isPrimaryKey:true },//The checkbox column is bound to the grid using template property and headerTemplateID property
+                        { field: "Quantity", headerText: 'Quantity', width: 80, textAlign: ej.TextAlign.Left },
+                        {
+                            field: "Sku", headerText: 'Part#/SKU', validationRules: { required: true},
+                            editTemplate: {
+                                create: function () {
+                                    return "<input>";
+                                },
+                                read: function (args) {
+                                    args.ejAutocomplete('suggestionList').css('display', 'none');
+                                    return args.ejAutocomplete("getValue");
+                                },
+                                write: function (args) {
+                                    var data = [];
+                                    // console.log(JSON.stringify(gridData));
+                                    for(var x in gridData){
+                                        data.push(gridData[x]);
+                                    }
+                                    //var data = [];
+                                    //for (var i = 0 ; i < 20000 ; i++) {
+                                    //    data.push(i);
+                                    //}++
+                                    //console.log(data);
+                                    args.element.ejAutocomplete({ width: "100%", dataSource: gridData, enableDistinct: true, select : "select part",fields: { key: "VendorDescription", text: "VendorDescription" } });
+                                    //args.element.ejAutocomplete({ width: "100%", dataSource: data, enableDistinct: true, select : "select", value: args.rowdata !== undefined ? args.rowdata["VendorDescription"] : "" });
+                                }
+                            }, width: 100
+                        },
+                        { field: "Manufacturer", headerText: 'Manufacturer', width: 200, textAlign: ej.TextAlign.Left},
+                        { field: "Description", headerText: 'Description', width: 400, textAlign: ej.TextAlign.Left }
+                    ],
+                    actionComplete: "detailGridActionComplete"
+                });
+
+                if (workOrderStatus.localeCompare("Closed") != 0
+                    && workOrderStatus.localeCompare("Invoiced") != 0)
+                {
+                    newDetailGrid.ejGrid({
+                        allowSelection: true,
+                        editSettings:{allowAdding:true,allowDeleting:true,allowEditing:true,allowSaving:true,allowCanceling:true},
+                    });
+                }
+
+                if($("#QualityIssue_" + filteredData)[0].checked == true)
+                {
+                    newDetailGrid.data("ejGrid").showColumns("Issue");//Uses field or headerText of column as the parameter.
+                    $("#FileUpload_" + filteredData).removeAttr('disabled');
+                    $("#Email_" + filteredData).removeAttr('disabled');
+                }
+                else
+                {
+                    newDetailGrid.data("ejGrid").hideColumns("Issue"); //Uses field or headerText of column as the parameter.
+                    $("#FileUpload_" + filteredData).attr('disabled', 'disabled');
+                    $("#Email_" + filteredData).attr('disabled', 'disabled');
+                }
+            });
+
+            if (e.data["CallTypeID"] == 1600)
+            {
+                e.detailsElement.find("#NonSurveyPanel").hide();
+                e.detailsElement.find("#SurveyPanel").show();
+            }
+            else{
+                e.detailsElement.find("#SurveyPanel").hide();
+                e.detailsElement.find("#NonSurveyPanel").show();
+            }
+
+            e.detailsElement.css("display", "");
+
+
+            $.each(e.detailsElement.find("[class*='SymptomDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*SymptomDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='SystemDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*SystemDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='NemwNumberDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*NemwNumberDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='ElectricalPhaseDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*ElectricalPhaseDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='MachineAmperageDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*MachineAmperageDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='UnitFitSpaceDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*UnitFitSpaceDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='VoltageDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*VoltageDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='CounterUnitSpaceDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*CounterUnitSpaceDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+
+            $.each(e.detailsElement.find("[class*='WaterLineDropDown_']"),function(i,item){
+                var dropValue = $(item).attr("class").match(/[\w-]*WaterLineDropDown_[\w-]*/g)[0].split('_')[1];
+                $(item).val(dropValue);
+            });
+        }
+
+        function checkEmail()
+        {
+            var email = document.getElementById("EmailEventEmail").value;
+            if(email.length>0)
+            {
+                var pattern = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+                return email.match(pattern);
+            }
+            else{
+                return false;
+            }
+        }
+
+        function showAssetImage(assetId, serialNumber)
+        {
+            $.ajax({
+                url: '@Url.Action("GetAssetImages", "Workorder")',
+            type: 'GET',
+            data: { "serialNumber": serialNumber, "assetId" : assetId },
+            success: function (jsonResult) {
+
+                if (jsonResult.success == true)
+                {
+                    if (jsonResult.data.length > 0)
+                    {
+                        $("#PopupAssetImage").attr("src",jsonResult.data[0]);
+                        $('[data-popup="popup-7"]').fadeIn(350);
+                    }
+                }
+            }
+        });
+    }
+    </script>
+
+    <!--Code corresponding to columnTemplate-->
+                        <script type="text/x-jsrender" id="checkboxTemplate">
+                            <input type="checkbox" class="rowCheckbox" />
+                        </script>
+
+    <!--Code corresponding to headerTemplate-->
+                        <script type="text/x-jsrender" id="headerTemplate">
+                            <input type="checkbox" id="headchk" />
+                        </script>
+
+                        <div class="popup" data-popup="popup-9">
+                            <div class="popup-inner">
+                                <h4>Reason / Notes</h4>
+                                <div class="col-md-12" style="margin-top:10px;position:relative;">
+                                    <span class="col-md-4">Spawn Reason</span>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            @Html.TextBox("SpawnReasonDropdown")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top:10px;position:relative;">
+                                    <span class="col-md-4">Notes</span>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            @Html.TextArea("SpanReasonNotes", new { @rows = "5", @class = "form-control", @Style = "width:100%", @id = "SpanReasonNotes" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <button data-popup-close="popup-9" style="margin-top:10px;float:right;" class="btn btn-primary ">Save</button>
+                                <a class="popup-close" data-popup-close="popup-9">x</a>
+                            </div>
+                        </div>
+
+                        <div class="popup" data-popup="popup-11">
+                            <div class="popup-inner">
+                                <h4>Reason for NSR </h4>
+                                <div class="col-md-12" style="margin-top:10px;position:relative;">
+                                    <span class="col-md-4">NSR Reason</span>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            @Html.TextBox("NSRReasonDropdown")
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" style="margin-top:10px;position:relative;">
+                                    <span class="col-md-4">Notes</span>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            @Html.TextArea("NSRReasonNotes", new { @rows = "5", @class = "form-control", @Style = "width:100%", @id = "NSRReasonNotes" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <button data-popup-close="popup-11" style="margin-top:10px;float:right;" class="btn btn-primary ">Save</button>
+                                <a class="popup-close" data-popup-close="popup-11">x</a>
+                            </div>
+                        </div>
+
+
+
+                        }

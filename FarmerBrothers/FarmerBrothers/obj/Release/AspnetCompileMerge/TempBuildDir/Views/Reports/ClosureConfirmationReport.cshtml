@@ -1,0 +1,169 @@
+﻿
+@model FarmerBrothers.Models.ClosureConfirmationModel
+
+    @using FarmerBrothers.Data;
+    @using Newtonsoft.Json;
+    @using Syncfusion.MVC.EJ;
+    @using Syncfusion.JavaScript;
+
+    <style>
+        .e-grid .e-toolbar > .e-horizontal.e-ul {
+            vertical-align: middle;
+            float: left;
+            height: auto;
+        }
+
+        a.disabled {
+            pointer-events: none;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var searchCriteria;
+
+        $(document).ready(function () {
+            $('#ReportLink').css("color", "white");
+
+            $('#closureConfirmationResults').ejGrid({
+                exportToExcelAction : '@Url.Action("ClosureConfirmationExcelExport", "Reports")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                dataSource : @Html.Raw(Json.Encode(Model.closureconfirmation)),
+                columns: [
+                    { field: "WorkOrder", headerText: "WorkOrder"},
+                    { field: "EntryDate", headerText: "Entry Date" },
+                    { field: "ClosedDate", headerText: "Closed Date" },
+                    { field: "ClosedUserName", headerText: "Closed User Name" },
+                    { field: "WOConfirmationCode", headerText: "WOConfirmationCode" }
+                ]
+            });
+
+
+
+            $("form").submit(function (e) {
+
+                if (ValidateSearchCriteria() == true) {
+                    var frmValues = $("form").serialize();
+                    $.ajax({
+                        type: "post",
+                        url: "@Url.Action("ClosureConfirmationSearch", "Reports")",
+                        data: frmValues
+                    }).done(function( result ) {
+                        var obj = $("#closureConfirmationResults").ejGrid("instance");
+                        obj.dataSource(result.closureconfirmation);
+                        //if (result.length >= 100)
+                        //{
+                        //    $('#ResultsMessage').text("Results Set Shows Maximum of 100 rows")
+                        //}
+                        //else
+                        //{
+                        //    $('#ResultsMessage').text("")
+                        //}
+                    });
+                }
+
+                e.preventDefault();
+            });
+
+            if (!($('#workorderid').val() == "" ))
+            {
+                $('form').submit();
+            }
+        });
+
+        function ValidateSearchCriteria()
+        {
+            //alert( $('#CustomerID').val() + "==="+ $('#CustomerName').val() + "==="+$('#Address').val() + "==="+ $('#City').val() + "==="+$('#StatesDropDown').val()
+            //    + "==="+$('#PostalCode').val() + "==="+ $('#PhoneWithAreaCode').val() + "==="+$('#ParentId').val());
+            var valid = true;
+            if ($('#workorderid').val() == "")
+            {
+                AlertPopup("|Please Enter WorkOrderID!");
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        function SearchClear() {
+            $('.form-control').val('');
+            //$('#StatesDropDown').val("n/a");
+            //$('#ResultsMessage').text("")
+
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("ClosureConfirmationClearSearchResults", "Reports")",
+            }).done(function( result ) {
+                var obj = $("#closureConfirmationResults").ejGrid("instance");
+                obj.dataSource(result);
+            });
+            return false;
+        }
+
+    </script>
+
+
+    @using (Html.BeginForm())
+    {
+
+        <section class="container-fluid white-bg pad">
+            <div class="row top-info">
+                <div class="col-md-11">
+                    <b>Closure Confirmation Report</b>
+                </div>
+                <div class="col-md-1">
+                    @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+                </div>
+            </div>
+
+        </section>
+
+        <section class="well">
+            <div class="row top-info">
+                <div class="customer-content margin-top">
+                    <div class="row customer clear-input">
+                        <div class="col-md-12">
+                            <div class="col-md-2">
+                                <div class="form-group right-inner-addon">
+                                    WorkOrder :
+                                    @Html.TextBoxFor(c => c.workorderid, new {Value = "", @class = "form-control SearchPanelControl", @Id = "workorderid", @type = "number" })
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group right-inner-addon" style="top:1.3em;">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                    <a onclick="SearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    }
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>Search Results</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="closureConfirmationResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+            </div>
+        </div>
+    </section>

@@ -1,0 +1,1192 @@
+﻿@model FarmerBrothers.Models.PartsManagementModel
+
+@{
+    ViewBag.Title = "PartsOrderManagement";
+}
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+
+<script type="text/javascript">
+
+    var workOrderOperation = 0;
+    var updateUrl = null;
+    var SelectedBranches = "";
+    var formDirty = false;
+
+    $( document ).ready( function ()
+    {
+
+        if ( $( "#PartsOrderDateNeeded" ).val() != null && $( "#PartsOrderDateNeeded" ).val() != "" )
+        {
+            $( "#PartsOrderDateNeeded" ).ejDatePicker( { value: new Date( $( "#PartsOrderDateNeeded" ).val() ) } );
+        }
+        else
+        {
+            $( "#PartsOrderDateNeeded" ).ejDatePicker();
+        }
+
+        $( '#WorkOrderLink' ).css( "color", "white" );
+
+        $( "form" ).submit( function ( event )
+        {
+            var operation = $( "#Operation" ).val();
+            if ( operation > 0 )
+            {
+
+                var notesItems = [];
+                $( "#Notes > option" ).each( function ()
+                {
+                    if ( this.value == 'null' )
+                    {
+                        var item = { Text: this.text, Value: this.value };
+                        notesItems.push( item );
+                    }
+                } );
+
+                if ( $( "#ActionWorkorderSave" ).length )
+                {
+                    $( "#ActionWorkorderSave" ).val( "" );
+                }
+                else
+                {
+                    var input1 = $( "<input id='ActionWorkorderSave'>" )
+                        .attr( "type", "hidden" )
+                        .attr( "name", "action:WorkorderSave" ).val( "" );
+                    $( this ).append( $( input1 ) );
+                }
+
+                if ( $( "#WorkOrderPartsHidden" ).length )
+                {
+                    $( "#WorkOrderPartsHidden" ).val( JSON.stringify( $( "#WorkOrderParts" ).ejGrid( "instance" )._currentJsonData ) );
+                }
+                else
+                {
+                    var input4 = $( "<input id='WorkOrderPartsHidden'>" )
+                        .attr( "type", "hidden" )
+                        .attr( "name", "WorkOrderPartsHidden" ).val( JSON.stringify( $( "#WorkOrderParts" ).ejGrid( "instance" )._currentJsonData ) );
+                    $( this ).append( $( input4 ) );
+                }
+
+                if ( $( "#WorkOrderNotesHidden" ).length )
+                {
+                    $( "#WorkOrderNotesHidden" ).val( JSON.stringify( notesItems ) );
+                }
+                else
+                {
+                    var input5 = $( "<input id='WorkOrderNotesHidden'>" )
+                            .attr( "type", "hidden" )
+                            .attr( "name", "WorkOrderNotesHidden" ).val( JSON.stringify( notesItems ) );
+                    $( this ).append( $( input5 ) );
+                }
+
+                var $this = $( this );
+                var frmValues = $this.serialize();
+                $.ajax( {
+                    type: $this.attr( 'method' ),
+                    url: "@Url.Action("SaveWorkOrder",HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                    data: frmValues
+                } ).done( function ( response )
+                {
+                    if ( response != null )
+                    {
+                        if ( response.returnValue == -1 )
+                        {
+                            AlertPopup( "|ERF ID is not valid. Please reenter correct ERF ID!" );
+                        }
+                        else if ( response.returnValue > 0 )
+                        {
+                            if ( operation == 1 )
+                            {
+                                AlertPopup( "|Work Order saved successfully! \r\n Work Order#: " + response.WorkOrderId );
+                            }
+                            else if ( operation == 2 )
+                            {
+                                AlertPopup( "|Notification sent to sales successfully!" );
+                            }
+                            else if ( operation == 3 )
+                            {
+                                AlertPopup( "|Overtime request sent successfully!" );
+                            }
+                            else if ( operation == 4 )
+                            {
+                                if ( response.WorkorderCallstatus == "Hold" )
+                                {
+                                    AlertPopup( "|Workorder put on hold successfully!" );
+                                    $( '#WorkorderCallStatus' ).text( "Hold" );
+                                }
+                                else
+                                {
+                                    AlertPopup( "|Workorder put on Open successfully!" );
+                                    $( '#WorkorderCallStatus' ).text( "Open" );
+                                }
+                            }
+                            else if ( operation == 5 )
+                            {
+                                AlertPopup( "|Appointment is updated successfully!" );
+                            }
+                            else if ( operation == 6 )
+                            {
+                                AlertPopup( "|Work Order completed successfully!" );
+                            }
+                            else if ( operation == 7 )
+                            {
+                                AlertPopup( "|Work Order created successfully! \r\n Work Order#: " + response.WorkOrderId );
+                                response.Url = null;
+                            }
+                            else if ( operation == 8 )
+                            {
+                                AlertPopup( "|Feast Movement Created Successfully! Work Order is closed!" );
+                            }
+
+                            updateUrl = response.Url;
+                        }
+                        else
+                        {
+                            if ( operation == 6 || operation == 1 )
+                            {
+                                AlertPopup( response.message );
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if ( operation == 1 )
+                        {
+                            AlertPopup( "|There is a problem in saving Workorder! Please contact support." );
+                        }
+                        else if ( operation == 2 )
+                        {
+                            AlertPopup( "|There is a problem in sending notification! Please contact support." );
+                        }
+                        else if ( operation == 3 )
+                        {
+                            AlertPopup( "There is a problem in requesting overtime! Please contact support." );
+                        }
+                        else if ( operation == 4 )
+                        {
+                            AlertPopup( "|There is a problem in holding workorder! Please contact support." );
+                        }
+                        else if ( operation == 5 )
+                        {
+                            AlertPopup( "|There is a problem in saving appointment! Please contact  support" );
+                        }
+                        else if ( operation == 6 )
+                        {
+                            AlertPopup( response.message );
+                        }
+                        else if ( operation == 7 )
+                        {
+                            AlertPopup( "|There is a problem in creating work order! Please contact support!" );
+                        }
+                        else if ( operation == 8 )
+                        {
+                            AlertPopup( "|There is a problem in creating feast movement! Please contact support!" );
+                        }
+                    }
+                } );
+                $( "#Operation" ).val( 0 );
+            }
+            event.preventDefault();
+        } );
+
+        $( "[data-popup-close='popupalert']" ).click( function ()
+        {
+            if ( updateUrl != null )
+            {
+                window.location.href = updateUrl;
+            }
+        } );
+
+        $( "input[name$='ShipTo']" ).click( function ()
+        {
+            var radioValue = $( this ).val();
+            $( "#PartsShipTo" ).val( radioValue );
+            $( "div.ShipToDiv" ).hide();
+            $( "#ShipTo" + radioValue ).show();
+        } );
+
+        $( ".WorkOrderFields" ).change( function ()
+        {
+            formDirty = true;
+        } );
+
+        if ( $( "#PartsShipTo" ).val() == 1 )
+        {
+            $( "input[name$='ShipTo'][value$=1]" ).trigger( "click" );
+        }
+        else if ( $( "#PartsShipTo" ).val() == 2 )
+        {
+            $( "input[name$='ShipTo'][value$=2]" ).trigger( "click" );
+        }
+        else if ( $( "#PartsShipTo" ).val() == 3 )
+        {
+            $( "input[name$='ShipTo'][value$=3]" ).trigger( "click" );
+        }
+        else
+        {
+            $( "input[name$='ShipTo'][value$=2]" ).trigger( "click" );
+            $( "#PartsShipTo" ).val( 2 );
+        }
+
+        if ( $( "#WorkOrder_WorkorderCallstatus" ).val() == "Accepted" )
+        {
+            $( ".notes-details-head" ).trigger( "click" );
+            $( ".closure-head" ).trigger( "click" );
+        }
+        else if ( $( "#WorkOrder_WorkorderCallstatus" ).val() == "Closed"
+            || $( "#WorkOrder_WorkorderCallstatus" ).val() == "Completed" )
+        {
+            $( ".notes-details-head" ).trigger( "click" );
+            $( ".closure-head" ).trigger( "click" );
+        }
+        else if ( $( "#WorkOrder_WorkorderCallstatus" ).val() == "Open" )
+        {
+            $( ".work-requested-details-head" ).trigger( "click" );
+            $( ".notes-details-head" ).trigger( "click" );
+        }
+        else
+        {
+            $( ".work-requested-details-head" ).trigger( "click" );
+            $( ".notes-details-head" ).trigger( "click" );
+        }
+    } );
+
+    function SetSubmitOperation( operation )
+    {
+        $( "#Operation" ).val( operation );
+    }
+
+    function AlertPopup( message )
+    {
+        var messages = message.split( "|" );
+
+        $( '#alertmessage' ).text( '' );
+        if ( messages.length > 1 )
+        {
+            $( '#alertmessage' ).append( 'Cannot Complete the Work Order!' );
+            $( '#alertmessage' ).append( '<ul>' );
+            for ( var i = 0; i < messages.length; i++ )
+            {
+                if ( messages[i].length > 0 )
+                {
+                    $( '#alertmessage' ).append( '<li>' + messages[i] + '</li>' );
+                }
+            }
+            $( '#alertmessage' ).append( '</ul>' );
+        }
+        else
+        {
+            $( '#alertmessage' ).text( message );
+        }
+        $( "[data-popup='popupalert']" ).show();
+    }
+
+    function GeneratePdf()
+    {
+        //window.location.href = "@Url.Action("WorkorderPdf", "Workorder")" + "?workOrderId=" + $( "#WorkOrder_WorkorderID" ).val();
+        getPdfData($("#WorkOrder_WorkorderID").val(), $("#WorkOrder_WorkorderCallStatus").val())
+    }
+
+    var workorderPDFId = "", WOStatus = "";
+    function getPdfData(varWorkorderID, varWOStatus) {
+        $(window).scrollTop(0);
+        $('body').css({'overflow-y':'hidden'});
+        workorderPDFId = varWorkorderID;
+        WOStatus = varWOStatus;
+        $.ajax({
+            method: "GET",
+            datatype: 'json',
+            url: "@Url.Action("WorkorderPdfData", "Workorder")",
+            data: { WorkorderID: varWorkorderID },
+        success: function (msg) {
+            var pdfDiv = $(msg.Content);
+            $("#woPdfDiv").append(pdfDiv);
+            generatePDF();
+        },
+        error: function (err) {
+            debugger;
+            $('body').css({'overflow-y':'auto'});
+        }
+    })
+    }
+    //==============================================
+
+    function generatePDF() {
+
+        var img1, img2, hratio1, hratio2;
+        var imgArr = [];
+        var heightRatio = [];
+
+        var headerBlock = $(".work-order")
+        var reqEqpBlock = $(".reqEquipmentBlock")
+        var eqpBlock = $(".equipmentBlock")
+        if (WOStatus == "Accepted" || WOStatus == "Accepted-Partial"
+                 || WOStatus == "On Site" || WOStatus == "In Progress"
+                 || WOStatus == "Completed" || WOStatus == "Closed" || WOStatus == "Invoiced") {
+            EquipmentGridRender(eqpBlock, imgArr, heightRatio)
+        }
+        else {
+            var renderCount = 0;
+            if ($(".reqEqpSec").length > 0) {
+                headerBlock.append($(".wrkReqHeading"));
+                $(".reqEqpSec").each(function (index, element) {
+                    var currentElement = element;
+
+                    if (index == 0) {
+                        currentElement = headerBlock;
+                        currentElement.append(element);
+                    }
+
+                    html2canvas(currentElement, {
+                        onrendered: function (canvas) {
+                            var wid;
+                            var hgt;
+                            var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                            heightRatio.push(hgt / wid);
+                            imgArr.push(img);
+
+                            renderCount++;
+                            if (renderCount == $(".reqEqpSec").length) {
+                                //EquipmentGridRender(eqpBlock, imgArr, heightRatio)
+                                var eqpImgArr = [];
+                                var eqpHeightRatio = [];
+                                savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    };
+
+
+    function EquipmentGridRender(eqpBlock, imgArr, heightRatio) {
+        var renderCount = 0;
+        var eqpImgArr = [];
+        var eqpHeightRatio = [];
+        var headerBlock = $(".work-order")
+        if ($(".eqpSec").length > 0) {
+            //eqpBlock.append($(".closureEqpHeading"));
+            headerBlock.append($(".closureEqpHeading"));
+            $(".eqpSec").each(function (index, element) {
+                var currentElement = element;
+                //if (index == 0) {
+                //    currentElement = $(".closureEqpHeading");
+                //    currentElement.append(element);
+                //}
+                if (index == 0) {
+                    currentElement = headerBlock;
+                    currentElement.append(element);
+                }
+
+                if (index == $(".eqpSec").length - 1) {
+                    currentElement.append($(".costDetailsBlock"));
+                    currentElement.append($(".timeDetailsBlock"));
+                    currentElement.append($(".CustomerSignatureBlock"));
+                }
+
+                html2canvas(currentElement, {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        eqpHeightRatio.push(hgt / wid);
+                        eqpImgArr.push(img);
+
+                        renderCount++;
+                        if (renderCount == $(".eqpSec").length) {
+                            savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                        }
+                    }
+                });
+            });
+        }
+        else {
+            savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+        }
+    }
+
+    var x = 2, y = 10;
+    function savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio) {
+        var doc = new jsPDF('p', 'pt', 'a4');
+
+        for (var im = imgArr.length - 1; im >= 0; im--) {
+            if (im != imgArr.length - 1) {
+                doc.addPage();
+            }
+            var width = doc.internal.pageSize.width;
+            var height = width * heightRatio[im];
+            doc.addImage(imgArr[im], 'PNG', x, y, width, height, 'Image' + im, 'fast');
+
+        }
+
+        if (WOStatus == "Accepted" || WOStatus == "Accepted-Partial"
+            || WOStatus == "On Site" || WOStatus == "In Progress"
+            || WOStatus == "Completed" || WOStatus == "Closed" || WOStatus == "Invoiced") {
+            for (var im = eqpImgArr.length - 1; im >= 0; im--) {
+                if (im != eqpImgArr.length - 1) {
+                    doc.addPage();
+                }
+                var width = doc.internal.pageSize.width;
+                var height = width * eqpHeightRatio[im];
+                doc.addImage(eqpImgArr[im], 'PNG', x, y, width, height, 'Image' + im, 'fast');
+            }
+        }
+
+        html2canvas($(".WordSection1"), {
+            onrendered: function (canvas) {
+                //for terms and conditions 
+                //WordSection1
+                var wid;
+                var hgt;
+                var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                var ratio = hgt / wid;
+                //eqpHeightRatio.push(hgt / wid);
+                //eqpImgArr.push(img);                
+                var rectX = 200, rectY = 800, rectW = 100, rectH = 8;
+                doc.setFontSize(8);
+                doc.setTextColor(0, 0, 255);
+                doc.textWithLink('Click here for Customer Satisfaction Survey', rectX, rectY, { url: 'https://goo.gl/forms/KgvSAgobIEee3kEz2' });
+                doc.link(rectX, rectY, rectW, rectH, { url: 'https://goo.gl/forms/KgvSAgobIEee3kEz2' });
+
+                //for terms and conditions
+                html2canvas($(".WordSection1"), {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        var ratio = hgt / wid;
+                        doc.addPage();
+                        var width = doc.internal.pageSize.width;
+                        var height = doc.internal.pageSize.height;
+                        doc.addImage(img, 'PNG', x, y, width, height, 'Image', 'fast');
+
+                        doc.save('WorkorderFor_' + workorderPDFId + '.pdf');
+
+                        $("#mainBodyDiv").remove();
+
+                        $('body').css({ 'overflow': 'auto' });
+                    }
+                });
+            }
+        });
+
+        // end of terms and conditions
+
+    }
+
+    //==============================================
+
+    function generatePDF1() {
+        $('#ForWaitCursor').addClass("loading");
+        var img1, img2, hratio1, hratio2;
+        var imgArr = [];
+        var heightRatio = [];
+
+        var headerBlock = $(".work-order")
+        var reqEqpBlock = $(".reqEquipmentBlock")
+        var eqpBlock = $(".equipmentBlock")
+        if (WOStatus == "Accepted" || WOStatus == "Accepted-Partial"
+                 || WOStatus == "On Site" || WOStatus == "In Progress"
+                 || WOStatus == "Completed" || WOStatus == "Closed" || WOStatus == "Invoiced") {
+            EquipmentGridRender1(eqpBlock, imgArr, heightRatio)
+        }
+        else {
+            var renderCount = 0;
+            if ($(".reqEqpSec").length > 0) {
+                headerBlock.append($(".wrkReqHeading"));
+                $(".reqEqpSec").each(function (index, element) {
+                    var currentElement = element;
+
+                    if (index == 0) {
+                        currentElement = headerBlock;
+                        currentElement.append(element);
+                    }
+
+                    html2canvas(currentElement, {
+                        onrendered: function (canvas) {
+                            var wid;
+                            var hgt;
+                            var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                            heightRatio.push(hgt / wid);
+                            imgArr.push(img);
+
+                            renderCount++;
+                            if (renderCount == $(".reqEqpSec").length) {
+                                var eqpImgArr = [];
+                                var eqpHeightRatio = [];
+                                savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    };
+
+
+    function EquipmentGridRender1(eqpBlock, imgArr, heightRatio) {
+        var renderCount = 0;
+        var eqpImgArr = [];
+        var eqpHeightRatio = [];
+        var headerBlock = $(".work-order")
+
+        var costBlock = $(".costDetailsBlock");
+        var timeBlock = $(".timeDetailsBlock");
+
+        if ($(".eqpSec").length > 0) {
+            headerBlock.append($(".closureEqpHeading"));
+            $(".eqpSec").each(function (index, element) {
+                var currentElement = element;
+
+                if (index == 0) {
+                    currentElement = headerBlock;
+                    currentElement.append(element);
+                }
+
+                if (index == $(".eqpSec").length - 1) {
+                    currentElement.append(costBlock);
+                    //currentElement.append(timeBlock);
+                }
+
+                html2canvas(currentElement, {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        eqpHeightRatio.push(hgt / wid);
+                        eqpImgArr.push(img);
+
+                        renderCount++;
+                        if (renderCount == $(".eqpSec").length) {
+                            savePDF1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                            //RequestedGridRenderer1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                        }
+                    }
+                });
+            });
+        }
+        else {
+            savePDF1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+            //RequestedGridRenderer1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+        }
+    }
+
+    function RequestedGridRenderer1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio) {
+        var headerBlock = $(".wrkReqHeading")
+        var timeBlock = $(".timeDetailsBlock");
+        var renderCount = 0;
+        if ($(".reqEqpSec").length > 0) {
+            //headerBlock.append($(".wrkReqHeading"));
+            $(".reqEqpSec").each(function (index, element) {
+                var currentElement = element;
+
+                if (index == 0) {
+                    currentElement = headerBlock;
+                    currentElement.append(element);
+                }
+
+                if (index == $(".reqEqpSec").length - 1) {
+                    //currentElement.append(costBlock);   
+                    currentElement.append(timeBlock);
+                }
+
+                html2canvas(currentElement, {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        heightRatio.push(hgt / wid);
+                        imgArr.push(img);
+
+                        renderCount++;
+                        if (renderCount == $(".reqEqpSec").length) {
+                            //savePDF(eqpBlock, imgArr, heightRatio);
+                            //EquipmentGridRender(eqpBlock, imgArr, heightRatio)
+                            //var eqpImgArr = [];
+                            //var eqpHeightRatio = [];    
+                            savePDF1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+
+    function savePDF1(imgArr, heightRatio, eqpImgArr, eqpHeightRatio) {
+        var doc = new jsPDF('p', 'pt', 'a4');
+
+        if (WOStatus == "Accepted" || WOStatus == "Accepted-Partial"
+            || WOStatus == "On Site" || WOStatus == "In Progress"
+            || WOStatus == "Completed" || WOStatus == "Closed" || WOStatus == "Invoiced") {
+            for (var im = eqpImgArr.length - 1; im >= 0; im--) {
+                if (im != eqpImgArr.length - 1) {
+                    doc.addPage();
+                }
+                var width = doc.internal.pageSize.width;
+                var height = width * eqpHeightRatio[im]; //doc.internal.pageSize.height;
+                doc.addImage(eqpImgArr[im], 'PNG', x, y, width, height, 'Image' + im, 'fast');
+            }
+        }
+
+
+        var headerBlock = $(".wrkReqHeading")
+        var timeBlock = $(".timeDetailsBlock");
+        var renderCount = 0;
+        if ($(".reqEqpSec").length > 0) {
+            //headerBlock.append($(".wrkReqHeading"));
+            $(".reqEqpSec").each(function (index, element) {
+                var currentElement = element;
+
+                if (index == 0) {
+                    currentElement = headerBlock;
+                    currentElement.append(element);
+                    doc.addPage();
+                }
+
+                if (index == $(".reqEqpSec").length - 1) {
+                    //currentElement.append(costBlock);   
+                    currentElement.append(timeBlock);
+                }
+
+                html2canvas(currentElement, {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        var width = doc.internal.pageSize.width;
+                        var height = width * (hgt / wid);
+                        doc.addImage(img, 'PNG', x, y, width, height, 'Image' + im, 'fast');
+
+                        renderCount++;
+                        if (renderCount == $(".reqEqpSec").length) {
+
+                            html2canvas($(".WordSection1"), {
+                                onrendered: function (canvas) {
+                                    var wid;
+                                    var hgt;
+                                    var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                                    var ratio = hgt / wid;
+                                    //eqpHeightRatio.push(hgt / wid);
+                                    //eqpImgArr.push(img);
+                                    doc.addPage();
+                                    var width = doc.internal.pageSize.width;
+                                    var height = doc.internal.pageSize.height;
+                                    doc.addImage(img, 'PNG', x, y, width, height, 'Image', 'fast');
+
+                                    doc.save('WorkorderFor_' + workorderPDFId + '.pdf');
+
+                                    $("#mainBodyDiv").remove();
+
+                                    $('body').css({ 'overflow': 'auto' });
+                                    $('#ForWaitCursor').removeClass("loading");
+                                }
+                            });
+
+                        }
+                    }
+                });
+            });
+        }
+
+
+        /* for (var imm = imgArr.length - 1; imm >= 0; imm--) {
+             if (imm != imgArr.length - 1 || eqpImgArr.length > 0) {
+                 doc.addPage();
+             }
+             var width = doc.internal.pageSize.width;
+             var height = width * heightRatio[imm]; //doc.internal.pageSize.height;
+             doc.addImage(imgArr[imm], 'PNG', x, y, width, height, 'Image'+imm, 'fast')
+         }
+ 
+         //for terms and conditions 
+         //WordSection1
+         html2canvas($(".WordSection1"), {
+             onrendered: function (canvas) {
+                 var wid;
+                 var hgt;
+                 var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                 var ratio = hgt / wid;
+                 //eqpHeightRatio.push(hgt / wid);
+                 //eqpImgArr.push(img);
+                 doc.addPage();
+                 var width = doc.internal.pageSize.width;
+                 var height = doc.internal.pageSize.height;
+                 doc.addImage(img, 'PNG', x, y, width, height, 'Image', 'fast');
+ 
+                 doc.save('WorkorderFor_' + workorderPDFId + '.pdf');
+ 
+                 //$("#mainBodyDiv").remove();
+ 
+                 $('body').css({ 'overflow': 'auto' });
+                 $( '#ForWaitCursor' ).removeClass( "loading" );
+             }
+         });*/
+
+        // end of terms and conditions
+
+    }
+
+    //===============================================
+
+    function onToolbarClick( args )
+    {
+        if ( ( args.itemName == "Edit" || args.itemName == "Delete" ) & this.getSelectedRecords().length == 0 )
+        {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup( "|No records selected for " + args.itemName + " operation" );
+
+        }
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    @Html.HiddenFor(m => m.WorkOrder.WorkorderCalltypeid)
+    @Html.HiddenFor(m => m.CustomerPartsOrder)
+
+    <section class="container-fluid white-bg pad fixedSecond header">
+        <div class="row vertical-align">
+            <div class="col-md-12">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <b>Work Order ID:</b>
+                            @if (Model.WorkOrder.WorkorderID > 0)
+                            {
+                                <span>@Model.WorkOrder.WorkorderID</span>
+                            }
+                            @Html.HiddenFor(w => w.WorkOrder.WorkorderID)
+                        </div>
+                        <div class="col-md-3">
+                            @if (!string.IsNullOrWhiteSpace(Model.WorkOrder.WorkorderErfid))
+                            {
+                                <b>ERF ID:</b>
+                                <span>@Html.ActionLink(@Model.WorkOrder.WorkorderErfid, "ErfDetails", "Erf", new { id = @Model.WorkOrder.WorkorderErfid }, new { target = "_blank" })</span>
+                            }
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+
+                    <div class="row vertical-align">
+                        <div class="col-md-12">
+                            <button class="e-editbutton e-button e-js e-btn-normal e-btn e-select e-widget" type="button" value="edit" id="ejControl_0" tabindex="" role="button" aria-disabled="false" style="display: inline-block; height: 28px; width: 52px;" onclick="GeneratePdf();"><div><span class="e-icon e-pdf"></span></div></button>
+                            <div class="col-md-2" style="align-items:center">
+                                <span>Status:</span>
+                                @if (!string.IsNullOrWhiteSpace(Model.WorkOrder.WorkorderCallstatus))
+                                {
+                                    <span id="WorkorderCallStatus">@Model.WorkOrder.WorkorderCallstatus</span>
+                                }
+                                @Html.HiddenFor(w => w.WorkOrder.WorkorderCallstatus)
+                            </div>
+                            <div class="col-md-2">
+                                <span>Created By:</span>
+                                <span>@Model.WorkOrder.EntryUserName</span>
+                            </div>
+                            @if (Model.WorkOrder.WorkorderEntryDate.HasValue)
+                            {
+                                <div class="col-md-2">
+                                    <span>Created On:</span>
+                                    <span>@Model.WorkOrder.WorkorderEntryDate.Value.ToString("MM/dd/yyyy")</span>
+                                </div>
+                            }
+                            @Html.HiddenFor(w => w.WorkOrder.WorkorderEntryDate)
+
+                            @if (Model.WorkOrder.WorkorderCloseDate.HasValue)
+                            {
+                                <div class="col-md-2">
+                                    <span>Closed By:</span>
+                                    <span>@Model.WorkOrder.ClosedUserName</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <span>Closed On:</span>
+                                    <span>@Model.WorkOrder.WorkorderCloseDate</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                            }
+                            @Html.HiddenFor(w => w.WorkOrder.WorkorderCloseDate)
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary btn-orange" style="margin-left:50px;margin-right:5px;">Email Event</button>
+                    <button type="submit" style="margin-right:5px;" class="btn btn-primary" onclick="SetSubmitOperation(1)" name="action:WorkorderSave">Save</button>
+                    @if (Model.WorkOrder.WorkorderID > 0)
+                    {
+                        @Html.ActionLink("Exit Work Order", "WorkorderSearch", "Workorder", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Technician / Third Party</h2>
+            <div class="customer-content margin-top">
+                <div class="row clear-input">
+                    <div class="col-md-4 customer-col1 customer sm-pad-reset">
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Tech / TPSP Name:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(m => m.Customer.CustomerName, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Address:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    @Html.TextBoxFor(m => m.Customer.Address, new { @class = "form-control CustomerData" })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5"></span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 customer sm-pad-reset">
+                        <div class="row">
+                            <div class="col-md-6 customer-form-cnt">
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">City:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.Customer.City, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">State:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.Customer.State, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">State:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.Customer.ZipCode, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 customer-form-cnt">
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Phone Number:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.Customer.PhoneNumber, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5">Email Address:</span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.Customer.MainEmailAddress, new { @class = "form-control CustomerData" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-5"></span>
+                                    <div class="col-md-7">
+                                        <div class="form-group">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @Html.HiddenFor(m => m.PartsShipTo)
+
+    if (Model.WorkOrder.WorkorderID > 0)
+    {
+        <section class="block">
+            <div class="container-fluid">
+                <h2 class="parts-ordering-details-head arrow-down tabheader">Parts Ordering</h2>
+                <div class="parts-ordering-details-content margin-top">
+                    <div class="row customer clear-input">
+                        <div class="col-md-4 customer-col1 sm-pad-reset">
+                            <div class="col-xs-6-o">
+                                <span class="col-sm-4 col-md-5 m-b-more">Ship To:</span>
+                            </div>
+                            <div class="col-md-12 customer-col1 sm-pad-reset">
+                                @if (Model.TechPartsOrder)
+                                {
+                                    <div class=" col-xs-6-o">
+                                        <span class="col-sm-8 col-md-7"><input name="ShipTo" value="1" type="radio"> Local Branch</span>
+                                    </div>
+                                }
+                                <div class="clearfix"></div>
+                                <div class="col-xs-6-o">
+                                    <span class="col-sm-8 col-md-7"><input name="ShipTo" value="2" type="radio" checked /> Customer</span>
+                                </div>
+                                <div id="ShipTo2" class="ShipToDiv">
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">Attention To:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.Customer_OtherPartsContactName, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="col-xs-6-o">
+                                    <span class="col-sm-8 col-md-7"><input name="ShipTo" value="3" type="radio" /> Other</span>
+                                </div>
+                                <div id="ShipTo3" style="display:none;" class="ShipToDiv">
+                                    <div class="clearfix"></div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">Name:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.WorkOrder.OtherPartsName, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">Contact Name:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.Other_OtherPartsContactName, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">Address:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.WorkOrder.OtherPartsAddress1, new { @class = "form-control WorkOrderFields", @style = "margin-bottom: 10px;" })
+                                                @Html.TextBoxFor(m => m.WorkOrder.OtherPartsAddress2, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">City:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.WorkOrder.OtherPartsCity, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">State:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.DropDownListFor(m => m.WorkOrder.OtherPartsState, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">Zip:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.WorkOrder.OtherPartsZip, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5">Phone Number:</span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(m => m.WorkOrder.OtherPartsPhone, new { @class = "form-control WorkOrderFields" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 sm-pad-reset">
+                            <div class="row">
+
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-2">Date Needed:</span>
+                                    <div class="col-md-2">
+                                        <div class="form-group" style="float:right">
+                                            @Html.TextBoxFor(m => m.WorkOrder.DateNeeded, new { @class = "form-control WorkOrderFields", @Id = "PartsOrderDateNeeded" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-3">
+                                        Rush Order:
+                                        @Html.CheckBoxFor(m => m.WorkOrder.PartsRushOrder.Value)
+                                    </span>
+                                </div>
+                                <div class="col-sm-6-o">
+                                    <span class="col-md-2">Purchase Order:</span>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(m => m.WorkOrder.PurchaseOrder, new { @class = "form-control WorkOrderFields" })
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 customer-col2">
+                                    <h4 class="customer-head">Standard Non-Serialized:</h4>
+                                    @(Html.EJ().Grid<object>("WorkOrderParts")
+                                    .Datasource(((IEnumerable<object>)Model.WorkOrderParts))
+                                    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                    .AllowPaging()
+                                    .ToolbarSettings(toolbar =>
+                                    {
+                                        toolbar.ShowToolbar().ToolbarItems(items =>
+                                        {
+                                            items.AddTool(ToolBarItems.Add);
+                                            items.AddTool(ToolBarItems.Edit);
+                                            items.AddTool(ToolBarItems.Delete);
+                                            items.AddTool(ToolBarItems.Update);
+                                            items.AddTool(ToolBarItems.Cancel);
+                                        });
+                                    })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("PartsIssueid").HeaderText("PartsIssue ID").IsPrimaryKey(true).Visible(false).Add();
+                                        col.Field("Quantity").HeaderText("Qty").Add();
+                                        col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>)Model.NonTaggedManufacturer)).Add();
+                                        col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.NonTaggedModels)).Add();
+                                        col.Field("Description").HeaderText("Location").Add();
+                                    })
+            .ClientSideEvents(eve => eve.ActionComplete("CompleteWorkOrderParts").ToolbarClick("onToolbarClick")))
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="col-md-12 customer-col2">
+                                    <span class="col-md-5" style="padding-left:0px;">Other Items (Not on File):</span><br />
+                                    <div class="form-group">
+                                        @Html.TextAreaFor(m => m.WorkOrder.OtherParts, new { @class = "form-control WorkOrderFields", @rows = "7" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="notes-details-head arrow-down tabheader">Notes</h2>
+            @Html.Partial("_ErfNotes", Model.Notes)
+        </div>
+    </section>
+
+    if (Model.WorkOrder.WorkorderID > 0)
+    {
+        <section class="block margin-top">
+            <div class="container-fluid">
+                <h2 class="closure-head arrow-down tabheader">Closure</h2>
+                <div class="closure-content margin-top">
+                    <div class="row customer">
+                        <div class="col-md-4 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Service Code:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <span>
+                                            @Model.WorkOrder.WorkorderCalltypeDesc
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Create Service Work Order:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-green" onclick="SetSubmitOperation(7)" name="action:WorkorderSave">Create Work Order</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Notify Sales:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        <a href="#" data-popup-open="popup-3" class="btn btn-orange ">Notification</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5">Special Closure:</span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                        @Html.DropDownListFor(w => w.Closure.SpecialClosure, new SelectList(Model.Closure.SpecialClosureList, "Description", "Description", Model.Closure.SpecialClosure), new { @class = "form-control WorkOrderFields" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <span class="col-md-5"><button type="submit" class="btn btn-orange" onclick="SetSubmitOperation(8)" name="action:WorkorderSave">Create FEAST Movement</button></span>
+                                <div class="col-md-7">
+                                    <div class="form-group">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+
+    <div class="popup" data-popup="popupalert">
+        <div class="popup-inner" style="min-width:300px;min-height:100px;">
+            <table>
+                <tr>
+                    <td>
+                        <span id="alertmessage"></span>
+                    </td>
+                </tr>
+            </table>
+            <a data-popup-close="popupalert" class="btn btn-orange" style="margin-top:10px;" href="#">Close</a>
+            <a class="popup-close" data-popup-close="popupalert" href="#">x</a>
+        </div>
+    </div>
+}
+
+
+<div id="woPdfDiv">
+    <canvas id="WoCanvasElement" style="border:2px solid black;display:none" width="200" height="200"></canvas>
+
+</div>

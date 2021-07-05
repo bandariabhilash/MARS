@@ -1,0 +1,72 @@
+﻿@model FarmerBrothers.Models.WorkOrderModel
+@using FarmerBrothers.Models;
+@if (Model != null)
+{
+
+    <form role="form">
+        <div class="test" id="dvWorkorderList">
+            <div>
+                <label style="width:120px;">Customer ID:</label>
+                @Html.DisplayFor(m => m.CustomerID, new { id = "txtCustomerID", name = "CustomerID" })
+            </div>
+            <div>
+                <label style="width:120px;">Customer Name:</label>
+                @Html.DisplayFor(m => m.CustomerName, new { id = "txtCustomerName", name = "CustomerName", @readonly = true })
+            </div>
+            <div>
+                <label style="width:120px;">Customer State:</label>
+                @Html.DisplayFor(m => m.CustomerState, new { id = "txtCustomerState", name = "CustomerState", @readonly = true })
+            </div>
+            <div>
+                <label style="width:120px;">Reopen Notes:</label>
+                @Html.TextAreaFor(m => m.Notes, new { id = "txtNotes", name = "notes", @cols = 35, @rows = 7 })
+            </div>
+            @{
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege"+(int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                    ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                    (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege"+(int)System.Web.HttpContext.Current.Session["UserId"]];
+                if (UserPrivilege["Reopen Work Order"].ToLower() == Model.ACCESS_EDIT_ONLY || UserPrivilege["Reopen Work Order"].ToLower() == Model.ACCESS_FULL)
+                {
+                    <div style="align-items:center">
+                        <button type="button" class="btn btn-primary" style="margin-left:290px;" id="btnSave">Reopen</button>
+                    </div>
+                }
+            }
+
+        </div>
+    </form>
+}
+<script type="text/javascript">
+    $( function ()
+    {
+        $( "#btnSave" ).click( function ()
+        {
+            var myUrl1 = '@Url.Action("ReopenWorkOrder", "ReopenWorkOrder")';
+            if ( $( "#txtNotes" ).val().trim().length == 0 )
+            {
+                AlertPopup( "|Please enter reopen notes" );
+                $( "#txtNotes" ).focus();
+            }
+            else
+            {
+                var dataToSend = { id: $( "#txtWorkOrderid" ).val(), notes: $( "#txtNotes" ).val() }
+                $.ajax( {
+                    type: 'POST',
+                    url: myUrl1, // we are calling json method
+                    dataType: 'json',
+                    data: { id: $( "#txtWorkOrderid" ).val(), notes: $( "#txtNotes" ).val() },
+                    success: function ( data )
+                    {
+                        AlertPopup( "|Work order " + $( "#txtWorkOrderid" ).val() + " successfully reopened." );
+                        $( "#dvWorkOrder" ).html( "" );
+                    },
+                    error: function ( ex )
+                    {
+                        AlertPopup( "|Fail" );
+                    }
+                } );
+                return false;
+            }
+        } );
+    } );
+</script>

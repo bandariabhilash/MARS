@@ -1,0 +1,272 @@
+﻿@model FarmerBrothers.Models.InvoiceSearchModel
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+
+<html>
+
+<head>
+
+    <title>Invoice-Search</title>
+    <meta charset="utf-8">
+    <!--media css support meta tag-->
+    <!--Bootstrap Styles-->
+    <link href="bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="bootstrap.min.css" rel="stylesheet" />
+    <link href="InvoiceDisplay.css" type="text/css" rel="stylesheet" />
+    @*<script src="ej.grid.min.js"></script>
+    <script src="ej.widgets.all.min.js"></script>*@
+ 
+    <style type="text/css">
+        /*Customization Styles*/
+
+        /*.invoice-form {
+            width: 1150px;
+            float: left;
+        }*/
+
+        .dark-bg {
+            background: #34373c;
+        }
+
+        .navbar-brand {
+            height: 60px;
+            padding: 15px 0px;
+            line-height: 30px;
+            z-index: 99999;
+            position: relative;
+        }
+
+            .navbar-brand > img {
+                width: 120px;
+            }
+
+        label {
+            font-weight: normal;
+        }
+
+        table.border-less tr td {
+            border: 0 none;
+        }
+
+        .right-text td:last-child {
+            text-align: right;
+        }
+    </style>
+    <script type="text/javascript">
+
+
+
+    $(document).ready(function () {
+
+   
+    });
+
+    $('#GridInvoiceSearch').ejGrid({
+      
+        dataSource: dataManager,
+        allowPaging:true
+    });
+        })
+    })
+    </script>
+        </head>
+
+        <body>
+
+            <section class="container-fluid dark-bg">
+                <a class="navbar-brand" href="#">
+                    <img src="main-logo.png" alt="Logo" />
+                </a>
+                <!-- Static navbar -->
+                <nav class="navbar">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+                        <div id="navbar" class="navbar-collapse collapse">
+
+                        </div>
+                        <!--/.nav-collapse -->
+                    </div>
+                </nav>
+            </section>
+            <div class="invoice-form">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table border-less">
+                    <tr>
+                        <td>
+                            <div class="invoice-header">
+                                <h2 class="col-sm-4"><b> Invoice:<em style="color:brown; font-style:normal;"> @Model.displayInvoiceModel.Invoiceid</em> <br />Status: <em style="color:brown; font-style:normal;">  @Model.displayInvoiceModel.InvoiceStatus </em></b> </h2>
+                                @Html.TextBoxFor(i => i.displayInvoiceModel.AuthorizedAmount, new { @class = "form-control" })
+                                @Html.EJ().CurrencyTextBoxFor(x => x.displayInvoiceModel.AuthorizedAmount).ShowSpinButton(false).DecimalPlaces(2).Width("100%").Height("34px")
+                             </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                <tr>
+                                    <td>
+                                        <div class="panel panel-default margin0">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title col-sm-4"> View Invoice </h4>
+                                            </div>
+                                            <div class="panel-body">
+                                                <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                    <tr>
+                                                        <td width="33%">
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                                <tr>
+                                                                    <td><label>Work Order ID:</label></td>
+                                                                    <td><b class="text-primary"><span>@Model.displayInvoiceModel.WorkorderID</span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Vendor ID:</label></td>
+                                                                    <td><b><span>@Model.displayInvoiceModel.TPSPVendorID</span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Vendor Name:</label></td>
+                                                                    <td><b><span>@Model.displayInvoiceModel.TPSPVendorName</span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Vendor State:</label></td>
+                                                                    <td><b> <span> </span> </b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>FSM:</label></td>
+                                                                    <td><b><span>@Model.displayInvoiceModel.FSM</span></b></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                        <td width="33%">
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                                <tr>
+                                                                    <td><label>Customer ID:</label></td>
+                                                                    <td><b class="text-primary"><span>@Model.displayInvoiceModel.CustomerID</span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Customer Name:</label></td>
+                                                                    <td><b><span>@Model.displayInvoiceModel.CustomerName</span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Customer State:</label></td>
+                                                                    <td><b><span>@Model.displayInvoiceModel.CustomerState</span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Distance to Customer from Branch:</label></td>
+                                                                    <td><b> <span> </span> </b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Phone Solves:</label></td>
+                                                                    <td><b><span>@Model.displayInvoiceModel.PhoneSolveID</span></b></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                        <td width="33%">
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                                                <tr>
+                                                                    <td><label>Project ID:</label></td>
+                                                                    <td><b class="text-primary"><span></span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Flat Rate:</label></td>
+                                                                    <td><b><span></span></b></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Invoice Amount:</label></td>
+                                                                    <td>
+                                                                        <b>
+                                                                            <span>
+                                                                                $ @Html.DisplayFor(c => c.displayInvoiceModel.InvoiceTotal)
+                                                                            </span>
+                                                                        </b>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Authorized Amount:</label></td>
+                                                                    <td>
+                                                                        <b>
+                                                                            <span>
+                                                                                $ @Html.DisplayFor(c => c.displayInvoiceModel.AuthorizedAmount)
+                                                                            </span>
+                                                                        </b>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><label>Vendor Contested Status:</label></td>
+                                                                    <td><b><span></span></b></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td colspan="2">
+                                                            <div class="adj-cmnts">
+                                                                <h5>Adjustment Comments:</h5>
+                                                                <b><span>@Model.displayInvoiceModel.Comments</span></b>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-bordered table-striped right-text">
+                                                                <tr>
+                                                                    <th colspan="2" class="bg-primary">Invoice Charges</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Parts Total </td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.PartsTotal) </span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Labor </td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.LaborTotal) </span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Travel</td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.TravelTotal) </span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Project Flat Rate </td>
+                                                                    <td><span></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Phone Solves </td>
+                                                                    <td><span></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Additional Charges </td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.AdditionalCharge) </span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Sub Total </td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.SubTotal) </span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Tax</td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.TaxAmount) </span> </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Total</td>
+                                                                    <td><span>$ @Html.DisplayFor(m => m.displayInvoiceModel.InvoiceTotal) </span></td>
+                                                                </tr>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+               
+            </div>
+       <table id="GridInvoiceSearch"></table>
+        </body>
+
+        </html>

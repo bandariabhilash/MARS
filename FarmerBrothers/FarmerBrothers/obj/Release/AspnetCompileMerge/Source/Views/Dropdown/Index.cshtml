@@ -1,0 +1,183 @@
+﻿@using Syncfusion.MVC.EJ;
+@using Syncfusion.EJ;
+@using Syncfusion.JavaScript;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+@{
+
+    ViewBag.Title = "Home Page";
+
+}
+@model List<FarmerBrothers.Controllers.Orders>
+    @(Html.EJ().Grid<FarmerBrothers.Controllers.EmployeeView>("DetailTemplate")
+            .Datasource((IEnumerable<object>)ViewBag.dataSource)
+        .Columns(col =>
+        {
+            col.Field("EmployeeID").HeaderText("Employee ID").IsPrimaryKey(true).TextAlign(TextAlign.Right).Width(75).Add();
+            col.Field("FirstName").HeaderText("First Name").Width(100).Add();
+            col.Field("Title").Width(120).Add();
+            col.Field("City").Width(100).Add();
+            col.Field("Country").Width(100).Add();
+        })
+        .DetailsTemplate("#tabGridContents")
+        .ClientSideEvents(eve => { eve.DetailsDataBound("detailGridData"); })
+    )
+
+
+
+    <script id="tabGridContents" type="text/x-jsrender">
+        <div id="FlatGrid">
+        </div>
+
+    </script>
+
+    <script type="text/javascript">
+        var param2 = @Html.Raw(Json.Encode(Model))
+
+               ej.DropDownList.prototype._onScroll = function ( e )
+               {
+                   if ( !e.scrollTop ) return;
+                   var scrollerPositon = e.scrollTop, proxy = this;
+                   if ( proxy.model.allowVirtualScrolling && proxy.model.virtualScrollMode == "continuous" )
+                   {
+                       var list, queryPromise, skipQuery = ej.Query().skip( proxy._rawList.length ).take( proxy.model.itemsCount ).clone();
+                       proxy._totalCount = param2.length
+                       if ( scrollerPositon >= Math.round( $( proxy.popupList ).find( "ul,ol" ).height() - $( proxy.popupList ).height() ) && proxy._rawList.length < proxy._totalCount )
+                       {
+                           proxy._addLoadingClass();
+                           if ( ej.DataManager && proxy.model.dataSource instanceof ej.DataManager && !ej.isNullOrUndefined( proxy.model.dataSource.dataSource.url ) )
+                           {
+                               if ( proxy.inputSearch && proxy.inputSearch.val() != "" )
+                                   skipQuery = proxy._addSearchQuery( ej.Query(), !proxy._isPlainType( proxy._rawList ) ).skip( proxy._getLi().length ).clone();
+                               else
+                                   skipQuery = proxy._getQuery().skip( proxy._rawList.length ).take( proxy.model.itemsCount ).clone();
+                               if ( !proxy._trigger( "actionBegin", { requestFrom: "scroll" } ) )
+                               {
+                                   queryPromise = proxy.model.dataSource.executeQuery( skipQuery );
+                                   queryPromise.done( function ( e )
+                                   {
+                                       if ( !ej.isNullOrUndefined( proxy._selectedValue ) )
+                                       {
+                                           var listitems = proxy._toArray( proxy._selectedValue, false );
+                                           var rawList = e.result;
+                                           var k, m, field = ( proxy.model.fields && proxy.model.fields.value ) ? proxy.model.fields["value"] : "value";
+                                           for ( k = 0; k < listitems.length; k++ )
+                                           {
+                                               for ( m = 0; m < rawList.length; m++ )
+                                               {
+                                                   if ( rawList[m][field] == listitems[k] )
+                                                   {
+                                                       var itemToRemove = rawList.indexOf( rawList[m] );
+                                                       rawList.splice( itemToRemove, 1 );
+                                                       e.result = rawList;
+                                                   }
+                                               }
+                                           }
+                                       }
+
+                                       proxy.addItem( e.result );
+                                       proxy._removeLoadingClass();
+                                       proxy._trigger( "actionSuccess", { e: e, requestFrom: "scroll" } );
+                                   } ).fail( function ()
+                                   {
+                                       proxy.model.dataSource = null;
+                                       proxy._removeLoadingClass();
+                                       proxy._trigger( "actionFailure", { e: e, requestFrom: "scroll" } );
+                                   } ).always( function ( e )
+                                   {
+                                       proxy._trigger( "actionComplete", { e: e, requestFrom: "scroll" } );
+                                   } );
+                               }
+                           }
+                           else if ( proxy.model.dataSource.length > 0 && ej.isNullOrUndefined( proxy.model.dataSource.url ) )
+                           {
+                               skipQuery = ej.Query().skip( proxy._rawList.length ).take( proxy.model.itemsCount ).clone();
+                               queryPromise = ej.DataManager( param2 ).executeLocal( skipQuery );
+                               proxy.addItem( queryPromise );
+                               window.setTimeout( function ()
+                               {
+                                   proxy._removeLoadingClass();
+                               }, 300 );
+                           }
+                           else
+                           {
+                               list = ej.DataManager( proxy.model.dataSource ).executeLocal( skipQuery );
+                               proxy.addItem( list );
+                               proxy._removeLoadingClass();
+                           }
+                       }
+                   } else if ( proxy.model.allowVirtualScrolling && proxy.model.virtualScrollMode == "normal" )
+                   {
+
+                       window.setTimeout( function ()
+                       {
+                           if ( proxy._virtualCount == 0 )
+                           {
+                               proxy._loadList();
+                           }
+                       }, 300 );
+
+                   }
+
+               }
+
+        ej.DropDownList.prototype._OnDropdownClick1 = ej.DropDownList.prototype._OnDropdownClick;
+        ej.DropDownList.prototype._OnDropdownClick = function ( e )
+        {
+            if ( this.model.dataSource == null )
+            {
+                var t = $( "#FlatGridEmployeeID" ).data( "ejDropDownList" );
+                var dataManager = ej.DataManager( param2 ).executeLocal( new ej.Query().take( 20 ) );
+                t.setModel( {
+                    dataSource: dataManager,
+                    allowVirtualScrolling: true,
+                    virtualScrollMode: "continuous",
+                    itemsCount: 20
+                } );
+            }
+            this._OnDropdownClick1( e );
+        }
+
+        function complete( args )
+        {
+            alert( "2" )
+            if ( args.requestType == "add" || args.requestType == "beginedit" )
+            {
+                alert( "3" )
+                var t = $( "#FlatGridEmployeeID" ).data( "ejDropDownList" );
+                t.setModel( { dataSource: null, fields: { text: "EmployeeID", value: 'EmployeeID' }, focusIn: "focus" } )
+
+            }
+
+        }
+
+        function detailGridData( e )
+        {
+            var filteredData = e.data["EmployeeID"];
+            // the datasource "window.ordersView" is referred from jsondata.min.js
+            var data = ej.DataManager( window.ordersView ).executeLocal( ej.Query().where( "EmployeeID", "equal", parseInt( filteredData ), true ) );
+            e.detailsElement.find( "#FlatGrid" ).ejGrid( {
+                dataSource: data,
+                allowSelection: false,
+                editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true },
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.Add, ej.Grid.ToolBarItems.Edit, ej.Grid.ToolBarItems.Delete, ej.Grid.ToolBarItems.Update, ej.Grid.ToolBarItems.Cancel] },
+                columns: [
+                        { field: "OrderID", isPrimaryKey: true, headerText: "Order ID", width: 80, textAlign: ej.TextAlign.Right },
+                        { field: "CustomerID", headerText: 'Customer ID', width: 80, textAlign: ej.TextAlign.Left },
+                        { field: "EmployeeID", foreignKeyField: "EmployeeID", foreignKeyValue: "FirstName", editType: ej.Grid.EditingType.Dropdown, width: 120, textAlign: ej.TextAlign.Left },
+                        { field: "ShipCity", headerText: 'City', width: 120, textAlign: ej.TextAlign.Left }
+                ],
+                actionComplete: "complete"
+            } );
+
+
+        }
+
+
+
+    </script>

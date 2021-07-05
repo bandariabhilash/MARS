@@ -1,0 +1,318 @@
+﻿@{
+    ViewBag.Title = "ESMDSMRSM";
+}
+
+@model FarmerBrothers.Models.ESMDSMRSMModel
+
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+<script src="~/Content/jquery.validate.min.js"></script>
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+
+@using (Html.BeginForm("UploadFile", "ESMDSMRSM", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    <div>
+        @Html.TextBox("file", "", new { type = "file" }) <br />
+
+        <input type="submit" value="Upload" />
+
+        @ViewBag.Message
+
+    </div>
+
+
+}
+
+  
+
+@*<script type="text/javascript">
+
+    $( document ).ready( function ()
+    {
+      
+        $( "form" ).submit( function ( event )
+        {
+            var operation = $( "#Operation" ).val();
+            //alert( operation );
+            if ( operation == 1 || operation == 2 )
+            {
+                if ( operation == 1 )
+                {
+                   
+                }
+                else
+                {
+                    //alert(operation)
+                    var $this = $( this );
+                    var frmValues = $this.serialize();
+                    //alert(JSON.stringify(frmValues) );
+                    if ( ValidateSearchCriteria() == true )
+                    {
+                       // var isChecked = $("#InactiveTechnicians").is(":checked") ? true : false;
+                        $.ajax( {
+                            type: $this.attr( 'method' ),
+                            url: "@Url.Action("ESMDSMRSMSearch", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                            //data: frmValues
+                            data: {
+                                "RegionNumber": $("#RegionNumber").val(), "BranchNumber": $("#BranchNumber").val()
+                            }
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                var obj = $("#ESMRSMCCMDetails").ejGrid("instance");
+                                obj.dataSource( response.data );
+                            }
+                            else
+                            {
+                                AlertPopup( '|There is a problem to get Technician Details! Please contact support!' );
+                            }
+                        } );
+                    }
+                    else
+                    {
+                        event.preventDefault();
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                e.preventDefault();
+            }
+
+            event.preventDefault();
+        } );
+    } );
+             
+    function ValidateSearchCriteria() {
+        //alert( $( '#SearchTechId' ).val() + "----" + $( '#SearchTechName' ).val() );
+        var valid = true;
+        if ($('#SearchTechId').val() == "" && $('#SearchTechName').val() == "" && $('#familyAffselectBox1').val() == "n/a") {
+            if ($("#InactiveTechnicians").prop('checked') == false) {
+                AlertPopup("|Please enter minimum details to perform search!");
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    var Id, BranchName, BranchNumber, RegionName, RegionNumber;
+    var ESMId, ESMName, ESMEmail, ESMPhone;
+    var CCMID, CCMName, CCMEmail, CCMPhone;
+    var RSMID, RSMName, RSMEmail, RSMPhone;
+
+    function TechnicianDetailsBegin(args) {
+        $('#TechnicianDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function TechnicianDetailsEndEdit(args) {
+        
+        Id = args.data.Id;
+        BranchName = args.data.BranchName;
+        RegionName = args.data.RegionName;
+
+        ESMId = args.data.ESMId;
+        ESMName = args.data.ESMName;
+        ESMEmail = args.data.ESMEmail;
+        ESMPhone = args.data.ESMPhone;
+
+        CCMId = args.data.CCMId;
+        CCMName = args.data.CCMName;
+        CCMEmail = args.data.CCMEmail;
+        CCMPhone = args.data.CCMPhone;
+
+        RSMId = args.data.RSMId;
+        RSMName = args.data.RSMName;
+        RSMEmail = args.data.RSMEmail;
+        RSMPhone = args.data.RSMPhone;
+
+        $('#TechnicianDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function TechnicianDetailsEndAdd(args) {
+        $('#TechnicianDetails_WaitingPopup').css("visibility", "hidden");
+    }
+
+
+
+    function TechnicianDetailsBeginEdit(args) {
+
+    }
+
+
+
+    function CompleteTechnicianModels(args) {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            $("#ESMRSMCCMDetailsESMName").ejDropDownList({ change: "ESMNameChange", enableFilterSearch: true });
+        }
+
+        if (args.requestType == "save") {
+            $.ajax({
+                url: '@Url.Action("ESMDSMRSMDetailsUpdate", "ESMDSMRSM")',
+                type: 'POST',
+                data: {
+                    "Id": Id, "RegionName": RegionName, "BranchName": BranchName, "ESMId": ESMId, "ESMName": ESMName, "ESMEmail": ESMEmail, "ESMPhone": ESMPhone, "RSMId": RSMId, "RSMName": RSMName, "RSMEmail": RSMEmail, "RSMPhone": RSMPhone, "CCMId": CCMId, "CCMName": CCMName, "CCMEmail": CCMEmail, "CCMPhone": CCMPhone
+                },
+                success: function (jsonResult) {
+                    AlertPopup(jsonResult.message);
+                }
+            });
+        }
+    }
+
+    function ESMNameChange(e)
+    {
+        $.ajax({
+            url: '@Url.Action("GetEsmDetails", "ESMDSMRSM")',
+            type: 'POST',
+            data: { "Name": e.value },
+            success: function (jsonResult) {
+                if (jsonResult.success == true) {
+                    $("#ESMRSMCCMDetailsESMId").val(jsonResult.data.ESMId);
+                    $("#ESMRSMCCMDetailsESMEmail").val(jsonResult.data.ESMEmail);
+                    $("#ESMRSMCCMDetailsESMPhone").val(jsonResult.data.ESMPhone);                   
+                }
+                else {
+                    AlertPopup("There is a problem in getting ESM Details!");
+                }
+            }
+        })
+    }
+
+    function onToolbarClick( args )
+    {
+        if ( ( args.itemName == "Edit" ) & this.getSelectedRecords().length == 0 )
+        {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup( "|No records selected for " + args.itemName + " operation" );
+
+        }
+    }
+    
+    function SearchClear()
+    {
+        $('#BranchNumber').val('');
+        $( '#RegionNumber' ).val( '' );
+    }
+    function ClearESMForm()
+    {
+        $( '.form-control' ).val( '' );
+       // $( '#InactiveTechnicians' ).attr( 'checked', false );
+
+        $.ajax( {
+            type: "post",
+            url: "@Url.Action("ClearSearchResults", "ESMDSMRSM")",
+        } ).done( function ( result )
+        {
+            var obj = $("#ESMRSMCCMDetails").ejGrid("instance");
+            obj.dataSource( result );
+        } );
+        return false;
+    }
+    function SetSubmitOperation( operation )
+    {
+        $( "#Operation" ).val( operation );
+    }
+
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+<section class="block margin-top">
+    <div class="container-fluid">
+        <h2 class="customer-head arrow-down tabheader">ESMDSMRSM</h2>
+        <div class="customer-content margin-top">
+            <div class="row clear-input">
+                <div class="col-md-12">
+                    <div class="col-md-2">
+                        <div class="form-group right-inner-addon">    
+                            Branch:                        
+                            @Html.DropDownListFor(c => c.BranchNumber, new SelectList(Model.ESMBranchList, "BranchNumber", "BranchName"), new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group right-inner-addon">
+                            Region: 
+                            @Html.DropDownListFor(c => c.RegionNumber, new SelectList(Model.ESMRegionList, "RegionNumber", "RegionName"), new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="form-group right-inner-addon" style="top:1.3em;">
+                            <button type="submit" onclick="SetSubmitOperation(2)" class="btn btn-primary">Search</button>
+                            <a onclick="ClearESMForm()" class="btn btn-orange">Clear</a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-12">
+                    <h4>Technicians:</h4>
+                    <div class="table-responsive">
+                        @(Html.EJ().Grid<object>("ESMRSMCCMDetails")
+     .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.datasource).UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+                             .AllowPaging().AllowFiltering()
+                                                        .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                                        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                                        //.Mappers(map => map.ExportToExcelAction(Url.Action("ExcelExportTechnicianResults", "TechnicianUpdate")))
+                                                        .ToolbarSettings(toolbar =>
+                                                        {
+                                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                                            {
+                                                                items.AddTool(ToolBarItems.Edit);
+                                                                items.AddTool(ToolBarItems.Update);
+                                                                items.AddTool(ToolBarItems.Cancel);
+                                                                // items.AddTool(ToolBarItems.ExcelExport);
+                                                            });
+                                                        })
+
+                                            .ClientSideEvents(eve =>
+                                            {
+                                                eve.BeginEdit("TechnicianDetailsBeginEdit")
+                                                .ActionBegin("TechnicianDetailsBegin")
+                                                .EndEdit("TechnicianDetailsEndEdit")
+                                                .EndAdd("TechnicianDetailsEndAdd")
+                                                .ActionComplete("CompleteTechnicianModels")
+                                                .ToolbarClick("onToolbarClick");
+                                            })
+
+                                        .Columns(col =>
+                                        {
+                                            col.Field("Id").HeaderText("").IsPrimaryKey(true).Visible(false).Add();
+                                            col.Field("ESMId").HeaderText("ESMId").AllowEditing(false).Add();
+                                            col.Field("ESMName").HeaderText("ESM Name").ForeignKeyField("ESMName").ForeignKeyValue("ESMName").DataSource(((IEnumerable<object>)Model.ESMList)).Add();
+                                            col.Field("ESMEmail").HeaderText("ESM Email").Add();
+                                            col.Field("ESMPhone").HeaderText("ESM Phone").Add();
+                                            col.Field("RSMId").HeaderText("RSMId").AllowEditing(false).Add();
+                                            col.Field("RSMName").HeaderText("RSM Name").ForeignKeyField("RSMName").ForeignKeyValue("RSMName").DataSource(((IEnumerable<object>)Model.RSMList)).AllowEditing(false).Add();
+                                            col.Field("RSMEmail").HeaderText("RSM Email").EditType(EditingType.String).AllowEditing(false).Add();
+                                            col.Field("RSMPhone").HeaderText("RSM Phone").AllowEditing(false).Add();
+                                            col.Field("CCMId").HeaderText("CCMId").AllowEditing(false).Add();
+                                            col.Field("CCMName").HeaderText("CCM Name").ForeignKeyField("CCMName").ForeignKeyValue("CCMName").DataSource(((IEnumerable<object>)Model.CCMList)).AllowEditing(false).Add();
+                                            col.Field("CCMEmail").HeaderText("CCM Email").EditType(EditingType.String).AllowEditing(false).Add();
+                                            col.Field("CCMPhone").HeaderText("CCM Phone").AllowEditing(false).Add();
+                                            col.Field("BranchName").HeaderText("Branch").ForeignKeyField("BranchName").ForeignKeyValue("BranchName").DataSource(((IEnumerable<object>)Model.ESMBranchList)).Add();
+                                            col.Field("RegionName").HeaderText("Region").ForeignKeyField("RegionName").ForeignKeyValue("RegionName").DataSource(((IEnumerable<object>)Model.ESMRegionList)).Add();
+                                        })
+                        )
+
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+}*@

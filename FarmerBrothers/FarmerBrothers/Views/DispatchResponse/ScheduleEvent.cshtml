@@ -1,0 +1,125 @@
+﻿@model FarmerBrothers.Models.ScheduleEventModel
+@{
+    ViewBag.Title = "ScheduleEvent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ScheduleDateTime").ejDateTimePicker(
+        {
+            //minDateTime: workorderDate,
+            //maxDateTime: new Date($("#CurrentDateTime").val()),
+            interval: 15,
+            close: function (args) {
+                if (args.value != '' && args.value != null) {
+                    $("#ScheduleDateTime").ejDateTimePicker({ enabled: true,  interval: 15 });
+                }
+                else {
+                    $("#ScheduleDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                }
+            },
+            focusOut: function (args) {
+                if (args.value != '' && args.value != null) {
+                    $("#ScheduleDateTime").ejDateTimePicker({ enabled: true,  interval: 15 });
+                }
+                else {
+                    $("#ScheduleDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                }
+            }
+        });
+    });
+
+    function ScheduleEventClick()
+    {
+        //alert($('#WorkorderID').val());
+        //alert($('#TechID').val());
+        //alert($('#CustomerID').val());
+        
+        var scheduleDate = $("#ScheduleDateTime").val();
+        var scheduleContactName = $("#ScheduleContactName").val();
+        var scheduleNotes = $("#ScheduleNotes").val();
+
+        if(scheduleDate == null || scheduleDate == "")
+            AlertPopup("Select the Schedule Date");
+        if(scheduleContactName == null || scheduleContactName == "")
+            AlertPopup("Enter Contact Name");
+        if(scheduleNotes == null || scheduleNotes == "")
+            AlertPopup("Enter Notes");
+
+        if(scheduleDate != null && scheduleContactName != null && scheduleNotes != null)
+        {
+            $.ajax({
+                type: $this.attr('method'),
+                url: "@Url.Action("ScheduleWorkorder", "Workorder")",
+                data: {
+                    "workOrderId": $('#WorkorderID').val(),
+                    "techId": $('#TechID').val(),
+                    "CustomerID": $('#CustomerID').val(),
+                    "CustomerName": scheduleContactName,
+                    "ScheculeDate": scheduleDate,
+                    "Notes": scheduleNotes
+                }
+            }).done(function (response) {
+
+            });
+        }
+
+    }
+
+</script>
+
+@Html.HiddenFor(m => m.WorkorderID)
+@Html.HiddenFor(m => m.TechID)
+@Html.HiddenFor(m => m.CustomerID)
+
+<section class="container-fluid white-bg pad">
+    <div class="row top-info">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+            <b>Schedule Event</b>
+        </div>
+    </div>
+</section>
+
+<section class="well">
+    <div class="row top-info">
+        <div class="customer-content margin-top">
+            <div class="row customer clear-input">
+                <div class="col-md-12  sm-pad-reset">
+                    <div class="col-sm-2">
+
+
+                        <div class="col-sm-6-o">
+                            <div class="form-group">
+                                Schedule Date/Time:<br />
+                                @Html.TextBoxFor(w => w.ScheduleDate, new { @class = "form-control WorkOrderFields", @Id = "ScheduleDateTime" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <div class="form-group">
+                                Customer Name:<br />
+                                <span style="font-size:xx-small;">Contact name that approved schedule date</span><br />
+                                @Html.TextBoxFor(w => w.CustomerName, new { @class = "form-control WorkOrderFields", @Id = "ScheduleContactName" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <div class="form-group">
+                                Notes:<br />
+                                @Html.TextBoxFor(w => w.Notes, new { @class = "form-control WorkOrderFields", @Id = "ScheduleNotes" })
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6-o">
+                            <div class="form-group">
+                                <button id="ScheduleWorkOrderBtnId" type="submit" style="margin-right:5px;" onclick="ScheduleEventClick()" class="btn btn-primary enableonclose" >Submit</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

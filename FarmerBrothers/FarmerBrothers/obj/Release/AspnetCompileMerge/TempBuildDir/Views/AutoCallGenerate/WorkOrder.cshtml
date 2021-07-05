@@ -1,0 +1,384 @@
+﻿@model FarmerBrothers.Models.AutoGenerateWorkorderModel
+@{
+    ViewBag.Title = "WorkOrder";
+    Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
+}
+
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using Syncfusion.EJ;
+
+<script type="text/javascript">
+
+    var erfOperation = false;
+    var saveWorkOrderOperation = false;
+    var controllerName = '@HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString()';
+    var updateUrl = null;
+    var newNotesArray = [];
+    var notesHistoryArray = [];
+    @foreach (var n in Model.Notes.NotesHistory.Select(n => n.Notes).ToArray())
+    {
+        string note = n.Replace("\n", "&#10;");
+        note = note.Replace("\r", "&#13;");
+        @:notesHistoryArray.push( "@note" );
+                                                                    }
+
+    var notes;
+
+
+    $( document ).ready( function ()
+    {
+        //alert("1");
+        notes = notesHistoryArray.join( "\r\n" );
+        notes = notes.split( "&amp;#13;" ).join( "\r" );
+        notes = notes.split( "&amp;#10;" ).join( "\n" );
+        //alert( "2" );
+        $( '#NotesHistory' ).text( notes );
+
+        if ( $( "#SaveWorkOrderButton" ).length )
+        {
+            $( "#SaveWorkOrderButton" ).click( function ()
+            {
+                if ( $( "#myCaptcha_ValidText" ).hasClass( "validTextBox error" ) )
+                {
+                    AlertPopup( "|Invalid captcha code entered. Please try again." );
+                    $( ".spanText" ).css( "display", "none" );
+                    $( "#myCaptcha_ValidText" ).removeClass( "validTextBox error" ).addClass( "validTextBox" );
+                }
+            } );
+        }
+        //alert( "3" );
+        $( "form" ).submit( function ( event )
+        {
+
+            //Validate();
+            //alert("1");
+            //var erfId = $( '#ErfID' ).val();
+            //alert("2");
+            //alert(erfOperation);
+            if ( erfOperation == true )
+            {
+                //alert( "2" );
+                if ( $.trim( $( '#NotesText' ).val() ) == '' )
+                {
+                    AlertPopup( "|Notes text can not be blank!" );
+                }
+                else
+                {
+
+                    $( '[data-popup-close]' ).trigger( "click" );
+
+                    var fullDate = new Date();
+                    var twoDigitMonth = ( ( fullDate.getMonth().toString().length + 1 ) > 1 ) ? ( fullDate.getMonth() + 1 ) : '0' + ( fullDate.getMonth() + 1 );
+                    var currentDate = twoDigitMonth + "/" + fullDate.getDate() + "/" + fullDate.getFullYear() + " " + fullDate.getHours() + ":" + fullDate.getMinutes() + ":" + fullDate.getSeconds();
+                    var newNotes = null;
+                    if ( typeof ( userName ) == 'undefined' )
+                    {
+                        newNotes = "[WEB] - " + currentDate + " - " + $( '#NotesText' ).val();
+                    }
+                    else
+                    {
+                        newNotes = "[" + userName + "] - " + currentDate + " - " + $( '#NotesText' ).val();
+                    }
+                    newNotesArray.push( $( '#NotesText' ).val() );
+                    $( '#NotesHistory' ).text( newNotes + '\n' + $( '#NotesHistory' ).val() );
+
+                }
+
+                $( '#NotesText' ).val( '' );
+                erfOperation = false;
+            }
+
+            if ( saveWorkOrderOperation == true )
+            {
+                //alert( "3" );
+                saveWorkOrderOperation = false;
+                erfOperation = false;
+                if ( newNotesArray.length == 0 )
+                {
+                    //alert( "4" );
+                    AlertPopup( "|Notes text can not be blank!" );
+                }
+                else if ( $( '#EquipmentLocation' ).val() == '' )
+                {
+                    AlertPopup( "|Equipment Location can not be blank!" );
+
+                }
+                else if ( $( '#callReason' ).val() == -1 )
+                {
+                    AlertPopup( "|Please Select Call Reason!" );
+
+                }
+                else
+                {
+                    var notesItems = [];
+                    $.each( newNotesArray, function ( index, value )
+                    {
+                        var item = { Text: value, Value: -1 };
+                        notesItems.push( item );
+                    } );
+
+                    $( "#CustomerID" ).val( $( "#Customer_CustomerId" ).val() );
+
+                    if ( $( "#ActionWorkorderSave" ).length )
+                    {
+                        $( "#ActionWorkorderSave" ).val( "" );
+                    }
+                    else
+                    {
+                        var input1 = $( "<input id='ActionWorkorderSave'>" )
+                            .attr( "type", "hidden" )
+                            .attr( "name", "action:WorkorderSave" ).val( "" );
+                        $( this ).append( $( input1 ) );
+                    }
+
+                    if ( $( "#WorkOrderNotesHidden" ).length )
+                    {
+                        $( "#WorkOrderNotesHidden" ).val( JSON.stringify( notesItems ) );
+                    }
+                    else
+                    {
+                        //alert("4.1.2");
+                        var input5 = $( "<input id='WorkOrderNotesHidden'>" )
+                                .attr( "type", "hidden" )
+                                .attr( "name", "WorkOrderNotesHidden" ).val( JSON.stringify( notesItems ) );
+                        $( this ).append( $( input5 ) );
+                    }
+
+                    var $this = $( this );
+                    var frmValues = $this.serialize();
+                    $.ajax( {
+                        type: $this.attr( 'method' ),
+                        url: "@Url.Action("SaveWorkOrder",HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                        data: frmValues
+                    } ).done( function ( response )
+                    {
+                        if ( response != null && response.success == true )
+                        {
+                            AlertPopup( response.message );
+                            updateUrl = response.Url;
+                        }
+                        else
+                        {
+                            AlertPopup( "|There is a problem in Work Order Creation! Please contact support." );
+                        }
+                    } );
+                }
+                $( "#Operation" ).val( 0 );
+
+            }
+            event.preventDefault();
+        } );
+
+
+        $( "[data-popup-close='popupalert']" ).click( function ()
+        {
+            if ( updateUrl != null )
+            {
+                window.location.href = updateUrl;
+            }
+        } );
+
+    } );
+
+
+
+    function SetNotesSaveOperation()
+    {
+        erfOperation = true;
+        saveWorkOrderOperation = false;
+    }
+
+    function SetWorkOrderSaveOperation( operation )
+    {
+        //alert("1")
+        erfOperation = false;
+        saveWorkOrderOperation = true;
+        $( "#Operation" ).val( operation );
+    }
+
+    function Validate()
+    {
+        //alert( "test" );
+        if ( $( "#myCaptcha_ValidText" ).hasClass( "validTextBox error" ) )
+        {
+            $( ".spanText" ).css( "display", "none" );
+            $( "#myCaptcha_ValidText" ).removeClass( "validTextBox error" ).addClass( "validTextBox" );
+        }
+    }
+
+    function AlertPopup( message )
+    {
+        var messages = message.split( "|" );
+
+        $( '#alertmessage' ).text( '' );
+        if ( messages.length > 1 )
+        {
+            $( '#alertmessage' ).append( '<ul>' );
+            for ( var i = 0; i < messages.length; i++ )
+            {
+                if ( messages[i].length > 0 )
+                {
+                    $( '#alertmessage' ).append( '<li>' + messages[i] + '</li>' );
+                }
+            }
+            $( '#alertmessage' ).append( '</ul>' );
+        }
+        else
+        {
+            $( '#alertmessage' ).text( message );
+        }
+        $( "[data-popup='popupalert']" ).show();
+    }
+
+
+</script>
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+    @Html.HiddenFor(m => m.CustomerID)
+
+    <section class="container-fluid white-bg pad fixedSecond header">
+        <div class="row vertical-align">
+            <div class="col-md-12">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-3">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4" style="align-items:center">
+                                Created By: @Model.UserName
+                            </div>
+
+                            <div class="col-md-8">
+                                Created On: @Model.CreatedDate
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="form-group" style="float:right ">
+                            @*<h4> @Html.CheckBoxFor(m => m.CrateWorkOrder)<b>Create Work Order</b> </h4>*@
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button id="SaveWorkOrderButton" type="submit" style="display: inline-block;margin-right:5px;float:right;" class="btn btn-primary" onclick="SetWorkOrderSaveOperation(1);" name="action:WorkorderSave">Save</button>
+                    </div>
+                    <div class="col-md-1">
+                        @Html.ActionLink("Back", "Index", "AutoCallGenerate", new { @IsBack = 1 }, new { @Class = "btn btn-primary btn-orange" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="block margin-top" style="margin-bottom:0px;">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader" style="margin-top:0px;">Customer</h2>
+        </div>
+        <div class="customer-content margin-top">
+            <div class="row clear-input">
+                <div class="col-md-12">
+                    <div class="col-md-3">
+                        <span class="col-md-8"><b>Account Number:</b></span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <div>@Html.ValueFor(c => c.Customer.CustomerId)</div>
+                                @Html.HiddenFor(c => c.Customer.CustomerId)
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-3">
+                        <span class="col-md-8"><b>Customer Name:</b></span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Html.ValueFor(c => c.Customer.CustomerName)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="col-md-8"><b>Address:</b></span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Html.ValueFor(c => c.Customer.Address)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="col-md-8"><b>City:</b></span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Html.ValueFor(c => c.Customer.City)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+    </section>
+    
+     <style>
+         .notes-details-content {
+             display: block !important;
+         }
+    </style>
+    <section class="block">
+        <div class="container-fluid">
+            <h2 class="notes-details-head arrow-down tabheader required1">Notes</h2>
+            <div class="notes-details-content col-md-12 customer-col2">
+                <div class="col-md-3 customer-col1 sm-pad-reset">
+                    <div class="col-sm-6-o">
+                        <div class="form-group" style="margin-top:20px">
+                            Call Reason:<br />
+                            @Html.DropDownListFor(m => m.callReason, new SelectList(Model.WorkorderTypes, "CallTypeID", "Description"), new { @style = "max-width:270px", @class = "form-control WorkOrderFields" })
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <div class="form-group">
+                            Equipment Location:<br />
+                            @Html.TextBoxFor(m => m.EquipmentLocation, "", new { Value = "", @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 customer-col1 sm-pad-reset">
+                    <div class="col-sm-6-o">
+                        <div class="form-group" style="margin-top:35px">
+                            @Html.EJ().Captcha("myCaptcha").EnableRefreshImage(true).EnableAudio(false).EnableAutoValidation(true).RequestMapper("Refresh").CustomErrorMessage("Invalid captcha code entered. Please try again.").TargetButton("SaveWorkOrderButton")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 customer-col1 sm-pad-reset">
+
+                </div>
+                <div class="col-md-3 customer-col1 sm-pad-reset">
+
+                </div>
+            </div>
+
+            @Html.Partial("_ErfNotes", Model.Notes)
+
+        </div>
+
+
+
+    </section>
+
+}
+
+

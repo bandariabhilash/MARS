@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Reports";
+}
+
+@model FarmerBrothers.Models.NotesModel
+@using Newtonsoft.Json;
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-11 col-sm-4 col-md-3">
+                <b>Program Status Report1</b>
+            </div>
+            <div class="col-xs-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary btn-orange" })
+            </div>
+        </div>
+    </section>
+    <section class="well">
+        <h4>Work Order</h4>
+        <h5>@Html.ActionLink("Work Order Note Details", "WorkOrderNoteDetails", "Reports", null, new { @Id = "workOrderId" })</h5>
+    </section>
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#ReportsLink').css("color", "white");
+    });
+</script>

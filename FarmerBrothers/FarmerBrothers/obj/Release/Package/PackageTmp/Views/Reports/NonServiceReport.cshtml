@@ -1,0 +1,221 @@
+﻿@model FarmerBrothers.Models.NonServiceSearchModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+<script type="text/javascript">
+    var searchCriteria;
+
+    $( document ).ready( function ()
+    {
+        $( '#ReportLink' ).css( "color", "white" );
+
+        $( "#nonServiceDateFrom" ).ejDatePicker( { value: new Date( $( "#nonServiceDateFrom" ).val() ) } );
+        $( "#nonServiceDateTo" ).ejDatePicker( { value: new Date( $( "#nonServiceDateTo" ).val() ) } );
+
+
+        @*$('#nonServiceEventResults').ejGrid({
+                exportToExcelAction : '@Url.Action("NonServiceEventReportExcelExport", "Reports")',
+                toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+                allowPaging: true,
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting:true ,
+                allowTextWrap: true,
+                pageSettings: { pageSize: 25 },
+                allowResizeToFit : true,
+                queryCellInfo: "queryCellInfo",
+                RecordClick:"RecordClick",
+                dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+                columns: [
+                    { field: "ServiceType", headerText: "Non Service Event Type"},
+                    { field: "Count", headerText: "Count"}
+                ]
+        });*@
+
+        $( "form" ).submit( function ( e )
+        {
+
+            if ( ValidateSearchCriteria() == true )
+            {
+                var frmValues = $( "form" ).serialize();
+                $.ajax( {
+                    type: "post",
+                    url: "@Url.Action("nonServiceEventSearch", "Reports")",
+                    data: frmValues
+                } ).done( function ( result )
+                {
+                    var obj = $( "#nonServiceEventResults" ).ejGrid( "instance" );
+                    obj.dataSource( result.SearchResults );
+                } );
+            }
+
+            e.preventDefault();
+        } );
+
+        if ( !( $( '#nonServiceDateFrom' ).val() == ""
+            && $( '#nonServiceDateTo' ).val() == ""
+        ) )
+        {
+            $( 'form' ).submit();
+        }
+
+    } );
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ( $( '#nonServiceDateFrom' ).val() == ""
+            || $( '#nonServiceDateTo' ).val() == "" )
+        {
+            AlertPopup( "|Please Select StartDate and EndDate!" );
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearNonServiceSearchResults()
+    {
+        $( '.form-control' ).val( '' );
+
+        $.ajax( {
+            type: "post",
+            url: "@Url.Action("ClearNonSearchResults", "Reports")",
+        } ).done( function ( result )
+        {
+            var obj = $( "#nonServiceEventResults" ).ejGrid( "instance" );
+            obj.dataSource( result );
+        } );
+        return false;
+    }
+
+    function queryCellInfo( args )
+    {
+        if ( args.column.field == "Count" )
+        {
+            args.cell.className += " urlStyle";
+        }
+        if ( args.column.field == "ServiceType" && args.data["ServiceType"] == "All" )
+            args.cell.className += " totalFieldStyle";
+    }
+
+    function RecordClick( args )
+    {        
+        if (args.columnName == "Count" && args.data.Count != "0")
+        {
+            $.ajax( {
+                type: "GET",
+                url: "@Url.Action("NonServiceSpecificResultDataExport", "Reports")",
+                data: { DateFrom: $( '#nonServiceDateFrom' ).val(), DateTo: $( '#nonServiceDateTo' ).val(), Description: args.data["ServiceType"] },
+            } ).done( function ( result )
+            {
+                window.location.href = "@Url.Action("DownloadingNonServiceSpecificResultDataExport", "Reports")";
+            } );         
+        }
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Customer-Service Event Details Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "nonServiceDateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "nonServiceDateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a  onclick="ClearNonServiceSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                @*<table id="nonServiceEventResults" class="display" cellspacing="0" width="100%"></table>*@
+                @(Html.EJ().Grid<object>
+                            ("nonServiceEventResults")
+                            .Datasource((IEnumerable<object>)Model.SearchResults)
+                            .AllowPaging()
+                            .AllowScrolling()
+                            .AllowSorting()
+                            .AllowTextWrap(true)
+                            .PageSettings(Page => Page.PageSize(25))
+                            .IsResponsive(true)
+                            .EnableResponsiveRow(true)
+                            .Mappers(map => map.ExportToExcelAction(Url.Action("NonServiceEventReportExcelExport", "Reports")))
+                            .ToolbarSettings(toolbar =>
+                            {
+                                toolbar.ShowToolbar().ToolbarItems(items =>
+                                {
+                                    items.AddTool(ToolBarItems.ExcelExport);
+                                });
+                            })
+                            .ClientSideEvents(eve => { eve.RecordClick("RecordClick").QueryCellInfo("queryCellInfo"); })
+                            .Columns(col =>
+                            {
+                                col.Field("ServiceType").HeaderText("Customer Service Event Type").Width(100).Add();
+                                col.Field("Count").HeaderText("Count").Width(100).Add();
+                            }))
+            </div>
+        </div>
+    </div>
+</section>

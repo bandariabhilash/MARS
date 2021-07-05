@@ -1,0 +1,36 @@
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.dll.config
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.dll
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.pdb
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.dll
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.dll
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.dll
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.xml
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.xml
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.xml
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.dll
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.pdb
+C:\Myfiles\FL\Ram\MAI SVN\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csprojResolveAssemblyReference.cache
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.dll.config
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.pdb
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.xml
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.xml
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.xml
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csprojResolveAssemblyReference.cache
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.pdb
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.dll.config
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.dll
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\FarmerBrothers.Data.pdb
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.dll
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.dll
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.dll
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.xml
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.xml
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.xml
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csprojResolveAssemblyReference.cache
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.dll
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.pdb

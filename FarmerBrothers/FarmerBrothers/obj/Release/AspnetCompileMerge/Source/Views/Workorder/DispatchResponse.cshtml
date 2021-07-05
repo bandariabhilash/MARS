@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Dispatch Response";
+}
+
+@model FormalBrothers.Data.DispatchResponseModel
+
+<section class="container-fluid white-bg pad">
+    <div class="row top-info">
+        <div class="col-xs-12 col-sm-4 col-md-3">
+            <b>Dispatch Response</b>
+        </div>
+    </div>
+</section>
+
+<section class="well">
+    <div class="row top-info">
+        <div class="customer-content margin-top">
+            <div class="row customer clear-input">
+                <div class="col-md-3 sm-pad-reset">
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5">Tech ID:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Model.TechId
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5">Work Order ID:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                @Model.WorkOrderId
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">@Model.Message
+                    </div>
+                    <div class="col-sm-6-o">
+                    </div>
+                    <div class="col-sm-6-o">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

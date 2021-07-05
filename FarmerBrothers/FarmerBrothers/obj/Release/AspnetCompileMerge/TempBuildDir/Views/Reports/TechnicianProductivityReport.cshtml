@@ -1,0 +1,211 @@
+﻿@{
+    ViewBag.Title = "ReportsSearch";
+}
+
+@model FarmerBrothers.Models.TechReportsModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+
+<script type="text/javascript">
+    var formDirty = false;
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+        console.debug("at page lode = " + ej.serverTimeZoneOffset)
+        $('#ReportsLink').css("color", "white");
+
+        $("#DateFrom").ejDatePicker({ value: new Date($("#DateFrom").val()) });
+        $("#DateTo").ejDatePicker({ value: new Date($("#DateTo").val()) });
+
+        $("#TechID").change(function () {
+            $.ajax({
+            url: "@Url.Action("TechnicianByFamilyAff", "Reports")",
+            data: { FamilyAff: $('#TechID option:selected').val() },
+            success: function (Result) {
+                $('#TechniciansId').empty()
+                $.each(Result, function (key, value) {
+                    $("#TechniciansId").append($("<option></option>").val(value.DealerId).html(value.CompanyName));
+                });
+
+            }
+
+            })
+        });
+
+        $('#CustomerResults').ejGrid({
+            exportToExcelAction : '@Url.Action("ExcelExportReport","Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "Region", headerText: "Region"},
+                { field: "BranchNumber", headerText: "Branch"},
+                { field: "Route", headerText: "Route"},
+                { field: "ESM", headerText: "ESM" },
+                { field: "ResponsibleTechid", headerText: "Tech JDE#" },
+                { field: "ResponsibleTechName", headerText: "Tech Name" },
+                { field: "BranchName", headerText: "Tech Branch" },
+                { field: "ToatlEventsByTech", headerText: "Calls Handled" },
+                { field: "ElapsedTime", headerText: "Avg Duration Per Call(Including Drive Time)" },
+                { field: "ElapsedTimeOnSite", headerText: "Avg Duration Per Call" },
+                { field: "FamilyAff", headerText: "Family Aff" }
+            ]
+        });
+
+        $("form").submit(function (e) {
+
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("Search", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#CustomerResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+
+            e.preventDefault();
+        });
+    });
+
+    function SearchClear() {
+        $('.form-control').val('');
+        //$('#StatesDropDown').val("n/a");
+        //$('#Submitclear').val('true');
+        //$("#Operation").val(5);
+        //$('#reportSearchForm').submit();
+    }
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#DateFrom').val() == ""
+            || $('#DateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+        return valid;
+    }
+
+    function ClearPrdTechSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearPrdTechResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#CustomerResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Technician Productivity Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "DateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                END Date :
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "DateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Family Aff:
+                                @Html.DropDownListFor(c => c.TechID, new SelectList(Model.TechnicianAffs, "TechID", "TechName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Technicians:
+                                @*@Html.DropDownListFor(t => t.TechID, new SelectList(Model.Technicianlist, "TechID", "PreferredProvider", "None"), new { @class = "form-control SearchPanelControl" })*@
+                                @Html.DropDownListFor(t => t.DealerId, new SelectList(Model.Techlist, "DealerId", "CompanyName", "None"), new { @class = "form-control SearchPanelControl", @Id = "TechniciansId" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearPrdTechSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="CustomerResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,245 @@
+﻿@{
+    ViewBag.Title = "Unknown Customer ID";
+}
+@model FarmerBrothers.Models.WorkorderSearchModel
+@using Newtonsoft.Json;
+@using FarmerBrothers.Models;
+<script type="text/x-jsrender" id="hyperlinkTemplate">
+    <a href="#" class="lnkWrkorder" id="lnkWorkOrder">{{:WorkorderID}}</a>
+</script>
+
+<script type="text/javascript">
+    var formDirty = false;
+    var searchCriteria;
+
+    $( document ).ready( function ()
+    {
+        $( '#AdministratorLink' ).css( "color", "white" );
+        $( '#UnknownCustResults' ).ejGrid( {
+            exportToExcelAction : '@Url.Action("ExcelExport", "UnknownCustomer")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            allowSorting: true,
+            allowFiltering: true,
+            filterSettings: {
+                filterType: "menu"
+            },
+            rowSelected: "rowSelected",
+            dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.SearchResults, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            })) ),
+            columns: [
+            { field: "WorkorderID", headerText: "Work Order ID"},
+            { field: "WorkorderCallstatus", headerText: "Work Order Status" },
+            { field: "CustomerID", headerText: "Customer ID" },
+            { field: "CustomerName", headerText: "Customer Name" },
+            { field: "Address1", headerText: "Address" },
+            { field: "CustomerCity", headerText: "City" },
+            { field: "CustomerState", headerText: "State" },
+            { field: "CustomerZipCode", headerText: "Zip" },
+            { field: "TechId", headerText: "Tech ID" },
+            { field: "AssignedTech", headerText: "Tech Name" },
+            { field: "WorkorderEntryDate", headerText: "Work Order Date/Time", format: "{0:MM/dd/yyyy hh:mm tt}" }
+            ],
+
+        } );
+
+        $( "#UnknownCustResults" ).ejGrid( {
+            rowSelected: function ( args )
+            {
+                var result = this.getSelectedRecords();
+                $( "#lblTempCustID" ).text( result[0].CustomerID );
+                $( "#lblWorkOrderID" ).text( result[0].WorkorderID )
+            }
+        } );
+
+        @*$("#btnFind").click(function () {
+            if ($("#CustID").val() != "") {
+                var cusID = $("#CustID").val();
+                window.location.href = '@Html.ActionLink("unknowsCustomerDetails", "UnknownCustomer")'+ "/" + $("#CustID").val())';
+                    //'@Url.Action("unknowsCustomerDetails", "UnknownCustomer")' + "/" + $("#CustID").val();
+            }
+            else {
+                alert("please enter customer id");
+            }
+
+        });*@
+
+        $( "#btnSave" ).click( function ()
+        {
+            if ( $( "#lblTempCustID" ).text() != " " && $( "#CustID" ).val() != null )
+            {
+                $.ajax( {
+                    type: "GET",
+                    url: "@Url.Action("IsCustomerExist", "UnknownCustomer")",
+                    data: {
+                        "custID": $( "#CustID" ).val()
+                    }
+                } ).done( function ( response )
+                {
+                    if ( response != null )
+                    {
+                        if ( response.success == false )
+                        {
+                            AlertPopup( "|Please Enter Valid Customer to assign work order." );
+                            event.preventDefault();
+                            return false;
+                        }
+                        else
+                        {
+                            var t1 = $( "#lblTempCustID" ).text();
+                            window.location.href = '@Url.Action("orderDetails", "UnknownCustomer")' + "/" + $("#CustID").val() + '/' + $("#lblWorkOrderID").text() + '/' + $("#lblTempCustID").text();
+                        }
+                    }
+
+                } );
+
+            }
+            else
+            {
+                AlertPopup( "|Please select Work Order ID" );
+            }
+
+        } );
+
+
+        $( ".lnkWrkorder" ).click( function ()
+        {
+            $( "#lblWorkOrderID" ).text( $( this ).text() );
+            @*window.location.href = '@Url.Action("WorkorderManagement", "Workorder")' + "/" + $( this ).closest( 'tr' ).find( 'td' ).eq( 2 ).text() + '/' + $( "#lblWorkOrderID" ).text();*@
+        } );
+
+        $( '#btnSave' ).hide();
+
+        $( "#btnFind" ).click( function ()
+        {
+            $.ajax( {
+                type: "POST",
+                url: "@Url.Action("GetCustomerDetails", "UnknownCustomer")",
+                data: {
+                    "custID": $( "#CustID" ).val()
+                }
+            } ).done( function ( response )
+            {
+                if ( response != null )
+                {
+                    if ( response.CompanyName != null )
+                    {
+                        $( '#CustomerState' ).text( response.State );
+                        $( '#CustomerName' ).text( response.CompanyName );
+                        $( '#CustomerCity' ).text( response.City );
+                        $( '#btnSave' ).show();
+                    }
+                    else
+                    {
+                        $( '#CustomerState' ).html( '' );;
+                        $( '#CustomerName' ).html( '' );;
+                        $( '#CustomerCity' ).html( '' );;
+                        $( '#btnSave' ).hide();
+                    }
+                }
+                else
+                {
+                    $( '#btnSave' ).hide();
+                }
+            } );
+        } );
+    } );
+
+    function rowSelected( args )
+    {
+        //var result = this.getSelectedRecords();
+        //$( "#lblTempCustID" ).text( result[0].CustomerID );
+        //$( "#lblWorkOrderID" ).text( result[0].WorkorderID );
+        //window.location.href = 'WorkorderManagement/' + args.data["CustomerID"] + '/' + args.data["WorkorderID"];
+    }
+
+    function SearchClear()
+    {
+        $( '.form-control' ).val( '' );
+        var obj = $( "#UnknownCustResults" ).ejGrid( "instance" );
+        obj.dataSource( '' );
+    }
+
+    function validateMyForm()
+    {
+        if ( $( "#CustID" ).val() == "" )
+        {
+            AlertPopup( "|Please enter customer ID" );
+            return false;
+        }
+    }
+
+    function ValidateCustomer()
+    {
+        $.ajax( {
+            type: "GET",
+            url: "@Url.Action("IsCustomerExist", "UnknownCustomer")",
+            data: {
+                "custID": $( "#CustID" ).val()
+            }
+        } ).done( function ( response )
+        {
+            if ( response != null )
+            {
+                if ( response.success == false )
+                {
+                    AlertPopup( "|Please Enter Valid Customer to assign work order." );
+                    event.preventDefault();
+                    return false;
+                }
+            }
+
+        } );
+        return true;
+    }
+</script>
+@using (Html.BeginForm("unknowsCustomerDetails", "UnknownCustomer", FormMethod.Post, new { onsubmit = "return validateMyForm();" }))
+{
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>Unknown Customers Results</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="UnknownCustResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+                <div id="searchSection">
+                    Temp Customer ID: <label style="width:100px" id="lblTempCustID"> </label>
+                    Work Order ID: <label style="width:100px" id="lblWorkOrderID"> </label><br />
+                    Correct Customer ID: @Html.TextBox("CustID", null, new { @type = "number" })
+                    <input id="btnFind" value="Find" class="btn btn-primary" readonly="readonly" />
+                    Customer Name: <label style="width:250px" id="lblCustName">
+                        <label id="CustomerName"></label>
+                    </label>
+                    City: <label style="width:250px" id="lblCustCity">
+                        <label id="CustomerCity"></label>
+                    </label>
+                    State: <label style="width:200px" id="lblCustState">
+                        <label id="CustomerState"></label>
+                    </label>
+                    @{
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+    if (UserPrivilege["Unknown Customer"] == "Edit-Only" || UserPrivilege["Unknown Customer"] == "Full")
+    {
+        <input type="button" id="btnSave" value="Save" class="btn btn-primary" /><br />
+    }
+                    }
+
+                    @if (TempData["notice"] != null)
+                    {
+                        <script>AlertPopup( "|@TempData["notice"]" );</script>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}

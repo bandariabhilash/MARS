@@ -1,0 +1,159 @@
+﻿
+@{
+    ViewBag.Title = "FBDispatchAccepted";
+}
+
+@model FarmerBrothers.Models.FBDispatchAcceptedModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<script type="text/javascript">
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+        console.debug("at page lode = " + ej.serverTimeZoneOffset)
+        $('#ReportsLink').css("color", "white");
+
+        $("#DateFrom").ejDatePicker({ value: new Date($("#DateFrom").val()) });
+        $("#DateTo").ejDatePicker({ value: new Date($("#DateTo").val()) });
+
+
+        $('#DispatchAcceptedResults').ejGrid({
+            exportToExcelAction : '@Url.Action("FBDispatchAcceptedReportExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+                columns: [
+                    { field: "UserName", headerText: "Agent Name"},
+                    { field: "WorkorderID", headerText: "Work Order" },
+                    { field: "TDate", headerText: "Date-Time" },
+                    { field: "statusFrom", headerText: "Status From" },
+                    { field: "statusTo", headerText: "Status To" },
+                    { field: "AcceptedDate", headerText: "Accepted Date" }
+                ]
+        });
+        $("form").submit(function (e) {
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("FBDispatchAcceptedReportSearch", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#DispatchAcceptedResults").ejGrid("instance");
+                    obj.dataSource(result);
+                });
+            }
+            e.preventDefault();
+        });
+
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#DateFrom').val() == ""
+            || $('#DateTo').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearFBDispatchAcceptedReportResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearFBDispatchAcceptedReportResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#DispatchAcceptedResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Farmer Brothers Dispatch Accepted Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "DateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "DateTo" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearFBDispatchAcceptedReportResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="DispatchAcceptedResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+

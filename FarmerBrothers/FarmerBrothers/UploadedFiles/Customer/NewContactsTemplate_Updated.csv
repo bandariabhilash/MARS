@@ -1,0 +1,6 @@
+﻿Customer Number,Company,Address1,Address2,Address3,City,State,PostalCode,Phone,Route,Branch,Route Code
+123456,abc,rfs,dgdg,,fghdf,us,433453,1232342,11,cfg,122
+232424,abc,rfsfsdf,dgdg,,,us,423424,1232342,11,cfg,123
+35653,abc,swad,dgdg,,fghdf,,43243,1232342,11,cfg,124
+,abc,,dgdg,,fghdf,us,,1232342,11,cfg,125
+23252,abc,rfs,dgdg,,fghdf,us,978789,1232342,11,cfg,126

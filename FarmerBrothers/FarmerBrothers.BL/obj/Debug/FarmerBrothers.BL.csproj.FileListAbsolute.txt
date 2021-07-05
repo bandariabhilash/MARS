@@ -1,0 +1,14 @@
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\FarmerBrothers.BL.dll.config
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\FarmerBrothers.BL.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\FarmerBrothers.BL.pdb
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\EntityFramework.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\EntityFramework.SqlServer.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\FarmerBrothers.Data.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\LinqKit.EntityFramework.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\FarmerBrothers.Data.pdb
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\EntityFramework.xml
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\EntityFramework.SqlServer.xml
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\bin\Debug\LinqKit.EntityFramework.xml
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\obj\Debug\FarmerBrothers.BL.csprojResolveAssemblyReference.cache
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\obj\Debug\FarmerBrothers.BL.dll
+C:\MAI\FarmerBrothers\MARS\FarmerBrothers\FarmerBrothers.BL\obj\Debug\FarmerBrothers.BL.pdb

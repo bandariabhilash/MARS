@@ -1,0 +1,103 @@
+﻿<link href="~/Content/Tpcm.css" rel="stylesheet" />
+<style>
+
+    input {
+    max-width: 280px;
+    margin-bottom:10px;
+}
+    select {
+    max-width: 280px;
+    margin-bottom:10px;
+}
+</style>
+@{
+    ViewBag.Title = "UpdateZoneTechnicians";
+}
+
+@model FarmerBrothers.Models.ZonePriorityModel
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Update Zone Technician</b>
+            </div>
+        </div>
+    </section>
+    <section class="well">
+        <div class="fieldTable" id="dvWorkorderList">
+            <div>
+                <label style="width:220px;">Zone Index:</label>
+                @Html.DisplayFor(m => m.ZoneIndex, new { id = "ZoneIndex", name = "ZoneIndex", @readonly = true })
+            </div>
+            <div>
+                <label style="width:220px;">Zone Name:</label>
+                @Html.DisplayFor(m => m.ZoneName, new { id = "ZoneName", name = "ZoneName", @readonly = true })
+            </div>
+            <div>
+                <label style="width:220px; float:left;">FEAST Location ID:</label>
+                @Html.TextBoxFor(m => m.ResponsibleTechBranch, new { id = "ResponsibleTechBranch ", name = "ResponsibleTechBranch ", @class = "form-control CustomerData" })
+            </div>
+            <div>
+                <label style="width:220px; float:left;">Primary Technician:</label>
+                @Html.DropDownListFor(c => c.ResponsibletechID, new SelectList(Model.Technicians, "TechId", "TechName"), "Select", new { @Id = "ResponsibletechID", @class = "form-control CustomerData" })
+                @Html.HiddenFor(x => x.ResponsibleTechName)
+            </div>
+            <div>
+                <label style="width:220px; float:left;">Secondary Technician:</label>
+                @Html.DropDownListFor(c => c.SecondaryTechID, new SelectList(Model.Technicians, "TechId", "TechName"), "Select", new { @Id = "SecondaryTechID", @class = "form-control CustomerData" })
+                @Html.HiddenFor(x => x.SecondaryTechName)
+            </div>
+            <div>
+                <label style="width:220px; float:left;">On Call Group:</label>
+                @Html.DropDownListFor(c => c.OnCallGroupID, new SelectList(Model.OnCallGroupList, "OnCallGroupID", "OnCallGroupName"), "Select", new { @Id = "OnCallGroupID", @class = "form-control CustomerData" })
+                @Html.HiddenFor(x => x.OnCallGroupID)
+            </div>
+            <div>
+                <label style="width:220px; float:left;">On Call Primary Technician:</label>
+                @Html.DropDownListFor(c => c.OnCallPrimarytechID, new SelectList(Model.Technicians, "TechId", "TechName"), "Select", new { @Id = "OnCallPrimarytechID", @class = "form-control CustomerData" })
+            </div>
+            <div>
+                <label style="width:220px; float:left;">On Call Backup Technician:</label>
+                @Html.DropDownListFor(c => c.OnCallBackupTechID, new SelectList(Model.Technicians, "TechId", "TechName"), "Select", new { @Id = "OnCallBackupTechID", @class = "form-control CustomerData" })
+            </div>
+            <div>
+                <label style="width:220px; float:left;">Latitude</label>
+                @Html.TextBoxFor(m => m.Latitude, new { id = "LatitudeAndLongitude", name = "LatitudeAndLongitude", @class = "form-control CustomerData" })
+            </div>
+            <div>
+                <label style="width:220px; float:left;">Longitude:</label>
+                @Html.TextBoxFor(m => m.Longitude, new { id = "LatitudeAndLongitude", name = "LatitudeAndLongitude", @class = "form-control CustomerData" })
+            </div>
+
+            <br />
+            <div style="align-items:center">
+                <button type="button" class="btn btn-primary" style="margin-left:500px;" id="btnSave">Update</button>
+                <a href="@Url.Action("UpdateZoneTechnician", "ZoneTechnician")" style="margin-left:10px; margin-bottom:0;" class="btn btn-orange">Cancel</a>
+            </div>
+        </div>
+    </section>
+}
+<script type="text/javascript">
+    $(function () {
+        $('#AdministratorLink').css("color", "white");
+        $("#btnSave").click(function () {
+
+            var selTypeResponsibletechText = $("#ResponsibletechID option:selected").text();
+            $("#ResponsibleTechName").val(selTypeResponsibletechText);
+            var selTypeSecondaryTechText = $("#SecondaryTechID option:selected").text();
+            $("#SecondaryTechName").val(selTypeSecondaryTechText);
+            var selTypePhoneSolveTechText = $("#PhoneSolveTechID option:selected").text();
+            $("#PhoneSolveTechName").val(selTypePhoneSolveTechText);
+            var frmValues = $("form").serialize();
+            $.ajax({
+                type: "post",
+                url: "@Url.Action("UpdateZoneTechnicians", "ZoneTechnician")",
+                data: frmValues
+            }).done(function (result) {
+                 AlertPopup("|Updated succesfully.")
+            });
+        });
+    });
+</script>

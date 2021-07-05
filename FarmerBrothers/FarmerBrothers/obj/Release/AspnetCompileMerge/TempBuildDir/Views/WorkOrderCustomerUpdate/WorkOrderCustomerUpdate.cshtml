@@ -1,0 +1,323 @@
+﻿@{
+    ViewBag.Title = "WorkOrderCustomerUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FarmerBrothers.Models.WorkorderSearchModel
+@using Newtonsoft.Json;
+@using FarmerBrothers.Models;
+<script type="text/x-jsrender" id="hyperlinkTemplate">
+    <a href="#" class="lnkWrkorder" id="lnkWorkOrder">{{:WorkorderID}}</a>
+</script>
+
+<script type="text/javascript">
+    var formDirty = false;
+    var searchCriteria;
+    $( "#CusDetails" ).hide();
+    $( document ).ready( function ()
+    {
+
+        $( "#CusDetails" ).hide();
+        $( '#AdministratorLink' ).css( "color", "white" );
+        $( '#WorkOrderCustResults' ).ejGrid( {
+            exportToExcelAction: '/Customer/ServiceHistoryExcelExport/',
+            allowPaging: true,
+            isResponsive: true,
+            allowSorting: true,
+            rowSelected: "rowSelected",
+            dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.SearchResults, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            })) ),
+            columns: [
+            { field: "WorkorderID", headerText: "Work Order ID", template: "#hyperlinkTemplate" },
+            { field: "CustomerID", headerText: "Customer ID" },
+            { field: "CustomerName", headerText: "Customer Name" },
+            { field: "Address1", headerText: "Address" },
+            { field: "CustomerCity", headerText: "City" },
+            { field: "CustomerState", headerText: "State" },
+            { field: "CustomerZipCode", headerText: "Zip" },
+            { field: "CustomerMainContactName", headerText: "Main Contact Name" },
+            { field: "CustomerPhone", headerText: "Customer Phone" },
+            { field: "CustomerMainEmail", headerText: "Main Email" },
+            ],
+
+        } );
+
+        $( "#WorkOrderCustResults" ).ejGrid( {
+            rowSelected: function ( args )
+            {
+                var result = this.getSelectedRecords();
+                $( "#lblTempCustID" ).text( result[0].CustomerID );
+                $( "#lblWorkOrderID" ).text( result[0].WorkorderID )
+            }
+        } );
+
+
+
+        $( "#btnSave" ).click( function ()
+        {
+            if ( $( "#CustID" ).val() != null )
+            {
+                $.ajax( {
+                    type: "GET",
+                    url: "@Url.Action("IsCustomerExist", "UnknownCustomer")",
+                    data: {
+                        "custID": $( "#CustID" ).val()
+                    }
+                } ).done( function ( response )
+                {
+                    if ( response != null )
+                    {
+                        if ( response.success == false )
+                        {
+                            AlertPopup( "|Please Enter Valid Customer to assign work order." );
+                            event.preventDefault();
+                            return false;
+                        }
+                        else
+                        {                            
+                            $.ajax( {
+                                type: "GET",
+                                url: "@Url.Action("WorkOrderUpdate", "WorkOrderCustomerUpdate")",
+                                data: { "custID": $( "#CustID" ).val(), "workOrderId": $( "#WorkOrderID" ).val() }
+                            } ).done( function ( response )
+                            {
+                                if ( response != null )
+                                {
+                                    if ( response.success == true )
+                                    {
+                                        AlertPopup( "|Successfully Updated Work Order Customer Details!" );
+                                        window.location.href = '@Url.Action("WorkOrderCustomerUpdate", "WorkOrderCustomerUpdate")';
+                                    }
+                                    else
+                                    {
+                                        AlertPopup( "|Pleaes enter valid Customer ID and Work Order ID!" );
+                                        event.preventDefault();
+                                        return false;
+                                    }
+                                }
+
+                            } );
+                        }
+                    }
+
+                } );
+
+            }
+            else
+            {
+                AlertPopup( "|Please select Work Order ID" );
+            }
+
+        } );
+
+
+        $( ".lnkWrkorder" ).click( function ()
+        {
+            $( "#lblWorkOrderID" ).text( $( this ).text() );
+            @*window.location.href = '@Url.Action("WorkorderManagement", "Workorder")' + "/" + $( this ).closest( 'tr' ).find( 'td' ).eq( 2 ).text() + '/' + $( "#lblWorkOrderID" ).text();*@
+        } );
+
+        $( '#btnSave' ).hide();
+
+        $( "#btnFind" ).click( function ()
+        {
+            if ( validateMyForm() == true )
+            {
+                $.ajax( {
+                    type: "POST",
+                    url: "@Url.Action("GetCustomerDetails", "WorkOrderCustomerUpdate")",
+                    data: {
+                        "custID": $( "#CustID" ).val()
+                    }
+                } ).done( function ( response )
+                {
+                    if ( response != null )
+                    {
+                        $( "#CusDetails" ).show();
+                        $( '#lblCustomerName' ).text( response.CustomerName );
+                        $( '#lblCustomerAddress' ).text( response.Address1 );
+                        $( '#lblCustomerCity' ).text( response.CustomerCity );
+                        $( '#lblCustomerState' ).text( response.CustomerState );
+                        $( '#lblCustomerZip' ).text( response.CustomerZipCode );
+                        $( '#lblCustomerMainContName' ).text( response.CustomerMainContactName );
+                        $( '#lblCustomerPhone' ).text( response.CustomerPhone );
+                        $( '#lblCustomerEmail' ).text( response.CustomerMainEmail );
+                        $( '#btnSave' ).show();
+
+                    }
+                    else
+                    {
+                        $( "#CusDetails" ).hide();
+                        $( '#btnSave' ).hide();
+                    }
+                } );
+            }
+
+        } );
+
+        $( "#btnWOIDFind" ).click( function ()
+        {
+            $.ajax( {
+                type: "POST",
+                url: "@Url.Action("WorkOrderCustomerUpdate", "WorkOrderCustomerUpdate")",
+                data: {
+                    "workOrderId": $( "#WorkOrderID" ).val()
+                }
+            } ).done( function ( response )
+            {                
+                if ( response.success == true)
+                {
+                    var obj = $( "#WorkOrderCustResults" ).ejGrid( "instance" );
+                    obj.dataSource( response.data );
+                }
+                else
+                {
+                    AlertPopup( "|Please Enter Valid Work Order ID!" );
+                    event.preventDefault();
+                    return false;
+                }
+               
+            } );
+        } );
+    } );
+
+    function rowSelected( args )
+    {
+        //var result = this.getSelectedRecords();
+        //$( "#lblTempCustID" ).text( result[0].CustomerID );
+        //$( "#lblWorkOrderID" ).text( result[0].WorkorderID );
+        //window.location.href = 'WorkorderManagement/' + args.data["CustomerID"] + '/' + args.data["WorkorderID"];
+    }
+
+    function SearchClear()
+    {
+        $( '.form-control' ).val( '' );
+        var obj = $( "#WorkOrderCustResults" ).ejGrid( "instance" );
+        obj.dataSource( '' );
+    }
+
+    function validateMyForm()
+    {
+        if ( $( "#CustID" ).val() == "" )
+        {
+            AlertPopup( "|Please Enter Valid Customer ID!" );
+            return false;
+        }
+        else
+        {
+            if ( ValidateCustomer() == true )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    function ValidateCustomer()
+    {
+        $.ajax( {
+            type: "GET",
+            url: "@Url.Action("IsCustomerExist", "UnknownCustomer")",
+            data: {
+                "custID": $( "#CustID" ).val()
+            }
+        } ).done( function ( response )
+        {
+            if ( response != null )
+            {
+                if ( response.success == false )
+                {
+                    AlertPopup( "|Please Enter Valid Customer to assign work order." );
+                    event.preventDefault();
+                    return false;
+                }
+            }
+
+        } );
+        return true;
+    }
+</script>
+@using (Html.BeginForm("unknowsCustomerDetails", "UnknownCustomer", FormMethod.Post, new { onsubmit = "return validateMyForm();" }))
+{
+            <section class="container-fluid white-bg pad">
+                <div class="row top-info">
+                    <div class="col-xs-12 col-sm-4 col-md-3">
+                        <b>Work Order Customers Update</b>
+                    </div>
+                    </div>
+            </section>
+        <section class="well">
+            <div class="row top-info">
+                <div class="col-xs-12">
+                    Work Order ID: @Html.TextBox("WorkOrderID", null, new { @type = "number" })
+                    <input id="btnWOIDFind" value="Find" class="btn btn-primary" readonly="readonly" style="width: 80px;padding: 4px 0px;" />
+                </div>
+                <br />
+            </div>
+            </section>
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <table id="WorkOrderCustResults" class="display" cellspacing="0" width="100%"></table>
+                </div>
+                </div>
+            </div>
+        </section>
+                <section class="well">
+                    <div class="container-fluid">
+                        <div class="row top-info">
+                            <div id="searchSection">
+                                <br /><br />
+                                Customer ID: @Html.TextBox("CustID", null, new { @type = "number" })
+                                <input id="btnFind" value="Find" class="btn btn-primary" readonly="readonly" style="width: 80px;padding: 4px 0px;" /> <br />
+                                <div id="CusDetails">
+                                    Customer Name: <label style="width:250px" id="lblCustName">
+                                        <label id="lblCustomerName"></label>
+                                    </label><br />
+                                    Address: <label style="width:250px" id="lblCustAddress">
+                                        <label id="lblCustomerAddress"></label>
+                                    </label><br />
+                                    City: <label style="width:250px" id="lblCustCity">
+                                        <label id="lblCustomerCity"></label>
+                                    </label><br />
+                                    State: <label style="width:200px" id="lblCustState">
+                                        <label id="lblCustomerState"></label>
+                                    </label><br />
+                                    Zip: <label style="width:250px" id="lblCustZip">
+                                        <label id="lblCustomerZip"></label>
+                                    </label><br />
+                                    Main Contact Name: <label style="width:250px" id="lblCustMainContName">
+                                        <label id="lblCustomerMainContName"></label>
+                                    </label><br />
+                                    Customer Phone: <label style="width:250px" id="lblCustPhone">
+                                        <label id="lblCustomerPhone"></label>
+                                    </label><br />
+                                    Main Email: <label style="width:250px" id="lblCustEmail">
+                                        <label id="lblCustomerEmail"></label>
+                                    </label><br />
+                                </div>
+                                                                @{
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+    if (UserPrivilege["WO Customer Update"] == "Edit-Only" || UserPrivilege["WO Customer Update"] == "Full")
+    {
+                            <input type="button" id="btnSave" value="Save" class="btn btn-primary" style="width: 80px;padding: 4px 0px;" /><br />
+    }
+                                }
+
+                                @if (TempData["notice"] != null)
+                                {
+                                    <script>AlertPopup( "|@TempData["notice"]" );</script>
+                                }
+                            </div>
+                        </div>
+                        </div>
+</section>
+}

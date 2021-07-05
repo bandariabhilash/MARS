@@ -1,0 +1,13 @@
+﻿@model FarmerBrothers.Models.AssetImageModel
+
+@{
+    ViewBag.Title = "Asset Images";
+}
+
+@using (Html.BeginForm())
+{
+   foreach (string imageUrl in Model.ImageUrls)
+   {
+        <img align='center' src='imageUrl' />
+   }
+}

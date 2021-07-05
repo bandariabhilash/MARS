@@ -1,0 +1,667 @@
+﻿@model FarmerBrothers.Models.WorkOrderPdfModel
+
+@{
+    Layout = null;
+
+
+    if (Model.Equipmentlist == null)
+    {
+        Model.Equipmentlist = new List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>();
+    }
+    if (Model.EquipmentRequestedlist == null)
+    {
+        Model.EquipmentRequestedlist = new List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>();
+    }
+    //if (Model.EquipmentRequestedSuperlist == null)
+    //{
+    //    Model.EquipmentRequestedSuperlist = new List<List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>>();
+    //}
+    //if (Model.EquipmentSuperlist == null)
+    //{
+    //    Model.EquipmentSuperlist = new List<List<FarmerBrothers.Models.WorkorderEquipmentDetailModel>>();
+    //}
+
+
+    //List<System.Web.Helpers.WebGrid> requestedWebGridArr = new List<System.Web.Helpers.WebGrid>();
+    var requestedWebGridArr = new WebGrid(Model.EquipmentRequestedlist, canPage: false, canSort: false, ajaxUpdateContainerId: "eqpReqMain");
+    //requestedWebGridArr.Add(wbgrid);
+    //int num = 0;
+    //foreach (var itemList in Model.EquipmentRequestedSuperlist)
+    //{
+    //    var wbgrid = new WebGrid(itemList, canPage: false, canSort: false, ajaxUpdateContainerId: "eqpReqMain" + num);
+    //    requestedWebGridArr.Add(wbgrid);
+    //    num++;
+    //}
+
+
+   // List<System.Web.Helpers.WebGrid> eqpWebGridArr = new List<System.Web.Helpers.WebGrid>();
+    var eqpWebGridArr = new WebGrid(Model.Equipmentlist, canPage: false, canSort: false, ajaxUpdateContainerId: "main");
+    //eqpWebGridArr.Add(wbgrid1);
+    //int eqpnum = 0;
+    //foreach (var itemList in Model.EquipmentSuperlist)
+    //{
+    //    var wbgrid = new WebGrid(itemList, canPage: false, canSort: false, ajaxUpdateContainerId: "main" + eqpnum);
+    //    eqpWebGridArr.Add(wbgrid);
+    //    eqpnum++;
+    //}
+
+
+
+
+}
+
+<!doctype html>
+<html>
+<head>
+    <title>Workorder-Search</title>
+    <meta charset="utf-8">
+    <!--media css support meta tag-->
+
+    <style type="text/css">
+        .webGrid {
+            margin: 4px;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #FCFCFC;
+        }
+
+            /*.header {
+            background-color: #C1D4E6;
+            font-weight: bold;
+            color: #FFF;
+        }*/
+
+            .webGrid th {
+                border: 1px solid #C0C0C0;
+                padding: 5px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+
+            .webGrid td {
+                font-size: 12px;
+            }
+
+            .webGrid tr {
+                height: 12px;
+            }
+
+        .alt {
+            height: 50px;
+            background-color: #E4E9F5;
+            color: #000;
+        }
+
+        .gridHead a:hover {
+            text-decoration: underline;
+        }
+
+        .description {
+            width: auto;
+        }
+
+        .doctitle {
+            width: auto;
+        }
+
+        .total {
+            width: 171px;
+        }
+
+        .docwidth {
+            width: auto;
+        }
+
+        .select {
+            background-color: #389DF5;
+        }
+
+        .panel-body {
+            border: 0.1vw solid gray;
+        }
+    </style>
+
+    <style type="text/css">
+        /*Customization Styles*/
+        .invoice-form .form-group {
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+            .invoice-form .form-group label {
+                font-weight: normal;
+            }
+
+        .invoice-header {
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .invoice-form .panel-heading {
+            overflow: hidden;
+        }
+
+            .invoice-form .panel-heading h4 {
+                font-weight: bold;
+                margin-top: 5px;
+            }
+
+        .margin0 {
+            margin: 0 !important;
+        }
+
+        .serilaized-items {
+            float: none;
+            margin: 0 auto;
+        }
+
+        .cust-textarea {
+            border: 1px solid;
+            height: 150px;
+            margin: 0 0 0 15px;
+            width: 100%;
+        }
+
+        td label {
+            font-weight: normal;
+        }
+
+        table.border-less tr td {
+            border: 0 none;
+        }
+
+        .table .table {
+            background: none;
+        }
+
+        .table .stripe-borders-table {
+            background: #fff;
+            margin: 0;
+        }
+
+        .stripe-borders-table th {
+            background: #ccc;
+        }
+
+        .stripe-borders-table-grid {
+            background: #8bb6dd;
+            padding: 10px;
+            /*margin: 0 15px*/;
+        }
+
+        .stripe-borders-table td, .stripe-borders-table th {
+            /*text-align: center;*/
+            font-weight: normal;
+            border: 1px solid !important;
+        }
+
+        .stripe-borders-table tr:nth-child(2n) td {
+            background: #eeeeee none repeat scroll 0 0;
+        }
+
+        .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+            border: 0;
+        }
+
+        .logo-block {
+            float: left;
+            min-height: 1px;
+            width: 340px;
+        }
+
+        .work-order label {
+            /*font-size: 19px;*/
+        }
+
+        .small-text td {
+            font-size: 12px;
+        }
+    </style>
+
+    <style>
+        /*Here I will write some css for looks good*/
+
+        th, td {
+            padding: 2px;
+            text-align:left;
+        }
+
+        th {
+            /*background-color: rgb(248, 248, 248);*/
+            background-color:rgb(241, 237, 237);
+        }
+
+        #gridT, #gridT tr {
+            /*border:1px solid ;*/
+        }
+
+        .breakhere {
+            page-break-before: always;
+        }
+
+        .WordSection1 {
+            padding-top: 80px;
+            padding-right: 80px;
+            padding-bottom: 80px;
+            padding-left: 80px;
+        }
+
+        .footer {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .costDetailsBlock table tr td, .timeDetailsBlock table tr td {
+            font-size: 12px;
+        }     
+        
+        #closureAssetsTbl 
+        {
+            width:100%;
+        }
+         #closureAssetsTbl tbody tr td{
+                border: 0.1px solid;
+                border-color: #e3e1e1eb;
+        }   
+
+        #closureAssetsTbl thead tr th, #closureAssetsTbl tbody tr td,
+        #partsTbl thead tr th,#partsTbl tbody tr td
+        {
+            word-wrap: break-word;
+        }
+
+        #partsTbl tbody tr td{
+                border: 0.1px solid;
+                border-color: #e3e1e1eb;
+        }   
+        #partsTbl
+        {            
+            width: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="mainBodyDiv" style="background-color:#8080801c; border: #a9a9a9b5 solid 1px;    float: left; padding: 5px;">
+        <div class="invoice-form">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table border-less">
+                <tr>
+                    <td>
+                        <div class="invoice-header">
+                            <div class="work-order" style="padding:10px;">
+                                <table>
+                                    <tr>
+                                        @*<td width="20%">*@
+                                        @*<img width="100%" src="~/img/FB-logo.png" class="img-responisve" />*@
+                                        @*<img width="100%" src="cid:logo" class="img-responisve" />*@
+                                        @*<img src='cid:logo' width='15%' height='15%'>*@
+                                        @*</td>*@
+                                        <td width="80%">
+                                            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                                <tr>
+                                                    <td>
+                                                        <label>Customer Account Number&nbsp;:</label>
+                                                    </td>
+                                                    <td>
+                                                        <label style="color: #0000ff;">@Model.objWorkOrder.CustomerID</label>
+                                                    </td>
+                                                    <td>
+                                                        <label>Service Date&nbsp;:</label>
+                                                    </td>
+                                                    <td>
+                                                        <label>@Model.objWorkOrder.WorkorderEntryDate.Value</label>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <label>Customer Location&nbsp;:</label>
+                                                    </td>
+                                                    <td>
+                                                        <label>@Model.objWorkOrder.CustomerName</label></br>
+                                                        <label>@Model.objWorkOrder.CustomerAddress</label></br>
+                                                        <label>@Model.objWorkOrder.CustomerCity</label>
+                                                        <label>@Model.objWorkOrder.CustomerState</label>
+                                                        <label>@Model.objWorkOrder.CustomerZipCode</label>
+                                                    </td>
+                                                    <td>
+                                                        <label>Technician Name&nbsp;:</label>
+                                                    </td>
+                                                    <td>
+                                                        @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0
+&& string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold for AB".ToUpper(), 0) != 0
+&& string.Compare(Model.objWorkOrder.WorkorderCalltypeDesc.ToUpper(), "Parts Request".ToUpper(), 0) != 0
+&& string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Hold".ToUpper(), 0) != 0)
+                                                        {
+                                                            <label>@Model.objWorkorderSchedule.TechName</label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label>Service Contact&nbsp;:</label></td>
+                                                    <td>
+                                                        @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0)
+                                                        {
+                                                            <label>@Model.objWorkOrder.WorkorderContactName</label>
+                                                        }
+
+                                                    </td>
+                                                    <td><label>Phone Number&nbsp;:</label></td>
+                                                    <td>
+                                                        @if (string.Compare(Model.objWorkOrder.WorkorderCallstatus.ToUpper(), "Open".ToUpper(), 0) != 0)
+                                                        {
+                                                            <label>@Model.objWorkOrder.WorkorderContactPhone</label>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td><label>Workorder ID&nbsp;:</label></td>
+                                                    <td><label>@Model.objWorkOrder.WorkorderID</label></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="reqEquipmentBlock">
+
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                <tr>
+                                    <td>
+
+                                        <div class="panel panel-default margin0">
+                                            <div class="panel-heading wrkReqHeading">
+                                                <h4 class="panel-title">Equipment</h4>
+                                            </div>
+                                            <div class="panel-body">
+
+                                                <div id="eqpReqMain" style="background-color: white;" class="stripe-borders-table-grid reqEqpSec">
+                                                    @requestedWebGridArr.GetHtml(
+                                                            htmlAttributes: new { id = "gridWrkReq", width = "100%" },
+                                                            columns: requestedWebGridArr.Columns(
+                                                                requestedWebGridArr.Column("Category", "Equipment Type"),
+                                                            requestedWebGridArr.Column("WorkOrderType", "Service Code"),
+                                                             requestedWebGridArr.Column("SymptomDesc", "Symptom"),
+                                                             requestedWebGridArr.Column("Location", "Equipment Location"),
+                                                            requestedWebGridArr.Column("SerialNumber", "Serial Number")
+                                                           ))
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <div class="costDetailsBlock" style="padding: 30px; margin-top:25px">
+                            <table align="right" border="0" cellspacing="0" cellpadding="0" class="table" style="width: 50%;border: black solid 1px;">
+                                <tr style="background:#cacbe6;">
+                                    <td><label>Travel</label></td>
+                                    <td><label>@Model.objWorkorderDetails.TravelTime</label></td>
+                                </tr>
+                                <tr style="background:#cacbe6;">
+                                    <td><label>Labor</label></td>
+                                    <td><label>@Model.LaborCost.ToString("C", new System.Globalization.CultureInfo("en-US"))</label></td>
+                                </tr>
+                                <tr style="background:#cacbe6;">
+                                    <td><label>Parts</label></td>
+                                    <td><label>@Model.PartsTotal.ToString("C", new System.Globalization.CultureInfo("en-US"))</label></td>
+                                </tr>
+                                <tr style="background:#cacbe6;">
+                                    <td><label>Total</label></td>
+                                    <td><label>@Model.Total.ToString("C", new System.Globalization.CultureInfo("en-US"))</label></td>
+                                </tr>
+
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        <div class="equipmentBlock">
+                            <table width="100%" border="0" cellspacing="0" cellpadding="0" class="table">
+                                <tr>
+                                    <td>
+
+                                        <div class="panel panel-default margin0">
+                                            <div class="panel-heading closureEqpHeading">
+                                                <h4 class="panel-title">Asset Details</h4>
+                                            </div>
+
+                                            <div class="panel-body" style="background:#ffffff;">
+                                                <div id="main" style="background-color:#fffffff; padding: 0;" class="stripe-borders-table-grid eqpSec">
+                                                    <table id="closureAssetsTbl" style="background:#ffffff">
+                                                        <thead>
+                                                        <th>service Code</th>
+                                                        <th>Equipment Type</th>
+                                                        <th>Manufacturer</th>
+                                                        <th>Asset ID</th>
+                                                        <th>Model</th>
+                                                        <th>Serial Number</th>
+                                                        <th>Completion Code</th>
+                                                        <th>Temperature</th>
+                                                        <th>Describe Work Performed</th>
+                                                        </thead>
+                                                        <tbody>
+                                                            @for (int j = 0; j < Model.Equipmentlist.Count(); j++)
+                                                            {
+                                                                <tr>
+                                                                    <td>@Model.Equipmentlist[j].WorkOrderType</td>
+                                                                    <td>@Model.Equipmentlist[j].Category</td>
+                                                                    <td>@Model.Equipmentlist[j].Manufacturer</td>
+                                                                    <td>@Model.Equipmentlist[j].Assetid</td>
+                                                                    <td>@Model.Equipmentlist[j].Model</td>
+                                                                    <td>@Model.Equipmentlist[j].SerialNumber</td>
+                                                                    <td>@Model.Equipmentlist[j].SolutionDesc</td>
+                                                                    <td>@Model.Equipmentlist[j].Temperature</td>
+                                                                    <td>@Model.Equipmentlist[j].WorkDescription</td>
+                                                                </tr>
+                                                                <tr>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td style='padding:5px; margin:0px;' colspan='9'>
+                                                                        <table id="partsTbl">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Quantity</th>
+                                                                                    <th>Manufacturer</th>
+                                                                                    <th>SKU</th>
+                                                                                    <th>Description</th>
+                                                                                    <th>Parts Total</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                @for (int p = 0; p < Model.Equipmentlist[j].Parts.Count(); p++)
+                                                                                {
+                                                                                    <tr>
+                                                                                        <td>@Model.Equipmentlist[j].Parts[p].Quantity</td>
+                                                                                        <td>@Model.Equipmentlist[j].Parts[p].Manufacturer</td>
+                                                                                        <td>@Model.Equipmentlist[j].Parts[p].Sku</td>
+                                                                                        <td>@Model.Equipmentlist[j].Parts[p].Description</td>
+                                                                                        <td>@Model.Equipmentlist[j].Parts[p].partsTotal</td>
+                                                                                    </tr>
+                                                                                }
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                    </tr>
+                                                            }
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+
+
+                                    </div>
+                                </div>
+
+                                </td>
+                                </tr>
+                                @*<tr>
+                                        <td>
+                                            <div class="panel panel-default margin0">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">Customer Signature</h4>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <table>
+                                                        <tr><td>Name:</td><td>@Model.objWorkOrder.CustomerName</td></tr>
+                                                        <tr><td>E-mail:</td><td>@Model.objWorkOrder.CustomerMainEmail</td></tr>
+
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>*@
+                                <tr>
+                                    <td>
+                                        <div class="panel panel-default margin0">
+                                            @*<div class="panel-heading">
+                                                    <h4 class="panel-title">Customer Signature</h4>
+                                                </div>*@
+                                            <div class="panel-body">
+                                                <table>
+                                                    @*<tr><td>Name:</td><td>@Model.objWorkOrder.CustomerName</td></tr>*@
+                                                    <tr><td><a href="https://goo.gl/forms/KgvSAgobIEee3kEz2" target="_blank">Click here for Customer Satisfaction Survey</a> </td></tr>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </table>
+
+                                </div>
+                                </td>
+                                </tr>
+
+                                <tr></tr>
+
+                                <tr>
+                                    <td>
+                                        <div class="timeDetailsBlock" style="padding: 25px; margin-top:25px">
+                                            <table width="100%">
+                                                <tr style="background:#fed5c5;">
+                                                    @if (Model.objWorkorderDetails.StartDateTime.HasValue)
+                                                    {
+                                                        <td><label>Start Time</label></td>
+                                                        <td><label>@Model.objWorkorderDetails.StartDateTime</label></td>
+                                                    }
+                                                    @if (Model.objWorkorderDetails.ArrivalDateTime.HasValue)
+                                                    {
+                                                        <td><label>Arrival Time</label></td>
+                                                        <td><label>@Model.objWorkorderDetails.ArrivalDateTime</label></td>
+                                                    }
+                                                </tr>
+                                                <tr style="background:#fed5c5;">
+                                                    @if (Model.objWorkorderDetails.CompletionDateTime.HasValue)
+                                                    {
+                                                        <td><label>Completion Time</label></td>
+                                                        <td><label>@Model.objWorkorderDetails.CompletionDateTime</label></td>
+                                                    }
+                                                    @if (!string.IsNullOrEmpty(Model.objWorkorderDetails.CustomerSignatureDetails))
+                                                    {
+                                                        @*<td><label>Signature</label></td>
+                                                            <td><img id="CustomerSignatureImage" height="100" width="250" alt="Customer Signature" src="Customer:Signature" /></td>*@
+                                                    }
+                                                </tr>
+
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <tr>
+                                    <td style='padding: 2px; text-align: left; '>
+                                        <div class='panel panel-default margin0'>
+
+                                            <div class='panel-body'>
+                                                <table style='float: right;'>
+                                                    <tr><td>Machine Notes: </td><td style='padding: 2px; text-align: left; '>@Model.MachineNotes</td></tr>
+                                                    <tr><td>Tax: </td><td style='padding: 2px; text-align: left; '>@Model.TaxPercentage</td></tr>
+                                                    <tr><td></td><td style='padding: 2px; text-align: left; '><a href='https://goo.gl/forms/KgvSAgobIEee3kEz2' target='_blank'>Click here for Customer Satisfaction Survey</a> </td></tr>
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </table>
+                                </div>
+                                <table align="right" class="signatureBlock">
+                                    @*<tr>
+                                            <td>
+                                                1912 Farmer Brothers Drive, <br />
+                                                Northlake, TX 76262 <br />
+                                                (682) 549-6600<br />
+                                            </td>
+                                        </tr>*@
+                                </table>
+                                <div style="page-break-after: always;">
+                                    -
+                                </div>
+
+
+
+
+                                </div>
+                            </body>
+</html>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var size = document.querySelectorAll("#main #gridT > thead > tr >th").size(); // get total column
+        document.querySelectorAll("#main #gridT > thead > tr >th").last().remove(); // remove last column
+        document.querySelectorAll("#main #gridT > thead > tr").prepend("<th></th>"); // add one column at first for collapsible column
+        document.querySelectorAll("#main #gridT > tbody > tr").each(function (i, el) {
+            $(this).prepend(
+                document.querySelectorAll("<td></td>")
+                    .addClass("expand")
+                    .addClass("hoverEff")
+                    .attr('title', "click for show/hide")
+            );
+
+            //Now get sub table from last column and add this to the next new added row
+            var table = document.querySelectorAll("table", this).parent().html();
+            //add new row with this subtable
+            document.querySelectorAll(this).after("<tr><td></td><td style='padding:5px; margin:0px;' colspan='" + (size - 1) + "'>" + table + "</td></tr>");
+            document.querySelectorAll("table", this).parent().remove();
+            // ADD CLICK EVENT FOR MAKE COLLAPSIBLE
+            //$(".hoverEff", this).live("click", function () {
+            //    $(this).parent().closest("tr").next().slideToggle(100);
+            //    $(this).toggleClass("expand collapse");
+            //});
+        });
+
+
+
+    });
+    function ImageNotFound() {
+        $('#CustomerSignatureImage').remove();
+    }
+</script>

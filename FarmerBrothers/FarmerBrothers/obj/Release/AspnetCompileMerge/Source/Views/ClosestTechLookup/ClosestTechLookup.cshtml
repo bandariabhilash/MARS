@@ -1,0 +1,165 @@
+﻿@model FarmerBrothers.Models.ClosestTechLookupModel
+@{
+    ViewBag.Title = "ClosestTechLookup";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+<script type="text/javascript">
+    var updateUrl = null;
+
+    $(document).ready(function () {
+
+        $('#ZipCode').keypress(function () {
+            return this.value.length < 5
+        })
+        $("#btnGetClosestTech").click(function (e) {
+            if ($('#ZipCode').val() != "") {
+                var zipcode = $('#ZipCode').val();
+                $.ajax({
+                    type: 'GET',
+                    url: "@Url.Action("IsZipCodeValid", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                    data: { "ZipCode": zipcode}
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                if (response.message !="") {
+                                    AlertPopup(response.message);
+                                }
+                                else {
+                                    window.location.href = "@Url.Action("ClosestTechLookupByZipCode", "ClosestTechLookup")" + '?ZipCode='+zipcode;
+
+                                }
+                            }
+                            else
+                            {
+                                AlertPopup(response.message);
+
+                            }
+                        } );
+            }
+            else {
+                AlertPopup("|Please Enter Zip Code")
+                e.preventDefault();
+            }
+            e.preventDefault();
+        });
+
+
+
+        $("[data-popup-close='popupalert']").click(function () {
+            if (updateUrl != null) {
+                window.location.href = updateUrl;
+            }
+        });
+
+        if ($("#DispatchBranches").length)
+        {
+
+            $("#DispatchBranches").ejGrid({
+                dataSource: ej.parseJSON(@Html.Raw(JsonConvert.SerializeObject(Model.Branches, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            }))),
+                allowPaging: true,
+                pageSettings: { pageSize: 6 },
+                allowSorting:true ,
+                //allowScrolling : true,
+                //scrollSettings: { width: 900, height: 300},
+                allowTextWrap: true,
+                allowFiltering : true,
+                filterSettings : {
+                    filterType : "menu"
+                },
+                actionBegin: "DispatchBranchesActionBegin",
+                actionComplete: "DispatchBranchesActionComplete",
+                //recordClick: function (args) {
+                //    if (args.data["Type"] == "3rd Party")
+                //    {
+                //        $('#TransmitButton').removeAttr('disabled');
+                //    }
+                //},
+                columns: [
+                        { headerText: "Select", template: true, templateID: "#checkBoxColumnTemplate", textAlign: "center", width: 50,  visible: false},
+                        { field: "Distance", headerText: "Distance", width: 80},
+                        { field: "Type", headerText: "Type", width: 80 },
+                        { field: "BranchName", headerText: "Branch", width: 130},
+                        { field: "ServiceCenterId", headerText: "Tech ID", width: 100},
+                        { field: "Name", headerText: "Technician" , width: 130 },
+                        { field: "City", headerText: "City", width: 90},
+                        { field: "Phone", headerText: "Phone #", width: 110  },
+                        { field: "ReplaceTechnician", headerText: "Replace Technician", width: 180 },
+                        { field: "AlternativePhone", headerText: "Alternate #", width: 130 },
+                        { field: "isUnavailable", headerText: "isUnavailable" , visible: false }
+                ],
+                queryCellInfo: "queryCellInfo"
+            });
+
+        }
+    });
+
+    function ClosestTechsSearchClear() {
+        $('#ZipCode').val('');
+    }
+
+</script>
+@using (Html.BeginForm())
+{
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Closest Tech Lookup</h2>
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Zip Code:</span>
+                                    @Html.TextBoxFor(c => c.ZipCode, new {  @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4">
+                            <div class="col-sm-8-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button id="btnGetClosestTech" type="submit" class="btn btn-primary">Get Closest Techs</button>
+                                    <a id="btnClosestTechClear" onclick="ClosestTechsSearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class=" row customer clear-input">
+
+                    <div class="col-md-7 sm-pad-reset">
+                        <div class="row">                           
+                            <div class="col-md-12 customer-col2">
+                                <script type="text/x-jsrender" id="checkBoxColumnTemplate">
+                                    <input type="checkbox" class="branchCheckBox" data-branchid="{{:Id}}" />
+                                </script>
+                                <div >
+                                    <table id="DispatchBranches" class="display" cellspacing="0"></table>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}
+

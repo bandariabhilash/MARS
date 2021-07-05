@@ -1,0 +1,43 @@
+/* Welcome to Compass. Use this file to define print styles.
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
+/* line 6, ../sass/print.scss */
+#nav, h1, .sectionRight, .teasers, #footer {
+  display: none;
+}
+
+/* line 10, ../sass/print.scss */
+#container {
+  -webkit-box-shadow: white 0px 0px 0px;
+  -moz-box-shadow: white 0px 0px 0px;
+  box-shadow: white 0px 0px 0px;
+}
+
+/* line 14, ../sass/print.scss */
+.addToCartButton {
+  background-color: #f59630;
+}
+
+/* line 18, ../sass/print.scss */
+#plananddesign #content h4, #plananddesign #paint-color .green, #plananddesign #video-bg .green, #plananddesign #content .green, #order-summary h3, #plananddesign #agencyInfo h2, #signin h3 {
+  color: #3A801A;
+}
+
+/* line 24, ../sass/print.scss */
+#orderhistorydetails h3 {
+  color: #3A801A !important;
+  font-size: 14px !important;
+}
+/* line 28, ../sass/print.scss */
+#orderhistorydetails p {
+  font-size: 12px !important;
+}
+/* line 31, ../sass/print.scss */
+#orderhistorydetails .centerCol {
+  font-size: 12px !important;
+  width: 440px !important;
+}
+/* line 35, ../sass/print.scss */
+#orderhistorydetails #ordersummary {
+  width: 440px !important;
+}

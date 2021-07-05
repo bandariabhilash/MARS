@@ -1,0 +1,204 @@
+﻿@{
+    ViewBag.Title = "ReportsSearch";
+}
+
+@model FarmerBrothers.Models.TechAvailabilityReportsModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+<script type="text/javascript">
+    var formDirty = false;
+
+    var serverTimeZoneDiff = -7.0   // if your server is in EST time zone (UTC -5.0) (in hours)
+    var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone differents and convert it to hours;
+    ej.serverTimezoneOffset = clientSideTimeZoneDiff;
+
+    function rowDataBound(args) {
+        if (args.data.PriorityCode != null
+            && args.data.PriorityCode.indexOf('Critical') >= 0) {
+            args.row.css("backgroundColor", "Red");
+        }
+    }
+
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+        console.debug("at page lode = " + ej.serverTimeZoneOffset)
+        $('#ReportsLink').css("color", "white");
+
+        $("#DateFrom").ejDatePicker({ value: new Date($("#DateFrom").val()) });
+        $("#DateTo").ejDatePicker({ value: new Date($("#DateTo").val()) });
+
+        $('#CustomerResults').ejGrid({
+            exportToExcelAction : '@Url.Action("TechAvailabilityExcelExportReport","Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            pageSettings: { pageSize: 5 },
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "TechID", headerText: "TechID"},
+                { field: "TechName", headerText: "Tech Name" },
+                { field: "UpdateDate", headerText: "Update Date"},
+                { field: "UpdateBy", headerText: "Update By" }
+            ]
+        });
+
+        $('#TechonCallResults').ejGrid({
+            exportToExcelAction : '@Url.Action("TechOnCallAvailabilityExcelExportReport","Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            pageSettings: { pageSize: 5 },
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.OnCallSearchResults)),
+            columns: [
+                { field: "TechID", headerText: "TechID"},
+                { field: "TechName", headerText: "Tech Name" },
+                { field: "UpdateDate", headerText: "Update Date"},
+                { field: "UpdateBy", headerText: "Update By" }
+            ]
+        });
+
+
+
+        $("form").submit(function (e) {
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchTechAvailability", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#CustomerResults").ejGrid("instance");
+                    obj.dataSource(result.SearchResults);
+
+                    var obj = $("#TechonCallResults").ejGrid("instance");
+                    obj.dataSource(result.OnCallSearchResults);
+                    
+                });
+            }
+
+            e.preventDefault();
+        });
+    });
+
+    function SearchClear() {
+        $('.form-control').val('');
+        //$('#StatesDropDown').val("n/a");
+        //$('#Submitclear').val('true');
+        //$("#Operation").val(5);
+        //$('#reportSearchForm').submit();
+    }
+
+    function ValidateSearchCriteria()
+    {
+        return true;
+    }
+
+    function ClearTechAvilSearchResults() {
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearTechAvailResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#CustomerResults").ejGrid("instance");
+            obj.dataSource(result);
+        });
+        return false;
+    }
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Technician Availability Update Log Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div> 
+        </div>
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.DateFrom, new { @class = "form-control SearchPanelControl", @Id = "DateFrom" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                END Date :
+                                @Html.TextBoxFor(c => c.DateTo, new { @class = "form-control SearchPanelControl", @Id = "DateTo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearTechAvilSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Tech Schedule Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="CustomerResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Tech OnCall Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="TechonCallResults" class="display" cellspacing="0" width="100%"></table>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,302 @@
+﻿@model FarmerBrothers.Models.InvoiceSearchModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+@{
+    ViewBag.Title = "InvoiceSearch";
+}
+
+<link href="~/Content/InvoiceSearch.css" rel="stylesheet" />
+
+
+<style type="text/css">
+    .customcss.e-rowcell
+    {
+        color: blue;
+        text-decoration: underline;
+    }
+</style>
+
+<script type="text/javascript"  >
+    
+    $(document).ready(function () {
+
+        $('#invoiceLink').css("color", "white");
+
+        $('#GridInvoiceSearch').ejGrid({
+            //exportToExcelAction: '/Invoice/ExcelExportInvoiceSearchResults',
+            exportToExcelAction: "@Url.Action("ExcelExportInvoiceSearchResults", "Invoice")",
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            dataSource:  @Html.Raw(Json.Encode(Model.SearchResults)),
+            //allowMultipleExporting:true ,
+            allowPaging: true,
+            allowScrolling: true,
+            //enableResponsiveRow: true,
+            pageSettings: { pageSize: 8 },
+            allowSorting:true ,
+            allowTextWrap: true,
+            //isResponsive: true,
+            allowPaging: true,
+            //scrollSettings: { height: 200, width: "auto" },
+            columns: [
+                 {
+                     field: "InvoiceUniqueid",
+                     headerText: "Print",
+                     commands: [
+                          {
+                              type: ej.Grid.UnboundType.Edit, buttonOptions: {
+                                  contentType: "imageonly", prefixIcon: "e-pdf", click: "OnClickPDF", width: 30
+                              }
+                          },
+                     ],
+                 },
+                       { field: "InvoiceUniqueid", headerText: "Invoice Unique ID ", width: 100, visible: false },
+                       { field: "Invoiceid", headerText: "Invoice ID", cssClass: "customcss" ,width: 100 },
+                       { field: "WorkorderID", headerText: "Work Order ID", width: 120 },
+                       { field: "CustomerID", headerText: "Customer ID", width: 110, textAlign: ej.TextAlign.Left },
+                       { field: "CustomerName", headerText: "Customer Name", width: 170, textAlign: ej.TextAlign.Left },
+                       { field: "SubmitAmount", headerText: "Submit Amount", width: 130, format: "{0:C}" },
+                       { field: "InvoiceSubmitDate", headerText: "Invoice Submission Date",format: "{0:MM/dd/yyyy}", width: 100 },
+                       { field: "AuthorizedAmount", headerText: "Authorized Amount", width: 150, format: "{0:C}" },
+                       { field: "ApproveBy", headerText: "Approved By", width: 110 },
+                       { field: "DateSubmissionForPayment", headerText: "Payment Submission Date",format: "{0:MM/dd/yyyy}", width: 100 },
+                       { field: "InvoiceStatus", headerText: "Invoice Status", width: 150 },
+                       { field: "FSM", headerText: "FSM", width: 100 },
+                       { field: "BranchID", headerText: "Branch ID", width: 100 },
+                       { field: "BranchName", headerText: "Branch Name", width: 170 },
+                       { field: "BranchState", headerText: "Branch State", width: 100 },
+                       { field: "WorkorderCompletionDate", headerText: " Work Order Completion Date", format: "{0:MM/dd/yyyy}", width: 100 },
+                       { field: "PaymentDate", headerText: "Payment Date", format: "{0:MM/dd/yyyy}", width: 100 },
+                       { field: "CheckNumber", headerText: "Check Number", width: 150 },
+                       { field: "TPSPVendorID", headerText: "TPSP Vendor ID", width: 100 },
+                       { field: "TPSPVendorName", headerText: "TPSP Vendor Name", width: 150 },
+            ]
+
+        });
+
+        //For Navigating to DisplayInvoice Page..
+        $("#GridInvoiceSearch").ejGrid({
+            recordClick: function (args) {
+                if (args.columnName != "Print")
+                {
+                    //var url = "/Invoice/DisplayInvoice?InvoiceUniqueid=" + args.data["InvoiceUniqueid"]+"&WorkorderID="+args.data["WorkorderID"];
+                    var url = "@Url.Action("DisplayInvoice", "Invoice")" + "?InvoiceUniqueid=" + args.data["InvoiceUniqueid"] + "&WorkorderID=" + args.data["WorkorderID"];
+                    window.location.href = url;
+                }
+            }
+        });
+
+
+        $("form").submit(function (e)
+        {
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("Search", "Invoice")",
+                    data: frmValues
+                }).done(function (result)
+                {
+                    var gridObj = $("#GridInvoiceSearch").ejGrid("instance");
+                    gridObj.dataSource(ej.parseJSON(result));
+
+                });
+            }
+            e.preventDefault();
+        });
+
+    });
+
+    function ValidateSearchCriteria() {
+        var valid = true;
+        if (
+            $('#invoiceSearchDropDown').val() == "Please Select"
+            && $('#fsmSearchdDropdwn').val() == 0
+            && $('#Invoiceid').val() == ""
+            && $('#WorkorderID').val() == ""
+            && $('#CustomerID').val()== ""
+            && $('#CustomerName').val() == ""
+            && $('#TPSPVendorID').val() == ""
+            && $('#TPSPVendorName').val() == ""
+            && $('#BranchID').val() == ""
+            && $('#BranchName').val() == ""
+            && $('#BeforeDate').val() == ""
+            && $('#OnOrAfterDate').val() == ""
+            )
+        {
+            //$("#modalpopup").show();
+            //$("p", "#modalpopup").text("Please Select at least one Search Criteria!");
+            AlertPopup("Please Select at least one Search Criteria!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    //For Clearing the fields..
+    function SearchClear() {
+        $('.form-control').val('');
+        $('#invoiceSearchDropDown').val('Please Select');
+        $('#fsmSearchdDropdwn').val(0);
+        $('#BeforeDate').val('');
+        $('#OnOrAfterDate').val('');
+        var gridObj = $("#GridInvoiceSearch").ejGrid("instance");
+       gridObj.dataSource('');
+    }
+
+    // For Pdf Click Event navigation..
+    function OnClickPDF(args) {
+        var grid = $("#GridInvoiceSearch").ejGrid("instance");
+        var index = this.element.closest("tr").index(); //For getting clicked rowElement(tr) index
+        var varInvoiceUniqueid = grid.getCurrentViewData()[index]["InvoiceUniqueid"]; //For getting the record by passing the row index
+        var varWorkorderID = grid.getCurrentViewData()[index]["WorkorderID"];
+        var url = "@Url.Action("DisplayPdfInvoice", "Invoice")" + "?InvoiceUniqueid=" + varInvoiceUniqueid + "&WorkorderID=" + varWorkorderID;
+          window.location.href = url;
+    }
+
+    
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Invoice Search</b>
+            </div>
+        </div>
+    </section>
+    <section class="well">
+        <div class="dfh-form row">
+            <form role="form">
+
+                <div class="col-sm-12 row margin-top">
+
+                    <!--Left Column Starts-->
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">Invoice Status:</label>
+                            <div class="col-sm-7">
+                                @Html.DropDownListFor(c => c.SelectedInvoiceStatus, new SelectList(Model.InvoiceStatus), new { @Id = "invoiceSearchDropDown", @class = "form-control" })
+
+                                @*       @Html.EJ().DropDownListFor(i => i.InvoiceStatusModel, new { @id="invoicesearchdropdown"}).Datasource(Model.InvoiceStatus).DropDownListFields(Df => Df.Text("text").Value("text"))
+                                *@
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">Invoice ID:</label>
+                            <div class="col-sm-7">
+                                @*<input type="text" class="form-control">*@
+                                @Html.TextBoxFor(i => i.Invoiceid, new { @class = "form-control", @maxlength = "50", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">Work Order ID:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(i => i.WorkorderID, new { @class = "form-control", @type = "number", @maxlength = "5" })
+                            </div>
+                        </div>
+                    </div>
+                    <!--Left Column Ends-->
+
+                    <!--Center Column Starts-->
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">
+                                Customer ID:
+                            </label>
+                            <div class="col-sm-7">                                
+                                    @Html.TextBoxFor(i => i.CustomerID, new { @class = "form-control", @type = "number" })                               
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">Customer Name:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(i => i.CustomerName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">FSM:</label>
+                            <div class="col-sm-7">
+                                @Html.DropDownListFor(c => c.FSM, new SelectList(Model.FSMList, "FsmID", "FsmName"), new { @Id = "fsmSearchdDropdwn", @class = "form-control" })
+                                </div>
+                        </div>
+                    </div>
+                    <!--Center Column Ends-->
+                    <!--Right Column Starts-->
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">TPSP Vendor ID:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(i => i.TPSPVendorID, new { @class = "form-control", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">TPSP Vendor Name:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(i => i.TPSPVendorName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">TPSP Branch ID:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(i => i.BranchID, new { @class = "form-control", @type = "number" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-5 padding-none-x">TPSP Branch Name:</label>
+                            <div class="col-sm-7">
+                                @Html.TextBoxFor(i => i.BranchName, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <!--Right Column Ends-->
+
+                    <div class="col-sm-12 row">
+                        <h4 class="margin0">Invoice Submission</h4>
+                        <div class="form-group col-sm-4">
+                            <label class="col-sm-5 padding-none-x text-right">Before:</label>
+                            <div class="col-sm-7">
+                                @Html.EJ().DatePickerFor(i => i.BeforeDate)
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label class="pull-left">On or After:</label>
+                            <div class="col-sm-7">
+                                @Html.EJ().DatePickerFor(i => i.OnOrAfterDate)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-block text-right">
+                        <button type="submit" style="display: inline-block; margin-right: 5px;" class="btn btn-primary">Search</button>
+                        <a id="btnClear" href="#" style="display: inline-block; margin-bottom: 0px; margin-right: 5px;" onclick="SearchClear()" class="btn btn-p2 btn-orange">Clear</a>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+    </section>
+
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <div class="row top-info">
+                <div class="col-xs-12 col-sm-4 col-md-3">
+                    <b>Search Results</b>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12">
+
+                    <div id="GridInvoiceSearch"></div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+}
+

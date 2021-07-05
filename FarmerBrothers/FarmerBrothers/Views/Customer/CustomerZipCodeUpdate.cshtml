@@ -1,0 +1,306 @@
+﻿
+@{
+    ViewBag.Title = "CustomerZipCodeUpdate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FarmerBrothers.Models.CustomerZipcodeUpdateModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+<script type="text/javascript">
+    var updateUrl = null;
+
+    $(document).ready(function () {
+        //$("#ZipCode").hide();
+        //$("#btnUpdateZipcode").hide();
+        //$("#btnClearZipcode").hide();
+        //$("#lblZipcode").hide();
+        $("#uploadBtn").on("click", function () {
+            $(".modal").show();
+        })
+
+        $(".updateField").hide();
+        $("#btnGetCustomer").click(function (e) {
+            if ($('#AccountNumber').val() != "") {
+
+                $.ajax({
+                    type: 'GET',
+                    url: "@Url.Action("GetCustomerZipCode", "Customer")",
+                    data: { "CustomerId": $("#AccountNumber").val() }
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                if (response.message !="") {
+                                    AlertPopup(response.message);
+                                }
+                                else {
+                                    $("#ZipCode").val(response.data.ZipCode);
+                                    $("#SalesEmail").val(response.data.SalesEmail);
+                                    //$("#ZipCode").show();
+                                    //$("#btnUpdateZipcode").show();
+                                    //$("#btnClearZipcode").show();
+                                    //$("#lblZipcode").show();
+                                    $(".updateField").show();
+                                }
+                            }
+                            else
+                            {
+                                AlertPopup('|There is a problem to get Invoice Details! Please contact support!');
+
+                            }
+                        } );
+            }
+            else {
+                AlertPopup("|Please Enter Account Number")
+                e.preventDefault();
+            }
+            e.preventDefault();
+        });
+
+        $("#btnUpdateZipcode").click(function (e) {
+            if ($('#AccountNumber').val() != "" && $('#ZipCode').val() != "") {
+
+                        $.ajax( {
+                            type: 'POST',
+                            url: "@Url.Action("UpdateCustomerZipCode", "Customer")",
+                            data: { "CustomerId": $("#AccountNumber").val(), "ZipCode": $("#ZipCode").val() }
+                        } ).done( function ( response )
+                        {
+                            if ( response != null && response.success == true )
+                            {
+                                if (response.message == "") {
+                                    AlertPopup("|Successfully Updated Zipcode for the Customer!");
+                                    updateUrl = "@Url.Action("CustomerZipCodeUpdate", "Customer")"
+                                }
+                                else
+                                {
+                                    AlertPopup(response.message);
+                                }
+                            }
+                            else
+                            {
+                                AlertPopup('|There is a problem Updating Customer Zipcode! Please contact support!');
+
+                            }
+                        } );
+            }
+            else {
+                AlertPopup("|Please enter CustomerId and Zipcode")
+                e.preventDefault();
+            }
+            e.preventDefault();
+        });
+
+
+        $("#btnUpdateSalesEmail").click(function (e) {
+            if ($('#AccountNumber').val() != "") {
+
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Action("UpdateCustomerSalesEmail", "Customer")",
+                    data: { "CustomerId": $("#AccountNumber").val(), "SalesEmail": $("#SalesEmail").val() }
+                }).done(function (response) {
+                    if (response != null && response.success == true) {
+                        if (response.message == "") {
+                            AlertPopup("|Successfully Updated SalesEmail for the Customer!");
+                            updateUrl = "@Url.Action("CustomerZipCodeUpdate", "Customer")"
+                        }
+                        else {
+                            AlertPopup(response.message);
+                        }
+                    }
+                    else {
+                        AlertPopup('|There is a problem Updating Customer SalesEmail! Please contact support!');
+
+                    }
+                });
+            }
+            else {
+                AlertPopup("|Please enter CustomerId and SalesEmail")
+                e.preventDefault();
+            }
+            e.preventDefault();
+        });
+
+
+        $("[data-popup-close='popupalert']").click(function () {
+            if (updateUrl != null) {
+                window.location.href = updateUrl;
+            }
+        });
+    });
+
+    function queryCellInfo(args) {
+        if ( args.column.headerText === "Success/Error Message" )
+        {
+            if (args.data.Message == "Success") {
+                args.cell.className += " successStyle";
+            }
+            else {
+                args.cell.className += " errorStyle";
+            }
+        }
+    }
+
+    function CustomerSearchClear() {
+        $('#AccountNumber').val('');
+    }
+    function zipCodeSearchClear() {
+        $('#ZipCode').val('');
+    }
+    function salesEmailSearchClear()
+    {
+        $('#SalesEmail').val('');        
+    }
+</script>
+@using (Html.BeginForm("NewCustomerUploadFile", "Customer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customerUpload-head arrow-down tabheader">New Customers Upload</h2>
+            <div class="customerUpload-content margin-top">
+                <div class="row customerUpload clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2" style="width: 30%;">
+                            <div class="form-group right-inner-addon">
+                                @Html.TextBox("file", "", new { type = "file" }) <br />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary" id="uploadBtn">Upload</button>
+                            </div>
+                        </div>
+
+                        @if (ViewBag.isSuccess != null && !(ViewBag.isSuccess))
+                        {
+                        <div class="row customer clear-input">
+                            <div class="col-md-12  sm-pad-reset">
+                                <b>Error: </b>
+                                @Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))
+                            </div>
+                        </div>
+                        }
+                        else if (ViewBag.isSuccess != null && (ViewBag.isSuccess))
+                        {
+                        <div class="row customer clear-input">
+                            <div class="col-md-12  sm-pad-reset">
+                                <b>Success: </b>
+                                @*@Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))*@
+                                <div class="row customer clear-input">
+                                    <div class="col-md-12  sm-pad-reset">
+
+                                        @(Html.EJ().Grid<object>("CustomerFileUploadResults")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
+                                     .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .AllowPaging()
+                                    .AllowFiltering()
+                                    .AllowTextWrap(true)
+                                    .TextWrapSettings(w => { w.WrapMode(WrapMode.Both); })
+                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("CustomerId").HeaderText("Customer#").Width(100).Add();
+                                        col.Field("CustomerName").HeaderText("Customer Name").Width(100).Add();
+                                        col.Field("Address").HeaderText("Address1").Width(100).Add();
+                                        col.Field("Address2").HeaderText("Address2").Width(100).Add();
+                                        col.Field("Address3").HeaderText("Address3").Width(100).Add();
+                                        col.Field("City").HeaderText("City").Width(100).Add();
+                                        col.Field("State").HeaderText("State").Width(70).Add();
+                                        col.Field("ZipCode").HeaderText("Postal Code").Width(80).Add();
+                                        col.Field("PhoneNumber").HeaderText("Phone").Width(100).Add();
+                                        col.Field("Route").HeaderText("Route").Width(60).Add();
+                                        col.Field("Branch").HeaderText("Branch").Width(60).Add();
+                                        col.Field("Message").HeaderText("Success/Error Message").Width(200).Add();
+                                    })
+                                     .ClientSideEvents(eve =>
+                                        {
+                                            eve.QueryCellInfo("queryCellInfo");
+                                        }))                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+    @using (Html.BeginForm())
+    {
+        <section class="block margin-top">
+            <div class="container-fluid">
+                <h2 class="customer-head arrow-down tabheader">Update Customer Details</h2>
+                <div class="customer-content margin-top">
+                    <div class="row customer clear-input">
+                        <div class="col-md-12  sm-pad-reset">
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <span class="required">Account Number:</span>
+                                        @Html.TextBoxFor(c => c.AccountNumber, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <div class="col-sm-6-o">
+                                    <div class="col-md-12" style="margin-top: 19px;">
+                                        <button id="btnGetCustomer" type="submit" class="btn btn-primary">Get Customer</button>
+                                        <a id="btnCustomerClear" onclick="CustomerSearchClear()" class="btn btn-orange">Clear</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-12  sm-pad-reset updateField">
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <span id="lblZipcode" class="required">ZipCode:</span>
+                                        @Html.TextBoxFor(c => c.ZipCode, new { Value = "", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="col-sm-6-o">
+                                    <div class="col-md-12" style="margin-top: 19px;">
+                                        <button id="btnUpdateZipcode" type="submit" class="btn btn-primary">Update ZipCode</button>
+                                        <a id="btnClearZipcode" onclick="zipCodeSearchClear()" class="btn btn-orange">Clear</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12  sm-pad-reset updateField">
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <span id="lblSalesEmail" class="required">SalesEmail:</span>
+                                        @Html.TextBoxFor(c => c.SalesEmail, new { Value = "", @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="col-sm-6-o">
+                                    <div class="col-md-12" style="margin-top: 19px;">
+                                        <button id="btnUpdateSalesEmail" type="submit" class="btn btn-primary">Update SalesEmail</button>
+                                        <a id="btnClearSalesEmail" onclick="salesEmailSearchClear()" class="btn btn-orange">Clear</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+}
+

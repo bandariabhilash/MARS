@@ -1,0 +1,251 @@
+﻿@{
+    ViewBag.Title = "Project Number";
+}
+<style>
+    table, th, td {
+        border: 0px solid white;
+    }
+
+    table {
+        border-collapse: collapse;
+    }
+
+    td {
+        padding-top: 0.75em;
+        padding-bottom: 0em;
+    }
+
+    .e-uploadclosebtn {
+        visibility: hidden;
+    }
+</style>
+@model FarmerBrothers.Models.ProjectNumberModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using (Html.BeginForm("UploadWorkOrder", "Project", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Project Number</b>
+            </div>
+        </div>
+    </section>
+    <section class="well">
+        @if (TempData["notice"] != null)
+        {
+            var Message = TempData["notice"];
+            if (Message.ToString() != "Successfully Uploaded.")
+            {
+                <p style="color:red">@TempData["notice"]</p>
+            }
+            else
+            {
+                <p>@TempData["notice"]</p>
+            }
+        }
+        <div>
+            <label style="width:120px;">Project ID:</label>
+            <input type="text" pattern="\d*" class="numbersOnly" id="txtProjectNumberid" />
+            <button type="button" class="btn btn-primary" id="btnSearch">Search</button>
+            <label style="width:250px;"></label>
+            <button type="button" class="btn btn-primary" style="background-color:green" id="btnCreate">Create Project</button>
+            <div></div>
+
+            <br /><br />
+            <div class="form-group" id="dvProject"></div>
+            <div id="dvCreateworkOrders">
+                <br /><br />
+                <br /><br />
+                <br /><br />
+            </div>
+            <table>
+                <tr>
+                    <td style="vertical-align:top"><label style="width:220px;">Create Work Order(s):</label></td>
+                    <td>
+                        @Html.EJ().Uploadbox("UploadDefault").SaveUrl(@Url.Action("SaveDefault")).RemoveUrl(@Url.Action("RemoveDefault")).ClientSideEvents(e => e.Complete("complete"))
+                        @*<td><input type="file" id="FileUpload" name="FileUpload" />
+                            </td>
+                            <td><button type="submit" class="btn btn-primary" style="margin-left:20px;" name="Command" value="UploadWorkOrder">Upload</button></td>*@
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align:top"><label style="width:220px;">Create ERF(s):</label></td>
+                    <td>
+                        @Html.EJ().Uploadbox("UploadFile").SaveUrl(@Url.Action("ErfUpload")).RemoveUrl(@Url.Action("RemoveDefault")).ClientSideEvents(e => e.Complete("complete"))
+
+                    </td>
+                    @*<td><button type="submit" class="btn btn-primary" style="margin-left:20px;" name="Command" value="UploadERF">Upload</button></td>*@
+
+
+
+                </tr>
+            </table>
+
+
+            <div>
+
+                @if (ViewBag.dataSource != null)
+                {
+                    <label> Uploaded Data:</label>
+
+                    <div id="FlatGrid">
+
+                        @(Html.EJ().Grid<object>("FlatGrid")
+                     .Datasource((System.Data.DataTable)ViewBag.dataSource)
+                     .AllowPaging().AllowScrolling()
+                     .AllowResizeToFit()
+                  .PageSettings(Page => { Page.EnableQueryString(true); })
+                  .ToolbarSettings(toolBar => toolBar.ShowToolbar().ToolbarItems(items =>
+                  {
+                      items.AddTool(ToolBarItems.ExcelExport);
+                  })).Mappers(map => map.ExportToExcelAction("ExcelAction")
+
+    )
+
+
+                         .ClientSideEvents(eve => eve.Create("create").QueryCellInfo("queryCellInfo"))
+
+                        )
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+<script type="text/javascript">
+
+
+    var formDirty = false;
+    $(function () {
+        $(window).on("beforeunload", function () {
+            if (formDirty == true) {
+                return "Changes made to Search Fields not Saved!";
+            }
+
+        });
+
+
+
+
+
+        $('#UploadWorkOrder').submit(function (event) {
+            debugger;
+            if (formDirty == true) {
+                e.preventDefault(); //prevent default form submit
+                $.confirm({
+                    title: "Warning",
+                    text: "Changes have been made to project fields. Do you wish to save these changes?",
+                    confirmButton: "Save",
+                    cancelButton: "No",
+                    backgroundDismiss: false,
+                    confirm: function (button) {
+                        $('#UploadWorkOrder').unbind('submit');
+                        $("#btnSave").trigger("click");
+                        $('#UploadWorkOrder').submit();
+                    },
+                    cancel: function (button) {
+                        $('#UploadWorkOrder').unbind('submit');
+                        $('#UploadWorkOrder').submit();
+                    }
+                });
+            }
+        });
+        $('#AdministratorLink').css("color", "white");
+        jQuery('.numbersOnly').keyup(function () {
+            this.value = this.value.replace(/[^0-9\.]/g, '');
+        });
+        $("#btnSearch").click(function () {
+            if (formDirty == true) {
+                $.confirm({
+                    title: "Warning",
+                    text: "Changes have been made to project fields. Do you wish to save these changes?",
+                    confirmButton: "Save",
+                    cancelButton: "No",
+                    backgroundDismiss: false,
+                    confirm: function (button) {
+                        $("#btnSave").trigger("click");
+                    },
+                    cancel: function (button) {
+                        formDirty = false;
+                        $('#btnSearch').trigger("click");
+                    }
+                });
+            }
+            else {
+
+                if ($("#txtProjectNumberid").val().trim().length == 0) {
+                    alert("Please enter Project ID");
+                    $("#txtProjectNumberid").focus();
+                }
+                else {
+                    var myUrl = '@Url.Action("EditProject", "Project")' + "?id=" + $("#txtProjectNumberid").val();
+                    $.post(myUrl, function (data) {
+                        $("#dvProject").html(data);
+                        $("#dvCreateworkOrders").hide();
+                        if ($("#dvProject div.test").length == 0) {
+                            $("#dvCreateworkOrders").show();
+                            alert("The project number that you entered does not exist. Please check the project number and try again.");
+                            $("#txtProjectNumberid").focus();
+                            projectFound = 0;
+                        }
+                    });
+                }
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
+    $("#btnCreate").click(function () {
+        if (formDirty == true) {
+            $.confirm({
+                title: "Warning",
+                text: "Changes have been made to project fields. Do you wish to save these changes?",
+                confirmButton: "Save",
+                cancelButton: "No",
+                backgroundDismiss: false,
+                confirm: function (button) {
+                    $("#btnSave").trigger("click");
+                    $('#myModal').modal('show');
+                },
+                cancel: function (button) {
+                    formDirty = false;
+                    $('#myModal').modal('show');
+                }
+            });
+        }
+        else {
+            $('#myModal').modal('show');
+        }
+    });
+
+    function complete(args) {
+        var url = "@Url.Action("Project", "Project")";
+        window.location.href = url;
+    }
+
+</script>
+
+<script>
+
+
+    function queryCellInfo(args) {
+
+        if (args.column.field == "UploadStatus" && args.data.UploadStatus == "Uploaded Sucessfully") {
+            args.cell.style.color = "green";  /*custom css column based */
+        }
+        else if (args.column.field == "UploadStatus") {
+            args.cell.style.color = "red";
+        }
+    }
+
+</script>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @Html.Action("CreateProject", "Project", Model)
+        </div>
+    </div>
+</div>

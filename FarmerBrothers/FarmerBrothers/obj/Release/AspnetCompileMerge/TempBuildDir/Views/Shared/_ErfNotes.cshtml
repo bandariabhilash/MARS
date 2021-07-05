@@ -1,0 +1,699 @@
+﻿@model FarmerBrothers.Models.NotesModel
+
+@using System.Linq;
+@using LinqKit;
+@using FarmerBrothers.Models;
+@using System.Text.RegularExpressions;
+<script type="text/javascript">
+
+    var erfOperation = false;
+    var trnsmitOperation = false;
+    var DSMOperation = false;
+    var ESMOperation = false;
+    var RSMOperation = false;
+    var CCMOperation = false;
+    var MikeOperation = false;
+    var DarryOperation = false;
+    var OtherOperation = false;
+    var controllerName = '@HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString()';
+
+    var newNotesArray = [];
+    var notesHistoryArray = [];
+    //alert("1");
+    @foreach (var n in Model.NotesHistory.Select(n => n.Notes).ToArray())
+    {
+        string note = n.Replace("\n", "&#10;").Replace("\\n", "&#10;");
+        note = note.Replace("\r", "&#13;").Replace("\\r", "&#13;");
+        note = note.Replace("\t", " ").Replace("\\t", " ");
+
+        string removableChars = Regex.Escape(@"\\");
+        string pattern = "[" + removableChars + "]";
+        note = Regex.Replace(note, pattern, "");
+
+        @:notesHistoryArray.push("@note");
+    }
+
+    var dispatchNotesHistoryArray = [];
+    @if (Model.DispatchNotesHistory != null)
+    {
+        foreach (var n in Model.DispatchNotesHistory.Select(n => n.Notes).ToArray())
+        {
+            string note = n.Replace("\n", "&#10;").Replace("\\n", "&#10;");
+            note = note.Replace("\r", "&#13;").Replace("\\r", "&#13;");
+            note = note.Replace("\t", " ").Replace("\\t", " ");
+
+            string removableChars = Regex.Escape(@"\\");
+            string pattern = "[" + removableChars + "]";
+            note = Regex.Replace(note, pattern, "");
+
+        @:dispatchNotesHistoryArray.push("@note");
+            }
+    }
+
+
+    var recordHistoryArray = [];
+    @*@foreach (var n in Model.RecordHistory.Select(n => n.Notes).ToArray())
+    {
+        string note = n.Replace("\n", "&#10;");
+        note = note.Replace("\r", "&#13;");
+        @:recordHistoryArray.push("@note");
+                                                                                }*@
+
+    //alert("2");
+    var CustomerNotesResultsArray = [];
+    @foreach (var n in Model.CustomerNotesResults.Select(n => n.Notes).ToArray())
+    {
+        string note = n.Replace("\n", "&#10;");
+        note = note.Replace("\r", "&#13;");
+        @:CustomerNotesResultsArray.push("@note");
+                            }
+    //alert("3");
+    var userName;
+    @if (Session["Username"] != null)
+    {
+        @:userName = '@Session["Username"].ToString()';
+                            }
+
+    var notes;
+    var records;
+    var customerNotes;
+    var dispatchNotes;
+
+    $(document).ready(function () {
+        //alert("4");
+        notes = notesHistoryArray.join("\r\n");
+        notes = notes.split("&amp;#13;").join("\r");
+        notes = notes.split("&amp;#10;").join("\n");
+        notes = notes.replace('\t', ' ').replace('\r', ' ').replace('\\', ' ')
+        
+        dispatchNotes = dispatchNotesHistoryArray.join("\r\n");
+        dispatchNotes = dispatchNotes.split("&amp;#13;").join("\r");
+        dispatchNotes = dispatchNotes.split("&amp;#10;").join("\n");
+        dispatchNotes = dispatchNotes.replace('\t', ' ').replace('\r', ' ').replace('\\', ' ')
+
+        //alert("5");
+        records = recordHistoryArray.join("\r\n");
+        records = records.split("&amp;#13;").join("\r");
+        records = records.split("&amp;#10;").join("\n");
+        records = records.replace('\t', ' ').replace('\r', ' ').replace('\\', ' ')
+        //alert("6");
+        customerNotes = CustomerNotesResultsArray.join("\r\n");
+        customerNotes = customerNotes.split("&amp;#13;").join("\r");
+        customerNotes = customerNotes.split("&amp;#10;").join("\n");
+        customerNotes = customerNotes.replace('\t', ' ').replace('\r', ' ').replace('\\', ' ')
+
+        notes = notes.replace(/&amp;/g, "&");
+        dispatchNotes = dispatchNotes.replace(/&amp;/g, "&");
+        records = records.replace(/&amp;/g, "&");
+        customerNotes = customerNotes.replace(/&amp;/g, "&");
+
+        notes = notes.replace(/&quot;/g, "\"");
+        dispatchNotes = dispatchNotes.replace(/&quot;/g, "\"");
+        records = records.replace(/&quot;/g, "\"");
+        customerNotes = customerNotes.replace(/&quot;/g, "\"");
+
+        notes = notes.replace(/&#39;/g, "\'");
+        dispatchNotes = dispatchNotes.replace(/&#39;/g, "\'");
+        records = records.replace(/&#39;/g, "\'");
+        customerNotes = customerNotes.replace(/&#39;/g, "\'");
+
+        //alert("7");
+        if (notes!=null) {
+            $('#NotesHistory').text(notes);
+        }
+        if (dispatchNotes!=null) {
+            $('#DispatchNotesHistory').text(dispatchNotes);
+        }
+        //$('#NotesHistory').text(notes);
+        $('#RecordHistory').text(records);
+        $('#CustomerNotesHistory').text(customerNotes);
+        //alert("8");
+        $("form").submit(function (event) {
+            var erfId= $('#ErfID').val();
+            //alert(trnsmitOperation);
+            if (erfOperation == true) {
+                if ( $.trim($('#NotesText').val()) == '' && trnsmitOperation == false && DSMOperation == false
+                    && ESMOperation == false && RSMOperation == false && CCMOperation == false && DarryOperation == false && MikeOperation == false && OtherOperation == false)
+                {
+                    AlertPopup("|Notes text cannot be blank!");
+                }
+                else
+                {
+                    //if (controllerName != "Workorder" && erfId.length != 0)
+                    if (controllerName.toLowerCase() != "workorder"  && controllerName != "ERF"&& controllerName!= "NonServiceEvent" && controllerName != "ERFNew")
+                    {
+                        //alert("1");
+                        var input = $("<input id='UpdateNotesHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "action:UpdateNotes").val("");
+                        $(this).append($(input));
+
+                        var $this = $(this);
+                        var frmValues = $this.serialize();
+                        $.ajax({
+                            type: $this.attr('method'),
+                            url: "@Url.Action("UpdateNotes", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                            data: frmValues
+                        }).done(function (jsonResult) {
+                            if (jsonResult.success == true) {
+                                $('#NotesHistory').empty();
+
+                                for (var i = 0 ; i < jsonResult.data.length; i++) {
+                                    $('#NotesHistory').append(jsonResult.data[i].Notes + '\n');
+                                }
+                                AlertPopup("|Notes added successfully!");
+                            }
+                            else {
+                                AlertPopup("|There is a problem in saving Notes! Please contact administrator.");
+                            }
+
+                            $("#UpdateNotesHidden").remove();
+                        });
+                        $('[data-popup-close]').trigger("click");
+                    }
+                    else
+                    {
+                        //alert("else")
+                        $('[data-popup-close]').trigger("click");
+
+                        var fullDate = new Date();
+                        var twoDigitMonth = ((fullDate.getMonth().toString().length+1) > 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
+                        var currentDate = twoDigitMonth + "/" + fullDate.getDate() + "/" + fullDate.getFullYear() + " " + fullDate.getHours() + ":" + fullDate.getMinutes() + ":" + fullDate.getSeconds();
+                        var newNotes =null;
+                        if (typeof(userName) == 'undefined')
+                        {
+                            if ($.trim($('#NotesText').val()) != '') {
+                                newNotes = "[] - " + currentDate + " - " + $('#NotesText').val();
+                            }
+                            if (trnsmitOperation == true || DSMOperation == true || ESMOperation == true || RSMOperation == true || CCMOperation == true
+                                || DarryOperation == true || MikeOperation == true || OtherOperation == true) {
+
+                                if ($('#NotesText1').val()!='') {
+                                    newNotes = "[] - " + currentDate + " - " + $('#NotesText1').val();
+                                }
+
+                            }
+
+                        }
+                        else
+                        {
+                            if ($.trim($('#NotesText').val()) != '') {
+                                newNotes = "[" + userName + "] - " + currentDate + " - " + $('#NotesText').val();
+                            }
+
+                            if (trnsmitOperation == true || DSMOperation == true || ESMOperation == true || RSMOperation == true || CCMOperation == true
+                                || DarryOperation == true || MikeOperation == true || OtherOperation == true) {
+                                if ($('#NotesText1').val()!='') {
+                                    newNotes = "[" + userName + "] - " + currentDate + " - " + $('#NotesText1').val();
+                                }
+
+                            }
+
+
+                        }
+                        if(newNotes != null)
+                        {
+                            newNotes.replace('\n', ' ').replace('\t', ' ').replace('\r', ' ').replace('\\', ' ')
+                        }
+
+                        if ($.trim($('#NotesText').val()) != '') {
+
+                            newNotesArray.push($('#NotesText').val());
+                            $('#NotesHistory').text(newNotes + '\n' + $('#NotesHistory').val());
+                        }
+
+                        if (trnsmitOperation == true || DSMOperation == true || ESMOperation == true || RSMOperation == true || CCMOperation == true
+                            || DarryOperation == true || MikeOperation == true || OtherOperation == true) {
+                            if ($('#NotesText1').val()!='') {
+                                newNotesArray.push($('#NotesText1').val());
+                            }
+                            if (newNotesArray.length !=null && newNotesArray.length >0) {
+                                $('#NotesHistory').text(newNotes + '\n' + $('#NotesHistory').val());
+                            }
+                            $('#NotesText').val('');
+                            $('#NotesText1').val('');
+
+                            if (trnsmitOperation == true) {
+                                $('#TransmitEscalationButton').trigger('click');
+                            }
+
+                            if (DSMOperation == true) {
+                                $('#DSMhidenButton').trigger('click');
+                            }
+
+                            if (ESMOperation == true) {
+                                $('#ESMhidenButton').trigger('click');
+                            }
+
+                            if (RSMOperation == true) {
+                                $('#RSMhidenButton').trigger('click');
+                            }
+
+                            if (CCMOperation == true) {
+                                $('#CCMhidenButton').trigger('click');
+                            }
+
+                            if (DarryOperation == true) {
+                                $('#DarryhidenButton').trigger('click');
+                            }
+
+                            if (MikeOperation == true) {
+                                $('#MikehidenButton').trigger('click');
+                            }
+
+                            if (OtherOperation == true) {
+                                $('#OtherhidenButton').trigger('click');
+                            }
+
+                            trnsmitOperation=false;
+                            DSMOperation = false;
+                            ESMOperation = false;
+                            RSMOperation = false;
+                            CCMOperation = false;
+                            DarryOperation =false;
+                            MikeOperation =false;
+                            OtherOperation = false;
+                        }
+
+                    }
+                }
+
+                $('#NotesText').val('');
+                $('#NotesText1').val('');
+                erfOperation = false;
+            }
+            event.preventDefault();
+        });
+
+        if ($('.FollowUpRequestDropDownList').length > 0)
+        {
+            $('.FollowUpRequestDropDownList').ejDropDownList({
+                dataSource : @Html.Raw(Json.Encode(Model.FollowUpRequestList)),
+                fields: { value : "FBStatusID", text : "FBStatus" },
+                showRoundedCorner: true,
+                width: 300,
+                watermarkText: "Please Select"
+            }).data("ejDropDownList").selectItemByValue("@Model.FollowUpRequestID");
+        }
+
+        if ($('.specificTechFields').length > 0)
+        {
+            $('.specificTechFields').ejDropDownList({
+                dataSource : @Html.Raw(Json.Encode(Model.Technicianlist)),
+                fields: { value: "TechID", text: "PreferredProvider" },
+                showRoundedCorner: true,
+                width: 300,
+                watermarkText: "Please Select"
+            }).data("ejDropDownList").selectItemByValue("@Model.TechID");
+        }
+        onChangeIsSpecificTech();
+    });
+
+    var result = {TransmitButton: 'TransmitButton',DSMButton: 'DSMButton',ESMButton: 'ESMButton',DarryButton: 'DarryButton',MikeButton: 'MikeButton' ,OtherButton:'OtherButton',CCMButton: 'CCMButton',RSMButton: 'RSMButton'};
+
+    function SetErfNotesSaveOperation(id) {
+        if (id =='TransmitButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#TransmitEscalationButton').trigger('click');
+            //    trnsmitOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        trnsmitOperation = true;
+            //    }
+            //}
+
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                trnsmitOperation = true;
+            }
+        }
+        if (id =='DSMButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#DSMhidenButton').trigger('click');
+            //    DSMOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        DSMOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                DSMOperation = true;
+            }
+        }
+
+        if (id =='ESMButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#ESMhidenButton').trigger('click');
+            //    ESMOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        ESMOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                ESMOperation = true;
+            }
+        }
+
+        if (id =='RSMButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#DSMhidenButton').trigger('click');
+            //    DSMOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        DSMOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                RSMOperation = true;
+            }
+        }
+
+        if (id =='CCMButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#DSMhidenButton').trigger('click');
+            //    DSMOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        DSMOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                CCMOperation = true;
+            }
+        }
+
+        if (id =='DarryButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#DarryhidenButton').trigger('click');
+            //    DarryOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        DarryOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                DarryOperation = true;
+            }
+        }
+        if (id =='MikeButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#MikehidenButton').trigger('click');
+            //    MikeOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        MikeOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                MikeOperation = true;
+            }
+        }
+
+        if (id =='OtherButton') {
+            //if (newNotesArray.length !=null && newNotesArray.length >0) {
+            //    $('#OtherhidenButton').trigger('click');
+            //    OtherOperation = false;
+            //}else{
+            //    $('[data-popup="popup-10"]').show();
+            //    if ($.trim($('#NotesText1').val()) == '') {
+            //        OtherOperation = true;
+            //    }
+            //}
+            $('[data-popup="popup-10"]').show();
+            if ($.trim($('#NotesText1').val()) == '') {
+                OtherOperation = true;
+            }
+        }
+
+
+        erfOperation = true;
+    }
+
+    function onChangeIsSpecificTech() {
+        if ($(".IsSpecificTechnicianRaidoButton").is(':checked') == true) {
+            $("#SpecificTechniciansSection").show();
+        }
+        else {
+            $("#SpecificTechniciansSection").hide();
+        }
+    }
+</script>
+
+@Html.HiddenFor(n => n.WorkOrderID)
+@Html.HiddenFor(n => n.ErfID)
+@*@Html.HiddenFor(n => n.FeastMovementID)*@
+@Html.HiddenFor(n => n.CustomerZipCode)
+@{ 
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                               ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                               (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+
+
+<div class="notes-details-content margin-top">
+    @if (string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "Workorder", true) == 0)
+    {
+        if (Model.WorkOrderStatus == "Closed")
+        {
+            <div class="col-md-12 customer-col2">
+                <div class="col-sm-6-o" style="pointer-events: none;">
+                    <span class="col-md-2">Follow Up Requested:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.TextBoxFor(c => c.FollowUpRequestID, new { @class = "form-control FollowUpRequestDropDownList" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else if (!string.IsNullOrEmpty(Model.WorkOrderStatus) && Model.WorkOrderStatus != "Hold for AB")
+        {
+            <div class="col-md-12 customer-col2">
+                <div class="col-sm-6-o">
+                    <span class="col-md-2">Follow Up Requested:</span>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            @Html.TextBoxFor(c => c.FollowUpRequestID, new { @class = "form-control FollowUpRequestDropDownList" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+    @if (WorkorderManagementModel.isTechSecurity(Model))
+    {
+        <div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
+            <div class="col-sm-6-o">
+                <div class="col-md-6">
+                    @Html.CheckBoxFor(m => m.IsSpecificTechnician, new { @onchange = "onChangeIsSpecificTech()", @class = "IsSpecificTechnicianRaidoButton" }) FB Employee Requesting Specific Technician
+                </div>
+            </div>
+        </div>
+
+        <div id="SpecificTechniciansSection" class="col-md-12 customer-col2">
+            <div class="col-sm-6-o">
+                <span class="col-md-1">Technician:</span>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        @Html.DropDownListFor(m => m.PreferredProvider, new SelectList(Model.Technicianlist, "TechID", "PreferredProvider"), new { Value = "", @Id = "SpecificTechDropDown", @class = "form-control specificTechFields" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+
+    @{
+        if (!Model.isFromAutoGenerateWorkOrder)
+        {
+            if (UserPrivilege["Work Order"] == "Edit-Only" || UserPrivilege["Work Order"] == "Full" || UserPrivilege["ERF"] == "Edit-Only" || UserPrivilege["ERF"] == "Full" || UserPrivilege["Customer"] == "Full" ||
+                UserPrivilege["ERFNew"] == "Edit-Only" || UserPrivilege["ERFNew"] == "Full")
+            {
+                if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Read-Only"))
+                {
+                    <div class="col-md-12 customer-col2" style="float:left;margin-top:15px">
+                        <div class="col-sm-6-o">
+                            @if (Model.WorkOrderStatus == null)
+                            {
+                                <div class="col-md-2">
+                                    @Html.CheckBoxFor(m => m.IsAutoDispatched, new { @class = "IsAutoDispatchedButton" }) Action by Dispatch
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-2">
+                                </div>
+                            }
+                            <div class="col-md-8">
+                                <a href="#" data-popup-open="popup" class="btn btn-primary btn-green addtonotes" style="float: right;" id="AddNotesButton">Add to Notes</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only" && UserPrivilege["ERFNew"] != "Full"))
+                {
+                    <div class="col-md-12 customer-col2" style="float:left;margin-top:15px">
+                        <div class="col-sm-6-o">
+                            @if (Model.WorkOrderStatus == null)
+                            {
+                                <div class="col-md-2">
+                                    @Html.CheckBoxFor(m => m.IsAutoDispatched, new { @class = "IsAutoDispatchedButton" }) Action by Dispatch
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-2">
+                                </div>
+                            }
+                            <div class="col-md-8">
+                                <a href="#" data-popup-open="popup" class="btn btn-primary btn-green addtonotes" style="float: right;" id="AddNotesButton">Add to Notes</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-12 customer-col2" style="float:left;margin-top:15px">
+                        <div class="col-sm-6-o">
+                            @if (Model.WorkOrderStatus == null)
+                            {
+                                if ((UserPrivilege.ContainsKey("ERFNew") && UserPrivilege["ERFNew"] == "Full"))
+                                {
+                                    <div class="col-md-2">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-2">
+                                        @Html.CheckBoxFor(m => m.IsAutoDispatched, new { @class = "IsAutoDispatchedButton" }) Action by Dispatch
+                                    </div> 
+                                }
+                            }
+                            else
+                            {
+                                <div class="col-md-2">
+                                </div>
+                            }
+                            <div class="col-md-8">
+                                <a href="#" data-popup-open="popup" class="btn btn-primary btn-green addtonotes" style="float: right;" id="AddNotesButton">Add to Notes</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            }
+        }
+        else
+        {
+            <div class="col-md-12 customer-col2">
+                <div class="col-sm-6-o">
+                    <div class="col-md-10">
+                        <a href="#" data-popup-open="popup" class="btn btn-primary btn-green addtonotes" style="float: right;" id="AddNotesButton" onclick="SetNotesSaveOperation();">Add to Notes</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+
+    <div class="col-md-12 customer-col2">
+        <div class="col-sm-6-o">
+            <span class="col-md-2">Notes:</span>
+
+            <div class="col-md-8">
+                <div class="form-group">
+                    @*@Html.ListBoxFor(n => n.Notes, new SelectList(Model.NotesHistory, "NotesID", "Notes"), new { @class = "form-control", @size = 10, @style = "overflow-x:scroll;", @Id = "Notes" })*@
+                    @Html.TextArea("NotesHistory", "", new { @class = "form-control", @rows = 10, @style = "overflow-x:scroll;", @readonly = "true", @Id = "NotesHistory" })                   
+
+                </div>
+            </div>
+        </div>
+    </div>
+    @{
+
+    // TODO: Uncomment when DispatchNotes need to be deployed
+       /* if (UserPrivilege["DispatchNotes"] != "No-Permission")
+        {
+            <div class="col-md-12 customer-col2">
+                <div class="col-sm-6-o">
+                    <span class="col-md-2">Dispatch Notes:</span>
+                    <div class="col-md-8">
+                        <div class="form-group">                            
+                            @Html.TextArea("DispatchNotesHistory", "", new { @class = "form-control", @rows = 10, @style = "overflow-x:scroll;", @readonly = "true", @Id = "DispatchNotesHistory" })
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }*/
+        if (!Model.isFromAutoGenerateWorkOrder)
+        {
+            <div class="col-md-12 customer-col2" style="display:none;">
+                <div class="col-sm-6-o">
+                    <span class="col-md-2">System Notes:</span>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            @*@Html.ListBoxFor(n => n.Notes, new SelectList(Model.RecordHistory, "NotesID", "Notes"), new { @class = "form-control", @size = 10, @style="overflow-x:scroll;", @Id="RecordHistory" })*@
+                            @Html.TextArea("RecordHistory", "", new { @class = "form-control", @rows = 10, @style = "overflow-x:scroll;", @readonly = "true", @Id = "RecordHistory" })
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            if (Model.CustomerNotesResults.Count > 0)
+            {
+            <div class="col-md-12 customer-col2">
+                <div class="col-sm-6-o">
+                    <span class="col-md-2">Customer Notes:</span>
+                    <div class="col-md-8">
+                        <div class="form-group">
+                            @Html.TextArea("CustomerNotesResults", "", new { @class = "form-control", @rows = 10, @style = "overflow-x:scroll;", @readonly = "true", @Id = "CustomerNotesHistory" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+            }
+        }
+        }
+
+</div>
+
+
+
+        }
+
+
+
+<div class="popup" data-popup="popup">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                <td><h4>Add to Notes</h4></td>
+            </tr>
+            <tr>
+                <td>@Html.TextAreaFor(n => n.Notes, new { @rows = "5", @class = "form-control", @Style = "width:500px", @id = "NotesText" })</td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="submit" class="btn btn-primary enableonclose" onclick="SetErfNotesSaveOperation();" style="margin-top:5px;" name="action:UpdateNotes">Add</button>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin-top:5px;">Cancel</button>
+                </td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup" href="#">x</a>
+    </div>
+</div>

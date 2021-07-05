@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>LumenWorksCsvReader</id>
+    <version>3.9.1</version>
+    <title>LumenWorks CSV Reader</title>
+    <authors>Sébastien Lorion, Paul Hatcher</authors>
+    <owners>Sébastien Lorion, Paul Hatcher</owners>
+    <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>https://github.com/phatcher/CsvReader</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An extended version of LumenWorks.Frameworks.IO</description>
+    <summary />
+    <releaseNotes>Added max field length for quoted fields (@criteo)
+Strengthen Debug.Assert condition in GetSchemaWithoutHeaders (@joshgo)
+Added test for quoted fields not throwing an exception (@joshgo)
+Added HasHeader function to allow checking if a header existing without throwing exception (@kiran94)</releaseNotes>
+    <copyright>Copyright © 2005 Sébastien Lorion, 2014 Paul Hatcher</copyright>
+    <tags>CSV</tags>
+  </metadata>
+</package>

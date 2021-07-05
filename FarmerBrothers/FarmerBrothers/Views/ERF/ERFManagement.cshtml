@@ -1,0 +1,1017 @@
+﻿@model FarmerBrothers.Models.ErfModel
+
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+<script src="~/Content/jquery.validate.min.js"></script>
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+<script type="text/javascript">
+    var saveErfOperation = false;
+    var updateUrl = null;
+
+    $( document ).ready( function ()
+    {
+       
+        //if ( $( "#ErfAssetsModel_Erf_Phone" ).length )
+        //{
+        //    $( '#ErfAssetsModel_Erf_Phone' ).keypress( function ()
+        //    {
+        //        return this.value.length < 10
+        //    } )
+        //}
+
+        if ( $( "#ERFFormDate" ).val() != null && $( "#ERFFormDate" ).val() != "" )
+        {
+            $( "#ERFFormDate" ).ejDatePicker( { value: new Date( $( "#ERFFormDate" ).val() ), dateFormat: "MM/dd/yyyy", minDate: new Date() } );
+        }
+        else
+        {
+            $( "#ERFFormDate" ).ejDatePicker( { minDate: new Date(), dateFormat: "MM/dd/yyyy" } );
+        }
+
+
+        if ( $( "#ERFDateRecived" ).val() != null && $( "#ERFDateRecived" ).val() != "" )
+        {
+            $( "#ERFDateRecived" ).ejDatePicker( { value: new Date( $( "#ERFDateRecived" ).val() ), dateFormat: "MM/dd/yyyy"} );
+        }
+        else
+        {
+            $( "#ERFDateRecived" ).ejDatePicker( { dateFormat: "MM/dd/yyyy" } );
+        }
+
+        if ( $( "#ERFDateProcessed" ).val() != null && $( "#ERFDateProcessed" ).val() != "" )
+        {
+            $( "#ERFDateProcessed" ).ejDatePicker( { value: new Date( $( "#ERFDateProcessed" ).val() ), dateFormat: "MM/dd/yyyy", minDate: new Date() } );
+        }
+        else
+        {
+            $( "#ERFDateProcessed" ).ejDatePicker( { minDate: new Date(), dateFormat: "MM/dd/yyyy" } );
+        }
+
+        if ( $( "#ERFRequestDate" ).val() != null && $( "#ERFRequestDate" ).val() != "" )
+        {
+            $( "#ERFRequestDate" ).ejDatePicker( { value: new Date( $( "#ERFRequestDate" ).val() ), dateFormat: "MM/dd/yyyy", minDate: new Date() } );
+        }
+        else
+        {
+            $( "#ERFRequestDate" ).ejDatePicker( { minDate: new Date(), dateFormat: "MM/dd/yyyy" } );
+        }
+
+
+        $( "#ErfLink" ).css( "color", "white" );
+
+        $( "form" ).submit( function ( event )
+        {
+
+            //if ( $( "#ErfAssetsModel_Erf_Phone" ).length )
+            //{
+             
+            //    if ( !( ( $( '#ErfAssetsModel_Erf_Phone' ).val() != '' && ValidatePhoneNumber( $( '#ErfAssetsModel_Erf_Phone' ).val() ) == true ) ||
+            //           $( '#ErfAssetsModel_Erf_Phone' ).val() == '' ) )
+            //    {
+            //        event.preventDefault();
+            //        return false;
+            //    }
+
+            //}
+            //else
+            //{
+            //}
+
+            var operation = $( "#Operation" ).val();
+
+            var dateFromValue = $( "#ERFFormDate" ).val();
+            var dateRecived = $( "#ERFDateRecived" ).val();
+            var dateProcessed = $( "#ERFDateProcessed" ).val();
+            var requestDate = $( "#ERFRequestDate" ).val();
+
+
+            var notesItems = [];
+
+            $.each( newNotesArray, function ( index, value )
+            {
+                var item = { Text: value, Value: -1 };
+                notesItems.push( item );
+            } );
+
+
+            if ( $( "#FBERFEquipmentDetailsHidden" ).length )
+            {
+                $( "#FBERFEquipmentDetailsHidden" ).val( JSON.stringify( $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json ) );
+            }
+            else
+            {
+                var input3 = $( "<input id='FBERFEquipmentDetailsHidden'>" )
+                    .attr( "type", "hidden" )
+                    .attr( "name", "FBERFEquipmentDetailsHidden" ).val( JSON.stringify( $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json ) );
+                $( this ).append( $( input3 ) );
+            }
+
+            if ( $( "#FBERFExpendableDetailsHidden" ).length )
+            {
+                $( "#FBERFExpendableDetailsHidden" ).val( JSON.stringify( $( "#FBERFExpendableDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json ) );
+            }
+            else
+            {
+                var input3 = $( "<input id='FBERFExpendableDetailsHidden'>" )
+                    .attr( "type", "hidden" )
+                    .attr( "name", "FBERFExpendableDetailsHidden" ).val( JSON.stringify( $( "#FBERFExpendableDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json ) );
+                $( this ).append( $( input3 ) );
+            }
+
+
+
+            if ( $( "#ERFNotesHidden" ).length )
+            {
+                $( "#ERFNotesHidden" ).val( JSON.stringify( notesItems ) );
+            }
+            else
+            {
+                var input5 = $( "<input id='ERFNotesHidden'>" )
+                        .attr( "type", "hidden" )
+                        .attr( "name", "ERFNotesHidden" ).val( JSON.stringify( notesItems ) );
+                $( this ).append( $( input5 ) );
+            }
+
+            if ( operation == 2 )
+            {
+                //alert( operation );
+                if ( dateFromValue.length > 0 && dateRecived.length > 0 && dateProcessed.length > 0 && requestDate.length > 0 )
+                {
+                    //alert( operation );
+                    //if ( ( ( $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ) != null
+                    //   && $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json != null
+                    //   && $( "#FBERFEquipmentDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json.length != 0 ) ||
+                    //    ( $( "#FBERFExpendableDetails" ).ejGrid( "instance" ) != null
+                    //   && $( "#FBERFExpendableDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json != null
+                    //   && $( "#FBERFExpendableDetails" ).ejGrid( "instance" ).model.dataSource.dataSource.json.length != 0 ) ) )
+                    //{
+                        //alert( operation );
+                        if ( saveErfOperation == true )
+                        {
+                            //alert( operation );
+                            var input = $( "<input>" )
+                                .attr( "type", "hidden" )
+                                .attr( "name", "action:ErfSave" ).val( "" );
+                            $( this ).append( $( input ) );
+
+                            if (ValidateERFModel()) {
+                                var $this = $(this);
+                                var frmValues = $this.serialize();
+                                $.ajax({
+                                    type: $this.attr('method'),
+                                    url: "@Url.Action("SaveErf", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                                    data: frmValues
+                                }).done(function (response) {
+                                    if (response != null && response.success == true) {
+                                        if (response.returnValue > 0) {
+                                            if (operation == 2) {
+                                                AlertPopup(response.message);
+                                            }
+
+
+                                            updateUrl = response.Url;
+                                        }
+                                        else {
+                                            AlertPopup(response.message);
+                                        }
+                                    }
+                                    else {
+                                        AlertPopup('|There is a problem in ERF Create! Please contact support!');
+                                    }
+                                });
+                            }
+                            saveErfOperation = false;
+                        }
+                    //}
+                    //else
+                    //{
+                    //    AlertPopup( '|Please add minimum one Equipment or Expendable to processed !' );
+                    //}
+
+
+                }
+                else
+                {
+                    AlertPopup( '|Please Enter Required Dates to processed !' );
+                }
+            }
+            event.preventDefault();
+        } );
+
+        $( ".work-requested-details-head" ).trigger( "click" );
+        $( ".notes-details-head" ).trigger( "click" );
+
+        $( "[data-popup-close='popupalert']" ).click( function ()
+        {
+            if ( updateUrl != null )
+            {
+                window.location.href = updateUrl;
+            }
+        } );
+    } );
+
+
+
+    function SetErfSaveOperation( operation )
+    {
+        saveErfOperation = true;
+        $( "#Operation" ).val( operation );
+    }
+
+
+    function FBERFEquipmentDetailsBegin( args )
+    {
+        $( '#FBERFEquipmentDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function FBERFEquipmentDetailsEndEdit( args )
+    {
+        $( '#FBERFEquipmentDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function FBERFEquipmentDetailsEndAdd( args )
+    {
+        $( '#FBERFEquipmentDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    var equipmentModel;
+    var equipmentQty;
+    var equipmentProductNo;
+    var equipmentUnitPrice;
+    var equipmentDescription;
+    var equipmentTransactionType;
+    var equipmentExtra;
+    var equipmentEquipType;
+    var equipmentSubstitutionType;
+
+    function FBERFEquipmentDetailsBeginEdit( args )
+    {
+        var children = args.row.children();
+        equipmentModel = $( children[1] ).text();
+        equipmentQty = $( children[2] ).text();
+        equipmentProductNo = $( children[3] ).text();
+        equipmentDescription = $( children[4] ).text();
+        equipmentEquipType = $( children[5] ).text();
+        equipmentTransactionType = $( children[8] ).text();
+        equipmentSubstitutionType = $( children[9] ).text();
+        equipmentExtra = $( children[10] ).text();
+
+    }
+    function CompleteEquipmentModels( args )
+    {
+        if ( args.requestType == "beginedit" || args.requestType == "add" )
+        {
+            if ( args.requestType == "beginedit" )
+            {
+
+                $( "#FBERFEquipmentDetailsModelNo" ).ejDropDownList().data( "ejDropDownList" ).selectItemByText( equipmentModel );
+                $( "#FBERFEquipmentDetailsQuantity" ).val( equipmentQty )
+                $( "#FBERFEquipmentDetailsProdNo" ).val( equipmentProductNo )
+                $( "#FBERFEquipmentDetailsDescription" ).val( equipmentDescription )
+                $( "#FBERFEquipmentDetailsEquipmentType" ).val( equipmentEquipType )
+                $( "#FBERFEquipmentDetailsTransactionType" ).val( equipmentTransactionType )
+                $( "#FBERFEquipmentDetailsSubstitution" ).val( equipmentSubstitutionType )
+                $( "#FBERFEquipmentDetailsExtra" ).val( equipmentExtra )
+                $.ajax( {
+                    url: '@Url.Action("GetProductNumberByModel", "Erf")',
+                    type: 'GET',
+                    data: { "model": equipmentModel },
+                    success: function ( jsonResult )
+                    {
+                        if ( jsonResult.success == true )
+                        {
+                            $( "#FBERFEquipmentDetailsProdNo" ).val( jsonResult.data[0].text )
+                            $( "#FBERFEquipmentDetailsDescription" ).val( jsonResult.data[1].text )
+                            $( "#FBERFEquipmentDetailsUnitPrice" ).val( jsonResult.data[2].text )
+
+                            //FBERFEquipmentDetailsProductNoChange( jsonResult.data[0].text );
+                            //alert( JSON.stringify( jsonResult.data ) );
+                            //$( "#FBERFEquipmentDetailsProdNo" ).ejDropDownList( { dataSource: jsonResult.data, enableFilterSearch: true } );
+                            //$( "#FBERFEquipmentDetailsProdNo" ).ejDropDownList().data( "ejDropDownList" ).selectItemByText( jsonResult.data[0].text );
+                        }
+                        else
+                        {
+                            AlertPopup( "|There is a problem in getting Products!" );
+                        }
+                    }
+                } );
+            }
+
+            $( "#FBERFEquipmentDetailsModelNo" ).ejDropDownList( { change: "FBERFEquipmentDetailsModelNoChange", enableFilterSearch: true } );
+            //$( "#FBERFEquipmentDetailsProdNo" ).ejDropDownList( { change: "FBERFEquipmentDetailsProductNoChange", enableFilterSearch: true } );
+        }
+    }
+
+
+
+
+    function FBERFEquipmentDetailsProductNoChange( e )
+    {
+        $.ajax( {
+            url: '@Url.Action("GetProductNoDescription", "Erf")',
+            type: 'GET',
+            data: { "modValue": e.value },
+            success: function ( jsonResult )
+            {
+                if ( jsonResult.success == true )
+                {
+
+                    $( "#FBERFEquipmentDetailsDescription" ).val( jsonResult.data );
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Description!" );
+                }
+            }
+        } );
+
+        $.ajax( {
+            url: '@Url.Action("GetProductNoUnitPrice", "Erf")',
+            type: 'GET',
+            data: { "modValue": e.value },
+            success: function ( jsonResult )
+            {
+
+                if ( jsonResult.success == true )
+                {
+                    $( "#FBERFEquipmentDetailsUnitPrice" ).val( jsonResult.data );
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Unit price !" );
+                }
+            }
+        } );
+    }
+
+    function FBERFEquipmentDetailsModelNoChange( e )
+    {
+        var selectedModel;
+        $.ajax( {
+            url: '@Url.Action("GetProductNumberByModel", "Erf")',
+            type: 'GET',
+            data: { "model": e.value },
+            success: function ( jsonResult )
+            {
+                if ( jsonResult.success == true )
+                {
+
+                    $( "#FBERFEquipmentDetailsProdNo" ).val( jsonResult.data[0].text )
+                    $( "#FBERFEquipmentDetailsDescription" ).val( jsonResult.data[1].text )
+                    $( "#FBERFEquipmentDetailsUnitPrice" ).val( jsonResult.data[2].text )
+                    //alert( JSON.stringify( jsonResult.data ) );
+                    //$( "#FBERFEquipmentDetailsProdNo" ).ejDropDownList( { dataSource: jsonResult.data, enableFilterSearch: true } );
+                    //$( "#FBERFEquipmentDetailsProdNo" ).ejDropDownList().data( "ejDropDownList" ).selectItemByText( jsonResult.data[0].text );
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Products!" );
+                }
+            }
+        } );
+
+
+    }
+
+
+
+    function FBERFExpendableDetailsBegin( args )
+    {
+        $( '#FBERFExpendableDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function FBERFExpendableDetailsEndEdit( args )
+    {
+        $( '#FBERFExpendableDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+    function FBERFExpendableDetailsEndAdd( args )
+    {
+        $( '#FBERFExpendableDetails_WaitingPopup' ).css( "visibility", "hidden" );
+    }
+
+    var expendableModel;
+    var expendableQty;
+    var expendableProductNo;
+    var expendableUnitPrice;
+    var expendableDescription;
+    var expendableTransactionType;
+    var expendableExtra;
+
+
+    function FBERFExpendableDetailsBeginEdit( args )
+    {
+        var children = args.row.children();
+        expendableModel = $( children[1] ).text();
+        expendableQty = $( children[2] ).text();
+        expendableProductNo = $( children[3] ).text();
+        expendableDescription = $( children[4] ).text();
+        expendableTransactionType = $( children[5] ).text();
+        expendableUnitPrice = $( children[6] ).text();
+        expendableExtra = $( children[8] ).text();
+    }
+    function CompleteExpendableModels( args )
+    {
+        if ( args.requestType == "beginedit" || args.requestType == "add" )
+        {
+            if ( args.requestType == "beginedit" )
+            {
+                $( "#FBERFExpendableDetailsModelNo" ).ejDropDownList().data( "ejDropDownList" ).selectItemByText( expendableModel );
+                $( "#FBERFExpendableDetailsProdNo" ).val( expendableProductNo )
+                $( "#FBERFExpendableDetailsDescription" ).val( expendableDescription )
+                $( "#FBERFExpendableDetailsQuantity" ).val( expendableQty )
+                $( "#FBERFExpendableDetailsTransactionType" ).val( expendableTransactionType )
+                $( "#FBERFExpendableDetailsExtra" ).val( expendableExtra )
+
+                $.ajax( {
+                    url: '@Url.Action("GetExpendableProductNumberByModel", "Erf")',
+                    type: 'GET',
+                    data: { "model": expendableModel },
+                    success: function ( jsonResult )
+                    {
+                        if ( jsonResult.success == true )
+                        {
+                            $( "#FBERFExpendableDetailsProdNo" ).ejDropDownList( { dataSource: jsonResult.data, enableFilterSearch: true } );
+                            $( "#FBERFExpendableDetailsProdNo" ).ejDropDownList().data( "ejDropDownList" ).selectItemByText( expendableProductNo );
+                        }
+                        else
+                        {
+                            AlertPopup( "|There is a problem in getting Products!" );
+                        }
+                    }
+                } );
+            }
+
+            $( "#FBERFExpendableDetailsModelNo" ).ejDropDownList( { change: "FBERFExpendableDetailsModelNoChange", enableFilterSearch: true } );
+            $( "#FBERFExpendableDetailsProdNo" ).ejDropDownList( { change: "FBERFExpendableDetailsProductNoChange", enableFilterSearch: true } );
+        }
+    }
+
+    function FBERFExpendableDetailsProductNoChange( e )
+    {
+        var currentProductNo = $( "#FBERFExpendableDetailsProdNo" ).val();
+
+        $.ajax( {
+            url: '@Url.Action("GetExpendableProductNoDescription", "Erf")',
+            type: 'GET',
+            data: { "prdValue": e.value },
+            success: function ( jsonResult )
+            {
+                if ( jsonResult.success == true )
+                {
+
+                    $( "#FBERFExpendableDetailsDescription" ).val( jsonResult.data );
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Description!" );
+                }
+            }
+        } );
+
+        $.ajax( {
+            url: '@Url.Action("GetExpendableProductNoUnitPrice", "Erf")',
+            type: 'GET',
+            data: { "prdValue": e.value },
+            success: function ( jsonResult )
+            {
+
+                if ( jsonResult.success == true )
+                {
+                    $( "#FBERFExpendableDetailsUnitPrice" ).val( jsonResult.data );
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Unit price !" );
+                }
+            }
+        } );
+    }
+
+    function FBERFExpendableDetailsModelNoChange( e )
+    {
+        var selectedModel;
+        $.ajax( {
+            url: '@Url.Action("GetExpendableProductNumberByModel", "Erf")',
+            type: 'GET',
+            data: { "model": e.value },
+            success: function ( jsonResult )
+            {
+                if ( jsonResult.success == true )
+                {
+                    $( "#FBERFExpendableDetailsProdNo" ).ejDropDownList( { dataSource: jsonResult.data, enableFilterSearch: true } );
+                    $( "#FBERFExpendableDetailsProdNo" ).ejDropDownList().data( "ejDropDownList" ).selectItemByText( jsonResult.data[0].text );
+                }
+                else
+                {
+                    AlertPopup( "|There is a problem in getting Products!" );
+                }
+            }
+        } );
+
+
+    }
+
+    function queryCellInfoEquipment( args )
+    {
+        if ( args.column.headerText === "Total Line Amount" )
+        {
+            var Qty = args.data.Quantity;
+            if ( args.data.Quantity === null || args.data.Quantity == 0 )
+            {
+                Qty = 1;
+            }
+
+            $( args.cell ).text( "$" + ( Qty * args.data.UnitPrice ).toFixed( 2 ) );
+        }
+        if ( args.column.headerText === "Unit Price" )
+        {
+
+            if ( args.data.UnitPrice !== null && args.data.UnitPrice != 0 )
+            {
+                //alert("UP ="+ args.data.UnitPrice );
+                $( args.cell ).text( "$" + ( args.data.UnitPrice ).toFixed( 2 ) );
+            }
+            else
+            {
+                //alert( args.data.UnitPrice );
+                $( args.cell ).text( "$" + ( args.data.UnitPrice ) );
+            }
+
+        }
+        if ( args.column.headerText === "Qty" )
+        {
+            if ( args.data.Quantity === null || args.data.Quantity == 0 )
+            {
+                $( args.cell ).text( 1 );
+            }
+        }
+        if ( args.column.headerText === "Equip Type" )
+        {
+            if ( args.data.EquipmentType !== null )
+            {
+                $( args.cell ).text( args.data.EquipmentType );
+            }
+        }
+        if ( args.column.headerText === "Substitution Type" )
+        {
+            if ( args.data.Substitution !== null )
+            {
+                $( args.cell ).text( args.data.Substitution );
+            }
+        }
+
+        if ( args.column.headerText === "Transaction Type" )
+        {
+            if ( args.data.TransactionType !== null )
+            {
+                $( args.cell ).text( args.data.TransactionType );
+            }
+        }
+        if ( args.column.headerText === "Extra" )
+        {
+            if ( args.data.Extra !== null )
+            {
+                $( args.cell ).text( args.data.Extra );
+            }
+        }
+    }
+
+    function queryCellInfoExpendable( args )
+    {
+
+        if ( args.column.headerText === "Total Line Amount" )
+        {
+            var Qty = args.data.Quantity;
+            if ( args.data.Quantity === null || args.data.Quantity == 0 )
+            {
+                Qty = 1;
+            }
+
+            if ( args.data.UnitPrice != 0 )
+            {
+                $( args.cell ).text( "$" + ( Qty * args.data.UnitPrice ).toFixed( 2 ) );
+            }
+            else
+            {
+                $( args.cell ).text( "$" + ( Qty * args.data.UnitPrice ) );
+            }
+
+        }
+        if ( args.column.headerText === "Unit Price" )
+        {
+
+            if ( args.data.UnitPrice !== null && args.data.UnitPrice != 0 )
+            {
+                $( args.cell ).text( "$" + ( args.data.UnitPrice ).toFixed( 2 ) );
+            }
+            else
+            {
+                $( args.cell ).text( "$" + ( args.data.UnitPrice ) );
+            }
+        }
+        if ( args.column.headerText === "Qty" )
+        {
+            if ( args.data.Quantity === null || args.data.Quantity == 0 )
+            {
+                $( args.cell ).text( 1 );
+            }
+        }
+        if ( args.column.headerText === "Transaction Type" )
+        {
+            //alert( args.data.TransactionType );
+            if ( args.data.TransactionType !== null )
+            {
+                $( args.cell ).text( args.data.TransactionType );
+            }
+        }
+        if ( args.column.headerText === "Extra" )
+        {
+            if ( args.data.Extra !== null )
+            {
+                $( args.cell ).text( args.data.Extra );
+            }
+        }
+
+    }
+
+    function onToolbarClick( args )
+    {
+        if ( ( args.itemName == "Edit" || args.itemName == "Delete" ) & this.getSelectedRecords().length == 0 )
+        {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup( "|No records selected for " + args.itemName + " operation" );
+
+        }
+    }
+
+    function ValidatePhoneNumber( phone )
+    {
+
+        if ( phone.replace( /\W+/g, '' ).length == 10 )
+        {
+            return true;
+        }
+        else
+        {
+            AlertPopup( "|Please Enter Valid Phone Number" );
+            return false;
+        }
+    }
+    function PhoneValidation( evt )
+    {
+        var charCode = ( evt.which ) ? evt.which : event.keyCode;
+        //if ((charCode >= 48 && charCode <=57)|| charCode ==40 || charCode ==41 || charCode ==45)
+        if ( charCode >= 48 && charCode <= 57 )
+            return true;
+
+        return false;
+    }
+
+    function ValidateERFModel() {
+        debugger;
+        var result = true;
+        if ($('#ErfAssetsModel_Erf_HoursofOperation').val().length > 50 || $('#ErfAssetsModel_Erf_InstallLocation').val().length > 90 ||
+            $('#ErfAssetsModel_Erf_UserName').val().length > 50 || $('#ErfAssetsModel_Erf_Phone').val().length > 15) {
+
+            result = false;
+        }
+
+        return result;
+    }
+</script>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(m => m.Operation)
+
+    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+
+            <section class="container-fluid white-bg pad fixedSecond header">
+                <div class="row vertical-align">
+                    <div class="col-md-12">
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <b>ERF ID:</b>
+                                    <span>@Model.ErfAssetsModel.Erf.ErfID</span>
+                                    @Html.HiddenFor(w => w.ErfAssetsModel.Erf.ErfID)
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="col-md-4">
+                                        Created By: @Model.CreatedBy
+                                    </div>
+                                    
+                                    <div class="col-md-8">
+                                        Created On: @Model.ErfAssetsModel.Erf.EntryDate
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="col-md-3">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="form-group" style="float:right ">
+                                    @*<h4> @Html.CheckBoxFor(m => m.CrateWorkOrder)<b>Create Work Order</b> </h4>*@
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                @{
+
+                                    if (UserPrivilege["ERF"] == "Edit-Only" || UserPrivilege["ERF"] == "Full" || (UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only"))
+                                    {
+
+                                        if ((UserPrivilege["Customer"] == "Full") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only"))
+                                        {
+                                            if (Convert.ToInt32(Model.ErfAssetsModel.Erf.ErfID) == 0)
+                                            {
+                                                <button type="submit" style="display: inline-block;margin-right:5px;float:right;" class="btn btn-primary" onclick="SetErfSaveOperation(2);" name="action:ErfSave">Save</button>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            if (Convert.ToInt32(Model.ErfAssetsModel.Erf.ErfID) > 0)
+                                            {
+                                                <button type="submit" style="display: inline-block;margin-right:5px;float:right;" class="btn btn-primary" onclick="SetErfSaveOperation(2);" name="action:ErfSave">Save</button>
+                                            }
+
+                                        }
+                                    }
+                                }
+                            </div>
+                            <div class="col-md-1">
+                                @Html.ActionLink("Back", "ERFSearch", "Erf", new { @IsBack = 1 }, new { @Class = "btn btn-primary btn-orange" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
+
+            <section class="block">
+                <div class="container-fluid">
+                    <h2 class="work-requested-details-head arrow-down tabheader">Assets</h2>
+                    <div class="work-requested-details-content margin-top">
+                        <div class="col-xs-12 customer sm-pad-reset">
+
+                            <div class="erf-Assets-content margin-top">
+                                <div class="row clear-input">
+
+                                    <div class="col-md-4 customer-col1 sm-pad-reset">
+                                        <div class="col-md-12">
+                                            <span class="col-md-6 required">Form Date:</span>
+                                            <div class="col-md-6">
+                                                <div class="form-group" style="float:right">
+                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateOnERF, new { @class = "form-control WorkOrderFields", @Id = "ERFFormDate" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <span class="col-md-6 required">ERF Received Date:</span>
+                                            <div class="col-md-6">
+                                                <div class="form-group" style="float:right">
+                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateERFReceived, new { @class = "form-control WorkOrderFields", @Id = "ERFDateRecived" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <span class="col-md-6 required">ERF Processed Date:</span>
+                                            <div class="col-md-6">
+                                                <div class="form-group" style="float:right">
+                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateERFProcessed, new { @class = "form-control WorkOrderFields", @Id = "ERFDateProcessed" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <span class="col-md-6 required"> Scheduled Install Date:</span> @*ERF Requested Date:</span>*@
+                                            <div class="col-md-6">
+                                                <div class="form-group" style="float:right">
+                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.OriginalRequestedDate, new { @class = "form-control WorkOrderFields", @Id = "ERFRequestDate" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8 customer sm-pad-reset">
+                                        <div class="row">
+                                            <div class="col-md-6 customer-col2">
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-sm-4 col-md-5 m-b-more">Hours of Operation:</span>
+                                                </div>
+                                                <div class="col-xs-4-o">
+                                                    <div class="form-group" style="float:right">
+                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.HoursofOperation, new { @class = "form-control WorkOrderFields" })
+                                                        <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.HoursofOperation, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-sm-4 col-md-5 m-b-more">Install Location:</span>
+                                                </div>
+                                                <div class="col-xs-4-o">
+                                                    <div class="form-group" style="float:right">
+                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.InstallLocation, new { @class = "form-control WorkOrderFields" })
+                                                        <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.InstallLocation, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-sm-4 col-md-5 m-b-more">Contact:</span>
+                                                </div>
+                                                <div class="col-xs-4-o">
+                                                    <div class="form-group" style="float:right">
+                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.UserName, new { @class = "form-control WorkOrderFields" })
+                                                        <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.UserName, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-sm-4 col-md-5 m-b-more">Phone:</span>
+                                                </div>
+                                                <div class="col-xs-4-o">
+                                                    <div class="form-group" style="float:right">
+                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.Phone, new { @class = "form-control WorkOrderFields" })
+                                                        @Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.Phone, "", new { @class = "text-danger" })
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-6 customer-form-cnt">
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-sm-4 col-md-5 m-b-more">SITE READY AT TIME OF ERF PROCESSION?</span>
+                                                </div>
+                                                <div class="col-xs-4-o">
+                                                    <div class="form-group" style="float:left">
+                                                        @Html.DropDownListFor(c => c.SiteReady, new SelectList(Model.SiteReadyList), new { @class = "form-control SearchPanelControl", @Id = "SiteReadyList" })
+                                                    </div>
+                                                </div>
+                                                @{
+
+    if (UserPrivilege["ERF"] == "Full")
+    {
+
+        <div class="col-xs-6-o">
+            <span class="col-sm-4 col-md-5 m-b-more">Create Work Order</span>
+        </div>
+                                                    <div class="col-xs-4-o">
+                                                        <div class="form-group" style="float:left">
+                                                            @Html.CheckBoxFor(m => m.CrateWorkOrder)
+                                                        </div>
+                                                    </div>
+    }
+                                                }
+
+                                            </div>
+                                        </div>
+                                        <br />
+
+                                    </div>
+
+
+
+                                </div>
+                                <div class="row clear-input">
+                                    <div class="col-md-12">
+                                        <h4>Equipment:</h4>
+                                        <div class="table-responsive">
+
+                                            @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementEquipmentModel>
+                                    ("FBERFEquipmentDetails")
+                                        .Datasource(ds => ds.Json((IEnumerable<object>)Model.ErfAssetsModel.EquipmentList)
+                                        .UpdateURL(Url.Action("EquipmentUpdate", "Erf"))
+                                        .InsertURL(Url.Action("EquipmentInsert", "Erf"))
+                                        .RemoveURL(Url.Action("EquipmentDelete", "Erf"))
+                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                        .AllowPaging()
+                                        .ToolbarSettings(toolbar =>
+                                        {
+                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                            {
+                                                items.AddTool(ToolBarItems.Add);
+                                                items.AddTool(ToolBarItems.Edit);
+                                                items.AddTool(ToolBarItems.Delete);
+                                                items.AddTool(ToolBarItems.Update);
+                                                items.AddTool(ToolBarItems.Cancel);
+                                            });
+                                        })
+                                        .Columns(col =>
+                                        {
+                                            col.Field("ERFEquipmentId").HeaderText("Equipment ID").IsPrimaryKey(true).Visible(false).Add();
+                                            col.Field("ModelNo").HeaderText("Model#").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfEquipmentModels))
+                                                .ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("Quantity").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
+                                            //col.Field("ProdNo").HeaderText("Product NO").Add();
+                                            col.Field("ProdNo").HeaderText("Product NO").Add();
+                                            col.Field("Description").HeaderText("Description").Add();
+                                            col.Field("EquipmentType").HeaderText("Equip Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfEquipmentTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("UnitPrice").HeaderText("Unit Price").AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
+                                            col.Field("UnitPrice").HeaderText("Total Line Amount").AllowEditing(false).Format("{0:n2}").Add();
+                                            col.Field("TransactionType").HeaderText("Transaction Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("Substitution").HeaderText("Substitution Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfSubstituion)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("Extra").HeaderText("Extra").Add();
+
+                                        })
+                                        .ClientSideEvents(eve =>
+                                        {
+                                            eve.ActionComplete("CompleteEquipmentModels")
+                                                .BeginEdit("FBERFEquipmentDetailsBeginEdit")
+                                                .ActionBegin("FBERFEquipmentDetailsBegin")
+                                                .EndEdit("FBERFEquipmentDetailsEndEdit")
+                                                .EndAdd("FBERFEquipmentDetailsEndAdd")
+                                                .QueryCellInfo("queryCellInfoEquipment")
+                                                .ToolbarClick("onToolbarClick");
+                                        }))
+
+
+                                        </div><!--end of .table-responsive-->
+                                    </div>
+                                    <div class="col-md-12">
+                                        <h4>Expendables:</h4>
+                                        <div class="table-responsive">
+
+                                            @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementExpendableModel>
+                                    ("FBERFExpendableDetails")
+                                        .Datasource(ds => ds.Json((IEnumerable<object>)Model.ErfAssetsModel.ExpendableList)
+                                        .UpdateURL(Url.Action("ExpendableUpdate", "Erf"))
+                                        .InsertURL(Url.Action("ExpendableInsert", "Erf"))
+                                        .RemoveURL(Url.Action("ExpendableDelete", "Erf"))
+                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                        .AllowPaging()
+                                        .ToolbarSettings(toolbar =>
+                                        {
+                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                            {
+                                                items.AddTool(ToolBarItems.Add);
+                                                items.AddTool(ToolBarItems.Edit);
+                                                items.AddTool(ToolBarItems.Delete);
+                                                items.AddTool(ToolBarItems.Update);
+                                                items.AddTool(ToolBarItems.Cancel);
+                                            });
+                                        })
+                                        .Columns(col =>
+                                        {
+                                            col.Field("ERFExpendableId").HeaderText("Expendable ID").IsPrimaryKey(true).Visible(false).Add();
+                                            col.Field("ModelNo").HeaderText("Model#").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpendableModels))
+                                                .ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("Quantity").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("number", true).AddRule("required", true)).Add();
+                                            col.Field("ProdNo").HeaderText("Product NO").ForeignKeyField("Product").ForeignKeyValue("Product").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpendableProducts)).Add();
+                                            col.Field("Description").HeaderText("Description").Add();
+                                            col.Field("TransactionType").HeaderText("Transaction Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                            col.Field("UnitPrice").HeaderText("Unit Price").AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
+                                            col.Field("UnitPrice").HeaderText("Total Line Amount").AllowEditing(false).Format("{0:n2}").Add();
+                                            col.Field("Extra").HeaderText("Extra").Add();
+
+
+                                        })
+                                        .ClientSideEvents(eve =>
+                                        {
+                                            eve.ActionComplete("CompleteExpendableModels")
+                                                .BeginEdit("FBERFExpendableDetailsBeginEdit")
+                                                .ActionBegin("FBERFExpendableDetailsBegin")
+                                                .EndEdit("FBERFExpendableDetailsEndEdit")
+                                                .EndAdd("FBERFExpendableDetailsEndAdd")
+                                                .QueryCellInfo("queryCellInfoExpendable")
+                                                .ToolbarClick("onToolbarClick");
+                                        }))
+
+
+                                        </div><!--end of .table-responsive-->
+                                        <!--Add removed code -->
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="block">
+                <div class="container-fluid">
+                    <h2 class="notes-details-head arrow-down tabheader  required">Notes</h2>
+                    @Html.Partial("_ErfNotes", Model.Notes)
+                </div>
+            </section>
+
+
+}
+
