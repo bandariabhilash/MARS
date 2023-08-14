@@ -8,14 +8,14 @@
 
 <script type="text/javascript">
     var searchCriteria;
-    var canExport   
+    var canExport
 
     function queryCellInfo(args)
     {
         if (args.column.field == "ContactID") {
             args.cell.className	+= " urlStyle";
         }
-        if((args.data.CompanyName != null && args.data.CompanyName.toLocaleLowerCase().indexOf("-cm") != -1) 
+        if((args.data.CompanyName != null && args.data.CompanyName.toLocaleLowerCase().indexOf("-cm") != -1)
             || (args.data.PricingParentDesc != null && args.data.PricingParentDesc.toLocaleLowerCase().indexOf("core-mark") != -1))
         {
             $($(args.cell).parent()).css({"font-weight": "bold", "color": "#FF0000"});//, "background": "#dfb37b"});
@@ -45,9 +45,9 @@
 
         // Calculate the difference in milliseconds
         var difference_ms = date2_ms - date1_ms;
-    
+
         // Convert back to days and return
-        return Math.round(difference_ms/one_day); 
+        return Math.round(difference_ms/one_day);
     }
 
     $(document).ready(function () {
@@ -134,7 +134,7 @@
                 @*window.location.href = "@Url.Action("CustomerDetails", "Customer")" + "/" + args.data["ContactID"];*@
                 $("#custId").html(args.data["ContactID"]);
 
-           //     if((args.data.CompanyName != null && args.data.CompanyName.toLocaleLowerCase().indexOf("-cm") != -1) 
+           //     if((args.data.CompanyName != null && args.data.CompanyName.toLocaleLowerCase().indexOf("-cm") != -1)
                 //|| (args.data.PricingParentDesc != null && args.data.PricingParentDesc.toLocaleLowerCase().indexOf("core-mark") != -1))
                 if(args.data.CompanyName.toLocaleLowerCase().startsWith("core-mark"))
                 {
@@ -163,7 +163,7 @@
                 {
                    $("#customerAlertTxt").html("This account should not be restricted from service if greater than 60 days no sales.  \n  Are you sure you want to Open " + args.data.ContactID);
                     $('[data-popup="popup-coremark-customer"]').fadeIn(350);
-                }               
+                }
                 else
                 {
                     $('[data-popup="popup-customerVerify-1"]').fadeIn(350);
@@ -260,7 +260,7 @@
 
         $('[data-popup="popup-coremark-customer"]').fadeOut(350);
         $('[data-popup="popup-nonApproved-customer"]').fadeOut(350);
-       
+
     }
 
     function formSubmit()
@@ -295,6 +295,18 @@
     {
         $('[data-popup="popup-customerVerify-1"]').fadeOut(350);
         window.location.href = "@Url.Action("CustomerDetails", "Customer")" + "/" + $("#custId").html();
+    }
+
+    function CancelPayment() {
+        var woId = $("#wo").val();
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("VoidPayment", "DispatchResponse")",
+            data: { WorkorderId: woId}
+        }).done(function (result) {
+            
+        });
     }
 
 </script>
@@ -435,6 +447,7 @@
     </section>
 
 
+
     <section class="block margin-top">
         <div class="container-fluid">
             <div class="row top-info">
@@ -449,17 +462,20 @@
             </div>
         </div>
     </section>
-                            }
+}
+
+@*<input id="wo" />
+<button id="payment" onclick="CancelPayment()">Cancel Transaction</button>*@
 
 <div class="popup" data-popup="popup-customerVerify">
     <div class="popup-inner">
         <table>
             <tr>
                 <td>Did you verify the account information?</td>
-            </tr>           
+            </tr>
             <tr>
                 <td>
-                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="formSubmit()" >Yes</button>
+                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="formSubmit()">Yes</button>
                     <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideVerifyCustomerPopup()">No</button>
                 </td>
             </tr>

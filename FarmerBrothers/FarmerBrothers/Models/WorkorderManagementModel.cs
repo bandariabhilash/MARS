@@ -36,6 +36,13 @@ namespace FarmerBrothers.Models
         public FbWorkorderBillableSKUModel SKUModel;
         public IList<FbWorkorderBillableSKUModel> BillableSKUList;
         public IList<VendorModelModel> SKUList;
+        public DocumentModel Documents;
+
+        public IList<CategoryModel> BillingItems { get; set; }
+        public IList<BillingModel> BillingDetails { get; set; }
+        public decimal BillingTotal { get; set; }
+        public string PaymentTransactionId { get; set; }
+
         public bool IsBillable { get; set; }
         public bool IsBillableFeed { get; set; }
 
@@ -44,6 +51,7 @@ namespace FarmerBrothers.Models
         public Nullable<System.DateTime> CurrentDateTime { get; set; }
 
         public bool ShowAllTech { get; set; }
+        public bool isCustomerDashboard { get; set; }
         public string customerZipcode { get; set; }
         public bool IsOpen;
         public string SpawnReason { get; set; }
@@ -99,7 +107,7 @@ namespace FarmerBrothers.Models
 
         public WorkOrderClosureModel Closure;
 
-        
+        public IList<AllFBStatu> ShippigPriorities;
 
 
         public IList<CategoryModel> TaggedCategories;
@@ -183,6 +191,15 @@ namespace FarmerBrothers.Models
 
         public IList<AllFBStatu> RescheduleReasonCodesList;
         public Nullable<int> ReasonCode { get; set; }
+
+        public string TravelDistance { get; set; }
+        public string TravelTime { get; set; }
+        public decimal Labor { get; set; }
+        public string TotalServiceQuote { get; set; }
+
+        public string ShippingPriority { get; set; }
+
+        public bool IsCCProcessComplete { get; set; }
 
         public WorkOrder FillCustomerData(WorkOrder entityWorkOrder, bool cleanDependentLists, FarmerBrothersEntities FarmerBrothersEntities, Contact sCustomer = null)
         {
@@ -348,9 +365,9 @@ namespace FarmerBrothers.Models
         {
             string query = string.Empty;
             
-            query = @"select d.CompanyName AS PreferredProvider from TECH_HIERARCHY d where searchType='SP'  
-                    and dealerID NOT IN (8888888,8888889,8888890,8888891,8888892,8888893,8888894,8888895,8888907,8888908,8888911,8888917,
-                    8888918,8888941,8888942,8888945,8888953,9999999,8888897,9999995,9999998,8888980,8888981,8888984,9990061,9990062,9990065) group by CompanyName order by PreferredProvider asc";
+            query = @"select d.DealerId AS TechID, d.CompanyName AS PreferredProvider from TECH_HIERARCHY d where searchType='SP'  
+                    and DealerId NOT IN (8888888,8888889,8888890,8888891,8888892,8888893,8888894,8888895,8888907,8888908,8888911,8888917,
+                    8888918,8888941,8888942,8888945,8888953,9999999,8888897,9999995,9999998,8888980,8888981,8888984,9990061,9990062,9990065) group by CompanyName, DealerId order by PreferredProvider asc";
             
             return FarmerBrothersEntities.Database.SqlQuery<TechHierarchyView>(query);
         }

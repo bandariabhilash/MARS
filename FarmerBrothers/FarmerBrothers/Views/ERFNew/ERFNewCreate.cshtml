@@ -129,6 +129,15 @@
                 $( this ).append( $( input3 ) );
             }
 
+            //if ($("#FBERFPOSDetailsHidden").length) {
+            //    $("#FBERFPOSDetailsHidden").val(JSON.stringify($("#FBERFPOSDetails").ejGrid("instance").model.dataSource.dataSource.json));
+            //}
+            //else {
+            //    var input3 = $("<input id='FBERFPOSDetailsHidden'>")
+            //        .attr("type", "hidden")
+            //        .attr("name", "FBERFPOSDetailsHidden").val(JSON.stringify($("#FBERFPOSDetails").ejGrid("instance").model.dataSource.dataSource.json));
+            //    $(this).append($(input3));
+            //}
 
 
             if ( $( "#ERFNotesHidden" ).length )
@@ -255,7 +264,7 @@
         $("#TotalNSV").on("keyup", function (e) {
             var EqpTotal = 0;
             $.each($("#FBERFEquipmentDetails").ejGrid("instance").model.dataSource.dataSource.json, function (index, value) {
-                if (value.TransactionType.toLowerCase() == "loan") {                    
+                if (value.TransactionType.toLowerCase() == "loan") {
                     EqpTotal = Number(EqpTotal) + Number(value.TotalCost);
                 }
             });
@@ -309,12 +318,12 @@
     function FBERFEquipmentDetailsEndAdd( args )
     {
         var EqpTotal = 0;
-        $.each( $("#FBERFEquipmentDetails").ejGrid("instance").model.dataSource.dataSource.json,  function (index, value) {            
+        $.each( $("#FBERFEquipmentDetails").ejGrid("instance").model.dataSource.dataSource.json,  function (index, value) {
             if (value.TransactionType.toLowerCase() == "loan")
             {
                 //var tmpVal = $("#AdditionalEquipmentTotal").val();
                 EqpTotal = Number(EqpTotal) + Number(value.TotalCost);
-            }            
+            }
         });
 
         $("#AdditionalEquipmentTotal").val(EqpTotal);
@@ -454,29 +463,31 @@
     {
         if (e.value == "Cash Sale") {
             if ($("#FBERFEquipmentDetailsEquipmentType").val() == "Refurb") {
-                $("#FBERFEquipmentDetailsLaidInCost").val("$" + (0.75 * LaidInCost).toFixed(2));               
+                $("#FBERFEquipmentDetailsLaidInCost").val("$" + (0.75 * LaidInCost).toFixed(2));
                 var laidCost = (0.75 * LaidInCost);
-                $("#FBERFEquipmentDetailsRentalCost").val("$" + (Number(laidCost) + Number((0.3 * laidCost))).toFixed(2));
+                //$("#FBERFEquipmentDetailsRentalCost").val("$" + (Number(laidCost) + Number((0.3 * laidCost))).toFixed(2));
             }
             else {
                 $("#FBERFEquipmentDetailsLaidInCost").val("$" + (LaidInCost).toFixed(2));
-                $("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
+                //$("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
             }
+            $("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
         }
         else if (e.value == "Rental") {
             $("#FBERFEquipmentDetailsLaidInCost").val("$" + (LaidInCost).toFixed(2));
             if ($("#FBERFEquipmentDetailsEquipmentType").val() == "New") {
-                $("#FBERFEquipmentDetailsRentalCost").val("$" + (LaidInCost / 24).toFixed(2));
+                //$("#FBERFEquipmentDetailsRentalCost").val("$" + (LaidInCost / 24).toFixed(2));
             }
             else
             {
-                RentalCost = (0.75 * LaidInCost) / 24;
-                $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));
+                /*RentalCost = (0.75 * LaidInCost) / 24;
+                $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));*/
             }
+            $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));
         }
         else if (e.value == "Loan") {
             if ($("#FBERFEquipmentDetailsEquipmentType").val() == "Refurb") {
-                $("#FBERFEquipmentDetailsLaidInCost").val("$" + (0.75 * LaidInCost).toFixed(2));               
+                $("#FBERFEquipmentDetailsLaidInCost").val("$" + (0.75 * LaidInCost).toFixed(2));
             }
             else {
                 $("#FBERFEquipmentDetailsLaidInCost").val("$" + (LaidInCost).toFixed(2));
@@ -509,16 +520,18 @@
     }
 
     function ERFEquipmentTypeChange(e) {
-        if (e.value == "Refurb") {  
+        if (e.value == "Refurb") {
             if ($("#FBERFEquipmentDetailsTransactionType").val() == "Cash Sale")
             {
                 $("#FBERFEquipmentDetailsLaidInCost").val("$" + (0.75 * LaidInCost).toFixed(2));
                 var laidCost = (0.75 * LaidInCost);
-                $("#FBERFEquipmentDetailsRentalCost").val("$" + (Number(laidCost) + Number((0.3 * laidCost))).toFixed(2));
+                //$("#FBERFEquipmentDetailsRentalCost").val("$" + (Number(laidCost) + Number((0.3 * laidCost))).toFixed(2));
+                $("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
             }
             else if($("#FBERFEquipmentDetailsTransactionType").val() == "Rental")
             {
-                RentalCost = (0.75 * LaidInCost) / 24;
+                /*RentalCost = (0.75 * LaidInCost) / 24;
+                $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));*/
                 $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));
                 $("#FBERFEquipmentDetailsLaidInCost").val("$" + (LaidInCost).toFixed(2));
             }
@@ -534,7 +547,8 @@
             if ($("#FBERFEquipmentDetailsTransactionType").val() == "Rental")
             {
                 $("#FBERFEquipmentDetailsLaidInCost").val("$" + (LaidInCost).toFixed(2));
-                $("#FBERFEquipmentDetailsRentalCost").val("$" + (LaidInCost / 24).toFixed(2));
+                //$("#FBERFEquipmentDetailsRentalCost").val("$" + (LaidInCost / 24).toFixed(2));
+                $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));
             }
             else if ($("#FBERFEquipmentDetailsTransactionType").val() == "Cash Sale") {
                 $("#FBERFEquipmentDetailsLaidInCost").val("$" + (LaidInCost).toFixed(2));
@@ -554,8 +568,8 @@
             total = QtyVal * LdCost;
         }
         $("#FBERFEquipmentDetailsTotalCost").val("$" + total.toFixed(2));
-        
-        /*if (e.value == "Refurb") {            
+
+        /*if (e.value == "Refurb") {
 
             RentalCost = (0.75 * LaidInCost) / 24;
 
@@ -564,9 +578,9 @@
             $("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
         }
         else
-            $("#FBERFEquipmentDetailsRentalCost").val(0);*/        
+            $("#FBERFEquipmentDetailsRentalCost").val(0);*/
     }
-    
+
     function FBERFEquipmentDetailsProductNoChange( e )
     {
         $.ajax( {
@@ -617,13 +631,13 @@
                         if ( jsonResult.success == true )
                         {
                             //var gridObj = $("#FBERFEquipmentDetails").data("ejGrid");
-                            
+
                             //$("#FBERFEquipmentDetailsBrand").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: true, change: ERFContingentDetailChange });
                             ////$("#FBERFEquipmentDetailsBrand_inputSearch").val(e.selectedValue);
                             ////$("#FBERFEquipmentDetailsBrand").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data[0]);
                             //$("#FBERFEquipmentDetailsTransactionType").ejDropDownList({ change: ERFTransTypeChange });
 
-                            
+
 
                             $("#FBERFEquipmentDetailsBrand").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: false, change: ERFContingentDetailChange });
                             $("#FBERFEquipmentDetailsTransactionType").ejDropDownList({ change: ERFTransTypeChange });
@@ -683,7 +697,7 @@
             {
                 $("#FBERFExpendableDetailsCategory").ejDropDownList().data("ejDropDownList").selectItemByText(equipmentModel);
             }
-            
+
             $("#FBERFExpendableDetailsCategory").ejDropDownList({ change: "FBERFExpendableDetailsCategoryChange", enableFilterSearch: false });
             $("#FBERFExpendableDetailsQuantity").on("keyup", FBERFEXPQuantityChange);
         }
@@ -695,7 +709,7 @@
             type: 'GET',
             data: { contingentId: e.value },//$('#EqpValidationList option:selected').val() },
             success: function (jsonResult) {
-                if (jsonResult.success == true) {                   
+                if (jsonResult.success == true) {
                     //$("#FBERFExpendableDetailsBrand").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: true, change: ERFExpContingentDetailChange });
                     //$("#FBERFExpendableDetailsTransactionType").ejDropDownList({ change: ERFExpTransTypeChange });
                     $("#FBERFExpendableDetailsBrand").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: false, change: ERFExpContingentDetailChange });
@@ -986,14 +1000,14 @@
         //{
         //    if(args.itemId == "FBERFEquipmentDetails_update" && $("#FBERFEquipmentDetailsBrand_dropdown").val() == "")
         //    {
-        //        AlertPopup("| Please select the Required Data ");                
+        //        AlertPopup("| Please select the Required Data ");
         //        return;
         //    }
         //    if (args.itemId == "FBERFExpendableDetails_add" && $("#FBERFExpendableDetailsBrand_dropdown").val() == "") {
         //        AlertPopup("| Please select the Required Data ");
         //        return;
         //    }
-        //}        
+        //}
     }
 
     function ValidatePhoneNumber( phone )
@@ -1042,6 +1056,12 @@
         var TotalNSV = $("#TotalNSV").val();
         var MainContactName = $("#MainContactName").val();
         var PhoneNumber = $("#PhoneNumber").val();
+        var HoursOfOpe = $("#ErfAssetsModel_Erf_HoursofOperation").val();
+        var installLoc = $("#ErfAssetsModel_Erf_InstallLocation").val();
+        var uName = $("#ErfAssetsModel_Erf_UserName").val();
+        var phone = $("#ErfAssetsModel_Erf_Phone").val();
+        var siteReady = $("#SiteReadyList").val();
+
 
         if (ordTyp.length <= 0) {
             result = false;
@@ -1070,8 +1090,202 @@
         //    result = false;
         //}
 
+        if (HoursOfOpe == "") {
+            result = false;
+        }
+        if (installLoc == "") {
+            result = false;
+        }
+        if (uName == "") {
+            result = false;
+        }
+        if (phone == "") {
+            result = false;
+        }
+        if (siteReady == "") {
+            result = false;
+        }
         return result;
     }
+
+    //************** POS **************************
+
+    @*function FBERFPosDetailsBegin(args) {
+        $('#FBERFPosDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function FBERFPosDetailsEndEdit(args) {
+        $('#FBERFPosDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function FBERFPosDetailsEndAdd(args) {
+        $('#FBERFPosDetails_WaitingPopup').css("visibility", "hidden");
+    }
+
+    var posModel;
+    var posQty;
+    var posProductNo;
+    var posUnitPrice;
+    var posDescription;
+    var posTransactionType;
+    var posExtra;
+
+
+    function FBERFPosDetailsBeginEdit(args) {
+        var children = args.row.children();
+
+        posModel = $(children[1]).text();
+        posQty = $(children[2]).text();
+        posProductNo = $(children[3]).text();
+        posDescription = $(children[4]).text();
+        posEquipType = $(children[5]).text();
+        posTransactionType = $(children[8]).text();
+        posSubstitutionType = $(children[9]).text();
+        posExtra = $(children[10]).text();
+    }
+    function CompletePosModels(args) {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            if (args.requestType == "beginedit") {
+                $("#FBERFPOSDetailsCategory").ejDropDownList().data("ejDropDownList").selectItemByText(posModel);
+            }
+
+            $("#FBERFPOSDetailsCategory").ejDropDownList({ change: "FBERFPOSDetailsCategoryChange", enableFilterSearch: false });
+            $("#FBERFPOSDetailsQuantity").on("keyup", FBERFPosQuantityChange);
+        }
+    }
+
+    function FBERFPOSDetailsCategoryChange(e) {
+        $.ajax({
+            url: '@Url.Action("GetContingentDetails", "ErfNew")',
+            type: 'GET',
+            data: { contingentId: e.value },
+            success: function (jsonResult) {
+                if (jsonResult.success == true) {
+                    $("#FBERFPOSDetailsBrand").ejDropDownList({ dataSource: jsonResult.data, enableFilterSearch: false, change: ERFPosContingentDetailChange });
+                    $("#FBERFPOSDetailsTransactionType").ejDropDownList({ change: ERFPosTransTypeChange });
+                }
+                else {
+                    AlertPopup("|There is a problem in getting Contingents!");
+                }
+            }
+        });
+
+    }
+
+    function ERFPosTransTypeChange(e)
+    {
+        if (e.value == "Rental") {
+            $("#FBERFPOSDetailsRentalCost").val("$" + PosRentalCost.toFixed(2));
+        }
+        else if (e.value == "Cash Sale") {
+            $("#FBERFPOSDetailsRentalCost").val("$" + PosCashSale.toFixed(2));
+        }
+        else
+            $("#FBERFPOSDetailsRentalCost").val(0);
+    }
+
+    var PosLaidInCost = 0;
+    var PosRentalCost = 0;
+    var PosCashSale = 0;
+    function ERFPosContingentDetailChange(e)
+    {
+
+        $.ajax({
+            url: '@Url.Action("GetContingentDetailItem", "ErfNew")',
+            type: 'GET',
+            data: { contingentDetailName: e.value },
+            success: function (jsonResult) {
+                if (jsonResult.success == true) {
+
+                    PosLaidInCost = jsonResult.data.LaidInCost == null ? 0 : jsonResult.data.LaidInCost;
+                    PosRentalCost = jsonResult.data.Rental == null ? 0 : jsonResult.data.Rental;
+                    PosCashSale = jsonResult.data.CashSale == null ? 0 : jsonResult.data.CashSale;
+
+                    $("#FBERFPOSDetailsBrand_input").val(jsonResult.data.ID);
+
+                    $("#FBERFPOSDetailsLaidInCost").val("$" + PosLaidInCost.toFixed(2));
+
+                    var quantity = $("#FBERFPOSDetailsQuantity").val();
+                    var total = 0;
+                    if ((quantity != null || quantity != "") && PosLaidInCost != null) {
+                        total = quantity * PosLaidInCost;
+                    }
+
+
+
+                    if ($("#FBERFPOSDetailsTransactionType").val() == "Rental") {
+                        $("#FBERFPOSDetailsRentalCost").val("$" + PosRentalCost.toFixed(2));
+                    }
+                    else if ($("#FBERFPOSDetailsTransactionType").val() == "Cash Sale") {
+                        $("#FBERFPOSDetailsRentalCost").val("$" + PosCashSale.toFixed(2));
+                    }
+                    else
+                        $("#FBERFPOSDetailsRentalCost").val(0);
+
+                    $("#FBERFPOSDetailsTotalCost").val("$" + total.toFixed(2));
+
+                }
+                else {
+                    AlertPopup("|There is a problem in getting Contingents!");
+                }
+            }
+        });
+    }
+
+    function FBERFPosQuantityChange(e)
+    {
+        var QtyVal = $("#FBERFPOSDetailsQuantity").val();
+        var LaidInCost = $("#FBERFPOSDetailsLaidInCost").val();
+        var total = 0;
+        if ((QtyVal != null || QtyVal != "") && PosLaidInCost != null) {
+            total = QtyVal * PosLaidInCost;
+        }
+        $("#FBERFPOSDetailsTotalCost").val("$" + total.toFixed(2));
+    }
+
+    function queryCellInfoPos(args) {
+
+        if (args.column.headerText === "Total Line Amount") {
+            var Qty = args.data.Quantity;
+            if (args.data.Quantity === null || args.data.Quantity == 0) {
+                Qty = 1;
+            }
+
+            if (args.data.UnitPrice != 0) {
+                $(args.cell).text("$" + (Qty * args.data.UnitPrice).toFixed(2));
+            }
+            else {
+                $(args.cell).text("$" + (Qty * args.data.UnitPrice));
+            }
+
+        }
+        if (args.column.headerText === "Unit Price") {
+
+            if (args.data.UnitPrice !== null && args.data.UnitPrice != 0) {
+                $(args.cell).text("$" + (args.data.UnitPrice).toFixed(2));
+            }
+            else {
+                $(args.cell).text("$" + (args.data.UnitPrice));
+            }
+        }
+        if (args.column.headerText === "Qty") {
+            if (args.data.Quantity === null || args.data.Quantity == 0) {
+                $(args.cell).text(1);
+            }
+        }
+        if (args.column.headerText === "Transaction Type") {
+            if (args.data.TransactionType !== null) {
+                $(args.cell).text(args.data.TransactionType);
+            }
+        }
+        if (args.column.headerText === "Extra") {
+            if (args.data.Extra !== null) {
+                $(args.cell).text(args.data.Extra);
+            }
+        }
+
+    }*@
+    
+    //************ End Of POS *******************
+
 </script>
 
 @using (Html.BeginForm())
@@ -1155,231 +1369,242 @@
 
             @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
 
-                            <section class="block">
-                                <div class="container-fluid">
-                                    <h2 class="work-requested-details-head arrow-down tabheader">Assets</h2>
-                                    <div class="work-requested-details-content margin-top">
-                                        <div class="col-xs-12 customer sm-pad-reset">
+<section class="block">
+    <div class="container-fluid">
+        <h2 class="work-requested-details-head arrow-down tabheader">Assets</h2>
+        <div class="work-requested-details-content margin-top">
+            <div class="col-xs-12 customer sm-pad-reset">
 
-                                            <div class="erf-Assets-content margin-top">
-                                                <div class="row clear-input">
+                <div class="erf-Assets-content margin-top">
+                    <div class="row clear-input">
 
-                                                    <div class="col-md-4 customer-col1 sm-pad-reset">
-                                                        @{
-                                                            if (UserPrivilege["ERFNew"] == "Full")
-                                                            {
-                                                                <div class="col-md-12">
-                                                                    <span class="col-md-6">Branch Stock / Accessory Only Order:</span>
-                                                                    <div class="col-md-6">
-                                                                        <div class="form-group">
-                                                                            @Html.CheckBoxFor(m => m.CrateWorkOrder, new { @Id = "accessOnlyWO" })
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                                                                               
-
-                                                        <div class="col-md-12">
-                                                            <span class="col-md-6 required">Order Type:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @*@Html.DropDownListFor(c => c.OrderType, new SelectList(Model.OrderTypeList), new { @class = "form-control SearchPanelControl", @Id = "OrderTypeList" })*@
-                                                                    @Html.DropDownListFor(c => c.OrderType, new SelectList(Model.OrderTypeList.OrderBy(x => x.OrderTypeDesc), "OrderTypeDesc", "OrderTypeDesc"), new { @Id = "OrderTypeList", @class = "form-control custom-select ThirdPartyDropDown", style = "width:100%" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        @*<div class="col-md-12">
-                                                            <span class="col-md-6 required">Ship to Customer:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    @Html.CheckBoxFor(m => m.CrateWorkOrder, new { @Id = "accessOnlyWO" })
-                                                                </div>
-                                                            </div>
-                                                        </div>*@
-
-                                                        @*<div class="col-md-12">
-                                                            <span class="col-md-6 required">Customer Direct:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @Html.DropDownListFor(c => c.ShipToCustomer, new SelectList(Model.ShipToCustomerList.OrderBy(x=>x.CompanyName), "ContactId", "CompanyName"), "Please select a  Customer", new { @Id = "CustomerList", @class = "form-control custom-select ThirdPartyDropDown", style = "width:100%" })
-                                                                </div>
-                                                            </div>
-                                                        </div>*@
-
-                                                        <div class="col-md-12">
-                                                            <span class="col-md-6 required">Ship to Branch if Different:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @*@Html.DropDownListFor(c => c.BranchName, new SelectList(Model.BranchList), new { @class = "form-control SearchPanelControl", @Id = "BranchList", @disabled = "disabled" })*@
-                                                                    @Html.DropDownListFor(c => c.BranchName, new SelectList(Model.BranchList.OrderBy(x => x.BranchName), "BranchNo", "BranchName"), "Please select a  Branch", new { @Id = "BranchList", @class = "form-control custom-select ThirdPartyDropDown", style = "width:100%" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-12">
-                                                            <span class="col-md-6 required">Form Date:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateOnERF, new { @class = "form-control WorkOrderFields", @Id = "ERFFormDate" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <span class="col-md-6 required">ERF Received Date:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateERFReceived, new { @class = "form-control WorkOrderFields", @Id = "ERFDateRecived" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <span class="col-md-6 required">ERF Processed Date:</span>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateERFProcessed, new { @class = "form-control WorkOrderFields", @Id = "ERFDateProcessed" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-12">
-                                                            <span class="col-md-6 required"> Scheduled Install Date:</span> @*ERF Requested Date:</span>*@
-                                                            <div class="col-md-6">
-                                                                <div class="form-group" style="float:right">
-                                                                    @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.OriginalRequestedDate, new { @class = "form-control WorkOrderFields", @Id = "ERFRequestDate" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-8 customer sm-pad-reset">
-                                                        <div class="row">
-                                                            <div class="col-md-6 customer-col2">
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-sm-4 col-md-5 m-b-more">Hours of Operation:</span>
-                                                                </div>
-                                                                <div class="col-xs-4-o">
-                                                                    <div class="form-group" style="float:right">
-                                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.HoursofOperation, new { @class = "form-control WorkOrderFields" })
-                                                                        <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.HoursofOperation, "", new { @class = "text-danger" })
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-sm-4 col-md-5 m-b-more">Install Location:</span>
-                                                                </div>
-                                                                <div class="col-xs-4-o">
-                                                                    <div class="form-group" style="float:right">
-                                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.InstallLocation, new { @class = "form-control WorkOrderFields" })
-                                                                        <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.InstallLocation, "", new { @class = "text-danger" })
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-sm-4 col-md-5 m-b-more">Contact:</span>
-                                                                </div>
-                                                                <div class="col-xs-4-o">
-                                                                    <div class="form-group" style="float:right">
-                                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.UserName, new { @class = "form-control WorkOrderFields" })
-                                                                        <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.UserName, "", new { @class = "text-danger" })
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-sm-4 col-md-5 m-b-more">Phone:</span>
-                                                                </div>
-                                                                <div class="col-xs-4-o">
-                                                                    <div class="form-group" style="float:right">
-                                                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.Phone, new { @class = "form-control WorkOrderFields" })
-                                                                        @Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.Phone, "", new { @class = "text-danger" })
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-sm-4 col-md-5 m-b-more">SITE READY AT TIME OF ERF PROCESSION?</span>
-                                                                </div>
-                                                                <div class="col-xs-4-o">
-                                                                    <div class="form-group" style="float:right">
-                                                                        @Html.DropDownListFor(c => c.SiteReady, new SelectList(Model.SiteReadyList), new { @class = "form-control SearchPanelControl", @Id = "SiteReadyList" })
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-md-6 customer-form-cnt">
-                                                               
-                                                                <h2 class="tabheader" style="margin-bottom:20px; text-align:center;">Equipment Calculator</h2>
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-sm-4 col-md-5 m-b-more required">Additional NSV:</span>
-                                                                </div>
-                                                                <div class="col-xs-4-o">
-                                                                    <div class="form-group" style="float:left">
-                                                                        @Html.TextBoxFor(m => m.TotalNSV, new { @class = "form-control WorkOrderFields" })
-                                                                        <br />@Html.ValidationMessageFor(m => m.TotalNSV, "", new { @class = "text-danger" })
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-md-5">Current NSV:</span>
-                                                                    <span class="col-md-7" id="currentTot">@String.Format("{0:C}", Model.CurrentNSV)</span>
-                                                                    @Html.HiddenFor(m => m.CurrentNSV)
-                                                                </div>
-
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-md-5">Contribution Margin:</span>
-                                                                    <span class="col-md-7" id="currentTot">@Model.ContributionMargin</span>
-                                                                    @Html.HiddenFor(m => m.ContributionMargin)
-                                                                </div>
-
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-md-5">Current Equipment:</span>
-                                                                    <span class="col-md-7" id="currentTot">@String.Format("{0:C}", Model.CurrentEquipmentTotal)</span>
-                                                                    @Html.HiddenFor(m => m.CurrentEquipmentTotal)
-                                                                </div>
-
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-md-5">Additional Equipment:</span>
-                                                                    <span class="col-md-7" id="additionalTot">@String.Format("{0:C}", Model.AdditionalEquipmentTotal)</span>
-                                                                    @Html.HiddenFor(m => m.AdditionalEquipmentTotal)
-                                                                </div>
-
-                                                                <div class="col-xs-6-o">
-                                                                    <span class="col-md-5">Approval Status:</span>
-                                                                    <span class="col-md-7" id="approvalStus">@Model.ApprovalStatus</span>
-                                                                    @Html.HiddenFor(m => m.ApprovalStatus)
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <br />
-
-                                                    </div>
+                        <div class="col-md-4 customer-col1 sm-pad-reset">
+                            @{
+                                if (UserPrivilege["ERFNew"] == "Full")
+                                {
+                                    <div class="col-xs-12-o">
+                                        <span class="col-md-6">Branch Stock / Accessory Only Order:</span>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.CheckBoxFor(m => m.CrateWorkOrder, new { @Id = "accessOnlyWO" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
 
 
+                            <div class="col-xs-12-o">
+                                <span class="col-md-6 required">Order Type:</span>
+                                <div class="col-md-6">
+                                    <div class="form-group" style="float:right">
+                                        @*@Html.DropDownListFor(c => c.OrderType, new SelectList(Model.OrderTypeList), new { @class = "form-control SearchPanelControl", @Id = "OrderTypeList" })*@
+                                        @Html.DropDownListFor(c => c.OrderType, new SelectList(Model.OrderTypeList.OrderBy(x => x.OrderTypeDesc), "OrderTypeDesc", "OrderTypeDesc"), new { @Id = "OrderTypeList", @class = "form-control custom-select ThirdPartyDropDown", style = "width:100%" })
+                                    </div>
+                                </div>
+                            </div>
 
+                            @*<div class="col-md-12">
+                                    <span class="col-md-6 required">Ship to Customer:</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            @Html.CheckBoxFor(m => m.CrateWorkOrder, new { @Id = "accessOnlyWO" })
+                                        </div>
+                                    </div>
+                                </div>*@
+
+                            @*<div class="col-md-12">
+                                    <span class="col-md-6 required">Customer Direct:</span>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="float:right">
+                                            @Html.DropDownListFor(c => c.ShipToCustomer, new SelectList(Model.ShipToCustomerList.OrderBy(x=>x.CompanyName), "ContactId", "CompanyName"), "Please select a  Customer", new { @Id = "CustomerList", @class = "form-control custom-select ThirdPartyDropDown", style = "width:100%" })
+                                        </div>
+                                    </div>
+                                </div>*@
+
+                            <div class="col-xs-12-o">
+                                <span class="col-md-6 required">Ship to Branch if Different:</span>
+                                <div class="col-md-6">
+                                    <div class="form-group" style="float:right">
+                                        @*@Html.DropDownListFor(c => c.BranchName, new SelectList(Model.BranchList), new { @class = "form-control SearchPanelControl", @Id = "BranchList", @disabled = "disabled" })*@
+                                        @Html.DropDownListFor(c => c.BranchName, new SelectList(Model.BranchList.OrderBy(x => x.BranchName), "BranchNo", "BranchName"), "Please select a  Branch", new { @Id = "BranchList", @class = "form-control custom-select ThirdPartyDropDown", style = "width:100%" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12-o">
+                                <span class="col-md-6 required">Form Date:</span>
+                                <div class="col-md-6">
+                                    <div class="form-group" style="float:right">
+                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateOnERF, new { @class = "form-control WorkOrderFields", @Id = "ERFFormDate" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12-o">
+                                <span class="col-md-6 required">ERF Received Date:</span>
+                                <div class="col-md-6">
+                                    <div class="form-group" style="float:right">
+                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateERFReceived, new { @class = "form-control WorkOrderFields", @Id = "ERFDateRecived" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12-o">
+                                <span class="col-md-6 required">ERF Processed Date:</span>
+                                <div class="col-md-6">
+                                    <div class="form-group" style="float:right">
+                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.DateERFProcessed, new { @class = "form-control WorkOrderFields", @Id = "ERFDateProcessed" })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-12-o">
+                                <span class="col-md-6 required"> Scheduled Install Date:</span> @*ERF Requested Date:</span>*@
+                                <div class="col-md-6">
+                                    <div class="form-group" style="float:right">
+                                        @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.OriginalRequestedDate, new { @class = "form-control WorkOrderFields", @Id = "ERFRequestDate" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-8 customer sm-pad-reset">
+                            <div class="row">
+                                <div class="col-md-6 customer-col2">
+                                    <div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">Hours of Operation:</span>
+                                        <span class="col-md-7" id="approvalStus">
+                                            @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.HoursofOperation, new { @class = "form-control WorkOrderFields" })
+                                                                                <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.HoursofOperation, "", new { @class = "text-danger" })
+                                                                            </span>
+                                        
+                                    </div>
+
+
+                                    @*<div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">Hours of Operation:</span>
+                                    </div>
+                                    <div class="col-xs-4-o">
+                                        <div class="form-group" style="float:right">
+                                            @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.HoursofOperation, new { @class = "form-control WorkOrderFields" })
+                                            <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.HoursofOperation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>*@
+                                    <div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">Install Location:</span>
+                                    </div>
+                                    <div class="col-xs-4-o">
+                                        <div class="form-group" style="float:right">
+                                            @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.InstallLocation, new { @class = "form-control WorkOrderFields" })
+                                            <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.InstallLocation, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">Contact:</span>
+                                    </div>
+                                    <div class="col-xs-4-o">
+                                        <div class="form-group" style="float:right">
+                                            @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.UserName, new { @class = "form-control WorkOrderFields" })
+                                            <br />@Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.UserName, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">Phone:</span>
+                                    </div>
+                                    <div class="col-xs-4-o">
+                                        <div class="form-group" style="float:right">
+                                            @Html.TextBoxFor(m => m.ErfAssetsModel.Erf.Phone, new { @class = "form-control WorkOrderFields" })
+                                            @Html.ValidationMessageFor(m => m.ErfAssetsModel.Erf.Phone, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">SITE READY AT TIME OF ERF PROCESSION?</span>
+                                    </div>
+                                    <div class="col-xs-4-o">
+                                        <div class="form-group" style="float:right">
+                                            @Html.DropDownListFor(c => c.SiteReady, new SelectList(Model.SiteReadyList), new { @class = "form-control SearchPanelControl", @Id = "SiteReadyList" })
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 customer-form-cnt">
+                                    <div class="col-xs-6-o">
+                                        <h2 class="tabheader" style="margin-bottom:20px; text-align:center;">Equipment Calculator</h2>
+                                    </div>
+                                    <div class="col-xs-6-o">
+                                        <span class="col-sm-4 col-md-5 m-b-more required">Additional NSV:</span>
+                                    </div>
+                                    <div class="col-xs-4-o">
+                                        <div class="form-group" style="float:left">
+                                            @Html.TextBoxFor(m => m.TotalNSV, new { @class = "form-control WorkOrderFields" })
+                                            <br />@Html.ValidationMessageFor(m => m.TotalNSV, "", new { @class = "text-danger" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xs-6-o">
+                                        <span class="col-md-5">Current NSV:</span>
+                                        <span class="col-md-7" id="currentTot">@String.Format("{0:C}", Model.CurrentNSV)</span>
+                                        @Html.HiddenFor(m => m.CurrentNSV)
+                                    </div>
+
+                                    <div class="col-xs-6-o">
+                                        <span class="col-md-5">Contribution Margin:</span>
+                                        <span class="col-md-7" id="currentTot">@Model.ContributionMargin</span>
+                                        @Html.HiddenFor(m => m.ContributionMargin)
+                                    </div>
+
+                                    <div class="col-xs-6-o">
+                                        <span class="col-md-5">Current Equipment:</span>
+                                        <span class="col-md-7" id="currentTot">@String.Format("{0:C}", Model.CurrentEquipmentTotal)</span>
+                                        @Html.HiddenFor(m => m.CurrentEquipmentTotal)
+                                    </div>
+
+                                    <div class="col-xs-6-o">
+                                        <span class="col-md-5">Additional Equipment:</span>
+                                        <span class="col-md-7" id="additionalTot">@String.Format("{0:C}", Model.AdditionalEquipmentTotal)</span>
+                                        @Html.HiddenFor(m => m.AdditionalEquipmentTotal)
+                                    </div>
+
+                                    <div class="col-xs-6-o">
+                                        <span class="col-md-5">Approval Status:</span>
+                                        <span class="col-md-7" id="approvalStus">@Model.ApprovalStatus</span>
+                                        @Html.HiddenFor(m => m.ApprovalStatus)
+                                    </div>
+
+                                </div>
+                            </div>
+                            <br />
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="row clear-input">
+                        <button class="btn btn-primary" onclick='window.open("https://docs.google.com/spreadsheets/d/e/2PACX-1vRkVq6wz4Hi_r2TFmDVF8Pnr_KUlcKmc5p2oN8iXRbQKcPKuri8d4yFlyyWnbdOx9oqK0LddHoo5pFc/pubhtml")' style="position: absolute;left: 50%;z-index:9999;">Reference Guide</button>
+                        <div class="col-md-12">
+                            <h2 class="equipment-head tabheader">Equipment:</h2>
+                            @*<div class="equipment-details-content">*@
+                            @*<div class="col-md-8 customer sm-pad-reset" style="width:100%;">
+                                    <div class="row">
+                                        <div class="col-md-6 customer-col2">
+                                            <div class="col-xs-6-o">
+                                                <span class="col-sm-4 col-md-5 m-b-more">Equipment Category Selection:</span>
+                                            </div>
+                                            <div class="col-xs-4-o">
+                                                <div class="form-group" style="float:right">
+                                                    @Html.DropDownListFor(c => c.EqpValidationId, new SelectList(Model.EqpValidationList.OrderBy(x => x.ContingentName), "ContingentId", "ContingentName"), "Please select an Item", new { @class = "form-control SearchPanelControl", @Id = "EqpValidationList" })
                                                 </div>
-                                                <div class="row clear-input">
-                                                    <button class="btn btn-primary" onclick='window.open("https://docs.google.com/spreadsheets/d/e/2PACX-1vRkVq6wz4Hi_r2TFmDVF8Pnr_KUlcKmc5p2oN8iXRbQKcPKuri8d4yFlyyWnbdOx9oqK0LddHoo5pFc/pubhtml")' style="position: absolute;left: 50%;z-index:9999;">Reference Guide</button>
-                                                    <div class="col-md-12">                                                        
-                                                        <h2 class="equipment-head tabheader">Equipment:</h2>
-                                                        @*<div class="equipment-details-content">*@
-                                                            @*<div class="col-md-8 customer sm-pad-reset" style="width:100%;">
-                                                                <div class="row">
-                                                                    <div class="col-md-6 customer-col2">
-                                                                        <div class="col-xs-6-o">
-                                                                            <span class="col-sm-4 col-md-5 m-b-more">Equipment Category Selection:</span>
-                                                                        </div>
-                                                                        <div class="col-xs-4-o">
-                                                                            <div class="form-group" style="float:right">
-                                                                                @Html.DropDownListFor(c => c.EqpValidationId, new SelectList(Model.EqpValidationList.OrderBy(x => x.ContingentName), "ContingentId", "ContingentName"), "Please select an Item", new { @class = "form-control SearchPanelControl", @Id = "EqpValidationList" })
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
 
-                                                            <div class="col-md-8 customer sm-pad-reset" style="width:100%;">
-                                                                <div class="row">
+                            <div class="col-xs-8-o customer sm-pad-reset" style="width:100%;">
+                                <div class="row">
 
-                                                                    <div class="table-responsive">
+                                    <div class="table-responsive">
 
 
-                                                                        @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementEquipmentModel>
+                                        @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementEquipmentModel>
                                     ("FBERFEquipmentDetails")
                                         .Datasource(ds => ds.Json((IEnumerable<object>)Model.ErfAssetsModel.EquipmentList)
                                         .UpdateURL(Url.Action("EquipmentUpdate", "ErfNew"))
@@ -1431,36 +1656,36 @@
 
 
 
-                                                                    </div><!--end of .table-responsive-->
+                                    </div><!--end of .table-responsive-->
 
-                                                                </div>
-                                                            </div>
-                                                        @*</div>*@
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <h2 class="expandible-head tabheader">Expendables:</h2>
-                                                        @*<div class="expandible-details-content">*@
-                                                            @*<div class="col-md-8 customer sm-pad-reset" style="width:100%;">
-                                                                <div class="row">
-                                                                    <div class="col-md-6 customer-col2">
-                                                                        <div class="col-xs-6-o">
-                                                                            <span class="col-sm-4 col-md-5 m-b-more">Expendable Category Selection:</span>
-                                                                        </div>
-                                                                        <div class="col-xs-4-o">
-                                                                            <div class="form-group" style="float:right">
-                                                                                @Html.DropDownListFor(c => c.ExpValidationId, new SelectList(Model.ExpValidationList.OrderBy(x => x.ContingentName), "ContingentId", "ContingentName"), "Please select an Item", new { @class = "form-control SearchPanelControl", @Id = "ExpValidationList" })
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>*@
+                                </div>
+                            </div>
+                            @*</div>*@
+                        </div>
+                        <div class="col-md-12">
+                            <h2 class="expandible-head tabheader">Expendables:</h2>
+                            @*<div class="expandible-details-content">*@
+                            @*<div class="col-md-8 customer sm-pad-reset" style="width:100%;">
+                                    <div class="row">
+                                        <div class="col-md-6 customer-col2">
+                                            <div class="col-xs-6-o">
+                                                <span class="col-sm-4 col-md-5 m-b-more">Expendable Category Selection:</span>
+                                            </div>
+                                            <div class="col-xs-4-o">
+                                                <div class="form-group" style="float:right">
+                                                    @Html.DropDownListFor(c => c.ExpValidationId, new SelectList(Model.ExpValidationList.OrderBy(x => x.ContingentName), "ContingentId", "ContingentName"), "Please select an Item", new { @class = "form-control SearchPanelControl", @Id = "ExpValidationList" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>*@
 
-                                                            <div class="col-md-8 customer sm-pad-reset" style="width:100%;">
-                                                                <div class="row">
+                            <div class="col-xs-8-o customer sm-pad-reset" style="width:100%;">
+                                <div class="row">
 
 
-                                                                    <div class="table-responsive">
-                                                                        @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementExpendableModel>
+                                    <div class="table-responsive">
+                                        @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementExpendableModel>
                                                                             ("FBERFExpendableDetails")
                                                                             .Datasource(ds => ds.Json((IEnumerable<object>
                                                                                 )Model.ErfAssetsModel.ExpendableList)
@@ -1510,70 +1735,125 @@
                                                                                     .QueryCellInfo("queryCellInfoExpendable")
                                                                                     .ToolbarClick("onToolbarClick");
                                                                                 }))
+                                        @*@(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementExpendableModel>
+                                            ("FBERFExpendableDetails")
+                                                .Datasource(ds => ds.Json((IEnumerable<object>)Model.ErfAssetsModel.ExpendableList)
+                                                .UpdateURL(Url.Action("ExpendableUpdate", "Erf"))
+                                                .InsertURL(Url.Action("ExpendableInsert", "Erf"))
+                                                .RemoveURL(Url.Action("ExpendableDelete", "Erf"))
+                                                .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                                .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                                .AllowPaging()
+                                                .ToolbarSettings(toolbar =>
+                                                {
+                                                    toolbar.ShowToolbar().ToolbarItems(items =>
+                                                    {
+                                                        items.AddTool(ToolBarItems.Add);
+                                                        items.AddTool(ToolBarItems.Edit);
+                                                        items.AddTool(ToolBarItems.Delete);
+                                                        items.AddTool(ToolBarItems.Update);
+                                                        items.AddTool(ToolBarItems.Cancel);
+                                                    });
+                                                })
+                                                .Columns(col =>
+                                                {
+                                                    col.Field("ERFExpendableId").HeaderText("Expendable ID").IsPrimaryKey(true).Visible(false).Add();
+                                                    col.Field("ModelNo").HeaderText("Model#").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpendableModels))
+                                                        .ValidationRules(r => r.AddRule("required", true)).Add();
+                                                    col.Field("Quantity").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("number", true).AddRule("required", true)).Add();
+                                                    col.Field("ProdNo").HeaderText("Product NO").ForeignKeyField("Product").ForeignKeyValue("Product").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpendableProducts)).Add();
+                                                    col.Field("Description").HeaderText("Description").Add();
+                                                    col.Field("TransactionType").HeaderText("Transaction Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                                    col.Field("UnitPrice").HeaderText("Unit Price").AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
+                                                    col.Field("UnitPrice").HeaderText("Total Line Amount").AllowEditing(false).Format("{0:n2}").Add();
+                                                    col.Field("Extra").HeaderText("Extra").Add();
 
 
+                                                })
+                                                .ClientSideEvents(eve =>
+                                                {
+                                                    eve.ActionComplete("CompleteExpendableModels")
+                                                        .BeginEdit("FBERFExpendableDetailsBeginEdit")
+                                                        .ActionBegin("FBERFExpendableDetailsBegin")
+                                                        .EndEdit("FBERFExpendableDetailsEndEdit")
+                                                        .EndAdd("FBERFExpendableDetailsEndAdd")
+                                                        .QueryCellInfo("queryCellInfoExpendable")
+                                                        .ToolbarClick("onToolbarClick");
+                                                }))*@
 
 
-                                                                                            @*@(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementExpendableModel>
-                                ("FBERFExpendableDetails")
-                                    .Datasource(ds => ds.Json((IEnumerable<object>)Model.ErfAssetsModel.ExpendableList)
-                                    .UpdateURL(Url.Action("ExpendableUpdate", "Erf"))
-                                    .InsertURL(Url.Action("ExpendableInsert", "Erf"))
-                                    .RemoveURL(Url.Action("ExpendableDelete", "Erf"))
-                                    .Adaptor(AdaptorType.RemoteSaveAdaptor))
-                                    .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
-                                    .AllowPaging()
-                                    .ToolbarSettings(toolbar =>
-                                    {
-                                        toolbar.ShowToolbar().ToolbarItems(items =>
-                                        {
-                                            items.AddTool(ToolBarItems.Add);
-                                            items.AddTool(ToolBarItems.Edit);
-                                            items.AddTool(ToolBarItems.Delete);
-                                            items.AddTool(ToolBarItems.Update);
-                                            items.AddTool(ToolBarItems.Cancel);
-                                        });
-                                    })
-                                    .Columns(col =>
-                                    {
-                                        col.Field("ERFExpendableId").HeaderText("Expendable ID").IsPrimaryKey(true).Visible(false).Add();
-                                        col.Field("ModelNo").HeaderText("Model#").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpendableModels))
-                                            .ValidationRules(r => r.AddRule("required", true)).Add();
-                                        col.Field("Quantity").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("number", true).AddRule("required", true)).Add();
-                                        col.Field("ProdNo").HeaderText("Product NO").ForeignKeyField("Product").ForeignKeyValue("Product").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpendableProducts)).Add();
-                                        col.Field("Description").HeaderText("Description").Add();
-                                        col.Field("TransactionType").HeaderText("Transaction Type").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
-                                        col.Field("UnitPrice").HeaderText("Unit Price").AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
-                                        col.Field("UnitPrice").HeaderText("Total Line Amount").AllowEditing(false).Format("{0:n2}").Add();
-                                        col.Field("Extra").HeaderText("Extra").Add();
+                                    </div><!--end of .table-responsive-->
+                                    <!--Add removed code -->
+                                </div>
+                            </div>
+                            @*</div>*@
+                        </div>
 
+                        @*<div class="col-md-12">
+                                <h2 class="expandible-head tabheader">POS:</h2>
 
-                                    })
-                                    .ClientSideEvents(eve =>
-                                    {
-                                        eve.ActionComplete("CompleteExpendableModels")
-                                            .BeginEdit("FBERFExpendableDetailsBeginEdit")
-                                            .ActionBegin("FBERFExpendableDetailsBegin")
-                                            .EndEdit("FBERFExpendableDetailsEndEdit")
-                                            .EndAdd("FBERFExpendableDetailsEndAdd")
-                                            .QueryCellInfo("queryCellInfoExpendable")
-                                            .ToolbarClick("onToolbarClick");
-                                    }))*@
-
-
-                                                                    </div><!--end of .table-responsive-->
-                                                                    <!--Add removed code -->
-                                                                </div>
-                                                            </div>
-                                                        @*</div>*@
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                                </div>
+                                <div class="col-md-8 customer sm-pad-reset" style="width:100%;">
+                                    <div class="row">
+                                        <div class="table-responsive">
+                                            @(Html.EJ().Grid<FarmerBrothers.Models.ERFManagementPOSModel>
+                                                    ("FBERFPOSDetails")
+                                                    .Datasource(ds => ds.Json((IEnumerable<object>
+                                                        )Model.ErfAssetsModel.PosList)
+                                                        .UpdateURL(Url.Action("PosUpdate", "ErfNew"))
+                                                        .InsertURL(Url.Action("PosInsert", "ErfNew"))
+                                                        .RemoveURL(Url.Action("PosDelete", "ErfNew"))
+                                                        .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                                        .EditSettings(edit => { edit.AllowAdding().AllowEditing().AllowDeleting(); })
+                                                        .AllowPaging()
+                                                         .AllowTextWrap(true)
+                                                        .ToolbarSettings(toolbar =>
+                                                        {
+                                                            toolbar.ShowToolbar().ToolbarItems(items =>
+                                                            {
+                                                                items.AddTool(ToolBarItems.Add);
+                                                                //items.AddTool(ToolBarItems.Edit);
+                                                                items.AddTool(ToolBarItems.Delete);
+                                                                items.AddTool(ToolBarItems.Update);
+                                                                items.AddTool(ToolBarItems.Cancel);
+                                                            });
+                                                        })
+                                                        .Columns(col =>
+                                                        {
+                                                            col.Field("ERFPosId").HeaderText("Equipment ID").IsPrimaryKey(true).Visible(false).Add();
+                                                            col.Field("Quantity").HeaderText("Qty").Width("5%").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
+                                                            col.Field("Category").HeaderText("Equipment Category").Width("15%").ForeignKeyField("ModelId").ForeignKeyValue("ModelName").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfPosCategory))
+                                                                .ValidationRules(r => r.AddRule("required", true)).Add();
+                                                            col.Field("Brand").HeaderText("Brand - Equipment Model Number - Description").Width("20%").ForeignKeyField("ModelId").ForeignKeyValue("ModelName").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfPosModels))
+                                                                .ValidationRules(r => r.AddRule("required", true)).HeaderTextAlign(TextAlign.Justify).Add();
+                                                            col.Field("Branch").HeaderText("Using Branch Stock").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.UsingBranch)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                                            col.Field("Substitution").HeaderText("Substitution possible ? ").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfSubstituion)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                                            col.Field("TransactionType").HeaderText("Trans Type").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                                            col.Field("EquipmentType").HeaderText("Equipment Type").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfEquipmentTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
+                                                            col.Field("LaidInCost").HeaderText("Laid-in-Cost").Width("10%").Type(ColumnType.Number).Format("{0:C}").ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).AllowEditing(false).Add();
+                                                            col.Field("RentalCost").HeaderText("Rental Cost").Width("10%").Type(ColumnType.Number).Format("{0:C}").ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).AllowEditing(false).Add();
+                                                            col.Field("TotalCost").HeaderText("Total").Width("10%").Type(ColumnType.Number).Format("{0:C}").ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).AllowEditing(false).Add();
+                                                        })
+                                                        .ClientSideEvents(eve =>
+                                                        {
+                                                            eve.ActionComplete("CompletePosModels")
+                                                            .BeginEdit("FBERFPosDetailsBeginEdit")
+                                                            .ActionBegin("FBERFPosDetailsBegin")
+                                                            .EndEdit("FBERFPosDetailsEndEdit")
+                                                            .EndAdd("FBERFPosDetailsEndAdd")
+                                                            .QueryCellInfo("queryCellInfoPos")
+                                                            .ToolbarClick("onToolbarClick");
+                                                        }))
+                                        </div>
                                     </div>
                                 </div>
-                            </section>
+                            </div>*@
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
                             <section class="block">
                                 <div class="container-fluid">
                                     <h2 class="notes-details-head arrow-down tabheader  required">Notes</h2>

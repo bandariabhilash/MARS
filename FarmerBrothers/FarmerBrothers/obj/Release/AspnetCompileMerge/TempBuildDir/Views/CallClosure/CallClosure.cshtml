@@ -45,7 +45,246 @@
         {
             window.location.href = "@Url.Action("CallClosureManagement", "CallClosure")" + "/" + args.data["CustomerId"] + '/' + args.data["WorkOrderId"] + "/false/false";
         }
+        if (args.columnName == "Print") {
+            getPdfData(args.data["WorkOrderId"], args.data["WorkOrderCallStatus"]);
+        }
     }
+
+    var workorderPDFId = "", WOStatus = "";
+    function getPdfData(varWorkorderID, varWOStatus) {
+        $(window).scrollTop(0);
+        $('body').css({ 'overflow-y': 'hidden' });
+        workorderPDFId = varWorkorderID;
+        WOStatus = varWOStatus;
+        $.ajax({
+            method: "GET",
+            datatype: 'json',
+            url: "@Url.Action("WorkorderPdfData", "Workorder")",
+            data: { WorkorderID: varWorkorderID },
+            success: function (msg) {
+
+                var pdfDiv = $(msg.Content);
+                $("#woPdfDiv").append(pdfDiv);
+                generatePDF();
+            },
+            error: function (err) {
+                debugger;
+                $('body').css({ 'overflow-y': 'auto' });
+            }
+        })
+    }
+
+    function generatePDF() {
+        $('#ForWaitCursor').addClass("loading");
+        var img1, img2, hratio1, hratio2;
+        var imgArr = [];
+        var heightRatio = [];
+
+        var headerBlock = $(".work-order")
+        var reqEqpBlock = $(".reqEquipmentBlock")
+        var eqpBlock = $(".equipmentBlock")
+        var CustomerSurveyBlock = $(".CustomerSurveyBlock");
+        if (WOStatus == "Accepted" || WOStatus == "Accepted-Partial"
+                 || WOStatus == "On Site" || WOStatus == "In Progress"
+                 || WOStatus == "Completed" || WOStatus == "Closed" || WOStatus == "Invoiced") {
+            EquipmentGridRender(eqpBlock, imgArr, heightRatio)
+        }
+        else {
+            var renderCount = 0;
+            if ($(".reqEqpSec").length > 0) {
+                headerBlock.append($(".wrkReqHeading"));
+                $(".reqEqpSec").each(function (index, element) {
+                    var currentElement = element;
+
+                    if (index == 0) {
+                        currentElement = headerBlock;
+                        currentElement.append(element);
+                    }
+
+                    html2canvas(currentElement, {
+                        onrendered: function (canvas) {
+                            var wid;
+                            var hgt;
+                            var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                            heightRatio.push(hgt / wid);
+                            imgArr.push(img);
+
+                            renderCount++;
+                            if (renderCount == $(".reqEqpSec").length) {
+                                //savePDF(eqpBlock, imgArr, heightRatio);
+                                //EquipmentGridRender(eqpBlock, imgArr, heightRatio)
+                                var eqpImgArr = [];
+                                var eqpHeightRatio = [];
+                                savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                            }
+                        }
+                    });
+                });
+            }
+        }
+    };
+
+
+    function EquipmentGridRender(eqpBlock, imgArr, heightRatio) {
+        var renderCount = 0;
+        var eqpImgArr = [];
+        var eqpHeightRatio = [];
+        var headerBlock = $(".work-order")
+
+        var costBlock = $(".costDetailsBlock");
+        var timeBlock = $(".timeDetailsBlock");
+        var CustomerSurveyBlock = $(".CustomerSurveyBlock");
+
+        if ($(".eqpSec").length > 0) {
+            //eqpBlock.append($(".closureEqpHeading"));
+            headerBlock.append($(".closureEqpHeading"));
+            $(".eqpSec").each(function (index, element) {
+                var currentElement = element;
+                //if (index == 0) {
+                //    currentElement = $(".closureEqpHeading");
+                //    currentElement.append(element);
+                //}
+                if (index == 0) {
+                    currentElement = headerBlock;
+                    currentElement.append(element);
+                }
+
+                if (index == $(".eqpSec").length - 1) {
+                    currentElement.append(costBlock);
+                    currentElement.append(timeBlock);
+                    currentElement.append($(".CustomerSignatureBlock"));
+                }
+
+                html2canvas(currentElement, {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        eqpHeightRatio.push(hgt / wid);
+                        eqpImgArr.push(img);
+
+                        renderCount++;
+                        if (renderCount == $(".eqpSec").length) {
+                            savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                        }
+                    }
+                });
+            });
+        }
+        else {
+            savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+        }
+    }
+
+    function RequestedGridRenderer(imgArr, heightRatio, eqpImgArr, eqpHeightRatio) {
+        var timeBlock = $(".timeDetailsBlock");
+        var renderCount = 0;
+        if ($(".reqEqpSec").length > 0) {
+            //headerBlock.append($(".wrkReqHeading"));
+            $(".reqEqpSec").each(function (index, element) {
+                var currentElement = element;
+
+                if (index == $(".reqEqpSec").length - 1) {
+                    //currentElement.append(costBlock);
+                    //currentElement.append(timeBlock);
+                }
+
+                html2canvas(currentElement, {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        heightRatio.push(hgt / wid);
+                        imgArr.push(img);
+
+                        renderCount++;
+                        if (renderCount == $(".reqEqpSec").length) {
+                            //savePDF(eqpBlock, imgArr, heightRatio);
+                            //EquipmentGridRender(eqpBlock, imgArr, heightRatio)
+                            //var eqpImgArr = [];
+                            //var eqpHeightRatio = [];
+                            savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio);
+                        }
+                    }
+                });
+            });
+        }
+    }
+
+
+    var x = 2, y = 10;
+    function savePDF(imgArr, heightRatio, eqpImgArr, eqpHeightRatio) {
+        var doc = new jsPDF('p', 'pt', 'a4');
+
+        for (var im = imgArr.length - 1; im >= 0; im--) {
+            if (im != imgArr.length - 1) {
+                doc.addPage();
+            }
+            var width = doc.internal.pageSize.width;
+            var height = width * heightRatio[im]; //doc.internal.pageSize.height;
+            doc.addImage(imgArr[im], 'PNG', x, y, width, height, 'Image' + im, 'fast');
+
+        }
+
+        if (WOStatus == "Accepted" || WOStatus == "Accepted-Partial"
+           || WOStatus == "On Site" || WOStatus == "In Progress"
+           || WOStatus == "Completed" || WOStatus == "Closed" || WOStatus == "Invoiced") {
+            for (var im = eqpImgArr.length - 1; im >= 0; im--) {
+                if (im != eqpImgArr.length - 1) {
+                    doc.addPage();
+                }
+                var width = doc.internal.pageSize.width;
+                var height = width * eqpHeightRatio[im]; //doc.internal.pageSize.height;
+                doc.addImage(eqpImgArr[im], 'PNG', x, y, width, height, 'Image' + im, 'fast');
+            }
+        }
+
+        html2canvas($(".CustomerSurveyBlock"), {
+            onrendered: function (canvas) {
+                //for terms and conditions
+                //WordSection1
+                var wid;
+                var hgt;
+                var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                var ratio = hgt / wid;
+                //eqpHeightRatio.push(hgt / wid);
+                //eqpImgArr.push(img);
+                var rectX = 200, rectY = 800, rectW = 100, rectH = 8;
+                doc.setFontSize(8);
+                doc.setTextColor(0, 0, 255);
+                doc.textWithLink('Click here for Customer Satisfaction Survey', rectX, rectY, { url: 'https://goo.gl/forms/KgvSAgobIEee3kEz2' });
+                doc.link(rectX, rectY, rectW, rectH, { url: 'https://goo.gl/forms/KgvSAgobIEee3kEz2' });
+
+                html2canvas($(".WordSection1"), {
+                    onrendered: function (canvas) {
+                        var wid;
+                        var hgt;
+                        var img = canvas.toDataURL('image/png', wid = canvas.width, hgt = canvas.height);
+                        var ratio = hgt / wid;
+                        //eqpHeightRatio.push(hgt / wid);
+                        //eqpImgArr.push(img);
+
+                        //TODO: Uncomment once updated terms are ready
+                        /*doc.addPage();
+                        var width = doc.internal.pageSize.width;
+                        var height = doc.internal.pageSize.height;
+                        doc.addImage(img, 'PNG', x, y, width, height, 'Image', 'fast');*/
+
+                        doc.save('WorkorderFor_' + workorderPDFId + '.pdf');
+
+                        $("#mainBodyDiv").remove();
+
+                        $('body').css({ 'overflow': 'auto' });
+                        $('#ForWaitCursor').removeClass("loading");
+                    }
+                });
+            }
+        });
+
+        // end of terms and conditions
+
+    }
+
 </script>
 
 
@@ -68,6 +307,15 @@
                                                .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
                                         .Columns(col =>
                                         {
+                                            col.HeaderText("Print").Commands(command =>
+                                            {
+                                                command.Type(UnboundType.Edit)
+                                                .ButtonOptions(new Syncfusion.JavaScript.Models.ButtonProperties()
+                                                {
+                                                    ContentType = Syncfusion.JavaScript.ContentType.ImageOnly,
+                                                    PrefixIcon = "e-icon e-pdf"
+                                                }).Add();
+                                            }).IsUnbound(true).Width(80).Add();
                                             col.Field("WorkOrderId").HeaderText("Work Order ID").IsPrimaryKey(true).Width(100).Add();
                                             col.Field("TechId").HeaderText("Technician ID").Width(110).Add();
                                             col.Field("WorkorderCalltypeDesc").HeaderText("Service Code").Width(100).Add();
@@ -107,5 +355,9 @@
 
 
 
+<div id="woPdfDiv" @*style="display:none;"*@ style="position:absolute; display:block; top:100%;">
+   
+    <canvas id="WoCanvasElement" style="border:2px solid black;display:none" width="200" height="200"></canvas>
 
+</div>
 

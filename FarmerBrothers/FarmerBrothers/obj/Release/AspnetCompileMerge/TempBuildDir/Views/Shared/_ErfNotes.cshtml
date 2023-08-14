@@ -496,13 +496,30 @@
 
     @if (WorkorderManagementModel.isTechSecurity(Model))
     {
-        <div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
-            <div class="col-sm-6-o">
-                <div class="col-md-6">
-                    @Html.CheckBoxFor(m => m.IsSpecificTechnician, new { @onchange = "onChangeIsSpecificTech()", @class = "IsSpecificTechnicianRaidoButton" }) FB Employee Requesting Specific Technician
+<div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
+    <div class="col-sm-6-o">
+        <div class="col-md-6">
+            @Html.CheckBoxFor(m => m.IsSpecificTechnician, new { @onchange = "onChangeIsSpecificTech()", @class = "IsSpecificTechnicianRaidoButton" }) FB Employee Requesting Specific Technician
+        </div>
+    </div>
+    @*@using (Html.BeginForm("NewCustomerUploadFile", "Customer", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="col-sm-6-o">
+            <div class="col-md-6">
+                <div class="col-md-2" style="width: 30%;">
+                    <div class="form-group right-inner-addon">
+                        @Html.TextBox("file", "", new { type = "file" }) <br />
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group right-inner-addon" style="top:1.3em;">
+                        <button type="submit" class="btn btn-primary" id="docUploadBtn">Upload</button>
+                    </div>
                 </div>
             </div>
         </div>
+    }*@
+</div>
 
         <div id="SpecificTechniciansSection" class="col-md-12 customer-col2">
             <div class="col-sm-6-o">

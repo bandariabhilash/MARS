@@ -50,13 +50,13 @@ namespace FarmerBrothers
 
             routes.MapRoute(
             "WorkOrderManagement",
-            "{controller}/{action}/{customerId}/{workOrderId}/{isNewPartsOrder}/{showAllTechs}",
-            new { controller = "Workorder", action = "WorkorderManagement", customerId = -1, workOrderId = -1, isNewPartsOrder= UrlParameter.Optional, showAllTechs =UrlParameter.Optional });
+            "{controller}/{action}/{customerId}/{workOrderId}/{isNewPartsOrder}/{showAllTechs}/{isCustomerDashboard}",
+            new { controller = "Workorder", action = "WorkorderManagement", customerId = -1, workOrderId = -1, isNewPartsOrder= UrlParameter.Optional, showAllTechs =UrlParameter.Optional, isCustomerDashboard=UrlParameter.Optional });
 
             routes.MapRoute(
            "LoadWorkOrderManagement",
            "{controller}/{action}/{customerId}/{workOrderId}",
-           new { controller = "Workorder", action = "WorkorderManagement", customerId = -1, workOrderId = -1, isNewPartsOrder = UrlParameter.Optional, showAllTechs = UrlParameter.Optional });
+           new { controller = "Workorder", action = "WorkorderManagement", customerId = -1, workOrderId = -1, isNewPartsOrder = UrlParameter.Optional, showAllTechs = UrlParameter.Optional, isCustomerDashboard = UrlParameter.Optional });
 
 
             routes.MapRoute(

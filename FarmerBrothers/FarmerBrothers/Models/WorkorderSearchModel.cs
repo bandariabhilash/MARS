@@ -230,6 +230,18 @@ namespace FarmerBrothers.Models
 
         public double UtcOffset;
 
+        public string CustomerPO { get; set; }
+
+        public string CashSaleStatus { get; set; }
+        public string ErfStatus { get; set; }
+        public IList<CashSaleModel> CashSalesList { get; set; }
+        public IList<ERFStatusModel> ERFStatusList { get; set; }
+
+        public DateTime? ClosedDate { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? ArrivalDate { get; set; }
+        public DateTime? CompletedDate { get; set; }
+
         public void FromSavedSearch(WorkorderSavedSearch savedSearch)
         {
             CustomerId = savedSearch.Customerid.ToString();

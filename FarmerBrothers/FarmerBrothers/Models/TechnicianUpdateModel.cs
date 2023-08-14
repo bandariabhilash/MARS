@@ -33,12 +33,14 @@ namespace FarmerBrothers.Models
             RegionNumber = string.Empty;
             FieldServiceManager = string.Empty;            
             Branches = new List<BranchRegion>();
+            BranchesForSearchData = new List<BranchRegion>();
             Regions = new List<BranchRegion>();
             FSM = new List<BranchRegion>();
             PrimaryTech = new List<BranchRegion>();
             using (FarmerBrothersEntities FarmerBrothersEntitites = new FarmerBrothersEntities())
             {
                 Branches = WorkOrderLookup.GetTechBranches(FarmerBrothersEntitites);
+                BranchesForSearchData = WorkOrderLookup.GetTechBranchesForTechUpdateGrid(FarmerBrothersEntitites);
                 Regions = WorkOrderLookup.GetTechRegions(FarmerBrothersEntitites);
                 States = Utility.GetStates(FarmerBrothersEntitites);
                 FSM = WorkOrderLookup.GetFSM(FarmerBrothersEntitites);
@@ -136,6 +138,7 @@ namespace FarmerBrothers.Models
         public string RegionNumber { get; set; }
         public IList<State> States;
         public List<BranchRegion> Branches { get; set; }
+        public List<BranchRegion> BranchesForSearchData { get; set; }
         public List<BranchRegion> Regions { get; set; }
         public List<BranchRegion> FamilyAffs { get; set; }
         public List<BranchRegion> FSM { get; set; }

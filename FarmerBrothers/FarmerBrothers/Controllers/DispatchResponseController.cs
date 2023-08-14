@@ -1,6 +1,8 @@
 ﻿using FarmerBrothers;
+using FarmerBrothers.CacheManager;
 using FarmerBrothers.Controllers;
 using FarmerBrothers.Data;
+using FarmerBrothers.Models;
 using FarmerBrothers.USZipService;
 using FarmerBrothers.Utilities;
 using Newtonsoft.Json.Linq;
@@ -11,6 +13,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
@@ -20,6 +23,7 @@ using System.Web.Configuration;
 using System.Web.Mvc;
 using System.Xml;
 using Customer = FarmerBrothers.Data.Contact;
+using DispatchResponseModel = FarmerBrothers.Data.DispatchResponseModel;
 
 namespace FarmerBrothersMailResponse.Controllers
 {
@@ -197,10 +201,10 @@ namespace FarmerBrothersMailResponse.Controllers
                     {
                         techWorkOrderSchedule.PrimaryTech = 1;
                     }
-                    else if (techWorkOrderSchedule.AssistTech >= 0)
-                    {
-                        techWorkOrderSchedule.AssistTech = 1;
-                    }
+                    //else if (techWorkOrderSchedule.AssistTech >= 0)
+                    //{
+                    //    techWorkOrderSchedule.AssistTech = 1;
+                    //}
 
                     /*if(techWorkOrderSchedule.EventScheduleDate != null)
                     {
@@ -674,19 +678,19 @@ namespace FarmerBrothersMailResponse.Controllers
                                 dispatchModel.Message = "Call has been Sent/Accepted by the selected Tech";
                             }
                             else
-                            {                                
+                            {
                                 //WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(sc => sc.Techid == techId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted")).FirstOrDefault();
-                                var  ws = (from sc in FarmerBrothersEntitites.WorkorderSchedules
-                                                        join t in FarmerBrothersEntitites.TECH_HIERARCHY on sc.Techid equals t.DealerId
-                                                        where sc.WorkorderID == workOrderId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted")
-                                                        && t.FamilyAff == "SPT"
-                                                        select new 
-                                                        {
-                                                            Techid = sc.Techid,
-                                                            AssignedStatus = sc.AssignedStatus,
-                                                            WorkorderID = sc.WorkorderID,
-                                                            familyAff = t.FamilyAff
-                                                        }).FirstOrDefault();
+                                var ws = (from sc in FarmerBrothersEntitites.WorkorderSchedules
+                                          join t in FarmerBrothersEntitites.TECH_HIERARCHY on sc.Techid equals t.DealerId
+                                          where sc.WorkorderID == workOrderId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted")
+                                          && t.FamilyAff == "SPT"
+                                          select new
+                                          {
+                                              Techid = sc.Techid,
+                                              AssignedStatus = sc.AssignedStatus,
+                                              WorkorderID = sc.WorkorderID,
+                                              familyAff = t.FamilyAff
+                                          }).FirstOrDefault();
 
                                 //WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(sc => sc.Techid == techId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted"))
                                 //    .Join().FirstOrDefault();
@@ -862,6 +866,12 @@ namespace FarmerBrothersMailResponse.Controllers
                                 dispatchModel.WorkOrderId = workOrderId;
                                 dispatchModel.Message = "Cannot Operate Event, Call Has been Redirected by You";
                             }
+                            else if(!string.IsNullOrEmpty(workOrder.AuthTransactionId) && string.IsNullOrEmpty(workOrder.FinalTransactionId))
+                            {
+                                dispatchModel.TechId = techId;
+                                dispatchModel.WorkOrderId = workOrderId;
+                                dispatchModel.Message = "Please process the Credit Card before Closing the Event!";
+                            }
                             else
                             {
                                 if (workOrder.WorkorderCallstatus == "Accepted" || workOrder.WorkorderCallstatus == "Accepted-Partial" || workOrder.WorkorderCallstatus == "Completed" || workOrder.WorkorderCallstatus == "On Site")
@@ -901,7 +911,7 @@ namespace FarmerBrothersMailResponse.Controllers
                                 dispatchModel.WorkOrderId = workOrderId;
                                 dispatchModel.Message = "Cannot Schedule, You Rejected the Call";
                             }
-                           else if (techWorkOrderSchedule != null && techWorkOrderSchedule.AssignedStatus == "Redirected")
+                            else if (techWorkOrderSchedule != null && techWorkOrderSchedule.AssignedStatus == "Redirected")
                             {
                                 dispatchModel.TechId = techId;
                                 dispatchModel.WorkOrderId = workOrderId;
@@ -919,6 +929,28 @@ namespace FarmerBrothersMailResponse.Controllers
                                     dispatchModel.Message = "Work Order is Already Closed/Completed";
                                 }
                             }
+                            break;
+                        case FarmerBrothers.Data.DispatchResponse.ESMESCALATION:
+
+                            if (workOrder.WorkorderCallstatus == "Closed")
+                            {
+                                dispatchModel.TechId = techId;
+                                dispatchModel.WorkOrderId = workOrderId;
+                                dispatchModel.Message = "Work Order already Closed, can't be Escalated!";
+                                break;
+                            }
+
+                            WorkorderController wc = new WorkorderController();
+                            List<string> notesList = new List<string>();
+                            string notes = "Escalation Email sent from Email Link";
+                            notesList.Add(notes);
+
+                            JsonResult emailResult = wc.SendEscalationMail("ESM", workOrderId, notesList);
+
+                            //if(emailResult.Data.success == 1)
+                            dispatchModel.TechId = techId;
+                            dispatchModel.WorkOrderId = workOrderId;
+                            dispatchModel.Message = "Escalation Email Sent To ESM";
                             break;
                     }
                 }
@@ -1046,9 +1078,9 @@ namespace FarmerBrothersMailResponse.Controllers
 
                 message = "Customer Service Event " + workOrderId + " Closed successfully!";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                message = "There is a problem in closing the Customer Service Event " + workOrderId ;
+                message = "There is a problem in closing the Customer Service Event " + workOrderId;
             }
         }
 
@@ -1085,7 +1117,7 @@ namespace FarmerBrothersMailResponse.Controllers
 
         [EncryptedActionParameter]
         [AllowAnonymous]
-        public ActionResult CreateServiceEvent(int workOrderId, int techId, DispatchResponse response, bool isResponsible, string isBillable="")
+        public ActionResult CreateServiceEvent(int workOrderId, int techId, DispatchResponse response, bool isResponsible, string isBillable = "")
         {
             NonServiceworkorder nsw = FarmerBrothersEntitites.NonServiceworkorders.Where(nswo => nswo.WorkOrderID == workOrderId).FirstOrDefault();
             DateTime currentTime = Utility.GetCurrentTime(nsw.CustomerZipCode, FarmerBrothersEntitites);
@@ -1109,8 +1141,8 @@ namespace FarmerBrothersMailResponse.Controllers
         {
             NonServiceworkorder nsw = FarmerBrothersEntitites.NonServiceworkorders.Where(nswo => nswo.WorkOrderID == workOrderId).FirstOrDefault();
             DateTime currentTime = Utility.GetCurrentTime(nsw.CustomerZipCode, FarmerBrothersEntitites);
-                        
-            if (nsw.NonServiceEventStatus != null && 
+
+            if (nsw.NonServiceEventStatus != null &&
                 nsw.NonServiceEventStatus.ToLower() != "closed" && nsw.NonServiceEventStatus.ToLower() != "service event")
             {
                 //FbUserMaster createdUser = null; string createdUserName = "";
@@ -1197,7 +1229,7 @@ namespace FarmerBrothersMailResponse.Controllers
                 serviceWorkOrderDetail.InvoiceNo = "";
                 serviceWorkOrderDetail.SolutionId = null;
 
-                serviceWorkOrder.WorkorderDetails.Add(serviceWorkOrderDetail);              
+                serviceWorkOrder.WorkorderDetails.Add(serviceWorkOrderDetail);
 
 
                 WorkOrderBrand newBrand = new WorkOrderBrand();
@@ -1224,7 +1256,7 @@ namespace FarmerBrothersMailResponse.Controllers
                 {
                     AutomaticNotes = 1,
                     EntryDate = currentTime,
-                    Notes = @"Service Work Order "+ serviceWorkOrder.WorkorderID +" Created for Non-Service work order " + nsw.WorkOrderID,
+                    Notes = @"Service Work Order " + serviceWorkOrder.WorkorderID + " Created for Non-Service work order " + nsw.WorkOrderID,
                     Userid = nsw.CreatedBy != null ? Convert.ToInt32(nsw.CreatedBy) : 1234,
                     UserName = createdUserName,
                     isDispatchNotes = 0
@@ -1333,9 +1365,9 @@ namespace FarmerBrothersMailResponse.Controllers
                 string msg = "";
                 if (nsw.NonServiceEventStatus.ToLower() == "closed")
                 {
-                     msg = @"Customer Service Event " + nsw.WorkOrderID + " is Already Closed!";
+                    msg = @"Customer Service Event " + nsw.WorkOrderID + " is Already Closed!";
                 }
-                else if(nsw.NonServiceEventStatus.ToLower() == "service event")
+                else if (nsw.NonServiceEventStatus.ToLower() == "service event")
                 {
                     msg = @"Service Event is already created for the Customer Service Event " + nsw.WorkOrderID;
                 }
@@ -1359,7 +1391,7 @@ namespace FarmerBrothersMailResponse.Controllers
                     dispatchModel.IsERF = true;
                     dispatchModel.Message = "ERF is already in cancel status";
                     return View("DispatchResponse", "_Layout_WithOutMenu", dispatchModel);
-                }                
+                }
             }
 
 
@@ -1386,7 +1418,7 @@ namespace FarmerBrothersMailResponse.Controllers
                 EntryDate = CurrentTime,
                 Notes = "[ERF]:  Status Updated from " + tempStatus + " to " + Status,
                 Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
-                UserName = esmdsmrsmView == null ? "1234" :esmdsmrsmView.ESMName,
+                UserName = esmdsmrsmView == null ? "1234" : esmdsmrsmView.ESMName,
                 ErfID = erf.ErfID,
                 WorkorderID = erf.WorkorderID,
                 isDispatchNotes = 1
@@ -1439,7 +1471,7 @@ namespace FarmerBrothersMailResponse.Controllers
                     DateTime CurrentTime = Utility.GetCurrentTime(erf.CustomerZipCode, FarmerBrothersEntitites);
                     int esmId = Convert.ToInt32(ESM);
                     //ESMDSMRSM esmdsmrsmView = FarmerBrothersEntitites.ESMDSMRSMs.FirstOrDefault(x => x.EDSMID == esmId);
-                    ESMCCMRSMEscalation esmdsmrsmView = FarmerBrothersEntitites.ESMCCMRSMEscalations.FirstOrDefault(x=>x.EDSMID == esmId);
+                    ESMCCMRSMEscalation esmdsmrsmView = FarmerBrothersEntitites.ESMCCMRSMEscalations.FirstOrDefault(x => x.EDSMID == esmId);
                     NotesHistory notesHistory = new NotesHistory()
                     {
                         AutomaticNotes = 1,
@@ -1501,7 +1533,7 @@ namespace FarmerBrothersMailResponse.Controllers
             StringBuilder salesEmailBody = new StringBuilder();
             WorkOrder workOrder = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
             string workOrderStatus = "";
-            string oldTechName=string.Empty;
+            string oldTechName = string.Empty;
             if (workOrder != null)
             {
                 if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0
@@ -1511,11 +1543,11 @@ namespace FarmerBrothersMailResponse.Controllers
                 {
                     if (isResponsible == true)
                     {
-                        UpdateTechAssignedStatus(techId, workOrder, "Sent",out oldTechName, 0, -1);
+                        UpdateTechAssignedStatus(techId, workOrder, "Sent", out oldTechName, 0, -1);
                     }
                     else
                     {
-                        UpdateTechAssignedStatus(techId, workOrder, "Sent",out oldTechName, - 1, 0);
+                        UpdateTechAssignedStatus(techId, workOrder, "Sent", out oldTechName, -1, 0);
                     }
 
                     StringBuilder subject = new StringBuilder();
@@ -1553,10 +1585,13 @@ namespace FarmerBrothersMailResponse.Controllers
                     }
 
 
-                    
+
                     if (!string.IsNullOrWhiteSpace(emailAddress))
                     {
-                        bool result = SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], techId, MailType.DISPATCH, isResponsible, null);
+                        WorkorderController wc = new WorkorderController();
+                        bool result = wc.SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], techId, MailType.DISPATCH, isResponsible, null);
+
+                        //bool result = SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], techId, MailType.DISPATCH, isResponsible, null);
                         if (result == true)
                         {
                             string emailDetails = @"Email sent to following recipients" + Environment.NewLine +
@@ -1592,8 +1627,12 @@ namespace FarmerBrothersMailResponse.Controllers
             int TotalCallsCount = FarmerBrothers.Models.CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrder.CustomerID.ToString());
 
             List<FarmerBrothers.Models.CustomerNotesModel> CustomerNotesResults = new List<FarmerBrothers.Models.CustomerNotesModel>();
-            int? custId = Convert.ToInt32(workOrder.CustomerID);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            //int? custId = Convert.ToInt32(workOrder.CustomerID);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrder.CustomerID);
+            int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
 
             string IsBillable = "";
             string ServiceLevelDesc = "";
@@ -1754,7 +1793,7 @@ namespace FarmerBrothersMailResponse.Controllers
             salesEmailBody.Append("<BR>");
 
 
-            string ServiceTier = customer == null ? "" : string.IsNullOrEmpty(customer.ProfitabilityTier) ? " - " :  customer.ProfitabilityTier;
+            string ServiceTier = customer == null ? "" : string.IsNullOrEmpty(customer.ProfitabilityTier) ? " - " : customer.ProfitabilityTier;
             string paymentTerm = customer == null ? "" : (string.IsNullOrEmpty(customer.PaymentTerm) ? "" : customer.PaymentTerm);
             string PaymentTermDesc = "";
             if (!string.IsNullOrEmpty(paymentTerm))
@@ -1779,6 +1818,28 @@ namespace FarmerBrothersMailResponse.Controllers
 
             salesEmailBody.Append("Service Priority: ");
             salesEmailBody.Append(priorityDesc);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Parent: ");
+            if (customer.PricingParentID != null)
+            {
+                NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                string parentNum = "", ParentName = "";
+                if (nonfbcust != null)
+                {
+                    parentNum = nonfbcust.NonFBCustomerId;
+                    ParentName = nonfbcust.NonFBCustomerName;
+                }
+                else
+                {
+                    parentNum = customer.PricingParentID;
+                    ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                }
+                salesEmailBody.Append(parentNum + " " + ParentName);
+            }
+            else
+            {
+                salesEmailBody.Append("");
+            }
             salesEmailBody.Append("<BR>");
             salesEmailBody.Append("Billable: ");
             salesEmailBody.Append(IsBillable);
@@ -2072,8 +2133,9 @@ namespace FarmerBrothersMailResponse.Controllers
                     }
                 }
 
-                string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-                if (customer.PricingParentID == IsNonFBCustomerParentId)
+
+                NonFBCustomer nonFBCustomer = FarmerBrothersEntitites.NonFBCustomers.Where(n => n.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                if (nonFBCustomer != null)
                 {
                     message.CC.Clear();
                 }
@@ -2104,7 +2166,7 @@ namespace FarmerBrothersMailResponse.Controllers
             return techView;
         }
 
-        public bool UpdateTechAssignedStatus(int techId, WorkOrder workOrder, string assignedStatus,out string oldTechName,  int isResponsible = -1, int isAssist = -1)
+        public bool UpdateTechAssignedStatus(int techId, WorkOrder workOrder, string assignedStatus, out string oldTechName, int isResponsible = -1, int isAssist = -1)
         {
             oldTechName = string.Empty;
             bool result = false;
@@ -2125,10 +2187,10 @@ namespace FarmerBrothersMailResponse.Controllers
                         {
                             techWorkOrderSchedule.PrimaryTech = 1;
                         }
-                        else if (techWorkOrderSchedule.AssistTech >= 0)
-                        {
-                            techWorkOrderSchedule.AssistTech = 1;
-                        }
+                        //else if (techWorkOrderSchedule.AssistTech >= 0)
+                        //{
+                        //    techWorkOrderSchedule.AssistTech = 1;
+                        //}
                         techWorkOrderSchedule.EntryDate = currentTime;
                         techWorkOrderSchedule.ScheduleDate = currentTime;
                         techWorkOrderSchedule.ModifiedScheduleDate = currentTime;
@@ -2192,7 +2254,7 @@ namespace FarmerBrothersMailResponse.Controllers
 
                 }
 
-                bool redirected = false;                
+                bool redirected = false;
                 IEnumerable<WorkorderSchedule> primaryTechSchedules = workOrder.WorkorderSchedules.Where(ws => ws.PrimaryTech >= 0);
                 foreach (WorkorderSchedule workOrderSchedule in primaryTechSchedules)
                 {
@@ -2236,7 +2298,9 @@ namespace FarmerBrothersMailResponse.Controllers
 
                             if (!string.IsNullOrWhiteSpace(emailAddress))
                             {
-                                SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], workOrderSchedule.Techid, MailType.REDIRECTED, false, "This Work Order has been redirected!");
+                                //SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], workOrderSchedule.Techid, MailType.REDIRECTED, false, "This Work Order has been redirected!");
+                                WorkorderController wc = new WorkorderController();
+                                wc.SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], workOrderSchedule.Techid, MailType.REDIRECTED, false, "This Work Order has been redirected!");
                             }
                         }
                     }
@@ -2502,5 +2566,1448 @@ namespace FarmerBrothersMailResponse.Controllers
 
         #endregion
 
+
+        #region Process Card
+        [EncryptedActionParameter]
+        [AllowAnonymous]
+        public ActionResult ProcessCard_old(int workOrderId, int techId, DispatchResponse response, bool isResponsible)
+        {
+            WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+
+            WorkorderSchedule techWorkOrderSchedule = FarmerBrothersEntitites.WorkorderSchedules.Where(ws => ws.WorkorderID == workOrderId && ws.Techid == techId).FirstOrDefault();
+            if (techWorkOrderSchedule != null && techWorkOrderSchedule.AssignedStatus != "Accepted")
+            {
+                DispatchResponseModel dispatchModel = new DispatchResponseModel();
+                dispatchModel.TechId = techId;
+                dispatchModel.WorkOrderId = workOrderId;
+                dispatchModel.Message = "Cannot Process Card, Event not Accepted";
+                return View("DispatchResponse", "_Layout_WithOutMenu", dispatchModel);
+            }
+            //else if (techWorkOrderSchedule != null && techWorkOrderSchedule.AssignedStatus == "Accepted" && wo.WorkorderCallstatus != "Completed")
+            //{
+            //    DispatchResponseModel dispatchModel = new DispatchResponseModel();
+            //    dispatchModel.TechId = techId;
+            //    dispatchModel.WorkOrderId = workOrderId;
+            //    dispatchModel.Message = "Cannot Process Card, Event not in Completed Status!";
+            //    return View("DispatchResponse", "_Layout_WithOutMenu", dispatchModel);
+            //}
+
+            ProcessCardModel cardModel = new ProcessCardModel();
+            List<FbWorkorderBillableSKUModel> partsList = new List<FbWorkorderBillableSKUModel>();
+
+            var evtPrtList = (from closureSku in FarmerBrothersEntitites.WorkorderParts
+                              where closureSku.WorkorderID == workOrderId && (closureSku.AssetID == null || closureSku.AssetID == 0)
+                              select new
+                              {
+                                  sku = closureSku.Sku,
+                                  des = closureSku.Description,
+                                  qty = closureSku.Quantity,
+                                  evtId = closureSku.WorkorderID,
+                                  unitcost = closureSku.Total / closureSku.Quantity,
+                                  Mnftr = closureSku.Manufacturer
+                              }).ToList();
+
+
+            cardModel.PartsList = new List<FbWorkorderBillableSKUModel>();
+            foreach (var wp in evtPrtList)
+            {
+                FbWorkorderBillableSKUModel fbsm = new FbWorkorderBillableSKUModel();
+                fbsm.SKU = wp.sku;
+                fbsm.WorkorderID = Convert.ToInt32(wp.evtId);
+                fbsm.UnitPrice = wp.unitcost;
+                fbsm.Qty = wp.qty;
+                fbsm.Description = wp.des;
+
+                cardModel.PartsList.Add(fbsm);
+            }
+
+            //cardModel.SKUList = WorkOrderLookup.CloserSKU(FarmerBrothersEntitites);
+            cardModel.SKUList = CloserSKU(FarmerBrothersEntitites);
+
+            List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+            List<CategoryModel> billingItms = new List<CategoryModel>();
+            foreach (BillingItem item in blngItmsList)
+            {
+                billingItms.Add(new CategoryModel(item.BillingName));
+            }
+            cardModel.BillingItems = billingItms;
+
+            List<BillingModel> bmList = new List<BillingModel>();
+            WorkorderDetail wd = FarmerBrothersEntitites.WorkorderDetails.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+            TimeSpan servicetimeDiff = TimeSpan.Zero, trvlTimeDiff = TimeSpan.Zero;
+            if (wd != null)
+            {
+                if (wd.StartDateTime != null && wd.ArrivalDateTime != null)
+                {
+                    DateTime arrival = Convert.ToDateTime(wd.ArrivalDateTime);
+                    DateTime strt = Convert.ToDateTime(wd.StartDateTime);
+                    trvlTimeDiff = arrival.Subtract(strt);
+                }
+
+                if (wd.ArrivalDateTime != null && wd.CompletionDateTime != null)
+                {
+                    DateTime arrival = Convert.ToDateTime(wd.ArrivalDateTime);
+                    DateTime cmplt = Convert.ToDateTime(wd.CompletionDateTime);
+                    servicetimeDiff = cmplt.Subtract(arrival);
+                }
+            }
+
+            List<WorkorderBillingDetail> wbdList = FarmerBrothersEntitites.WorkorderBillingDetails.Where(w => w.WorkorderId == workOrderId).ToList();
+            foreach (WorkorderBillingDetail bitem in wbdList)
+            {
+                BillingItem blngItm = FarmerBrothersEntitites.BillingItems.Where(b => b.BillingCode == bitem.BillingCode).FirstOrDefault();
+
+                if (blngItm != null)
+                {
+                    decimal tot = 0;
+
+                    BillingModel bmItem = new BillingModel();
+                    bmItem.BillingType = blngItm.BillingName;
+                    bmItem.BillingCode = bitem.BillingCode;
+                    bmItem.Quantity = Convert.ToInt32(bitem.Quantity);
+
+                    if (blngItm.BillingName.ToLower() == "travel time")
+                    {
+                        BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                        decimal? travelAmt = TravelItem == null ? 0 : TravelItem.UnitPrice;
+                      
+
+                        bmItem.Duration = new DateTime(trvlTimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(TravelItem.UnitPrice);
+                        tot = Convert.ToDecimal(travelAmt * Convert.ToDecimal(trvlTimeDiff.TotalHours));
+                        bmItem.Total = tot;
+                    }
+                    else if (blngItm.BillingName.ToLower() == "labor")
+                    {
+                        BillingItem srvsItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+                        decimal? travelAmt = srvsItem == null ? 0 : srvsItem.UnitPrice;
+
+
+                        bmItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(srvsItem.UnitPrice);
+                         tot = Convert.ToDecimal(travelAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+                        bmItem.Total = tot;
+                    }
+                    else
+                    {
+                        bmItem.Duration = new DateTime(36000000000).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(blngItm.UnitPrice);
+                        tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                        bmItem.Total = tot;
+                    }
+                    //bmItem.Cost = Convert.ToDecimal(blngItm.UnitPrice);
+                    //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                    //bmItem.Total = tot;
+
+                    cardModel.BillingTotal += tot;
+                    bmList.Add(bmItem);
+                }
+            }
+
+            
+            if (string.IsNullOrEmpty(wo.FinalTransactionId))
+            {                
+                string StartTime = null, ArrivalTime = null, CompletionTime = null;
+                if (wd != null)
+                {
+                    StartTime = wd.StartDateTime.ToString().Trim();
+                    ArrivalTime = wd.ArrivalDateTime.ToString().Trim();
+                    CompletionTime = wd.CompletionDateTime.ToString().Trim();
+                }
+
+                decimal travelCost = 0, laborCost = 0;
+                if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+                {
+                    DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                    DateTime strt = Convert.ToDateTime(StartTime);
+                    TimeSpan timeDiff = arrival.Subtract(strt);
+
+                    BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                    decimal? travelAmt = TravelItem == null ? 0 : TravelItem.UnitPrice;
+                    travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                    if (travelCost >= 0)
+                    {
+                        BillingModel bmItem = new BillingModel();
+                        bmItem.BillingType = TravelItem.BillingName;
+                        bmItem.BillingCode = TravelItem.BillingCode;
+                        bmItem.Quantity = 1;
+                        bmItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(TravelItem.UnitPrice);
+                        //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                        //bmItem.Total = tot;
+                        bmItem.Total = travelCost;
+
+                        //cardModel.BillingTotal += tot;
+                        cardModel.BillingTotal += travelCost;
+                        bmList.Add(bmItem);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+                {
+                    DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                    DateTime cmplt = Convert.ToDateTime(CompletionTime);
+                    TimeSpan srvcetimeDiff = cmplt.Subtract(arrival);
+
+                    BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+                    decimal? laborAmt = laborItem == null ? 0 : laborItem.UnitPrice;
+                    laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(srvcetimeDiff.TotalHours));
+
+                    if (laborCost >= 0)
+                    {
+                        BillingModel bmItem = new BillingModel();
+                        bmItem.BillingType = laborItem.BillingName;
+                        bmItem.BillingCode = laborItem.BillingCode;
+                        bmItem.Quantity = 1;
+                        bmItem.Duration = new DateTime(srvcetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(laborItem.UnitPrice);
+                        //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                        //bmItem.Total = tot;
+                        bmItem.Total = laborCost;
+
+                        //cardModel.BillingTotal += tot;
+                        cardModel.BillingTotal += laborCost;
+                        bmList.Add(bmItem);
+                    }
+
+                }
+
+            }
+
+
+            StateTax st = FarmerBrothersEntitites.StateTaxes.Where(s => s.ZipCode == wo.CustomerZipCode).FirstOrDefault();
+            if(st != null)
+            {
+                cardModel.SaleTax = Convert.ToDecimal(st.StateRate);
+            }
+
+
+            cardModel.BillingDetails = bmList;
+            cardModel.WorkorderId = workOrderId;
+            cardModel.FinalTransactionId = wo.FinalTransactionId;
+            cardModel.WorkorderEntryDate = wo.WorkorderEntryDate;
+            cardModel.StartDateTime = wd.StartDateTime;
+            cardModel.ArrivalDateTime = wd.ArrivalDateTime;
+            cardModel.CompletionDateTime = wd.CompletionDateTime;
+
+            BillingItem prePaymentTravle = blngItmsList.Where(a => a.BillingName.ToLower() == "pre-payment travel").FirstOrDefault();
+            cardModel.PreTravelCost = prePaymentTravle == null ? 0 : Convert.ToDecimal(prePaymentTravle.UnitPrice);
+            
+
+            return View(cardModel);
+        }
+
+        [EncryptedActionParameter]
+        [AllowAnonymous]
+        public ActionResult ProcessCard(int workOrderId, int techId, DispatchResponse response, bool isResponsible)
+        {
+            WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+
+            WorkorderSchedule techWorkOrderSchedule = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == workOrderId && w.Techid == techId).FirstOrDefault();
+            if (techWorkOrderSchedule != null && techWorkOrderSchedule.AssignedStatus != "Accepted")
+            {
+                DispatchResponseModel dispatchModel = new DispatchResponseModel();
+                dispatchModel.TechId = techId;
+                dispatchModel.WorkOrderId = workOrderId;
+                dispatchModel.Message = "Cannot Process Card, Event not Accepted";
+                return View("DispatchResponse", "_Layout_WithOutMenu", dispatchModel);
+            }
+
+            ProcessCardModel cardModel = new ProcessCardModel();
+            List<FbWorkorderBillableSKUModel> partsList = new List<FbWorkorderBillableSKUModel>();
+
+            var evtPrtList = (from closureSku in FarmerBrothersEntitites.WorkorderParts
+                              where closureSku.WorkorderID == workOrderId && (closureSku.AssetID == null || closureSku.AssetID == 0)
+                              select new
+                              {
+                                  sku = closureSku.Sku,
+                                  des = closureSku.Description,
+                                  qty = closureSku.Quantity,
+                                  evtId = closureSku.WorkorderID,
+                                  unitcost = closureSku.Total / closureSku.Quantity,
+                                  Mnftr = closureSku.Manufacturer
+                              }).ToList();
+
+
+            cardModel.PartsList = new List<FbWorkorderBillableSKUModel>();
+            foreach (var wp in evtPrtList)
+            {
+                FbWorkorderBillableSKUModel fbsm = new FbWorkorderBillableSKUModel();
+                fbsm.SKU = wp.sku;
+                fbsm.WorkorderID = Convert.ToInt32(wp.evtId);
+                fbsm.UnitPrice = wp.unitcost;
+                fbsm.Qty = wp.qty;
+                fbsm.Description = wp.des;
+
+                cardModel.PartsList.Add(fbsm);
+            }
+
+            cardModel.SKUList = CloserSKU(FarmerBrothersEntitites);
+
+            List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+            List<CategoryModel> billingItms = new List<CategoryModel>();
+            foreach (BillingItem item in blngItmsList)
+            {
+                billingItms.Add(new CategoryModel(item.BillingName));
+            }
+            cardModel.BillingItems = billingItms;
+
+            List<BillingModel> bmList = new List<BillingModel>();
+            WorkorderDetail wd = FarmerBrothersEntitites.WorkorderDetails.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+            TimeSpan servicetimeDiff = TimeSpan.Zero, trvlTimeDiff = TimeSpan.Zero;
+            if (wd != null)
+            {
+                if (wd.StartDateTime != null && wd.ArrivalDateTime != null)
+                {
+                    DateTime arrival = Convert.ToDateTime(wd.ArrivalDateTime);
+                    DateTime strt = Convert.ToDateTime(wd.StartDateTime);
+                    trvlTimeDiff = arrival.Subtract(strt);
+                }
+
+                if (wd.ArrivalDateTime != null && wd.CompletionDateTime != null)
+                {
+                    DateTime arrival = Convert.ToDateTime(wd.ArrivalDateTime);
+                    DateTime cmplt = Convert.ToDateTime(wd.CompletionDateTime);
+                    servicetimeDiff = cmplt.Subtract(arrival);
+                }
+            }
+
+            Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == wo.CustomerID).FirstOrDefault();
+
+            var ws = (from sc in FarmerBrothersEntitites.WorkorderSchedules
+                      join t in FarmerBrothersEntitites.TECH_HIERARCHY on sc.Techid equals t.DealerId
+                      where sc.WorkorderID == workOrderId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted")
+                      && t.FamilyAff == "SPT"
+                      select new
+                      {
+                          Techid = sc.Techid,
+                          AssignedStatus = sc.AssignedStatus,
+                          WorkorderID = sc.WorkorderID,
+                          familyAff = t.FamilyAff
+                      }).FirstOrDefault();
+
+
+            PricingDetail priceDtls = Utility.GetPricingDetails(wo.CustomerID, ws.Techid, wo.CustomerState, FarmerBrothersEntitites);
+            /*PricingDetail priceDtls = null;
+            if (!string.IsNullOrEmpty(contact.PricingParentID) && contact.PricingParentID != "0")
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 501 && p.PricingEntityId == contact.PricingParentID).FirstOrDefault();
+            }
+            else if (ws != null)
+            {
+                string tId = ws.Techid.ToString();
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 502 && p.PricingEntityId == tId).FirstOrDefault();
+            }
+            else
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 503 && p.PricingEntityId == wo.CustomerState).FirstOrDefault();
+            }
+
+
+            if (priceDtls == null)
+            {
+                BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+
+                priceDtls = new PricingDetail();
+                priceDtls.HourlyLablrRate = TravelItem.UnitPrice;
+                priceDtls.HourlyTravlRate = laborItem.UnitPrice;
+            }*/
+
+
+
+            List <WorkorderBillingDetail> wbdList = FarmerBrothersEntitites.WorkorderBillingDetails.Where(w => w.WorkorderId == workOrderId).ToList();
+            foreach (WorkorderBillingDetail bitem in wbdList)
+            {
+                BillingItem blngItm = FarmerBrothersEntitites.BillingItems.Where(b => b.BillingCode == bitem.BillingCode).FirstOrDefault();
+
+                if (blngItm != null)
+                {
+                    decimal tot = 0;
+
+                    BillingModel bmItem = new BillingModel();
+                    bmItem.BillingType = blngItm.BillingName;
+                    bmItem.BillingCode = bitem.BillingCode;
+                    bmItem.Quantity = Convert.ToInt32(bitem.Quantity);
+
+                    if (blngItm.BillingName.ToLower() == "travel time")
+                    {
+                        decimal? travelAmt = priceDtls == null ? 0 : priceDtls.HourlyTravlRate;
+
+                        bmItem.Duration = new DateTime(trvlTimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(travelAmt);
+                        tot = Convert.ToDecimal(travelAmt * Convert.ToDecimal(trvlTimeDiff.TotalHours));
+                        bmItem.Total = tot;
+                    }
+                    else if (blngItm.BillingName.ToLower() == "labor")
+                    {                       
+                        decimal? laborAmt = priceDtls == null ? 0 : priceDtls.HourlyLablrRate;
+
+                        bmItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(laborAmt);
+                        tot = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+                        bmItem.Total = tot;
+                    }
+                    else
+                    {
+                        bmItem.Duration = new DateTime(36000000000).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(blngItm.UnitPrice);
+                        tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                        bmItem.Total = tot;
+                    }
+                    
+
+                    cardModel.BillingTotal += tot;
+                    bmList.Add(bmItem);
+                }
+            }
+
+
+            if (string.IsNullOrEmpty(wo.FinalTransactionId))
+            {
+                string StartTime = null, ArrivalTime = null, CompletionTime = null;
+                if (wd != null)
+                {
+                    StartTime = wd.StartDateTime.ToString().Trim();
+                    ArrivalTime = wd.ArrivalDateTime.ToString().Trim();
+                    CompletionTime = wd.CompletionDateTime.ToString().Trim();
+                }
+
+                decimal travelCost = 0, laborCost = 0;
+                if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+                {
+                    DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                    DateTime strt = Convert.ToDateTime(StartTime);
+                    TimeSpan timeDiff = arrival.Subtract(strt);
+
+                    BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                    decimal? travelAmt = priceDtls == null ? 0 : priceDtls.HourlyTravlRate;
+                    travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                    if (travelCost >= 0)
+                    {
+                        BillingModel bmItem = new BillingModel();
+                        bmItem.BillingType = TravelItem.BillingName;
+                        bmItem.BillingCode = TravelItem.BillingCode;
+                        bmItem.Quantity = 1;
+                        bmItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(travelAmt);
+                        //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                        //bmItem.Total = tot;
+                        bmItem.Total = travelCost;
+
+                        //cardModel.BillingTotal += tot;
+                        cardModel.BillingTotal += travelCost;
+                        bmList.Add(bmItem);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+                {
+                    DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                    DateTime cmplt = Convert.ToDateTime(CompletionTime);
+                    TimeSpan srvcetimeDiff = cmplt.Subtract(arrival);
+
+                    BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+                    decimal? laborAmt = priceDtls == null ? 0 : priceDtls.HourlyLablrRate;
+                    laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(srvcetimeDiff.TotalHours));
+
+                    if (laborCost >= 0)
+                    {
+                        BillingModel bmItem = new BillingModel();
+                        bmItem.BillingType = laborItem.BillingName;
+                        bmItem.BillingCode = laborItem.BillingCode;
+                        bmItem.Quantity = 1;
+                        bmItem.Duration = new DateTime(srvcetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        bmItem.Cost = Convert.ToDecimal(laborAmt);
+                        //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                        //bmItem.Total = tot;
+                        bmItem.Total = laborCost;
+
+                        //cardModel.BillingTotal += tot;
+                        cardModel.BillingTotal += laborCost;
+                        bmList.Add(bmItem);
+                    }
+
+                }
+
+            }
+
+
+            StateTax st = FarmerBrothersEntitites.StateTaxes.Where(s => s.ZipCode == wo.CustomerZipCode).FirstOrDefault();
+            if (st != null)
+            {
+                cardModel.SaleTax = Convert.ToDecimal(st.StateRate);
+            }
+
+            cardModel.PartsDiscount = priceDtls == null ? 0 : Convert.ToDecimal(priceDtls.PartsDiscount);
+            cardModel.BillingDetails = bmList;
+            cardModel.WorkorderId = workOrderId;
+            cardModel.FinalTransactionId = wo.FinalTransactionId;
+            cardModel.WorkorderEntryDate = wo.WorkorderEntryDate;
+            cardModel.StartDateTime = wd.StartDateTime;
+            cardModel.ArrivalDateTime = wd.ArrivalDateTime;
+            cardModel.CompletionDateTime = wd.CompletionDateTime;
+
+            BillingItem prePaymentTravle = blngItmsList.Where(a => a.BillingName.ToLower() == "pre-payment travel").FirstOrDefault();
+            cardModel.PreTravelCost = prePaymentTravle == null ? 0 : Convert.ToDecimal(prePaymentTravle.UnitPrice);
+
+
+            return View(cardModel);
+        }
+
+
+        public static IList<VendorDataModel> CloserSKU(FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            if (MAICacheManager.hasType(MAICacheManager.TypeNames.BILLING_CLOSER_SKU))
+                return MAICacheManager.getType(MAICacheManager.TypeNames.BILLING_CLOSER_SKU) as List<VendorDataModel>;
+
+            List<VendorDataModel> CloserSkusList = new List<VendorDataModel>();
+
+            try
+            {
+                //IEnumerable<string> CloserPartOrSKU = (from closureSku in FarmerBrothersEntitites.FBClosureParts
+                //                                      join sk in FarmerBrothersEntitites.Skus on closureSku.ItemNo equals sk.Sku1
+                //                                      where closureSku.SkuActive == true
+                //                                      select closureSku.ItemNo).Distinct();
+                //foreach (string vendor in CloserPartOrSKU)
+                //{
+                //    CloserSkusList.Add(new VendorDataModel(vendor));
+                //}
+                //CloserSkusList.OrderBy(v => v.VendorDescription).ToList();
+
+                List<FBClosurePart> prtsList = FarmerBrothersEntitites.FBClosureParts.Where(c => c.SkuActive == true).ToList();
+                List<Sku> skList = FarmerBrothersEntitites.Skus.ToList();
+
+                foreach(FBClosurePart prt in prtsList)
+                {
+                    Sku sk = skList.Where(s => s.Sku1 == prt.ItemNo).FirstOrDefault();
+                    if(sk != null)
+                    {
+                        CloserSkusList.Add(new VendorDataModel(prt.ItemNo));
+                    }
+                }
+                CloserSkusList.OrderBy(v => v.VendorDescription).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to get the closer SKU ", ex);
+            }
+            MAICacheManager.setType(MAICacheManager.TypeNames.BILLING_CLOSER_SKU, CloserSkusList);
+
+
+            return CloserSkusList;
+        }
+
+        [AllowAnonymous]
+        public JsonResult GetPartsForEvent(int? WorkorderId)
+        {
+            IEnumerable<WorkorderPart> workorderParts = FarmerBrothersEntitites.WorkorderParts.Where(wp => wp.WorkorderID == WorkorderId);
+            var data = new List<WorkorderPart>();
+            if (WorkorderId != null)
+            {
+                foreach (WorkorderPart workOrderPart in workorderParts)
+                {
+                    data.Add(new WorkorderPart() { Quantity = workOrderPart.Quantity, Manufacturer = workOrderPart.Manufacturer != null ? workOrderPart.Manufacturer.Trim() : "", Sku = workOrderPart.Sku, Description = workOrderPart.Description, PartsIssueid = workOrderPart.PartsIssueid });
+                }
+            }
+
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public JsonResult GetBillingItem(string ItemName)
+        {
+            BillingItem item = FarmerBrothersEntitites.BillingItems.Where(i => i.BillingName == ItemName).FirstOrDefault();
+
+            JsonResult jsonResult = new JsonResult();
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = item };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+
+        [AllowAnonymous]
+        public JsonResult GetSkuDetails(string sku)
+        {
+            var skuList = (from closureSku in FarmerBrothersEntitites.FBClosureParts
+                           join sk in FarmerBrothersEntitites.Skus on closureSku.ItemNo equals sk.Sku1
+                           where closureSku.SkuActive == true && sk.Sku1 == sku
+                           select new
+                           {
+                               SKUDescription = closureSku.Description,
+                               UnitPrice = sk.SKUCost
+                           }).FirstOrDefault();
+
+            decimal? unitprice = skuList.UnitPrice;
+            string description = skuList.SKUDescription;
+
+            JsonResult jsonResult = new JsonResult();
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = unitprice, desc = description};
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        public JsonResult AuthenticateCardDetails(string CardNumber, string ExpiryDate, string Cvv, decimal Amount, int WorkorderId)
+        {
+            JsonResult jsonResult = new JsonResult();
+
+            var sourceToken = "";
+            string autohToken = ConfigurationManager.AppSettings["CloverAuthToken"];
+            string accessKey = ConfigurationManager.AppSettings["CloverAccessKey"];
+
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri("https://token-sandbox.dev.clover.com/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", autohToken);
+                client.DefaultRequestHeaders.Add("apikey", accessKey);
+
+                string[] expDateArray = ExpiryDate.Split('/');
+
+                string expMonth = expDateArray[0];
+                string expYear = expDateArray[1];
+
+                var dataObj = new
+                {
+                    card = new
+                    {
+                        number = CardNumber,
+                        exp_month = expMonth,
+                        exp_year = expYear,
+                        cvv = Cvv,
+                        brand = "DISCOVER"
+                    }
+                };
+
+                var JSONString = Newtonsoft.Json.JsonConvert.SerializeObject(dataObj);
+
+                var content = new StringContent(JSONString.ToString(), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync("v1/tokens", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    dynamic jObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                    if (jObject != null)
+                    {
+                        sourceToken = jObject["id"].ToString();
+
+                        //FarmerBrothersEntities fbentity = new FarmerBrothersEntities();
+                        //WorkOrder WO = fbentity.WorkOrders.Where(w => w.WorkorderID == WorkorderId).FirstOrDefault();
+                        //if(WO != null)
+                        //{
+                        //    WO.CreditCardTransactionId = sourceToken;
+                        //}
+                        //fbentity.SaveChanges();
+                        ProcessBillPayment(sourceToken, Amount, false);
+                    }
+                }
+            }
+
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = sourceToken };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        [AllowAnonymous]
+        public JsonResult ProcessBillPayment(string sourceToken, decimal Amount, bool Capture)
+        {
+            JsonResult jsonResult = new JsonResult();
+            string paymentTransactionId = "";
+
+            string autohToken = ConfigurationManager.AppSettings["CloverAuthToken"];
+            string accessKey = ConfigurationManager.AppSettings["CloverAccessKey"];
+
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+                                                                               | SecurityProtocolType.Tls11
+                                                                               | SecurityProtocolType.Tls12
+                                                                               | SecurityProtocolType.Ssl3
+                                                                               | (SecurityProtocolType)3072;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["CloverBaseUrl"]);
+                //client.BaseAddress = new Uri("https://scl.clover.com");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", autohToken);
+
+                Amount = Amount * 100; //API accepts the value in cents, to capture in dollars, need to multiply with 100
+                var dataObj = new
+                {
+                    amount = Convert.ToDecimal(Amount.ToString("F")),
+                    currency = "usd",
+                    capture = Capture,
+                    source = sourceToken
+                };
+
+                var JSONString = Newtonsoft.Json.JsonConvert.SerializeObject(dataObj);
+
+                var content = new StringContent(JSONString.ToString(), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync("v1/charges", content).Result;
+
+
+                if (response.IsSuccessStatusCode)
+                {
+                    dynamic jObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                    paymentTransactionId = jObject["id"].ToString();
+                }
+            }
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = paymentTransactionId };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        [AllowAnonymous]
+        public JsonResult VoidPayment(int WorkorderId)
+        {
+            JsonResult jsonResult = new JsonResult();
+            string message = "";
+
+            string autohToken = ConfigurationManager.AppSettings["CloverAuthToken"];
+            WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == WorkorderId).FirstOrDefault();
+            string paymentId = "";
+            if (wo != null)
+            {
+                paymentId = string.IsNullOrEmpty(wo.AuthTransactionId) ? "" : wo.AuthTransactionId;
+            }
+
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(ConfigurationManager.AppSettings["CloverBaseUrl"]);
+                //client.BaseAddress = new Uri("https://scl.clover.com");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", autohToken);
+
+
+                var dataObj = new
+                {
+                    charge = paymentId
+                };
+
+                var JSONString = Newtonsoft.Json.JsonConvert.SerializeObject(dataObj);
+
+                var content = new StringContent(JSONString.ToString(), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = client.PostAsync("v1/refunds", content).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    message = "Refund/Void Success";
+                }
+            }
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = message };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+            [AllowAnonymous]
+            public JsonResult VoidPayment_NOTINUSE(int WorkorderId)
+            {
+                JsonResult jsonResult = new JsonResult();
+                string message = "";
+
+                string autohToken = ConfigurationManager.AppSettings["CloverAuthToken"];
+                WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == WorkorderId).FirstOrDefault();
+                string paymentId = "";
+                if (wo != null)
+                {
+                    paymentId = string.IsNullOrEmpty(wo.AuthTransactionId) ? "" : wo.AuthTransactionId;
+                }
+
+                ServicePointManager.Expect100Continue = true;
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(ConfigurationManager.AppSettings["CloverBaseUrl"]);
+                    //client.BaseAddress = new Uri("https://scl.clover.com");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", autohToken);
+
+
+                    var dataObj = new
+                    {
+                        charge = paymentId
+                    };
+
+                    var JSONString = Newtonsoft.Json.JsonConvert.SerializeObject(dataObj);
+
+                    var content = new StringContent(JSONString.ToString(), Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = client.PostAsync("v1/refunds", content).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        message = "Refund/Void Success";
+                    }
+                }
+
+                jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = message };
+                jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+                return jsonResult;
+            }
+
+            [AllowAnonymous]
+        public ActionResult PartInsert(FbWorkorderBillableSKUModel value)
+        {
+            IList<FbWorkorderBillableSKUModel> SkuItems = TempData["PartRow"] as IList<FbWorkorderBillableSKUModel>;
+            if (SkuItems == null)
+            {
+                SkuItems = new List<FbWorkorderBillableSKUModel>();
+            }
+
+            if (TempData["WorkOrderSKUId"] != null)
+            {
+                int eqpId = Convert.ToInt32(TempData["WorkOrderSKUId"]);
+                value.WorkOrderSKUId = eqpId + 1;
+                TempData["WorkOrderSKUId"] = eqpId + 1;
+            }
+            else
+            {
+                value.WorkOrderSKUId = 1;
+                value.UnitPrice = Convert.ToDecimal(value.UnitPrice);
+                TempData["WorkOrderSKUId"] = 1;
+            }
+
+            SkuItems.Add(value);
+
+            TempData["PartRow"] = SkuItems;
+            TempData.Keep("PartRow");
+            return Json(value, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult PartUpdate(FbWorkorderBillableSKUModel value)
+        {
+            IList<FbWorkorderBillableSKUModel> SkuItems = TempData["PartRow"] as IList<FbWorkorderBillableSKUModel>;
+            if (SkuItems == null)
+            {
+                SkuItems = new List<FbWorkorderBillableSKUModel>();
+            }
+            FbWorkorderBillableSKUModel SkuItem = SkuItems.Where(n => n.WorkOrderSKUId == value.WorkOrderSKUId).FirstOrDefault();
+
+            if (SkuItem != null)
+            {
+                SkuItem.SKU = value.SKU;
+                SkuItem.Qty = value.Qty;
+                SkuItem.UnitPrice = value.UnitPrice;
+            }
+
+            TempData["PartRow"] = SkuItems;
+            TempData.Keep("PartRow");
+            return Json(value, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult PartDelete(int key)
+        {
+            IList<FbWorkorderBillableSKUModel> skuItems = TempData["PartRow"] as IList<FbWorkorderBillableSKUModel>;
+            FbWorkorderBillableSKUModel skuItem = skuItems.Where(n => n.WorkOrderSKUId == key).FirstOrDefault();
+            skuItems.Remove(skuItem);
+            TempData["PartRow"] = skuItems;
+            TempData.Keep("PartRow");
+            return Json(skuItems, JsonRequestBehavior.AllowGet);
+        }
+
+
+
+        [AllowAnonymous]
+        public ActionResult BillingDataUpdate(BillingModel value)
+        {
+            IList<BillingModel> BillingItems = TempData["BillingRow"] as IList<BillingModel>;
+            if (BillingItems == null)
+            {
+                BillingItems = new List<BillingModel>();
+            }
+            BillingModel BillingItem = BillingItems.Where(n => n.Id == value.Id).FirstOrDefault();
+
+            if (BillingItem != null)
+            {
+                BillingItem.BillingType = value.BillingType;
+                BillingItem.BillingCode = value.BillingCode;
+                BillingItem.Cost = value.Cost;
+                BillingItem.Quantity = value.Quantity;
+                BillingItem.Total = value.Total;
+            }
+
+            TempData["BillingRow"] = BillingItems;
+            TempData.Keep("BillingRow");
+            return Json(value, JsonRequestBehavior.AllowGet);
+        }
+        [AllowAnonymous]
+        public ActionResult BillingDataInsert(BillingModel value)
+        {
+            IList<BillingModel> BillingItems = TempData["BillingRow"] as IList<BillingModel>;
+            decimal cost = 0;
+            decimal tot = 0;
+            BillingItem item = FarmerBrothersEntitites.BillingItems.Where(i => i.BillingName == value.BillingType).FirstOrDefault();
+            if(item != null)
+            {
+                cost = Convert.ToDecimal(item.UnitPrice);
+                tot = Convert.ToDecimal(item.UnitPrice * value.Quantity);
+            }
+            value.Cost = cost;
+            value.Total = tot;
+
+
+            if (BillingItems == null)
+            {
+                BillingItems = new List<BillingModel>();
+            }
+       
+            if (TempData["Id"] != null)
+            {
+                int billingId = Convert.ToInt32(TempData["Id"]);
+                value.Id = billingId + 1;
+                TempData["Id"] = billingId + 1;
+            }
+            else
+            {
+                value.Id = 1;
+                TempData["Id"] = 1;
+            }
+
+            BillingItems.Add(value);
+            TempData["BillingRow"] = BillingItems;
+            TempData.Keep("BillingRow");
+            return Json(value, JsonRequestBehavior.AllowGet);
+        }
+        [AllowAnonymous]
+        public ActionResult BillingDataDelete(int key)
+        {
+            IList<BillingModel> BillingItems = TempData["BillingRow"] as IList<BillingModel>;
+
+            BillingModel EquipmentItem = BillingItems.Where(n => n.Id == key).FirstOrDefault();
+            BillingItems.Remove(EquipmentItem);
+            TempData["BillingRow"] = BillingItems;
+            TempData.Keep("BillingRow");
+            return Json(BillingItems, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public JsonResult SaveWorkorderFinalBillingDetails([ModelBinder(typeof(ProcessCardModelBinder))] ProcessCardModel CardModel)
+        {
+            JsonResult jsonResult = new JsonResult();
+            string message = string.Empty;
+            bool isValid = true; int returnValue = -1;
+            if (string.IsNullOrEmpty(CardModel.PaymentTransactionId))
+            {
+                message = @"|Payment Process Pending!";
+                isValid = false;
+            }
+
+            if (CardModel.BillingDetails.Count() <= 0)
+            {
+                message = @"|No Billing Details!";
+                isValid = false;
+            }
+
+            if(isValid)
+            {
+                
+                WorkOrder wrkOrd = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == CardModel.WorkorderId).FirstOrDefault();
+                DateTime currentTime = Utility.GetCurrentTime(wrkOrd.CustomerZipCode, FarmerBrothersEntitites);
+
+
+                WorkorderDetail wrkOrdDtl = FarmerBrothersEntitites.WorkorderDetails.Where(w => w.WorkorderID == CardModel.WorkorderId).FirstOrDefault();
+                if(wrkOrdDtl != null)
+                {
+                    wrkOrdDtl.StartDateTime = CardModel.StartDateTime;
+                    wrkOrdDtl.ArrivalDateTime = CardModel.ArrivalDateTime;
+                    wrkOrdDtl.CompletionDateTime = CardModel.CompletionDateTime;
+                }
+
+                wrkOrd.FinalTransactionId = CardModel.PaymentTransactionId;
+                NotesHistory authTransactionHistory = new NotesHistory()
+                {
+                    AutomaticNotes = 1,
+                    EntryDate = currentTime,
+                    Notes = @"Final Payment TransactionId : " + CardModel.PaymentTransactionId,
+                    Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                    UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
+                    isDispatchNotes = 0,
+                    WorkorderID = wrkOrd.WorkorderID
+                };
+                FarmerBrothersEntitites.NotesHistories.Add(authTransactionHistory);
+
+                SaveBillingDetails(CardModel.BillingDetails, CardModel.WorkorderId);
+
+                SavePartDetails(CardModel.PartsList, CardModel.WorkorderId);
+
+                try
+                {
+                    FarmerBrothersEntitites.SaveChanges();
+                    returnValue = 1;
+
+                    message = "Payment Details Saved Successfully !";
+                }
+                catch(Exception ex)
+                {
+                    returnValue = 0;
+                    message = "Problem Saving, Please contact Support !";
+                }
+                
+            }
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, ReturnValue = returnValue, message = message };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+
+        private void SavePartDetails(IList<FbWorkorderBillableSKUModel> Parts, int WorkorderId)
+        {
+            if (Parts != null && Parts.Count() > 0)
+            {
+                IEnumerable<WorkorderPart> FBPartsList = FarmerBrothersEntitites.WorkorderParts.Where(a => a.WorkorderID == WorkorderId).ToList();
+
+                if (FBPartsList != null)
+                {
+                    for (int count = FBPartsList.Count() - 1; count >= 0; count--)
+                    {
+                        WorkorderPart FBWOSku = FBPartsList.ElementAt(count);
+                        FarmerBrothersEntitites.WorkorderParts.Remove(FBWOSku);
+                    }
+                }
+
+
+                foreach (FbWorkorderBillableSKUModel newFBPrtItem in Parts)
+                {
+                    Sku sk = FarmerBrothersEntitites.Skus.Where(s => s.Sku1 == newFBPrtItem.SKU).FirstOrDefault();
+
+                    WorkorderPart part = new WorkorderPart()
+                    {
+                        Quantity = newFBPrtItem.Qty,
+                        Manufacturer = sk != null ? sk.Manufacturer : "",
+                        Sku = newFBPrtItem.SKU,
+                        Description = newFBPrtItem.Description,
+                        Total = newFBPrtItem.UnitPrice * newFBPrtItem.Qty,
+                        WorkorderID = WorkorderId
+                    };
+                    FarmerBrothersEntitites.WorkorderParts.Add(part);
+                }
+
+            }
+        }
+              
+        public double SaveBillingDetails(IList<BillingModel> newFBWOList, int WorkorderID)
+        {
+            double totalPrice = 0;
+            double UnitPrice = 0;
+            IEnumerable<WorkorderBillingDetail> FBBillingList = FarmerBrothersEntitites.WorkorderBillingDetails.Where(a => a.WorkorderId == WorkorderID).ToList();
+
+            if (FBBillingList != null)
+            {
+                for (int count = FBBillingList.Count() - 1; count >= 0; count--)
+                {
+                    WorkorderBillingDetail FBWOSku = FBBillingList.ElementAt(count);
+                    FarmerBrothersEntitites.WorkorderBillingDetails.Remove(FBWOSku);
+                }
+            }
+
+            if (newFBWOList.Count() > 0)
+            {
+                foreach (BillingModel newFBWOItem in newFBWOList)
+                {
+                    WorkorderBillingDetail FBWOSku = new WorkorderBillingDetail()
+                    {
+                        WorkorderId = WorkorderID,
+                        Quantity = newFBWOItem.Quantity,
+                        EntryDate = DateTime.Now,
+                        BillingCode = newFBWOItem.BillingCode
+                    };
+                    using (FarmerBrothersEntities entity = new FarmerBrothersEntities())
+                    {
+                        UnitPrice = Convert.ToDouble(entity.BillingItems.Where(s => s.BillingCode == newFBWOItem.BillingCode).Select(s => s.UnitPrice).FirstOrDefault());
+                    }
+                    totalPrice += Convert.ToDouble(newFBWOItem.Quantity * UnitPrice);
+                    FarmerBrothersEntitites.WorkorderBillingDetails.Add(FBWOSku);
+                }
+            }
+
+            return totalPrice;
+        }
+
+        [AllowAnonymous]
+        public JsonResult UpdateBillingData_old(string StartTime, string ArrivalTime, string CompletionTime, string DataSource)
+        {
+            JsonResult jsonResult = new JsonResult();
+            decimal BillingTotal = 0;
+            List<BillingModel> bmList =  Newtonsoft.Json.JsonConvert.DeserializeObject<List<BillingModel>>(DataSource);
+
+            List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+            decimal travelCost = 0, laborCost = 0;
+            foreach(BillingModel obj in bmList)
+            {
+                string billingType = obj.BillingType.ToString().ToLower();
+                switch (billingType)
+                {
+                    case "travel time":
+                        if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+                        {
+                            DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                            DateTime strt = Convert.ToDateTime(StartTime);
+                            TimeSpan timeDiff = arrival.Subtract(strt);
+
+                            BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                            decimal? travelAmt = TravelItem == null ? 0 : TravelItem.UnitPrice;
+                            travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                            if (travelCost >= 0)
+                            {                                
+                                obj.BillingType = TravelItem.BillingName;
+                                obj.BillingCode = TravelItem.BillingCode;
+                                obj.Quantity = 1;
+                                obj.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                                obj.Cost = Convert.ToDecimal(TravelItem.UnitPrice);
+                                obj.Total = travelCost;
+
+                                BillingTotal += travelCost;
+                            }
+                        }
+                        break;
+                    case "labor":
+                        if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+                        {
+                            DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                            DateTime cmplt = Convert.ToDateTime(CompletionTime);
+                            TimeSpan servicetimeDiff = cmplt.Subtract(arrival);
+
+                            BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+                            decimal? laborAmt = laborItem == null ? 0 : laborItem.UnitPrice;
+                            laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+
+                            if (laborCost >= 0)
+                            {
+                                obj.BillingType = laborItem.BillingName;
+                                obj.BillingCode = laborItem.BillingCode;
+                                obj.Quantity = 1;
+                                obj.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                                obj.Cost = Convert.ToDecimal(laborItem.UnitPrice);
+                                obj.Total = laborCost;
+
+                                BillingTotal += laborCost;
+                            }
+                        }
+                        break;
+                }
+            }
+
+
+
+            //if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+            //{
+            //    DateTime arrival = Convert.ToDateTime(ArrivalTime);
+            //    DateTime strt = Convert.ToDateTime(StartTime);
+            //    TimeSpan timeDiff = arrival.Subtract(strt);
+
+            //    BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+            //    decimal? travelAmt = TravelItem == null ? 0 : TravelItem.UnitPrice;
+            //    travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+            //    if (travelCost > 0)
+            //    {
+            //        BillingModel bmItem = new BillingModel();
+            //        bmItem.BillingType = TravelItem.BillingName;
+            //        bmItem.BillingCode = TravelItem.BillingCode;
+            //        bmItem.Quantity = 1;
+            //        bmItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+            //        bmItem.Cost = Convert.ToDecimal(TravelItem.UnitPrice);
+            //        bmItem.Total = travelCost;
+
+            //        BillingTotal += travelCost;
+            //        bmList.Add(bmItem);
+            //    }
+            //}
+
+            //if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+            //{
+            //    DateTime arrival = Convert.ToDateTime(ArrivalTime);
+            //    DateTime cmplt = Convert.ToDateTime(CompletionTime);
+            //    TimeSpan servicetimeDiff = cmplt.Subtract(arrival);
+
+            //    BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+            //    decimal? laborAmt = laborItem == null ? 0 : laborItem.UnitPrice;
+            //    laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+
+            //    if (laborCost > 0)
+            //    {
+            //        BillingModel bmItem = new BillingModel();
+            //        bmItem.BillingType = laborItem.BillingName;
+            //        bmItem.BillingCode = laborItem.BillingCode;
+            //        bmItem.Quantity = 1;
+            //        bmItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+            //        bmItem.Cost = Convert.ToDecimal(laborItem.UnitPrice);
+            //        bmItem.Total = laborCost;
+
+            //        BillingTotal += laborCost;
+            //        bmList.Add(bmItem);
+            //    }
+            //}
+
+
+
+            /*
+            decimal BillingTotal = 0;
+            List<BillingModel> bmList = new List<BillingModel>();
+            List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+            decimal travelCost = 0, laborCost = 0;
+            if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+            {
+                DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                DateTime strt = Convert.ToDateTime(StartTime);
+                TimeSpan timeDiff = arrival.Subtract(strt);
+
+                BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                decimal? travelAmt = TravelItem == null ? 0 : TravelItem.UnitPrice;
+                travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                if (travelCost > 0)
+                {
+                    BillingModel bmItem = new BillingModel();
+                    bmItem.BillingType = TravelItem.BillingName;
+                    bmItem.BillingCode = TravelItem.BillingCode;
+                    bmItem.Quantity = 1;
+                    bmItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                    bmItem.Cost = Convert.ToDecimal(TravelItem.UnitPrice);
+                    bmItem.Total = travelCost;
+
+                    BillingTotal += travelCost;
+                    bmList.Add(bmItem);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+            {
+                DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                DateTime cmplt = Convert.ToDateTime(CompletionTime);
+                TimeSpan servicetimeDiff = cmplt.Subtract(arrival);
+
+                BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+                decimal? laborAmt = laborItem == null ? 0 : laborItem.UnitPrice;
+                laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+
+                if (laborCost > 0)
+                {
+                    BillingModel bmItem = new BillingModel();
+                    bmItem.BillingType = laborItem.BillingName;
+                    bmItem.BillingCode = laborItem.BillingCode;
+                    bmItem.Quantity = 1;
+                    bmItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                    bmItem.Cost = Convert.ToDecimal(laborItem.UnitPrice);
+                    bmItem.Total = laborCost;
+
+                    BillingTotal += laborCost;
+                    bmList.Add(bmItem);
+                }
+            }
+            */
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = bmList, Total = BillingTotal };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        [AllowAnonymous]
+        public JsonResult UpdateBillingData(string StartTime, string ArrivalTime, string CompletionTime, int WorkorderId, string DataSource)
+        {
+            JsonResult jsonResult = new JsonResult();
+            decimal BillingTotal = 0;
+
+            WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == WorkorderId).FirstOrDefault();
+            Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == wo.CustomerID).FirstOrDefault();
+
+            var ws = (from sc in FarmerBrothersEntitites.WorkorderSchedules
+                      join t in FarmerBrothersEntitites.TECH_HIERARCHY on sc.Techid equals t.DealerId
+                      where sc.WorkorderID == WorkorderId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted")
+                      && t.FamilyAff == "SPT"
+                      select new
+                      {
+                          Techid = sc.Techid,
+                          AssignedStatus = sc.AssignedStatus,
+                          WorkorderID = sc.WorkorderID,
+                          familyAff = t.FamilyAff
+                      }).FirstOrDefault();
+
+            PricingDetail priceDtls = null;
+            if (!string.IsNullOrEmpty(contact.PricingParentID) && contact.PricingParentID != "0")
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 501 && p.PricingEntityId == contact.PricingParentID).FirstOrDefault();
+            }
+            else if(ws != null)
+            {
+                string techId = ws.Techid.ToString();
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 502 && p.PricingEntityId == techId).FirstOrDefault();
+            }
+            else
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 503 && p.PricingEntityId == wo.CustomerState).FirstOrDefault();
+            }
+
+
+            if (priceDtls == null)
+            {
+                List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+
+                BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+
+                priceDtls = new PricingDetail();
+                priceDtls.HourlyLablrRate = TravelItem.UnitPrice;
+                priceDtls.HourlyTravlRate = laborItem.UnitPrice;
+            }
+
+            List<BillingModel> bmList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<BillingModel>>(DataSource);
+
+            decimal travelCost = 0, laborCost = 0;
+            if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+            {
+                DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                DateTime strt = Convert.ToDateTime(StartTime);
+                TimeSpan timeDiff = arrival.Subtract(strt);
+
+                decimal? travelAmt = priceDtls == null ? 0 : priceDtls.HourlyTravlRate;
+                travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                if (travelCost >= 0)
+                {
+                    BillingModel existingBillItem = bmList.Where(b => b.BillingType.ToLower() == "travel time").FirstOrDefault();
+
+                    if (existingBillItem != null)
+                    {                        
+                        existingBillItem.Quantity = 1;
+                        existingBillItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        existingBillItem.Cost = Convert.ToDecimal(priceDtls.HourlyTravlRate);
+                        existingBillItem.Total = travelCost;
+                    }
+                    else
+                    {
+                        BillingModel newBillItem = new BillingModel();
+
+                        newBillItem.BillingType = "TRAVEL TIME";
+                        newBillItem.BillingCode = "091.4430";
+                        newBillItem.Quantity = 1;
+                        newBillItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        newBillItem.Cost = Convert.ToDecimal(priceDtls.HourlyTravlRate);
+                        newBillItem.Total = travelCost;
+
+                        bmList.Add(newBillItem);
+                    }
+                    BillingTotal += travelCost;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+            {
+                DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                DateTime cmplt = Convert.ToDateTime(CompletionTime);
+                TimeSpan servicetimeDiff = cmplt.Subtract(arrival);
+
+                decimal? laborAmt = priceDtls == null ? 0 : priceDtls.HourlyLablrRate;
+                laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+
+                if (laborCost >= 0)
+                {
+                    BillingModel existingBillItem = bmList.Where(b => b.BillingType.ToLower() == "labor").FirstOrDefault();
+
+                    if (existingBillItem != null)
+                    {
+                        existingBillItem.Quantity = 1;
+                        existingBillItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        existingBillItem.Cost = Convert.ToDecimal(priceDtls.HourlyLablrRate);
+                        existingBillItem.Total = laborCost;
+                    }
+                    else
+                    {
+                        BillingModel newBillItem = new BillingModel();
+
+                        newBillItem.BillingType = "LABOR";
+                        newBillItem.BillingCode = "091.4435";
+                        newBillItem.Quantity = 1;
+                        newBillItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                        newBillItem.Cost = Convert.ToDecimal(priceDtls.HourlyLablrRate);
+                        newBillItem.Total = laborCost;
+
+                        bmList.Add(newBillItem);
+                    }
+                    BillingTotal += laborCost;
+                }
+            }
+
+            /*List <BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+            decimal travelCost = 0, laborCost = 0;
+            foreach (BillingModel obj in bmList)
+            {
+                string billingType = obj.BillingType.ToString().ToLower();
+                switch (billingType)
+                {
+                    case "travel time":
+                        if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+                        {
+                            DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                            DateTime strt = Convert.ToDateTime(StartTime);
+                            TimeSpan timeDiff = arrival.Subtract(strt);
+
+                            BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                            decimal? travelAmt = TravelItem == null ? 0 : TravelItem.UnitPrice;
+                            travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                            if (travelCost >= 0)
+                            {
+                                obj.BillingType = TravelItem.BillingName;
+                                obj.BillingCode = TravelItem.BillingCode;
+                                obj.Quantity = 1;
+                                obj.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                                obj.Cost = Convert.ToDecimal(TravelItem.UnitPrice);
+                                obj.Total = travelCost;
+
+                                BillingTotal += travelCost;
+                            }
+                        }
+                        break;
+                    case "labor":
+                        if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+                        {
+                            DateTime arrival = Convert.ToDateTime(ArrivalTime);
+                            DateTime cmplt = Convert.ToDateTime(CompletionTime);
+                            TimeSpan servicetimeDiff = cmplt.Subtract(arrival);
+
+                            BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+                            decimal? laborAmt = laborItem == null ? 0 : laborItem.UnitPrice;
+                            laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+
+                            if (laborCost >= 0)
+                            {
+                                obj.BillingType = laborItem.BillingName;
+                                obj.BillingCode = laborItem.BillingCode;
+                                obj.Quantity = 1;
+                                obj.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+                                obj.Cost = Convert.ToDecimal(laborItem.UnitPrice);
+                                obj.Total = laborCost;
+
+                                BillingTotal += laborCost;
+                            }
+                        }
+                        break;
+                }
+            }
+            */
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = bmList, Total = BillingTotal };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+        #endregion
     }
 }

@@ -37,5 +37,6 @@ namespace FarmerBrothers.Models
         public string Region { get; set; }
         public string EmailSentTo { get; set; }
         public string Notes { get; set; }
+        public string CreatedUserName { get; set; }
     }
 }

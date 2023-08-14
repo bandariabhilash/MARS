@@ -96,9 +96,13 @@ namespace FarmerBrothers.Controllers
                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
 
-                                string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-                                if (customer.PricingParentID == IsNonFBCustomerParentId && UserPrivilege["NonFBCustomer"] != "Full") continue;
 
+                                NonFBCustomer nonFBCustomer = FarmerBrothersEntitites.NonFBCustomers.Where(n => n.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                                if (nonFBCustomer != null && UserPrivilege["NonFBCustomer"] != "Full")
+                                {
+                                    continue;
+                                }
+                                
                                 string phoneNumber = string.Empty;
                                 if (!string.IsNullOrWhiteSpace(customer.Phone))
                                 {

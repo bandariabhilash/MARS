@@ -97,7 +97,7 @@ body {
 .fbbg-img {
 	min-width:960px;
 	height:674px;
-	background: url(../images/bg1.png) no-repeat center center;
+	//background: url(../images/bg1.png) no-repeat center center;
   -webkit-background-size: cover;
      -moz-background-size: cover;
        -o-background-size: cover;
@@ -329,14 +329,18 @@ width: 86px;
 }
 .login {
 	height: 674px;
-width: 397px;
-background: url(../images/login-bg.png) repeat;
+width: 674px;//397px;
+//background: url(../images/login-bg.png) repeat;
 margin:0 auto;
 /*padding: 7px 19px;*/
+text-align: center;
 }
 .login form{
 width: 292px;
 margin: 0 auto;
+border: 0.1vw #808080 solid;
+padding: 3vw 4vw;
+border-radius: 3vw;
 }
 .login h2{
 	font-size: 40px;
@@ -352,19 +356,21 @@ color: #fff;
 }
 .login h4 {
 	font-family:"MyriadProSemibold",Arial, Helvetica, sans-serif;
-	color:#fff;
+	color:#00000073;
 	font-size:20px;
 	margin-top: 48px;
 	margin-bottom:22px;
+	text-align: left;
 }
 .e-login {
 	position:relative;
 	display:block;
+	margin: 1vw;
 }
 .login .email-login {
 	font-family:"MYRIADPROREGULAR",Arial, Helvetica, sans-serif;
 	font-size:18px;
-	background:url(../images/email-login.png) no-repeat;
+	//background:url(../images/email-login.png) no-repeat;
 	margin: 0px;
 border: 0px;
 width: 233px;
@@ -373,11 +379,12 @@ padding-left: 47px;
 padding-top: 16px;
 padding-bottom: 14px;
 margin-bottom: 1px;
+background-color: #5b48481c;
 }
 .login .pwd-login {
 	font-family:"MYRIADPROREGULAR",Arial, Helvetica, sans-serif;
 	font-size:18px;
-	background:url(../images/pwd-login.png) no-repeat;
+	//background:url(../images/pwd-login.png) no-repeat;
 	margin: 0px;
 border: 0px;
 color:#000;
@@ -385,6 +392,7 @@ padding-left: 47px;
 width: 233px;
 padding-top: 16px;
 padding-bottom: 14px;
+background-color: #5b48481c;
 }
 .login .login-button {
 	background:url(../images/login-btn.png) no-repeat;
@@ -396,6 +404,7 @@ font-size:24px;
 color:#fff;
 font-family:"Signika-Bold",Arial, Helvetica, sans-serif;
 cursor:pointer;
+margin: 1vw;
 }
 .login .forgot-y-p {
 padding-top: 28px;
@@ -512,6 +521,7 @@ border: 1px solid #B6B6B6;
 	width: 100%;
 color: #000;
 background: #FCFEFF;
+margin: 1vw;
 }
 footer .footer-full {
 	border-top:1px solid #ccc;

@@ -74,7 +74,8 @@
         });
         $("#supInvResults").ejGrid({
             recordClick: function (args) {
-                window.location.href = "@Url.Action("SupInvTechExcelExport", "Reports")" + "/" + args.data["TechId"] + "?SDate=" + $("#HiddenFromDate").val() + "&EDate=" + $("#HiddenToDate").val() + "&ESM=" + args.data["ESM"] +"&TechID="+$("#HiddenDealerId").val()+"&PACC="+$("#HiddenParentACC").val()+"&Route="+args.data["Route"];
+                window.location.href = "@Url.Action("SupInvTechExcelExport", "Reports")" + "/" + args.data["TechId"] + "?SDate=" + $("#HiddenFromDate").val() + "&EDate=" + $("#HiddenToDate").val() + "&ESM=" + args.data["ESM"] + "&TechID=" + $("#HiddenDealerId").val() + "&PACC=" + $("#HiddenParentACC").val() + "&Route=" + args.data["Route"]
+                    + "&Branch=" + args.data["BranchNumber"] + "&Region=" + args.data["Region"];
             }
         });
         $("form").submit(function (e) {

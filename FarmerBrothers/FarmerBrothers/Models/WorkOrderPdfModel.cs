@@ -38,5 +38,7 @@ namespace FarmerBrothers.Models
         public string TravelTime { get; set; }
         public string CallPriority { get; set; }
 
+        public string Route { get; set; }
+
     }
 }

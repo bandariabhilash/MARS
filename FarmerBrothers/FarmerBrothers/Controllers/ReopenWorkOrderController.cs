@@ -74,7 +74,18 @@ namespace FarmerBrothers.Controllers
                         FarmerBrothersEntitites.WorkorderEquipments.Remove(equipments);
                     }
                 }
-                               
+
+                if (workOrder.WorkorderCalltypeid == 1600)
+                {
+                    if (workOrder.WorkorderInstallationSurveys != null)
+                    {
+                        foreach (var equipments in workOrder.WorkorderInstallationSurveys.ToList())
+                        {
+                            FarmerBrothersEntitites.WorkorderInstallationSurveys.Remove(equipments);
+                        }
+                    }
+                }
+
                 DateTime currentTime = Utility.GetCurrentTime(workOrder.CustomerZipCode, FarmerBrothersEntitites);
                 NotesHistory noteHistory = new NotesHistory();
                 noteHistory.WorkorderID = id;                

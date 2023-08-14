@@ -134,8 +134,8 @@
             else {
                 // Ensure that it is a number and stop the keypress
                 if (event.keyCode < 48 || event.keyCode > 57 ) {
-                    event.preventDefault(); 
-                }   
+                    event.preventDefault();
+                }
             }
         });
 
@@ -148,12 +148,22 @@
         var val = $(".IsNonFBCustomerChk").is(":checked");
         if(val == true)
         {
-            var nonFNCustomerParentId = @System.Configuration.ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-            $("#ParentNumber").prop('readonly', true).val(nonFNCustomerParentId);
+            var nonFBCustomerName = $(".nonFbCustomerList").val();
+            if(nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a')
+            {
+                AlertPopup( "|Please Select NonFBCustomer from the Dropdown list" );
+                return false;
+            }
+            else
+            {
+                var nonFNCustomerParentId = nonFBCustomerName;
+                $("#ParentNumber").prop('readonly', true).val(nonFNCustomerParentId);
+            }
         }
         else
         {
             $("#ParentNumber").prop('readonly', false).val("");
+            $(".nonFbCustomerList").val("n/a");
         }
     }
 
@@ -252,7 +262,7 @@
 
     function NonFbCustomerChange()
     {
-        ParentNumberTxtBoxAccess();        
+        ParentNumberTxtBoxAccess();
     }
 
     //function PhoneValidation(evt) {
@@ -263,6 +273,16 @@
 
     //    return false;
     //}
+
+    function NonFBCustomerChangefunc(val) {
+
+        if ($.trim(val).length != 0) {
+            ParentNumberTxtBoxAccess();
+        }
+        else {
+          
+        }
+    }
 </script>
 
 <section class="block margin-top">
@@ -279,26 +299,34 @@
 
             </div>
             <div class="col-md-4 customer-col1 customer sm-pad-reset">
-            @if (Model.unknownCustomer || Model.CustomerId == null)
-            {
-                <div class="col-xs-6-o">
-                    <span class="col-md-5">Non-FB Customer: </span>
-                    <span class="col-md-7">
-                        <div class="form-group">                            
-                            <input @(Convert.ToBoolean(Model.IsNonFBCustomer) == true ?   "checked='checked'" : string.Empty) type="checkbox" 
-                                  onchange="NonFbCustomerChange()" class="IsNonFBCustomerChk"/>                           
-                        </div>
-                    </span>
-                </div>
-                   <div class="col-xs-6-o">
-                    <span class="col-md-5">Parent Number:</span>
-                    <span class="col-md-7">
+                @if (Model.unknownCustomer || Model.CustomerId == null)
+                {
+                    <div class="col-xs-6-o">
+                        <span class="col-md-5">Is Non-FB Customer: </span>
+                        <span class="col-md-7">
+                            <div class="form-group">
+                                <input @(Convert.ToBoolean(Model.IsNonFBCustomer) == true ? "checked='checked'" : string.Empty) type="checkbox"
+                                       onchange="NonFbCustomerChange()" class="IsNonFBCustomerChk" />
+                            </div>
+                        </span>
+                    </div>
+                    <div class="col-xs-6-o">
+                        <span class="col-md-5">Non-FB Customer:</span>
+                        <span class="col-md-7">
+                            <div class="form-group">
+                                @Html.DropDownListFor(c => c.NonFBCustomerNumber, new SelectList(Model.NonFBCustomerList, "NonFBCustomerId", "NonFBCustomerName"), new { @class = "form-control CustomerData inputFields nonFbCustomerList", @onchange = "NonFBCustomerChangefunc(this.value)", @placeholder = "Please Select" })
+                            </div>
+                        </span>
+                    </div>
+                    <div class="col-xs-6-o">
+                        <span class="col-md-5">Parent Number:</span>
+                        <span class="col-md-7">
                             <div class="form-group">
                                 @Html.TextBoxFor(c => c.ParentNumber, new { @type = "number", @class = "form-control CustomerData inputFields" })
                             </div>
-                    </span>
-                </div>                
-            }
+                        </span>
+                    </div>
+                }
                 <div class="col-xs-6-o">
                     <span class="col-md-5">Account Number:</span>
                     <span class="col-md-7">
@@ -309,24 +337,24 @@
                             </div>
                         </div>
                         @*<div class="col-md-8">
-                                <div>@Model.CurrentTime</div>
-                                <div>@Model.CustomerTimeZone</div>
-                            </div>*@
+                            <div>@Model.CurrentTime</div>
+                            <div>@Model.CustomerTimeZone</div>
+                        </div>*@
                     </span>
                 </div>
                 <div class="col-sm-6-o">
                     <span class="col-md-5">Customer Name:</span>
                     <div class="col-md-7">
                         <div class="form-group">
-                        @if ((Model.CustomerName != null && Model.CustomerName.ToLower().Contains("-cm")) 
-                            || (Model.PricingParent != null && Model.PricingParent.ToLower().Contains("core-mark")))
-                        {
-                            @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control CustomerData inputFields", @style = "color:#FF0000;" })
-                        }
-                        else
-                        {
-                            @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control CustomerData inputFields" })
-                        }
+                            @if ((Model.CustomerName != null && Model.CustomerName.ToLower().Contains("-cm"))
+                                || (Model.PricingParent != null && Model.PricingParent.ToLower().Contains("core-mark")))
+                            {
+                                @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control CustomerData inputFields", @style = "color:#FF0000;" })
+                            }
+                            else
+                            {
+                                @Html.TextBoxFor(c => c.CustomerName, new { @class = "form-control CustomerData inputFields" })
+                            }
                             @Html.ValidationMessageFor(m => m.CustomerName, "", new { @class = "text-danger" })
                         </div>
                     </div>
@@ -418,10 +446,10 @@
                     <div class="col-sm-6-o">
                         <span class="col-md-5">Phone Number:</span>
                         @*<div class="col-md-3">
-                                <div class="form-group">
-                                    @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control CustomerData inputFields @style = "margin-left:20px" " })
-                                </div>
-                            </div>*@
+                            <div class="form-group">
+                                @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control CustomerData inputFields @style = "margin-left:20px" " })
+                            </div>
+                        </div>*@
                         <div class="col-md-7">
                             <div class="form-group">
                                 @Html.TextBoxFor(c => c.PhoneNumber, new { @class = "form-control CustomerData inputFields" })
@@ -470,7 +498,7 @@
                         <div class="col-xs-6-o">
                             <span class="col-md-5">First Contact (ESM):</span>
                             <span class="col-md-7">@Model.ESMName</span>
-                        </div>                        
+                        </div>
                         <div class="col-xs-6-o">
                             <span class="col-md-5">Second Contact (CCM):</span>
                             <span class="col-md-7">@Model.CCMName</span>
@@ -495,9 +523,9 @@
                             </div>
                         </div>
                         @*<div class="col-xs-6-o">
-                                <span class="col-md-5">Service Level:</span>
-                                <span class="col-md-7">@Model.ServiceLevel</span>
-                            </div>*@
+                            <span class="col-md-5">Service Level:</span>
+                            <span class="col-md-7">@Model.ServiceLevel</span>
+                        </div>*@
                         <div class="col-xs-6-o">
                             <span class="col-md-5">Total calls:</span>
                             <span class="col-md-7">@Model.TotalCallsCount</span>
@@ -537,35 +565,55 @@
                             <span class="col-md-7">@Model.PaymentTermDesc</span>
                         </div>
 
-                    @if (string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "Erf", true) == 0)
-                    {
-                        @*<span id="erfId" class="col-md-7" style="visibility:hidden;">@Model.ErfId</span>*@
-                        @*<input id="erfId" class="col-md-7" style="visibility:hidden;" value="@Model.ErfId"/>*@
-
-                        if ((UserPrivilege["ERFStatusUpdate"] == "Edit-Only" || UserPrivilege["ERFStatusUpdate"] == "Full"))
+                        @if (string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "Erf", true) == 0)
                         {
-                            <div class="col-xs-6-o">
-                                <span class="col-md-5">ERF Status:</span>
-                                <span class="col-md-7">
-                                    <span class="col-md-7" id="erfStatusLbl">@Model.ERFStatus</span>
+                            @*<span id="erfId" class="col-md-7" style="visibility:hidden;">@Model.ErfId</span>*@
+                            @*<input id="erfId" class="col-md-7" style="visibility:hidden;" value="@Model.ErfId"/>*@
 
-                                    @Html.DropDownListFor(c => c.ERFStatus, new SelectList(Model.ERFStatusList, "StatusName", "StatusName"), new { @class = "form-control" })
-                                    <button id="erfStatusEditBtn" title="Edit" class="btn btn-primary" style="padding:2px 4px;" onclick="onEditErfStatusClick()"><i class="icon-edit-sign"></i></button>
+                            if ((UserPrivilege["ERFStatusUpdate"] == "Edit-Only" || UserPrivilege["ERFStatusUpdate"] == "Full"))
+                            {
+                                <div class="col-xs-6-o">
+                                    <span class="col-md-5">ERF Status:</span>
+                                    <span class="col-md-7">
+                                        <span class="col-md-7" id="erfStatusLbl">@Model.ERFStatus</span>
 
-                                    <button id="erfStatusSaveBtn" title="Save" class="btn btn-primary" style="padding:2px 4px;" onclick="onSaveErfStatusClick()"><i class="icon-check"></i></button>
-                                    <button id="erfStatusCancelBtn" title="Cancel" class="btn btn-primary" style="padding:2px 4px;" onclick="onCancelErfStatusClick()"><i class="icon-remove"></i></button>
-                                </span>
-                            </div>
+                                        @Html.DropDownListFor(c => c.ERFStatus, new SelectList(Model.ERFStatusList, "StatusName", "StatusName"), new { @class = "form-control" })
+                                        <button id="erfStatusEditBtn" title="Edit" class="btn btn-primary" style="padding:2px 4px;" onclick="onEditErfStatusClick()"><i class="icon-edit-sign"></i></button>
+
+                                        <button id="erfStatusSaveBtn" title="Save" class="btn btn-primary" style="padding:2px 4px;" onclick="onSaveErfStatusClick()"><i class="icon-check"></i></button>
+                                        <button id="erfStatusCancelBtn" title="Cancel" class="btn btn-primary" style="padding:2px 4px;" onclick="onCancelErfStatusClick()"><i class="icon-remove"></i></button>
+                                    </span>
+                                </div>
+
+
+                                <div class="col-xs-6-o">
+                                    <span class="col-md-5">Cash Sale Status:</span>
+                                    <span class="col-md-7">
+                                        @*<span class="col-md-7" id="cashStatusLbl">@Model.CashSaleStatus</span>*@
+
+                                        @*@Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @class = "form-control CustomerData inputFields" })*@
+                                        @Html.DropDownListFor(c => c.CashSaleStatus, new SelectList(Model.CashSaleStatusList, "StatusCode", "StatusName", Model.CashSaleStatus), new { @class = "form-control CustomerData inputFields" })
+
+                                    </span>
+                                </div>
+
+
+
+                            }
+                            else
+                            {
+                                <div class="col-xs-6-o">
+                                    <span class="col-md-5">ERF Status:</span>
+                                    <span class="col-md-7">@Model.ERFStatus</span>
+                                </div>
+
+                                <div class="col-xs-6-o">
+                                    <span class="col-md-5">Cash Sale Status:</span>
+                                    <span class="col-md-7">@Model.CashSaleStatus</span>
+                                </div>
+                            }
+
                         }
-                        else
-                        {
-                            <div class="col-xs-6-o">
-                                <span class="col-md-5">ERF Status:</span>
-                                <span class="col-md-7">@Model.ERFStatus</span>
-                            </div>
-                        }
-
-                    }
 
                     </div>
                     <div class="col-md-6 customer-form-cnt">
@@ -594,7 +642,7 @@
                         <div class="col-xs-6-o">
                             <span class="col-md-5">Third Contact (RSM) Phone:</span>
                             <span class="col-md-7">@Model.RSMphone</span>
-                        </div>                        
+                        </div>
                         <div class="col-xs-6-o">
                             <span class="col-md-5">Region:</span>
                             <span class="col-md-7">@Model.Region</span>
@@ -623,32 +671,33 @@
                 </div>
                 <br />
                 @*<div class="row">
-                        <div class="col-md-12">
-                            Entitled for Service:
-                            <br />
-                            <table id="ServiceDetails" class="display" cellspacing="0" width="100%"></table>
-                        </div>
-                    </div>*@
+                    <div class="col-md-12">
+                        Entitled for Service:
+                        <br />
+                        <table id="ServiceDetails" class="display" cellspacing="0" width="100%"></table>
+                    </div>
+                </div>*@
             </div>
             @*<div class="col-md-12 customer-col1 customer sm-pad-reset">
-        <div class="col-md-12">
-            Customer Special Instructions:
-            <div class="form-group">
-                @Html.TextAreaFor(c => c.CustomerSpecialInstructions, new { @class = "form-control CustomerData inputFields", @Style = "width:100%", @rows = 5 })
-            </div>
-        </div>
-    </div>*@
+                <div class="col-md-12">
+                    Customer Special Instructions:
+                    <div class="form-group">
+                        @Html.TextAreaFor(c => c.CustomerSpecialInstructions, new { @class = "form-control CustomerData inputFields", @Style = "width:100%", @rows = 5 })
+                    </div>
+                </div>
+            </div>*@
         </div>
         @if (string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "Workorder", true) != 0
-                    && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "Erf", true) != 0
-                && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "NonServiceEvent", true) != 0
-                && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "ErfNew", true) != 0)
+                        && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "Erf", true) != 0
+                    && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "NonServiceEvent", true) != 0
+                    && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "ErfNew", true) != 0)
         //&&(Session["IsERFUser"] == null || Convert.ToInt32(Session["IsERFUser"]) == 0))
         {
             //"9268996","9269309","9268993", "9268992"
             //string[] NonApprovedCustomers = { "9269383", "9268818", "9269065", "9269325", "9271062", "9269348", "9268755", "9268750", "9268991", "9271344", "9268932", "9268994", "9268925", "9269278", "9262495", "9269400", "9269070", "9268800", "9258432", "9269295", "9269131", "9258878", "9258879", "9269284", "9269298", "9269140", "9269279", "9268902", "9268854", "9268821", "9268746", "9268792", "9269158", "9269127", "9269031", "9269061", "9268754", "9269355", "9268990", "9269253", "9268758", "9269283", "9269391", "9268751", "9268791", "9268983", "9268989", "9252241", "9269062", "9268810", "9293048", "9258690", "9268790", "9269033", "9269506", "9269157", "9268793", "9269287", "9269337", "9268956", "9269240", "9269246", "9270470", "9268815", "9269405", "9270294", "9268745", "9268744", "9269014", "9269159", "9268816", "9269182", "9269254", "9268756", "9269053", "9268924", "9270521", "9270061", "9269017", "9269055", "9268644", "9268999", "9268611", "9268594", "9268723", "9268716", "9268722", "9268987", "9268982", "9268589", "9269191", "9269046", "9253351",  "9269190", "9269037", "9268626", "9268940", "9269322", "9268936", "9269303", "9268624", "9268859", "9268799", "9269244", "9268911", "9268898", "9268896", "9269038", "9269282", "9268980", "9268781", "9269320", "9269323" };
             string[] NonApprovedCustomers = { "9253351", "9252241" };
             List<string> NonApprovedCustomersList = NonApprovedCustomers.ToList();
+
             if (NonApprovedCustomersList.Contains(@Model.CustomerId))
             {
                 <div class="row clear-input">
@@ -657,76 +706,92 @@
                     </div>
                 </div>
             }
+            else if (Model.ServiceTier == "5" && (!string.IsNullOrEmpty(Model.CustomerType) && Model.CustomerType.ToLower() != "ce") && (string.IsNullOrEmpty(Model.ParentNumber) || Model.ParentNumber == "0"))
+            {
+                //Included for Events with Card Processing
+                @*<div class="col-md-3">
+                    @Html.ActionLink("Create Work Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                </div>*@
+                //End of Card processing events
+
+                <div class="col-md-3">
+                    @Html.ActionLink("Create Customer Service Event", "NonServiceEventCall", "NonServiceEvent", new { customerId = @Model.CustomerId }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                </div>
+
+                <div class="col-md-3">
+                    @Html.ActionLink("Create ERF New", "ERFNewCreate", "ERFNew", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                </div>
+            }
             else
             {
-                    <div class="row clear-input">
-                        <div class="col-md-12 customer-col1 customer sm-pad-reset">
+                <div class="row clear-input">
+                    <div class="col-md-12 customer-col1 customer sm-pad-reset">
 
-                            @{
-                                UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
-                                        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
-                                        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
-                                if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Read-Only"))
-                                {
-                                    <div class="col-md-3">
-                                        @Html.ActionLink("Create Work Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                                    </div>
-                                }
-                            }
-
-                            @{
-                                UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
-                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
-                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
-                                //if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Read-Only"))
-                                if (UserPrivilege["ERF"] == "Full")
-                                {
-                                    <div class="col-md-3">
-                                        @Html.ActionLink("Create Parts Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>(), isNewPartsOrder = true }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                                    </div>
-                                }
-                            }
-
-                            @*@{
-                                    UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                        @{
+                            UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
                                     ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
                                     (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
-                                    if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only"))
-                                    {
-                                        <div class="col-md-3">
-                                            @Html.ActionLink("Create ERF", "ERFManagement", "ERF", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                                        </div>
-                                    }
-                                }*@
-
-                            @{
-                                UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
-                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
-                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
-                                if (UserPrivilege["ERFNew"] == "Full")
-                                {
-                                    <div class="col-md-3">
-                                        @Html.ActionLink("Create ERF New", "ERFNewCreate", "ERFNew", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                                    </div>
-                                }
+                            if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Read-Only"))
+                            {
+                                <div class="col-md-3">
+                                    @Html.ActionLink("Create Work Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                                </div>
                             }
+                        }
 
-                            <div class="col-md-3">
-                                @Html.ActionLink("Create Customer Service Event", "NonServiceEventCall", "NonServiceEvent", new { customerId = @Model.CustomerId }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                            </div>
+                        @{
+                            UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                            //if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Read-Only"))
+                            if (UserPrivilege["ERF"] == "Full")
+                            {
+                                <div class="col-md-3">
+                                    @Html.ActionLink("Create Parts Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>(), isNewPartsOrder = true }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                                </div>
+                            }
+                        }
 
-                        </div>
-                    </div>
-                                    }
-                                }
-                    @*else if (Session["IsERFUser"] != null && Convert.ToInt32(Session["IsERFUser"]) == 1
-                                        && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "ErfNew", true) != 0)
-                        {
+                        @*@{
+                            UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                            if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only"))
+                            {
+                                <div class="col-md-3">
+                                    @Html.ActionLink("Create ERF", "ERFManagement", "ERF", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                                </div>
+                            }
+                        }*@
+
+                        @{
+                            UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                            if (UserPrivilege["ERFNew"] == "Full")
+                            {
                                 <div class="col-md-3">
                                     @Html.ActionLink("Create ERF New", "ERFNewCreate", "ERFNew", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
                                 </div>
-                            }*@
+                            }
+                        }
+
+                        <div class="col-md-3">
+                            @Html.ActionLink("Create Customer Service Event", "NonServiceEventCall", "NonServiceEvent", new { customerId = @Model.CustomerId }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                        </div>
+
+                    </div>
                 </div>
+            }
+        }
+        @*else if (Session["IsERFUser"] != null && Convert.ToInt32(Session["IsERFUser"]) == 1
+                        && string.Compare(HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString(), "ErfNew", true) != 0)
+        {
+                <div class="col-md-3">
+                    @Html.ActionLink("Create ERF New", "ERFNewCreate", "ERFNew", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                </div>
+            }*@
+    </div>
 </section>
 
 <div class="popup" data-popup="popup-1">

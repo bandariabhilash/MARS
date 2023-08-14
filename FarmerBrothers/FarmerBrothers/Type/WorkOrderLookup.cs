@@ -251,6 +251,34 @@ namespace FarmerBrothers
             return TechBranchList;
         }
 
+        public static List<BranchRegion> GetTechBranchesForTechUpdateGrid(FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            List<BranchRegion> TechBranchList = new List<BranchRegion>();
+
+            try
+            {
+                IEnumerable<List<BranchESM>> branches = (from m in FarmerBrothersEntitites.BranchESMs group m by m.BranchName into branch select branch.ToList()).ToList();
+
+                foreach (List<BranchESM> branch in branches)
+                {
+                    if (branch.Count() > 0)
+                    {
+                        TechBranchList.Add(new BranchRegion(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(branch[0].BranchName.ToLower()), branch[0].BranchNo.ToString()));
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to get the Technician Branches ", ex);
+            }
+
+            BranchRegion blankBranch = new BranchRegion() { Number = "n/a", Name = "Please Select" };
+            TechBranchList.Insert(0, blankBranch);
+
+            return TechBranchList;
+        }
+
         public static List<BranchRegion> GetTechBranchesNumbers(FarmerBrothersEntities FarmerBrothersEntitites)
         {
             List<BranchRegion> TechBranchList = new List<BranchRegion>();

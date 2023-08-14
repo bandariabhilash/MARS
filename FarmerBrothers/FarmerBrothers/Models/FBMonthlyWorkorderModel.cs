@@ -26,4 +26,22 @@ namespace FarmerBrothers.Models
         public string ClosureConfirmationNo { get; set; }
 
     }
+
+    public class EscalationReportModel
+    {
+        public DateTime? DateFrom { get; set; }
+        public DateTime? DateTo { get; set; }
+
+        public IList<EscalationReportSearchResultModel> SearchResults;
+    }
+    public class EscalationReportSearchResultModel
+    {
+        public string WorkOrderID { get; set; }
+        public string WorkorderEntryDate { get; set; }
+        public string EscalatedBy { get; set; }
+        public string EscalatedTo { get; set; }
+        public string EscalatedOn { get; set; }
+    }
+
+
 }

@@ -1,0 +1,217 @@
+﻿@model FarmerBrothers.Models.PricingUpdateModel
+@{
+    ViewBag.Title = "PricingUpdates";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using FarmerBrothers.Models;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+
+<h2>PricingUpdates</h2>
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <h2 class="parentPricing-head arrow-down tabheader">Parent Pricing</h2>
+        <div class="parentPricing-content margin-top" style="display:none;">
+
+
+
+            <div class="row parentPricing clear-input">
+                <div class="col-md-12  sm-pad-reset">
+
+                    @(Html.EJ().Grid<object>
+    ("parentPricingGrid")
+    .Datasource(ds => ds.Json((IEnumerable<object>)Model.ParentPricingModel)
+    //.UpdateURL("CellEditUpdate").Adaptor(AdaptorType.RemoteSaveAdaptor))
+    .UpdateURL(Url.Action("ParentPricingUpdate", "PricingUpdates"))
+    //              .InsertURL(Url.Action("ERFContingentDataInsert", "ErfNew"))
+    //.RemoveURL(Url.Action("EquipmentDelete", "ErfNew"))
+    .Adaptor(AdaptorType.RemoteSaveAdaptor))
+
+    .AllowScrolling()
+.AllowSorting()
+.AllowTextWrap(true)
+        .AllowPaging()
+        .AllowFiltering()
+        .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+        .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+         .IsResponsive(true)
+        .EnableResponsiveRow(true)
+        .Mappers(map => map.ExportToExcelAction(Url.Action("ParentPricingExcelExport", "PricingUpdates")))
+        .ToolbarSettings(toolbar =>
+        {
+            toolbar.ShowToolbar().ToolbarItems(items =>
+            {
+                items.AddTool(ToolBarItems.ExcelExport);
+                // items.AddTool(ToolBarItems.Add);
+                items.AddTool(ToolBarItems.Edit);
+                items.AddTool(ToolBarItems.Update);
+                items.AddTool(ToolBarItems.Cancel);
+            });
+        })
+        .ClientSideEvents(eve =>
+        {
+            eve.BeginEdit("beginedit")
+            .ActionBegin("ActionBegin")
+            .EndEdit("EndEdit")
+            .EndAdd("EndAdd")
+            .ToolbarClick("onToolbarClick");
+        })
+        .Columns(col =>
+        {
+            col.Field("PricingEntityId").HeaderText("Parent#").IsPrimaryKey(true).AllowEditing(false).TextAlign(TextAlign.Right).Add();
+            //col.Field("ParentId").HeaderText("Parent Name").Width("10%").ForeignKeyField("NonFBCustomerId").ForeignKeyValue("NonFBCustomerName").DataSource(((IEnumerable<object>)Model.ParentDetails)).ValidationRules(r => r.AddRule("required", true)).Add();
+            col.Field("PricingEntityName").HeaderText("Parent Name").AllowEditing(false).Add();
+            col.Field("HourlyTravelRate").HeaderText("Hourly Travel Rate").Add();
+            col.Field("HourlyLaborRate").HeaderText("Hourly Labor Rate").Add();
+            col.Field("MileageRate").HeaderText("Mileage Rate").Add();
+            col.Field("AfterHourTravelRate").HeaderText("After-Hour Travel Rate").Add();
+            col.Field("AfterHourLaborRate").HeaderText("After-Hour Labor Rate").Add();
+            col.Field("PartsDiscount").HeaderText("Parts Discount (%)").Add();
+            col.Field("AfterHourRatesApply").HeaderText("After Hour Rates Apply").EditType(EditingType.Boolean).Add();
+            col.Field("AdditionalFee").HeaderText("Additional Fee").Add();
+
+
+        })
+
+                        )
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <h2 class="thirdPartyPricing-head arrow-down tabheader">3rd Party Pricing</h2>
+        <div class="thirdPartyPricing-content margin-top" style="display:none;">
+
+
+
+            <div class="row parentPricing clear-input">
+                <div class="col-md-12  sm-pad-reset">
+
+                    @(Html.EJ().Grid<object>
+                                ("thirdPartyPricingGrid")
+                                .Datasource(ds => ds.Json((IEnumerable<object>)Model.ThirdPartyPricingModel)
+                                .UpdateURL(Url.Action("ThirdPartyPricingUpdate", "PricingUpdates"))
+                                .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                .AllowScrolling()
+                                .AllowSorting()
+                                .AllowTextWrap(true)
+                                .AllowPaging()
+                                .AllowFiltering()
+                                .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                .IsResponsive(true)
+                                .EnableResponsiveRow(true)
+                                .Mappers(map => map.ExportToExcelAction(Url.Action("ThirdPartyPricingExcelExport", "PricingUpdates")))
+                                .ToolbarSettings(toolbar =>
+                                {
+                                    toolbar.ShowToolbar().ToolbarItems(items =>
+                                    {
+                                        items.AddTool(ToolBarItems.ExcelExport);
+                                        // items.AddTool(ToolBarItems.Add);
+                                        items.AddTool(ToolBarItems.Edit);
+                                        items.AddTool(ToolBarItems.Update);
+                                        items.AddTool(ToolBarItems.Cancel);
+                                    });
+                                })
+                                .ClientSideEvents(eve =>
+                                {
+                                    eve.BeginEdit("beginedit")
+                                    .ActionBegin("ActionBegin")
+                                    .EndEdit("EndEdit")
+                                    .EndAdd("EndAdd")
+                                    .ToolbarClick("onToolbarClick");
+                                })
+                                .Columns(col =>
+                                {
+                                    col.Field("PricingEntityId").HeaderText("Parent#").IsPrimaryKey(true).AllowEditing(false).TextAlign(TextAlign.Right).Add();
+                                    col.Field("PricingEntityName").HeaderText("Parent Name").AllowEditing(false).Add();
+                                    col.Field("HourlyTravelRate").HeaderText("Hourly Travel Rate").Add();
+                                    col.Field("HourlyLaborRate").HeaderText("Hourly Labor Rate").Add();
+                                    col.Field("MileageRate").HeaderText("Mileage Rate").Add();
+                                    col.Field("AfterHourTravelRate").HeaderText("After-Hour Travel Rate").Add();
+                                    col.Field("AfterHourLaborRate").HeaderText("After-Hour Labor Rate").Add();
+                                    col.Field("PartsDiscount").HeaderText("Parts Discount (%)").Add();
+                                    col.Field("AfterHourRatesApply").HeaderText("After Hour Rates Apply").EditType(EditingType.Boolean).Add();
+                                    col.Field("AdditionalFee").HeaderText("Additional Fee").Add();
+
+
+                                })
+
+                        )
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <h2 class="statePricing-head arrow-down tabheader">State Pricing</h2>
+        <div class="statePricing-content margin-top" style="display:none;">
+
+
+
+            <div class="row parentPricing clear-input">
+                <div class="col-md-12  sm-pad-reset">
+
+                    @(Html.EJ().Grid<object>
+                                ("StatePricingGrid")
+                                .Datasource(ds => ds.Json((IEnumerable<object>)Model.StatePricingModel)
+                                .UpdateURL(Url.Action("StatePricingUpdate", "PricingUpdates"))
+                                .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                .AllowScrolling()
+                                .AllowSorting()
+                                .AllowTextWrap(true)
+                                .AllowPaging()
+                                .AllowFiltering()
+                                .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+                                .IsResponsive(true)
+                                .EnableResponsiveRow(true)
+                                .Mappers(map => map.ExportToExcelAction(Url.Action("StatePricingExcelExport", "PricingUpdates")))
+                                .ToolbarSettings(toolbar =>
+                                {
+                                    toolbar.ShowToolbar().ToolbarItems(items =>
+                                    {
+                                        items.AddTool(ToolBarItems.ExcelExport);
+                                        // items.AddTool(ToolBarItems.Add);
+                                        items.AddTool(ToolBarItems.Edit);
+                                        items.AddTool(ToolBarItems.Update);
+                                        items.AddTool(ToolBarItems.Cancel);
+                                    });
+                                })
+                                .ClientSideEvents(eve =>
+                                {
+                                    eve.BeginEdit("beginedit")
+                                    .ActionBegin("ActionBegin")
+                                    .EndEdit("EndEdit")
+                                    .EndAdd("EndAdd")
+                                    .ToolbarClick("onToolbarClick");
+                                })
+                                .Columns(col =>
+                                {
+                                    col.Field("PricingEntityId").HeaderText("Parent#").IsPrimaryKey(true).AllowEditing(false).TextAlign(TextAlign.Right).Add();
+                                    col.Field("PricingEntityName").HeaderText("Parent Name").AllowEditing(false).Add();
+                                    col.Field("HourlyTravelRate").HeaderText("Hourly Travel Rate").Add();
+                                    col.Field("HourlyLaborRate").HeaderText("Hourly Labor Rate").Add();
+                                    col.Field("MileageRate").HeaderText("Mileage Rate").Add();
+                                    col.Field("AfterHourTravelRate").HeaderText("After-Hour Travel Rate").Add();
+                                    col.Field("AfterHourLaborRate").HeaderText("After-Hour Labor Rate").Add();
+                                    col.Field("PartsDiscount").HeaderText("Parts Discount (%)").Add();
+                                    col.Field("AfterHourRatesApply").HeaderText("After Hour Rates Apply").EditType(EditingType.Boolean).Add();
+                                    col.Field("AdditionalFee").HeaderText("Additional Fee").Add();
+
+
+                                })
+
+                        )
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</section>

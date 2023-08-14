@@ -10,9 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <title>Marketing Alternatives Service Dispatch Application – MARS</title>
-    <link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="~/images/favicon.ico" type="image/x-icon" />    
+    <title>REVIVE CUSTOMER SERVICE PORTAL</title>
+    <link rel="icon" href="~/images/favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="~/images/favicon.png" type="image/x-icon" />
 
     @Styles.Render("~/Content/css")
     @Styles.Render("~/Content/ej/web/bootstrap-theme/ej.web.all.min.css")
@@ -31,6 +31,7 @@
             color: #2fa83c;
             font-weight: bold;
         }
+
         .e-grid .e-toolbar > .e-horizontal.e-ul {
             vertical-align: middle;
             float: right;
@@ -38,7 +39,7 @@
         }
     </style>
 
-   
+
 
     <script src="~/Scripts/jquery-2.2.3.min.js"></script>
     <script src="~/Scripts/jquery-ui.js"></script>
@@ -48,61 +49,54 @@
     <script src="~/Scripts/jquery.easing.1.3.js"></script>
     <script src="~/Scripts/jsrender.min.js"></script>
 
-   
+
     @*<script src="https://cdn.syncfusion.com/15.3.0.26/js/web/ej.web.all.js"> </script>*@
     <script src="~/Scripts/web/ej.web.all.min.js"></script>
     <script src="~/Scripts/common/ej.unobtrusive.min.js"></script>
     <link href="~/Content/ej/web/bootstrap-theme/ej.web.all.min.css" rel="stylesheet" />
+    <link href="~/icon/font-awesome.css" rel="stylesheet">
     <script src="~/Scripts/Mars/MarsCommon.js"></script>
     <script src="~/Scripts/html2canvas.js"></script>
     <script src="~/Scripts/jspdf.min.js"></script>
 
-    <script type="text/javascript">      
-        $(document).ready(function ()
-        {
+    <script type="text/javascript">
+        $(document).ready(function () {
 
-            $( document ).on( {
-                ajaxStart: function () { $( '#ForWaitCursor' ).addClass( "loading" ); },
-                ajaxStop: function () { $( '#ForWaitCursor' ).removeClass( "loading" ); }
-            } );
+            $(document).on({
+                ajaxStart: function () { $('#ForWaitCursor').addClass("loading"); },
+                ajaxStop: function () { $('#ForWaitCursor').removeClass("loading"); }
+            });
 
-            $( window ).scroll( function ()
-            {
-                if ( $( window ).scrollTop() > 100 )
-                {
-                    $( ".header" ).addClass( "fixed" );
-                } else
-                {
-                    $( ".header" ).removeClass( "fixed" );
+            $(window).scroll(function () {
+                if ($(window).scrollTop() > 100) {
+                    $(".header").addClass("fixed");
+                } else {
+                    $(".header").removeClass("fixed");
                 }
-            } );
+            });
 
-            $( "#AdministratorLink" ).click( function ()
-            {
+            $("#AdministratorLink").click(function () {
 
                 //$(".Adminstration").toggle();
-                $( ".dropdown-menu" ).toggle();
-            } );
+                $(".dropdown-menu").toggle();
+            });
 
-            $( '[data-popup-open]' ).on( 'click', function ( e )
-            {
-                var targeted_popup_class = jQuery( this ).attr( 'data-popup-open' );
-                $( '[data-popup="' + targeted_popup_class + '"]' ).fadeIn( 350 );
+            $('[data-popup-open]').on('click', function (e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-open');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
 
                 e.preventDefault();
-            } );
+            });
 
-            $( '[data-popup-close]' ).on( 'click', function ( e )
-            {
-                var targeted_popup_class = jQuery( this ).attr( 'data-popup-close' );
-                $( '[data-popup="' + targeted_popup_class + '"]' ).fadeOut( 350 );
-                if ( $( "#alertmessage" ).text().indexOf( "Invoice Message: " ) != -1 )
-                {
-                    location.reload( true );
+            $('[data-popup-close]').on('click', function (e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-close');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+                if ($("#alertmessage").text().indexOf("Invoice Message: ") != -1) {
+                    location.reload(true);
                 }
                 e.preventDefault();
-            } );
-        } );
+            });
+        });
     </script>
 
     <style>
@@ -125,16 +119,16 @@
 <body>
     <div id="ForWaitCursor">
         <section class="container-fluid dark-bg">
-            <a class="navbar-brand" href="#"><img src="~/images/logo_header.png" alt="Logo" /></a>
+            <a class="navbar-brand" href="#"><img src="~/images/logo_header.png" alt="Logo" style="width:53px;"/></a>
             <a class="navbar-brand pull-right" href="" style='margin-left:16px'>
-                <img src="~/images/mars-logo.png" class="mai-logo" />
-                <h6 style="margin-left:15px;color:white">Ver. @ViewContext.Controller.GetType().Assembly.GetName().Version</h6>
+                <!--<img src="~/images/mars-logo.png" class="mai-logo" />
+                <h6 style="margin-left:15px;color:white">Ver. @ViewContext.Controller.GetType().Assembly.GetName().Version</h6>-->
             </a>
             <!-- Static navbar -->
             <nav class="navbar">
                 <div class="container-fluid">
                     <div class="navbar-header">
-                        @*<h2 style="margin-left:15px;color:white">MARS</h2>*@
+                        
                         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                             <span class="sr-only">Toggle navigation</span>
                             <span class="icon-bar"></span>
@@ -166,28 +160,13 @@
                                 (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
                                 if (Session["TechId"] != null)// && UserPrivilege["Call Closure"] != "No-Permission")
                                 {
-                                    if (UserPrivilege["Call Closure"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("CALL CLOSURE", "CallClosure", "CallClosure", null, new { @Id = "CallClosureLink" })</li>
-                                    }
-                                    if (UserPrivilege["ERF"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("ERF", "ERFSearch", "ERF", null, new { @Id = "ErfLink" })</li>
-                                    }
-                                    if (UserPrivilege["Reports"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" })</li>
-                                    }
-                                }
-                                @*else if (Session["IsERFUser"] != null && Convert.ToInt32(Session["IsERFUser"]) == 1)
-                                {
-                                    <li>@Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" })</li>
-                                }*@
-                                else
-                                {
                                     if (UserPrivilege["Customer"] != "No-Permission" || UserPrivilege["ERFNew"] == "Full")
                                     {
                                         <li>@Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" })</li>
+                                    }
+                                    if (UserPrivilege["Call Closure"] != "No-Permission")
+                                    {
+                                        <li>@Html.ActionLink("CALL CLOSURE", "CallClosure", "CallClosure", null, new { @Id = "CallClosureLink" })</li>
                                     }
                                     if (UserPrivilege["Work Order"] != "No-Permission")
                                     {
@@ -199,8 +178,46 @@
                                     }
                                     if (UserPrivilege["Reports"] != "No-Permission")
                                     {
-                                        <li>@Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" })</li>                                        
+                                        <li>@Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" })</li>
+                                    }
+                                    if (UserPrivilege["Technician Schedule"] != "No-Permission")
+                                    {
+                                        <li>@Html.ActionLink("TECHNICIAN SCHEDULE", "Calendar", "TechnicianCalendar", null, null)</li>
+                                    }
                                 }
+                                @*else if (Session["IsERFUser"] != null && Convert.ToInt32(Session["IsERFUser"]) == 1)
+            {
+                <li>@Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" })</li>
+            }*@
+                                else
+                                {
+                                    if (UserPrivilege["Customer"] != "No-Permission" || UserPrivilege["ERFNew"] == "Full")
+                                    {
+                                        <li>@Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" })</li>
+                                    }
+                                    if (UserPrivilege["CustomerDashboard"] != "No-Permission" || UserPrivilege["CustomerDashboard"] == "Full")
+                                    {
+                                        <li>@Html.ActionLink("CUSTOMER DASHBOARD", "CustomerDashboard", "Customer", null, new { @Id = "CustomerDshBrdLink" })</li>
+                                    }
+                                    if (UserPrivilege["Work Order"] != "No-Permission")
+                                    {
+                                        <li>@Html.ActionLink("WORK ORDER", "WorkorderSearch", "Workorder", null, new { @Id = "WorkOrderLink" })</li>
+                                    }
+                                    if (UserPrivilege["ERF"] != "No-Permission")
+                                    {
+                                        <li>@Html.ActionLink("ERF", "ERFSearch", "ERF", null, new { @Id = "ErfLink" })</li>
+                                    }
+                                    if (UserPrivilege["Reports"] != "No-Permission")
+                                    {
+                                        <li>@Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" })</li>
+
+                                    }
+                                    if (UserPrivilege["Technician Schedule"] != "No-Permission")
+                                    {
+                                        <li>@Html.ActionLink("TECHNICIAN SCHEDULE", "Calendar", "TechnicianCalendar", null, null)</li>
+                                    }
+                                }
+
 
                                 if ((UserPrivilege["Unknown Customer"] != "No-Permission" && UserPrivilege["Work Order"] != "No-Permission") ||
                                      UserPrivilege["Reopen Work Order"] != "No-Permission" ||
@@ -214,63 +231,67 @@
                                      UserPrivilege["Closest Tech Lookup"] != "No-Permission")
                                 {
 
-                                        <li>
-                                            <a id="AdministratorLink">ADMINISTRATION</a>
-                                            <ul class="dropdown-menu">
-                                                @if (UserPrivilege["Unknown Customer"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Unknown Customer", "unknownCustomer", "UnknownCustomer", null, new { @Id = "unknownCustomer" })</li>
-                                                }
-                                                @if (UserPrivilege["Reopen Work Order"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Reopen Work Order", "ReopenWorkOrder", "ReopenWorkOrder", null, new { @Id = "workOrderId" })</li>
-                                                }
-                                                @if (UserPrivilege["Technician Schedule"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Technician Schedule", "Calendar", "TechnicianCalendar", null, null)</li>
-                                                }
-                                                @if (UserPrivilege["User Maintenance"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("User Maintenance", "UserSearch", "User", null, null)</li>
-                                                }
-                                                @if (UserPrivilege["Holiday List Maintenance"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Holiday List Maintenance", "HolidayList", "Holiday", null, null)</li>
-                                                }
-                                                @if (UserPrivilege["Customer Notes"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Customer Notes", "CustomerNotes", "CustomerNotes", null, null)</li>
-                                                }
-                                                @if (UserPrivilege["Technician Update"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Technician Update", "TechnicianUpdate", "TechnicianUpdate", null, null)</li>
-                                                }
-                                                @if (UserPrivilege["WO Customer Update"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("WO Customer Update", "WorkOrderCustomerUpdate", "WorkOrderCustomerUpdate", null, null)</li>
-                                                }
-                                                @if (UserPrivilege["WO Invoice Update"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("WO Invoice Update", "WorkOrderInvoiceUpdate", "WorkOrderInvoiceUpdate", null, null)</li>
-                                                    <li>@Html.ActionLink("Customer Details Update", "CustomerZipCodeUpdate", "Customer", null, null)</li>
-                                                    <li>@Html.ActionLink("ERF Data Maintenance", "ERFDataMaintenance", "ERFNew", null, null)</li>
-                                                    <li>@Html.ActionLink("ERF Bulk Upload", "ERFBulkUpload", "ERFNew", null, null)</li>
-                                                    <li>@Html.ActionLink("ESMCCMRSM Maintenance", "ESMCCMRSMMaintenance", "ESMCCMRSM", null, null)</li>
-                                                    <li>@Html.ActionLink("Customer Service Distribution Maintenance", "CustomerServiceEscalationMaintenance", "ESMCCMRSM", null, null)</li>                                                    
-                                                    <li>@Html.ActionLink("PMUpload Maintenance", "PMUploadMaintenance", "PMUploadMaintenance", null, null)</li>
-                                                    @*<li>@Html.ActionLink("PMUpload Maintenance", "PMUploadContactUpdate", "Customer", null, null)</li>*@
-                                                }
-                                                @if (UserPrivilege["Closest Tech Lookup"] != "No-Permission")
-                                                {
-                                                    <li>@Html.ActionLink("Closest Tech Lookup", "ClosestTechLookup", "ClosestTechLookup", null, null)</li>
-                                                }
-                                                @*<li>@Html.ActionLink("Update Zone Technician", "UpdateZoneTechnician", "ZoneTechnician", null, new { @Id = "workOrderId" })</li>*@
-                                            </ul>
-                                        </li>
-                                    }
+                                    <li>
+                                        <a id="AdministratorLink">ADMINISTRATION</a>
+                                        <ul class="dropdown-menu">
+                                            @if (UserPrivilege["Unknown Customer"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Unknown Customer", "unknownCustomer", "UnknownCustomer", null, new { @Id = "unknownCustomer" })</li>
+                                            }
+                                            @if (UserPrivilege["Reopen Work Order"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Reopen Work Order", "ReopenWorkOrder", "ReopenWorkOrder", null, new { @Id = "workOrderId" })</li>
+                                            }
+                                            @*@if (UserPrivilege["Technician Schedule"] != "No-Permission")
+        {
+            <li>@Html.ActionLink("Technician Schedule", "Calendar", "TechnicianCalendar", null, null)</li>
+        }*@
+                                            @if (UserPrivilege["User Maintenance"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("User Maintenance", "UserSearch", "User", null, null)</li>
+                                                <li>@Html.ActionLink("Pricing Updates", "PricingUpdates", "PricingUpdates", null, null)</li>
+                                            }
+                                            @if (UserPrivilege["Holiday List Maintenance"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Holiday List Maintenance", "HolidayList", "Holiday", null, null)</li>
+                                            }
+                                            @if (UserPrivilege["Customer Notes"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Customer Notes", "CustomerNotes", "CustomerNotes", null, null)</li>
+                                            }
+                                            @if (UserPrivilege["Technician Update"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Technician Update", "TechnicianUpdate", "TechnicianUpdate", null, null)</li>
+                                            }
+                                            @if (UserPrivilege["WO Customer Update"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("WO Customer Update", "WorkOrderCustomerUpdate", "WorkOrderCustomerUpdate", null, null)</li>
+                                            }
+                                            @if (UserPrivilege["WO Invoice Update"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("WO Invoice Update", "WorkOrderInvoiceUpdate", "WorkOrderInvoiceUpdate", null, null)</li>
+                                                <li>@Html.ActionLink("Customer Details Update", "CustomerZipCodeUpdate", "Customer", null, null)</li>
+                                                <li>@Html.ActionLink("ERF Data Maintenance", "ERFDataMaintenance", "ERFNew", null, null)</li>
+                                                <li>@Html.ActionLink("ERF Bulk Upload", "ERFBulkUpload", "ERFNew", null, null)</li>
+                                                <li>@Html.ActionLink("ESMCCMRSM Maintenance", "ESMCCMRSMMaintenance", "ESMCCMRSM", null, null)</li>
+                                                <li>@Html.ActionLink("Customer Service Distribution Maintenance", "CustomerServiceEscalationMaintenance", "ESMCCMRSM", null, null)</li>
 
+                                                <li>@Html.ActionLink("PMUpload Maintenance", "PMUploadMaintenance", "PMUploadMaintenance", null, null)</li>
+                                                @*<li>@Html.ActionLink("PMUpload Maintenance", "PMUploadContactUpdate", "Customer", null, null)</li>*@
+
+
+                                            }
+                                            @if (UserPrivilege["Closest Tech Lookup"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Closest Tech Lookup", "ClosestTechLookup", "ClosestTechLookup", null, null)</li>
+                                            }
+                                            @*<li>@Html.ActionLink("Update Zone Technician", "UpdateZoneTechnician", "ZoneTechnician", null, new { @Id = "workOrderId" })</li>*@
+                                        </ul>
+                                    </li>
                                 }
+
                             }
+
 
                             <li class="">@Html.ActionLink("LOGOUT", "Logout", "Home", null, new { @Id = "LogOutLink" })</li>
                         </ul>

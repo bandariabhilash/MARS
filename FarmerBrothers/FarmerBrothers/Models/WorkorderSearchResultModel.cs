@@ -92,6 +92,10 @@ namespace FarmerBrothers.Models
             {
                 CustomerID = Convert.ToInt32(dr["CustomerID"]);
             }
+            if (dr.Table.Columns.Contains("CustomerPO") && dr["CustomerPO"] != DBNull.Value)
+            {
+                CustomerPO = dr["CustomerPO"].ToString();
+            }
 
             if (dr.Table.Columns.Contains("DealerId") && dr["DealerId"] != DBNull.Value)
             {
@@ -122,21 +126,21 @@ namespace FarmerBrothers.Models
             }
             if (dr.Table.Columns.Contains("TechName"))
             {
-                if (dr["TechName"] != DBNull.Value && scheduleAssignedStatus == "Accepted")
+                if (dr["TechName"] != DBNull.Value && (scheduleAssignedStatus == "Accepted" || scheduleAssignedStatus == "Scheduled"))
                 {
                     AssignedTech = Convert.ToString(dr["TechName"]);
                 }
             }
             if (dr.Table.Columns.Contains("TechPhone"))
             {
-                if (dr["TechPhone"] != DBNull.Value && scheduleAssignedStatus == "Accepted")
+                if (dr["TechPhone"] != DBNull.Value && (scheduleAssignedStatus == "Accepted" || scheduleAssignedStatus == "Scheduled"))
                 {
                     TechPhone = Convert.ToString(dr["TechPhone"]);
                 }
             }
             if (dr.Table.Columns.Contains("ServiceCenterName"))
             {
-                if (dr["ServiceCenterName"] != DBNull.Value && scheduleAssignedStatus == "Accepted")
+                if (dr["ServiceCenterName"] != DBNull.Value && (scheduleAssignedStatus == "Accepted" || scheduleAssignedStatus == "Scheduled"))
                 {
                     TechBranch = Convert.ToString(dr["ServiceCenterName"]);
                 }
@@ -817,5 +821,14 @@ namespace FarmerBrothers.Models
         public string DispatchDate { get; set; }
         public string AcceptedDate { get; set; }
         public string DispatchTech { get; set; }
-}
+
+        public string EqpSerialNumber { get; set; }
+        public string EqpOrderType { get; set; }
+        public string EqpDepositInvoiceNumber { get; set; }
+        public string EqpDepositAmount { get; set; }
+        public string EqpFinalInvoiceNumber { get; set; }
+        public string EqpInvoiceTotal { get; set; }
+        public string CaseSaleStatus { get; set; }
+        public string CustomerPO { get; set; }
+    }
 }

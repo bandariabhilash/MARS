@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Mail;
 using System.Net.Mime;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -550,82 +551,13 @@ namespace FarmerBrothers.Controllers
 
         #endregion
 
-        #region New Customer Upload
+        #region New Customer Upload    
 
-        [HttpPost]
-        public ActionResult NewCustomerUploadFile_Old(HttpPostedFileBase file)
+        [HttpGet]
+        public ActionResult CustomerUpload()
         {
-            try
-            {
-                if (file == null)
-                {
-                    ViewBag.Message = "No File Selected ";
-                    ViewBag.isSuccess = false;
-                    ViewBag.dataSource = new List<CustomerModel>();
-                    return View("CustomerZipCodeUpdate");
-                }
-
-                else if (Path.GetExtension(file.FileName).ToLower() != ".csv")
-                {
-                    ViewBag.Message = "Selected file is not CSV file ";
-                    ViewBag.isSuccess = false;
-                    ViewBag.dataSource = new List<CustomerModel>();
-                    return View("CustomerZipCodeUpdate");
-                }
-
-                if (file.ContentLength > 0)
-                {
-                    string _FileName = Path.GetFileName(file.FileName);
-                    string DirPath = Server.MapPath("~/UploadedFiles/Customer");
-
-                    if (!Directory.Exists(DirPath))
-                    {
-                        Directory.CreateDirectory(DirPath);
-                    }
-                    string _inputPath = Path.Combine(DirPath, _FileName);
-                    file.SaveAs(_inputPath);
-
-                        
-                    FileReading fileData = FileReading.ReadCustomerCSVFile(DirPath, _FileName);
-
-                    if (fileData != null && fileData.IsValid)
-                    {
-                        CustomerModel.InsertCustomerData(fileData.CustomerDataList, FarmerBrothersEntitites);
-                        string CompletedFilePath = Path.Combine(DirPath, "Completed");
-                        if (!Directory.Exists(CompletedFilePath))
-                        {
-                            Directory.CreateDirectory(CompletedFilePath);
-                        }
-
-                        string _completedPath = Path.Combine(CompletedFilePath, _FileName);
-                        if (System.IO.File.Exists(_completedPath))
-                        {
-                            System.IO.File.Delete(_completedPath);
-                        }
-                        System.IO.File.Move(_inputPath, _completedPath);
-
-                        ViewBag.Message = "File Uploaded Successfully!!";
-                        ViewBag.isSuccess = true;
-                        ViewBag.dataSource = fileData.EsmDataList;
-                    }
-                    else
-                    {
-                        //sendEmail(esmData);
-                        ViewBag.Message = "File upload failed!! " + "\n" + fileData.ErrorMsg;
-                        ViewBag.isSuccess = false;
-                        ViewBag.dataSource = new List<CustomerModel>();
-                    }
-                }
-
-                return View("CustomerZipCodeUpdate");
-            }
-            catch (Exception ex)
-            {
-                ViewBag.Message = "File upload failed!! " + ex;
-                ViewBag.isSuccess = false;
-                ViewBag.dataSource = new List<CustomerModel>();
-                return View("CustomerZipCodeUpdate");
-            }
+            CustomerZipcodeUpdateModel customrZipcodeModel = new CustomerZipcodeUpdateModel();
+            return View(customrZipcodeModel);
         }
 
         public ActionResult NewCustomerUploadFile(HttpPostedFileBase file)
@@ -638,7 +570,7 @@ namespace FarmerBrothers.Controllers
                     ViewBag.Message = "No File Selected ";
                     ViewBag.isSuccess = false;
                     ViewBag.dataSource = new List<CustomerModel>();
-                    return View("CustomerZipCodeUpdate");
+                    return View("CustomerUpload");
                 }
 
                 else if (Path.GetExtension(file.FileName).ToLower() != ".csv")
@@ -646,7 +578,7 @@ namespace FarmerBrothers.Controllers
                     ViewBag.Message = "Selected file is not CSV file ";
                     ViewBag.isSuccess = false;
                     ViewBag.dataSource = new List<CustomerModel>();
-                    return View("CustomerZipCodeUpdate");
+                    return View("CustomerUpload");
                 }
 
                 if (file.ContentLength > 0)
@@ -660,19 +592,20 @@ namespace FarmerBrothers.Controllers
                     }
                     string _inputPath = Path.Combine(DirPath, _FileName);
                     file.SaveAs(_inputPath);
-                                       
-                    string _path = Path.Combine(DirPath, _FileName);
+                    string line;
+                    var csvReader = new StreamReader(file.InputStream);                    
+                    List<ERFBulkUploadDataModel> erfDataList = new List<ERFBulkUploadDataModel>();
 
-                    var contents = System.IO.File.ReadAllText(_path).Split('\n');
                     FileReading fileDataObj = new FileReading();
                     fileDataObj.IsValid = true;
                     fileDataObj.FileName = _FileName;
                     int i = 0;
 
-                    foreach (string line in contents)
+                    while ((line = csvReader.ReadLine()) != null)
                     {
                         if (string.IsNullOrEmpty(line)) continue;
-                        string lineVal = line.Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ').Replace('\\', ' ').Replace("\"", "");
+
+                        string lineVal = line;//.Replace('\r', ' ').Replace('\n', ' ').Replace('\t', ' ').Replace('\\', ' ').Replace("\"", "");
                         if (string.IsNullOrEmpty(lineVal) || lineVal == " ") continue;
 
                         if (i == 0)
@@ -684,75 +617,76 @@ namespace FarmerBrothers.Controllers
                                 ViewBag.Message = "File upload failed!! " + "\n" + fileDataObj.ErrorMsg;
                                 ViewBag.isSuccess = false;
                                 ViewBag.dataSource = new List<CustomerModel>();
-                                return View("CustomerZipCodeUpdate");
+                                return View("CustomerUpload");
                             }
                         }
-                        string[] lineValues = lineVal.Split(',');
+                       
+                        Regex CSVParser = new Regex(",(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                        String[] lineValues = CSVParser.Split(lineVal);
+
                         if (i != 0)
-                        {                            
+                        {
                             string CustomerId = "", CustomerName = "", Address1 = "", Address2 = "", Address3 = "", City = "", State = "", ZipCode = "", PhoneNumber = "", Route = "", Branch = "", RouteCode = "";
-                            string ErrorMessage = "";
+                            string ErrorMessage = "", Email = "", pricingParentId = "";
+                            
                             for (int ind = 0; ind <= lineValues.Count() - 1; ind++)
                             {
                                 string str = lineValues[ind].Trim();
                                 switch (ind)
                                 {
                                     case 0:
-                                        CustomerId = string.IsNullOrEmpty(str) ? "" : str;
-                                        if(string.IsNullOrEmpty(CustomerId)) { ErrorMessage += "Customer Number is Missing"; }
+                                        CustomerId = string.IsNullOrEmpty(str) ? "" : str.Trim();
+                                        //if (string.IsNullOrEmpty(CustomerId)) { ErrorMessage += "Customer Number is Missing"; }
                                         break;
                                     case 1:
-                                        CustomerName = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        CustomerName = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(CustomerName)) { ErrorMessage += "Customer Name is Missing"; }
                                         break;
                                     case 2:
-                                        Address1 = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        Address1 = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(Address1)) { ErrorMessage += "Address1 is Missing"; }
                                         break;
                                     case 3:
-                                        Address2 = string.IsNullOrEmpty(str) ? "" : str.ToString();                                        
+                                        Address2 = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         break;
                                     case 4:
-                                        Address3 = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        Address3 = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         break;
                                     case 5:
-                                        City = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        City = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(City)) { ErrorMessage += "City is Missing"; }
                                         break;
                                     case 6:
-                                        State = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        State = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(State)) { ErrorMessage += "State is Missing"; }
                                         break;
                                     case 7:
-                                        ZipCode = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        ZipCode = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(ZipCode)) { ErrorMessage += "ZipCode is Missing"; }
                                         break;
                                     case 8:
-                                        PhoneNumber = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        PhoneNumber = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         break;
                                     case 9:
-                                        Route = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        Route = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(Route)) { ErrorMessage += "Route is Missing"; }
                                         break;
                                     case 10:
-                                        Branch = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        Branch = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         if (string.IsNullOrEmpty(Branch)) { ErrorMessage += "Branch is Missing"; }
                                         break;
                                     case 11:
-                                        RouteCode = string.IsNullOrEmpty(str) ? "" : str.ToString();
+                                        RouteCode = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
+                                        break;
+                                    case 12:
+                                        Email = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
+                                        break;
+                                    case 13:
+                                        pricingParentId = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
                                         break;
                                 }
                             }
-
-                            int contactId = 0;
-                            try
-                            {
-                                contactId = string.IsNullOrEmpty(CustomerId) ? 0 : Convert.ToInt32(CustomerId);
-                            }
-                            catch(Exception ex)
-                            {
-                                ErrorMessage += "Customer Number is not in Correct Format";
-                            }
+                            
                             if (!string.IsNullOrEmpty(ErrorMessage))
                             {
                                 CustomerModel cm = new CustomerModel();
@@ -770,19 +704,35 @@ namespace FarmerBrothers.Controllers
                                 cm.RouteCode = RouteCode;
                                 cm.CustomerBranch = Branch;
                                 cm.Message = ErrorMessage;
+                                cm.MainEmailAddress = Email;
+                                cm.PricingParentId = pricingParentId;
 
                                 customerList.Add(cm);
 
                                 continue;
                             }
-                            
-                            if (contactId > 0)
+
+                            if (!string.IsNullOrEmpty(CustomerId))
+                            //if (contactId > 0)
                             {
-                                Contact contacttem = FarmerBrothersEntitites.Contacts.Where(cr => cr.ContactID == contactId).FirstOrDefault();
+                                Contact contacttem = FarmerBrothersEntitites.Contacts.Where(cr => cr.LongAddressNumber == CustomerId).FirstOrDefault();
+
+                                IndexCounter customerCounter = Utility.GetIndexCounter("CustomerID", 1);
+                                customerCounter.IndexValue++;
+                                int contactIndex = customerCounter.IndexValue.Value;
+
+
+                                ESMCCMRSMEscalation esmDetails = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == ZipCode).FirstOrDefault();
+                                if (esmDetails == null)
+                                {
+                                    esmDetails = new ESMCCMRSMEscalation();
+                                }
+
                                 if (contacttem == null)
                                 {
                                     Contact contact = new Contact();
-                                    contact.ContactID = contactId;
+                                    contact.ContactID = contactIndex;
+                                    contact.LongAddressNumber = CustomerId;
                                     contact.CompanyName = CustomerName;
                                     contact.Address1 = Address1;
                                     contact.Address2 = Address2;
@@ -793,18 +743,36 @@ namespace FarmerBrothers.Controllers
                                     contact.Phone = PhoneNumber;
                                     contact.Route = Route;
                                     contact.Branch = Branch;
-                                    contact.RouteCode = RouteCode;
+                                    contact.RouteCode = string.IsNullOrEmpty(RouteCode) ? Route : RouteCode;
                                     contact.DateCreated = currentDate;
                                     contact.LastModified = currentDate;
                                     contact.SearchType = "C";
                                     contact.CustomerBranch = Branch;
+                                    contact.PricingParentID = pricingParentId;
+                                    contact.Email = Email;
+
+                                    contact.FSMJDE = esmDetails.EDSMID == null ? 0 : Convert.ToInt32(esmDetails.EDSMID);
+                                    contact.ESMName = string.IsNullOrEmpty(esmDetails.ESMName) ? "" : esmDetails.ESMName;
+                                    contact.ESMPhone = string.IsNullOrEmpty(esmDetails.ESMPhone) ? "" : esmDetails.ESMPhone;
+                                    contact.ESMEmail = string.IsNullOrEmpty(esmDetails.ESMEmail) ? "" : esmDetails.ESMEmail;
+
+                                    contact.RCCMJDE = esmDetails.RSMID == null ? 0 : Convert.ToInt32(esmDetails.RSMID);
+                                    contact.RSMName = string.IsNullOrEmpty(esmDetails.RSM) ? "" : esmDetails.RSM;
+                                    contact.RSMPhone = string.IsNullOrEmpty(esmDetails.RSMPhone) ? "" : esmDetails.RSMPhone;
+                                    contact.RSMEmail = string.IsNullOrEmpty(esmDetails.RSMEmail) ? "" : esmDetails.RSMEmail;
+
+                                    contact.CCMJDE = esmDetails.CCMID == null ? 0 : Convert.ToInt32(esmDetails.CCMID);
+                                    contact.CCMName = string.IsNullOrEmpty(esmDetails.CCMName) ? "" : esmDetails.CCMName;
+                                    contact.CCMPhone = string.IsNullOrEmpty(esmDetails.CCMPhone) ? "" : esmDetails.CCMPhone;
+                                    contact.CCMEmail = string.IsNullOrEmpty(esmDetails.CCMEmail) ? "" : esmDetails.CCMEmail;
 
                                     FarmerBrothersEntitites.Contacts.Add(contact);
 
                                 }
                                 else
                                 {
-                                    contacttem.ContactID = contactId;
+                                    contacttem.ContactID = contactIndex;
+                                    contacttem.LongAddressNumber = CustomerId;
                                     contacttem.CompanyName = CustomerName;
                                     contacttem.Address1 = Address1;
                                     contacttem.Address2 = Address2;
@@ -815,10 +783,28 @@ namespace FarmerBrothers.Controllers
                                     contacttem.Phone = PhoneNumber;
                                     contacttem.Route = Route;
                                     contacttem.Branch = Branch;
-                                    contacttem.RouteCode = RouteCode;
+                                    contacttem.RouteCode = string.IsNullOrEmpty(RouteCode) ? Route : RouteCode; ;
                                     contacttem.LastModified = currentDate;
                                     contacttem.SearchType = "C";
                                     contacttem.CustomerBranch = Branch;
+                                    contacttem.PricingParentID = pricingParentId;
+                                    contacttem.Email = Email;
+
+                                    contacttem.FSMJDE = esmDetails.EDSMID == null ? 0 : Convert.ToInt32(esmDetails.EDSMID);
+                                    contacttem.ESMName = string.IsNullOrEmpty(esmDetails.ESMName) ? "" : esmDetails.ESMName;
+                                    contacttem.ESMPhone = string.IsNullOrEmpty(esmDetails.ESMPhone) ? "" : esmDetails.ESMPhone;
+                                    contacttem.ESMEmail = string.IsNullOrEmpty(esmDetails.ESMEmail) ? "" : esmDetails.ESMEmail;
+
+                                    contacttem.RCCMJDE = esmDetails.RSMID == null ? 0 : Convert.ToInt32(esmDetails.RSMID);
+                                    contacttem.RSMName = string.IsNullOrEmpty(esmDetails.RSM) ? "" : esmDetails.RSM;
+                                    contacttem.RSMPhone = string.IsNullOrEmpty(esmDetails.RSMPhone) ? "" : esmDetails.RSMPhone;
+                                    contacttem.RSMEmail = string.IsNullOrEmpty(esmDetails.RSMEmail) ? "" : esmDetails.RSMEmail;
+
+                                    contacttem.CCMJDE = esmDetails.CCMID == null ? 0 : Convert.ToInt32(esmDetails.CCMID);
+                                    contacttem.CCMName = string.IsNullOrEmpty(esmDetails.CCMName) ? "" : esmDetails.CCMName;
+                                    contacttem.CCMPhone = string.IsNullOrEmpty(esmDetails.CCMPhone) ? "" : esmDetails.CCMPhone;
+                                    contacttem.CCMEmail = string.IsNullOrEmpty(esmDetails.CCMEmail) ? "" : esmDetails.CCMEmail;
+
                                 }
 
                                 try
@@ -839,8 +825,10 @@ namespace FarmerBrothers.Controllers
                                     cm.Branch = Branch;
                                     cm.RouteCode = RouteCode;
                                     cm.CustomerBranch = Branch;
+                                    cm.PricingParentId = pricingParentId;
+                                    cm.MainEmailAddress = Email;
                                     if (result == 1)
-                                    {   
+                                    {
                                         cm.Message = "Success";
                                     }
                                     else
@@ -867,6 +855,116 @@ namespace FarmerBrothers.Controllers
                                     cm.Branch = Branch;
                                     cm.RouteCode = RouteCode;
                                     cm.CustomerBranch = Branch;
+                                    cm.PricingParentId = pricingParentId;
+                                    cm.MainEmailAddress = Email;
+                                    cm.Message = ErrorMessage;
+
+                                    customerList.Add(cm);
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                IndexCounter customerCounter = Utility.GetIndexCounter("CustomerID", 1);
+                                customerCounter.IndexValue++;
+                                int contactIndex = customerCounter.IndexValue.Value;
+
+
+                                ESMCCMRSMEscalation esmDetails = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == ZipCode).FirstOrDefault();
+                                if (esmDetails == null)
+                                {
+                                    esmDetails = new ESMCCMRSMEscalation();
+                                }
+
+                               
+                                Contact contact = new Contact();
+                                contact.ContactID = contactIndex;
+                                contact.LongAddressNumber = CustomerId;
+                                contact.CompanyName = CustomerName;
+                                contact.Address1 = Address1;
+                                contact.Address2 = Address2;
+                                contact.Address3 = Address3;
+                                contact.City = City;
+                                contact.State = State;
+                                contact.PostalCode = ZipCode;
+                                contact.Phone = PhoneNumber;
+                                contact.Route = Route;
+                                contact.Branch = Branch;
+                                contact.RouteCode = string.IsNullOrEmpty(RouteCode) ? Route : RouteCode;
+                                contact.DateCreated = currentDate;
+                                contact.LastModified = currentDate;
+                                contact.SearchType = "C";
+                                contact.CustomerBranch = Branch;
+                                contact.PricingParentID = pricingParentId;
+                                contact.Email = Email;
+
+                                contact.FSMJDE = esmDetails.EDSMID == null ? 0 : Convert.ToInt32(esmDetails.EDSMID);
+                                contact.ESMName = string.IsNullOrEmpty(esmDetails.ESMName) ? "" : esmDetails.ESMName;
+                                contact.ESMPhone = string.IsNullOrEmpty(esmDetails.ESMPhone) ? "" : esmDetails.ESMPhone;
+                                contact.ESMEmail = string.IsNullOrEmpty(esmDetails.ESMEmail) ? "" : esmDetails.ESMEmail;
+
+                                contact.RCCMJDE = esmDetails.RSMID == null ? 0 : Convert.ToInt32(esmDetails.RSMID);
+                                contact.RSMName = string.IsNullOrEmpty(esmDetails.RSM) ? "" : esmDetails.RSM;
+                                contact.RSMPhone = string.IsNullOrEmpty(esmDetails.RSMPhone) ? "" : esmDetails.RSMPhone;
+                                contact.RSMEmail = string.IsNullOrEmpty(esmDetails.RSMEmail) ? "" : esmDetails.RSMEmail;
+
+                                contact.CCMJDE = esmDetails.CCMID == null ? 0 : Convert.ToInt32(esmDetails.CCMID);
+                                contact.CCMName = string.IsNullOrEmpty(esmDetails.CCMName) ? "" : esmDetails.CCMName;
+                                contact.CCMPhone = string.IsNullOrEmpty(esmDetails.CCMPhone) ? "" : esmDetails.CCMPhone;
+                                contact.CCMEmail = string.IsNullOrEmpty(esmDetails.CCMEmail) ? "" : esmDetails.CCMEmail;
+
+                                FarmerBrothersEntitites.Contacts.Add(contact);
+
+                                try
+                                {
+                                    int result = FarmerBrothersEntitites.SaveChanges();
+
+                                    CustomerModel cm = new CustomerModel();
+                                    cm.CustomerId = contactIndex.ToString();
+                                    cm.CustomerName = CustomerName;
+                                    cm.Address = Address1;
+                                    cm.Address2 = Address2;
+                                    cm.Address3 = Address3;
+                                    cm.City = City;
+                                    cm.State = State;
+                                    cm.ZipCode = ZipCode;
+                                    cm.PhoneNumber = PhoneNumber;
+                                    cm.Route = Route;
+                                    cm.Branch = Branch;
+                                    cm.RouteCode = RouteCode;
+                                    cm.CustomerBranch = Branch;
+                                    cm.PricingParentId = pricingParentId;
+                                    cm.MainEmailAddress = Email;
+                                    if (result == 1)
+                                    {
+                                        cm.Message = "Success";
+                                    }
+                                    else
+                                    {
+                                        cm.Message = "Error Saving";
+                                    }
+                                    customerList.Add(cm);
+                                }
+                                catch (Exception ex)
+                                {
+                                    ErrorMessage += "Problem Saving Contact,  Exception: " + ex.ToString();
+
+                                    CustomerModel cm = new CustomerModel();
+                                    cm.CustomerId = CustomerId;
+                                    cm.CustomerName = CustomerName;
+                                    cm.Address = Address1;
+                                    cm.Address2 = Address2;
+                                    cm.Address3 = Address3;
+                                    cm.City = City;
+                                    cm.State = State;
+                                    cm.ZipCode = ZipCode;
+                                    cm.PhoneNumber = PhoneNumber;
+                                    cm.Route = Route;
+                                    cm.Branch = Branch;
+                                    cm.RouteCode = RouteCode;
+                                    cm.CustomerBranch = Branch;
+                                    cm.PricingParentId = pricingParentId;
+                                    cm.MainEmailAddress = Email;
                                     cm.Message = ErrorMessage;
 
                                     customerList.Add(cm);
@@ -876,20 +974,20 @@ namespace FarmerBrothers.Controllers
                         }
                         i++;
                     }
-                    
+
                 }
 
                 ViewBag.Message = "File uploaded ! ";
                 ViewBag.isSuccess = true;
                 ViewBag.dataSource = customerList;
-                return View("CustomerZipCodeUpdate");
+                return View("CustomerUpload");
             }
             catch (Exception ex)
             {
                 ViewBag.Message = "File upload failed!! " + ex;
                 ViewBag.isSuccess = false;
                 ViewBag.dataSource = new List<CustomerModel>();
-                return View("CustomerZipCodeUpdate");
+                return View("CustomerUpload");
             }
         }
 
@@ -999,6 +1097,132 @@ namespace FarmerBrothers.Controllers
 
 
         #endregion
-    }
+        //}
 
+        //public class CustomerDashboardController : BaseController
+        //{
+        #region CustomerDashboard
+        //public ActionResult CustomerDashboard()
+        //{
+        //    return View();
+        //}
+
+
+        public ActionResult CustomerDashboard()
+        {
+            int userId = System.Web.HttpContext.Current.Session["UserId"] != null ? (int)System.Web.HttpContext.Current.Session["UserId"] : 0;
+            List<WorkorderSchedule> workOrderSchedule = new List<WorkorderSchedule>();
+            List<CustomerDashboardModel> callCloser = new List<CustomerDashboardModel>();
+
+            FbUserMaster user = FarmerBrothersEntitites.FbUserMasters.Where(u => u.UserId == userId).FirstOrDefault();
+            if (user != null && !string.IsNullOrEmpty(user.CustomerParent))
+            {
+                List<string> parentIds = user.CustomerParent.Split(',').ToList();
+                List<string> assignedStatus = new List<string> { "sent", "accepted", "scheduled" };
+
+
+                workOrderSchedule = (from ws in FarmerBrothersEntitites.WorkorderSchedules
+                                     join w in FarmerBrothersEntitites.WorkOrders on ws.WorkorderID equals w.WorkorderID
+                                     join c in FarmerBrothersEntitites.Contacts on w.CustomerID equals c.ContactID
+                                     //where c.PricingParentID == user.CustomerParent
+                                     where parentIds.Contains(c.PricingParentID)
+                                     && assignedStatus.Contains(ws.AssignedStatus)
+                                     select ws).OrderByDescending(d => d.ModifiedScheduleDate).ToList();
+
+                foreach (WorkorderSchedule call in workOrderSchedule)
+                {
+                    CustomerDashboardModel closer = new CustomerDashboardModel(call, FarmerBrothersEntitites);
+                    closer.AppointmentDate = call.ScheduleDate == null ? null : call.ScheduleDate.ToString();
+                    callCloser.Add(closer);
+                }
+            }
+
+            //foreach (int id in techIds)
+            //{
+            //    workOrderSchedule = FarmerBrothersEntitites.WorkorderSchedules.Where(wr => wr.Techid == id && ((wr.AssignedStatus == "Accepted") || (wr.AssignedStatus == "Scheduled")))
+            //   .Where(wr => wr.WorkOrder.WorkorderCallstatus == "Accepted" || wr.WorkOrder.WorkorderCallstatus == "Completed"
+            //   || wr.WorkOrder.WorkorderCallstatus == "On Site" || wr.WorkOrder.WorkorderCallstatus == "Scheduled").OrderByDescending(d => d.ModifiedScheduleDate).ToList();
+
+            //    foreach (WorkorderSchedule call in workOrderSchedule)
+            //    {
+            //        CallCloserModel closer = new CallCloserModel(call, FarmerBrothersEntitites);
+            //        callCloser.Add(closer);
+            //    }
+            //}
+
+            ViewBag.callClosers = callCloser;
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult CustDashboardSearch(CustomerDashboardModel closureMdl)
+        {
+            int userId = System.Web.HttpContext.Current.Session["UserId"] != null ? (int)System.Web.HttpContext.Current.Session["UserId"] : 0;
+            List<WorkorderSchedule> workOrderSchedule = new List<WorkorderSchedule>();
+            List<CustomerDashboardModel> callCloser = new List<CustomerDashboardModel>();
+
+            FbUserMaster user = FarmerBrothersEntitites.FbUserMasters.Where(u => u.UserId == userId).FirstOrDefault();
+            if (user != null && !string.IsNullOrEmpty(user.CustomerParent))
+            {
+                List<string> parentIds = user.CustomerParent.Split(',').ToList();
+                List<string> assignedStatus = new List<string> { "sent", "accepted", "scheduled" };
+
+
+                //workOrderSchedule = (from ws in FarmerBrothersEntitites.WorkorderSchedules
+                //                     join w in FarmerBrothersEntitites.WorkOrders on ws.WorkorderID equals w.WorkorderID
+                //                     join c in FarmerBrothersEntitites.Contacts on w.CustomerID equals c.ContactID
+                //                     where parentIds.Contains(c.PricingParentID)
+                //                     && assignedStatus.Contains(ws.AssignedStatus)
+                //                     select ws).OrderByDescending(d => d.ModifiedScheduleDate).ToList();
+
+
+                if (closureMdl != null)
+                {
+                    if (closureMdl.WorkOrderId.HasValue && !string.IsNullOrEmpty(closureMdl.CustomerPO))
+                    {
+                        workOrderSchedule = (from ws in FarmerBrothersEntitites.WorkorderSchedules
+                                             join w in FarmerBrothersEntitites.WorkOrders on ws.WorkorderID equals w.WorkorderID
+                                             join c in FarmerBrothersEntitites.Contacts on w.CustomerID equals c.ContactID
+                                             where parentIds.Contains(c.PricingParentID) && w.WorkorderID == closureMdl.WorkOrderId && w.CustomerPO == closureMdl.CustomerPO
+                                             && assignedStatus.Contains(ws.AssignedStatus)
+                                             select ws).OrderByDescending(d => d.ModifiedScheduleDate).ToList();
+                    }
+                    else
+                    {
+                        if (closureMdl.WorkOrderId.HasValue)
+                        {
+                            workOrderSchedule = (from ws in FarmerBrothersEntitites.WorkorderSchedules
+                                                 join w in FarmerBrothersEntitites.WorkOrders on ws.WorkorderID equals w.WorkorderID
+                                                 join c in FarmerBrothersEntitites.Contacts on w.CustomerID equals c.ContactID
+                                                 where parentIds.Contains(c.PricingParentID) && w.WorkorderID == closureMdl.WorkOrderId
+                                                 && assignedStatus.Contains(ws.AssignedStatus)
+                                                 select ws).OrderByDescending(d => d.ModifiedScheduleDate).ToList();
+                        }
+                        else if (!string.IsNullOrEmpty(closureMdl.CustomerPO))
+                        {
+                            workOrderSchedule = (from ws in FarmerBrothersEntitites.WorkorderSchedules
+                                                 join w in FarmerBrothersEntitites.WorkOrders on ws.WorkorderID equals w.WorkorderID
+                                                 join c in FarmerBrothersEntitites.Contacts on w.CustomerID equals c.ContactID
+                                                 where parentIds.Contains(c.PricingParentID) && w.CustomerPO == closureMdl.CustomerPO
+                                                 && assignedStatus.Contains(ws.AssignedStatus)
+                                                 select ws).OrderByDescending(d => d.ModifiedScheduleDate).ToList();
+                        }
+                    }
+                }
+
+
+                foreach (WorkorderSchedule call in workOrderSchedule)
+                {
+                    CustomerDashboardModel closer = new CustomerDashboardModel(call, FarmerBrothersEntitites);
+                    closer.AppointmentDate = call.ScheduleDate == null ? null : call.ScheduleDate.ToString();
+                    callCloser.Add(closer);
+                }
+            }
+
+            ViewBag.callClosers = callCloser;
+            return Json(ViewBag.callClosers, JsonRequestBehavior.AllowGet);
+        }
+
+        #endregion
+    }
 }

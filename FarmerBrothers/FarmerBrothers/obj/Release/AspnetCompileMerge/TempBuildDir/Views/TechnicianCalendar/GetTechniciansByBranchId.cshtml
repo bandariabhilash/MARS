@@ -129,6 +129,9 @@
         args.cancel = true;
 
     }
+    function reminderCustom(args) {
+        alert("Reminder Appointment");
+    }
     function  OnAppointmentHover(args)
     {
         //alert(args.appointment.Subject);
@@ -362,12 +365,13 @@
                             .ShowQuickWindow(true)
                                 .AllowDragAndDrop(false).
                             TimeMode(TimeMode.Hour12)
-                            .CurrentView(CurrentView.Month).
-                            ShowAllDayRow(true).
-                            ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
-                                .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick"))
+                            .CurrentView(CurrentView.Month)
+                            .ShowAllDayRow(true)
+                            .ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
+                                .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick").Reminder("reminderCustom"))
                             .ShowCurrentTimeIndicator().
                             ShowNextPrevMonth(false)
+                            //.ReminderSettings(rem=> rem.Enable(true).AlertBefore(3))
                             .Resources(res =>
                             {
                                 res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true)
@@ -384,7 +388,7 @@
                                   .AllDay("AllDay")
                                   .Recurrence("Recurrence")
                                   .RecurrenceRule("RecurrenceRule"))
-                            //.CategorizeSettings(Fields => Fields.Title("Replacement Tech").Datasource((System.Collections.IEnumerable)ViewBag.categorize).Enable(true).AllowMultiple(false).Id("id").Text("text").Color("color"))
+                                //.CategorizeSettings(Fields => Fields.Title("Replacement Tech").Datasource((System.Collections.IEnumerable)ViewBag.categorize).Enable(true).AllowMultiple(false).Id("id").Text("text").Color("color"))
 
                                 )
                             }
@@ -435,9 +439,10 @@
                             .AllowDragAndDrop(false).
                         TimeMode(TimeMode.Hour12)
                         .CurrentView(CurrentView.Month).
-                        ShowAllDayRow(true).
-                        ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
-                            .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick"))
+                        ShowAllDayRow(true)
+                            //.ReminderSettings(rem => rem.Enable(true).AlertBefore(3))
+                        .ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
+                            .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick").Reminder("reminderCustom"))
                         .ShowCurrentTimeIndicator().
                         ShowNextPrevMonth(false)
                         .Resources(res =>
@@ -507,9 +512,10 @@
                             .AllowDragAndDrop(false).
                         TimeMode(TimeMode.Hour12)
                         .CurrentView(CurrentView.Month).
-                        ShowAllDayRow(true).
-                        ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
-                            .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick"))
+                        ShowAllDayRow(true)
+                           // .ReminderSettings(rem => rem.Enable(true).AlertBefore(3))
+                        .ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
+                            .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick").Reminder("reminderCustom"))
                         .ShowCurrentTimeIndicator().
                         ShowNextPrevMonth(false)
                         .CategorizeSettings(fields => fields.Title("Replace Tech").TableName("RepTechs").Datasource(Model.ResourceList1).Enable(true).AllowMultiple(false).Id("Id").Text("Text"))

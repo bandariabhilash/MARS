@@ -8,13 +8,13 @@
 
 <html>
 <head>
-    <title>Marketing Alternatives Service Dispatch Application – MARS</title>
+    <title>REVIVE CUSTOMER SERVICE PORTAL</title>
     <meta charset="utf-8">
     <meta name="description" content="Your description">
     <meta name="keywords" content="Your keywords">
     <meta name="author" content="Your name">
-    <link rel="icon" href="~/images/favicon.ico" type="image/x-icon" />
-    <link rel="shortcut icon" href="~/images/favicon.ico" type="image/x-icon" />
+    <link rel="icon" href="~/images/favicon.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="~/images/favicon.png" type="image/x-icon" />
     <link rel="stylesheet" type="text/css" href="~/css/style.css">
     <link href="~/icon/font-awesome.css" rel="stylesheet">
     <script src="~/Scripts/jquery-2.2.3.js"></script>
@@ -26,15 +26,17 @@
         } );
     </script>
 </head>
-<body bgcolor="#572600">
+<body bgcolor="#ffffff">
 
     <!--==============================Header=================================-->
     <div class="wrapper bg-col">
-        <a href="#" style="position: absolute;margin-left: 78px;top: -5px;"><img src="~/images/logo.png" style="width: 94px;" /></a>
+        <a href="#" style="position: absolute;margin-left: 78px;top: -5px;">
+		<!--<img src="~/images/logo.png" style="width: 94px;" />-->
+	</a>
         <div class="main">
-            <header id="header">
+            <!--<header id="header">
                 <h1 class="logo"><a href="~/Home/Login">logo</a></h1>
-            </header>
+            </header>-->
         </div>
     </div>
     <!--==============================Header End=================================-->
@@ -45,6 +47,7 @@
                 <img src="~/images/login-header-img.png" />
                 @using (Html.BeginForm("Login", "Home", FormMethod.Post))
                 {
+		    <h3>REVIVE CUSTOMER SERVICE PORTAL</h3>
                     @Html.AntiForgeryToken()
                     <h4>Sign In Below</h4>
                     <div class="e-login">

@@ -73,8 +73,10 @@ namespace FarmerBrothers.Models
         public string ElapsedTime { get; set; }
         public int TotalCount { get; set; }
 
-
-
+        public string Estimate { get; set; }
+        public string FinalEstimate { get; set; }
+        public string EstimateApprovedBy { get; set; }
+        public string ThirdPartyPO { get; set; }
 
     }
 }

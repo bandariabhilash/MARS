@@ -105,6 +105,9 @@ namespace FarmerBrothers.Models
                 {
                     model.ErfAssetsModel.Erf.FeastMovementID = new Nullable<int>(Convert.ToInt32(feastMovementId));
                 }
+
+                if (!string.IsNullOrWhiteSpace(request.Form.Get("CashSaleStatus")))
+                    model.Customer.CashSaleStatus = (request.Form.Get("CashSaleStatus"));
             }
 
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("FBERFEquipmentDetailsHidden")))
@@ -115,7 +118,11 @@ namespace FarmerBrothers.Models
             {
                 model.ErfAssetsModel.ExpendableList = json_serializer.Deserialize<IList<ERFManagementExpendableModel>>(request.Unvalidated.Form.Get("FBERFExpendableDetailsHidden"));
             }
-
+            //if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("FBERFPOSDetailsHidden")))
+            //{
+            //    model.ErfAssetsModel.PosList = json_serializer.Deserialize<IList<ERFManagementPOSModel>>(request.Unvalidated.Form.Get("FBERFPOSDetailsHidden"));
+            //}
+            
 
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("ERFNotesHidden")))
             {

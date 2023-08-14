@@ -1,0 +1,211 @@
+﻿@model FarmerBrothers.Models.DocumentModel
+
+<script>
+    var formdata = new FormData();
+    //var isNewEvent = false;
+    $(document).ready(function () {
+
+        //if (isNewEvent) {
+        //    $("#btnUpload").hide();
+        //}
+        //else {
+        //    $("#btnUpload").show();
+        //}
+
+        $("#DocUpload").on("change", function () {
+            var fileInput = document.getElementById('DocUpload');
+            //Iterating through each files selected in fileInput
+            for (i = 0; i < fileInput.files.length; i++) {
+
+                var sfilename = fileInput.files[i].name;
+                let srandomid = Math.random().toString(36).substring(7);
+
+                formdata.append(sfilename, fileInput.files[i]);
+
+                var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
+                    "\")'><span class='glyphicon glyphicon-remove red'></span></a></td></tr>"; // Binding the file name
+                $("#FilesList tbody").append(markup);
+
+            }
+            chkatchtbl();
+            $('#DocUpload').val('');
+        });
+
+
+        $('#btnUpload').click(function () {
+            DocUpload();
+
+
+
+            // Checking whether FormData is available in browser
+            @*if (window.FormData !== undefined) {
+
+                var fileUpload = $("#DocUpload").get(0);
+                var files = fileUpload.files;
+
+                // Create FormData object
+                var fileData = new FormData();
+
+                // Looping over all files and add it to FormData object
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append(files[i].name, files[i]);
+                }
+
+                // Adding one more key to FormData object
+                fileData.append('workorderId', "@Model.WorkOrderID");
+
+                $.ajax({
+                    url: '/Workorder/WorkorderDocumentUpload',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (result) {
+                        alert(result);
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+            } else {
+                alert("FormData is not supported.");
+            }*@
+        });
+
+        //$("#DocsList").ejListBox({
+        //    itemsCount: 5,
+        //    fields: { id: "Name", value: "Path" }
+        //});
+
+        var brandNamesFromModel = @Html.Raw(Json.Encode(Model.WorkorderDocuments));
+        if (brandNamesFromModel != null)
+        {
+            for(var i = 0; i < brandNamesFromModel.length; i ++)
+            {
+                //$("#DocsList").ejListBox("addItem", brandNamesFromModel[i].Name, brandNamesFromModel[i].Path);
+                //$("#DocsList").append('<li name="' + brandNamesFromModel[i].Name + '" value="' + brandNamesFromModel[i].Path + '">' + brandNamesFromModel[i].Name+'</li>');
+                $("#DocsList").append('<li><a target="_blank" href="' + brandNamesFromModel[i].Path + '">' + brandNamesFromModel[i].Name + '</a></li>');
+            }
+        }
+
+        //$("#DocsList li").on("click", function (e) {
+
+        //    $.ajax({
+        //        url: '/Workorder/DownLoadDocument',
+        //        type: "GET",
+        //        data: { Name: $(this).attr("name") , Path: $(this).attr("value")},
+        //        async: false,
+        //        success: function (result) {
+        //            if (result != "") {
+
+        //            }
+        //        },
+        //        error: function (err) {
+
+        //        }
+        //    });
+        //});
+
+    });
+
+    function DocUpload() {
+         formdata.append('uploadername', "@Model.UserName");
+            //formdata.append('workorderId', "@Model.WorkOrderID");
+            formdata.append('workorderId', $("#docWorkorderId").val());
+
+            $.ajax({
+                url: '/Workorder/WorkorderDocumentUpload',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                data: formdata,
+                async: false,
+                success: function (result) {
+                    if (result != "") {
+                        //alert(result);
+                        $("#FilesList tbody").empty();
+                    }
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+    }
+
+    function DeleteFile(Fileid, FileName) {
+        formdata.delete(FileName)
+        $("#" + Fileid).remove();
+        chkatchtbl();
+    }
+    function chkatchtbl() {
+        if ($('#FilesList tr').length > 1) {
+            $("#FilesList").css("visibility", "visible");
+        } else {
+            $("#FilesList").css("visibility", "hidden");
+        }
+    }
+</script>
+
+@Html.HiddenFor(n => n.WorkOrderID, new { @id = "docWorkorderId" })
+@Html.HiddenFor(n => n.UserName)
+@{
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="document-content margin-top">
+                <div class="row document clear-input">
+
+
+                    <div class="col-lg-12">
+                        @*<div class="col-md-2">
+                                <input type="file" id="DocUpload" multiple />
+                                <input type="button" id="btnUpload" value="Upload Files" />
+                            </div>*@
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                @Html.TextBox("file", "", new { type = "file", id = "DocUpload" }) <br />
+                            </div>
+                        </div>
+
+                        @if (!Model.isNewEvent)
+                        {
+                        <div class="col-md-2" id="uploadBtnBlock">
+                            <div class="form-group right-inner-addon">
+                                <button class="btn btn-primary" id="btnUpload">Upload Files</button>
+                            </div>
+                        </div>
+                        }
+
+                    </div>
+                    <div class="row document clear-input">
+                        <div class="col-md-4  sm-pad-reset">
+                            <table class="table" id="FilesList" style="visibility:hidden">
+                                <tr>
+                                    <th>
+                                        Attachment(s)
+                                    </th>
+                                    <th>
+                                        Action
+                                    </th>
+                                </tr>
+                            </table>
+                        </div>
+                        @*</div>
+
+                            <div class="col-md-2">*@
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <ul id="DocsList"></ul>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+
+
+

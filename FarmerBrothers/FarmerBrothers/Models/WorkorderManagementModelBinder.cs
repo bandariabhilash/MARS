@@ -453,6 +453,7 @@ namespace FarmerBrothers.Models
                     woClosure.FilterReplaced = Convert.ToBoolean(request.Unvalidated.Form.Get("FilterReplacedHidden"));
                     woClosure.WaterTested = Convert.ToBoolean(request.Unvalidated.Form.Get("WaterTestedHidden"));
                     woClosure.HardnessRating = request.Unvalidated.Form.Get("Closure.HardnessRating");
+                    woClosure.TDS = Convert.ToDecimal(request.Unvalidated.Form.Get("Closure.TDS"));
                 }
 
                 model.Closure = woClosure;
@@ -739,6 +740,26 @@ namespace FarmerBrothers.Models
             {
                 model.BillableSKUList = new List<FbWorkorderBillableSKUModel>();
             }
+
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("BillingDetailsHidden")))
+            {
+                model.BillingDetails = json_serializer.Deserialize<IList<BillingModel>>(request.Unvalidated.Form.Get("BillingDetailsHidden"));
+            }
+            else
+            {
+                model.BillingDetails = new List<BillingModel>();
+            }
+
+
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("cloverTransaction")))
+            {
+                model.PaymentTransactionId = request.Unvalidated.Form.Get("cloverTransaction").ToString();
+            }
+            else
+            {
+                model.PaymentTransactionId = "";
+            }
+
 
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("NonSerializedDetailsHidden")))
             {

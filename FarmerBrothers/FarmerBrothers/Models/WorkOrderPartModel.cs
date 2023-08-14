@@ -34,4 +34,16 @@ namespace FarmerBrothers.Models
         public decimal skuCost { get; set; }
         public decimal partsTotal { get; set; }
     }
+
+
+    public class BillingModel
+    {
+        public int Id { get; set; }
+        public string BillingType { get; set; }
+        public string BillingCode { get; set; }
+        public int Quantity { get; set; }
+        public decimal Cost { get; set; }
+        public decimal Total { get; set; }
+        public string Duration { get; set; }
+    }
 }

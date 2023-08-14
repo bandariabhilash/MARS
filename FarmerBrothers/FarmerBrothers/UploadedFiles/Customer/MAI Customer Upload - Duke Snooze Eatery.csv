@@ -1,0 +1,41 @@
+Customer Number,Company,Address1,Address2,Address3,City,State,PostalCode,Phone,Route,Branch,Route Code,Email,Parent
+,Duke Services,Snooze Eatery #102,700 N Colorado Blvd,,Denver,CO,80206,303-736-6200,1011,91,,7co-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #407,5100 Beltline Rd,,Dallas,TX,75254,972-360-8990,1011,91,,addison-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #305,4901 E Ray Road,,Phoenix,AZ,85044,480-893-7638,1011,91,,ahwatukee-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #401,3800 N Lamar Blvd,,Austin,TX,78756,512-410-0670,1011,91,,nlamar-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #402,1700 S Lamar Blvd,,Austin,TX,78704,512-428-8444,1011,91,,slamar-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #406,23501 Cinco Ranch Blvd,,Katy,TX,77494,281-394-7780,1011,91,,cincoranch-gm@snoozeatery.com,9001236
+,Duke Services,Snooze Eatery #306,800 North Central Ave,,Phoenix,AZ,85004,602-675-9950,1011,91,,circlerecords-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #410,"820 Bar Area Blvd  Webster,",,Webster,TX,77598,346-230-4883,1011,91,,clearlake-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #419,"711 University Dr. E, Ste. 400",,College Station,TX,77840,979-921-1750,1011,91,,collegestation-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #202,3435 Del Mar Heights Rd,,San Diego,CA,92130,858-703-5300,1011,91,,dmar-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #412,1109 E 5th Street,,Austin,TX,78702,512-886-1550,1011,91,,eastaustin-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #801,969 Main Street,,Nashville,TN,37206,615-314-5600,1011,91,,eastnashville-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #413,5000 Westheimer,,Houston,TX,77056,281-810-6130,1011,91,,galleria-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #303,310 N Gilbert Rd,,Gilbert,AZ,85234,480-664-3133,1011,91,,gilbert-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #201,3940 5th Ave,,San Diego,CA,92103,619-500-3344,1011,91,,Hic-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #501,3217 Montrose Blvd,,Houston,TX,77006,713-574-6655,1011,91,,montrose-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #405,718-A W. 18th St,,Houston,TX,77008,346-237-9150,1011,91,,houstonheights-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #404,600 West Sam Houston Pkwy N,,Houston,TX,77024,713-470-4586,1011,91,,houstonTandC-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #304,15054 N Scottsdale Rd,,Scottsdale,AZ,85254,480-664-3133,1011,91,,kierland-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #204,8861 Villa La Jolla Dr,,La Jolla,CA,92037,858-483-5556,1011,91,,lajolla-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #207,28141 Crown Valley Pkwy. Ste#B,,Liguna Niguel,CA,92677,949-767-8950,1011,91,,lagunaniguel-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #411,2150 West 7th Street,,Fort Worth,TX,76107,682-350-9970,1011,91,,leftbank-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #701,4600 Roswell Road,,Atlanta,GA,30342,470-571-3880,1011,91,,northbuckhead-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #415,3211 Oak Lawn Avenue,,Dallas,TX,75219,469-480-7250,1011,91,,oaklawn-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #205,240 W Chapman Ave,,Orange,CA,92866,657-284-1850,1011,91,,orangecounty-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #506,7012 W. 135th St.,,Overland Park,KS,66223,913-349-3010,1011,91,,overlandpark-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #308,8612 E. Shea. Blvd.,,Scottsdale,AZ,85260,480-581-7800,1011,91,,pimacrossing-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #601,1331 Central Ave,,Charlotte,NC,28205,980-243-5070,1011,91,,plazamidwood-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #602,2041 South Blvd,,Charlotte,NC,28203,980-701-9600,1011,91,,southend-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #302,615 S College Ave,,Tempe,AZ,85281,480-355-1934,1011,91,,tempe-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #403,255 East Basse Road,,San Antonio,TX,78209,210-937-1063,1011,91,,thequarry-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #414,11255 Huebner Rd,,San Antonio,TX,78230,210-962-5530,1011,91,,strand-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #408,1305 N. Loop 1604,,San Antonio,TX,78258,210-962-5520,1011,91,,vineyard-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #301,"2045 E Camelback Rd,",,Phoenix,AZ,85016,480-725-8000,1011,91,,TandC-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #307,"2500 E. Grant Road, Suite 182",,Tucson,AZ,85716,520-815-5500,1011,91,,tuscongrant-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #203,3032 El Camino Real,,Tustin,CA,92782,714-415-6269,1011,91,,tustin-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #409,8041 Walnut Hill Lane,,Dallas,TX,75231,972-972-8730,1011,91,,walnuthill-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #702,980 Howell Mill Rd. Unit 001,,Altanta,GA,30318,470-785-5700,1011,91,,westmidtown-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #505,4144 Broadway Boulevard,,Kansas City,MO,64111,816-601-3500,1011,91,,westport-gm@snoozeeatery.com,9001236
+,Duke Services,Snooze Eatery #416,2415 Research Forest Drive,,Spring,TX,77381,346-298-6450,1011,91,,woodlands-gm@snoozeeatery.com,9001236

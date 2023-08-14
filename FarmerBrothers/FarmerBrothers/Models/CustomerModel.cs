@@ -30,15 +30,21 @@ namespace FarmerBrothers.Models
         public string IsBillable;
         public string ServiceLevelDesc;
         public string ERFStatus;
+        public string CashSaleStatus;
         public IList<ERFStatusModel> ERFStatusList;
+        public IList<CashSaleModel> CashSaleStatusList;
 
         public IList<EquipmentSummaryModel> EquipmentSummary;
+
+        public IList<NonFBCustomer> NonFBCustomerList;
 
         public CustomerModel()
         {
             using (FarmerBrothersEntities entities = new FarmerBrothersEntities())
             {
                 States = Utility.GetStates(entities);
+                CashSaleStatusList = Utility.GetCashSaleStatusList(entities);
+                NonFBCustomerList = Utility.GetNonFBCustomers(entities);
             }
         }
 
@@ -69,10 +75,21 @@ namespace FarmerBrothers.Models
         public CustomerModel(Contact customer, FarmerBrothersEntities FarmerBrothersEntitites)
         {
 
-            this.ManagerName = WebConfigurationManager.AppSettings["ManagerName"];
-            this.ManagerPhone = Utility.FormatPhoneNumber(WebConfigurationManager.AppSettings["ManagerPhone"]);
+            FBCustomerServiceDistribution FBCustomerDistribution = FarmerBrothersEntitites.FBCustomerServiceDistributions.Where(c => c.Route == customer.RouteCode).FirstOrDefault();
+
+            if (FBCustomerDistribution != null)
+            {
+                this.ManagerName = FBCustomerDistribution.SalesManagerName == null ? "" : FBCustomerDistribution.SalesManagerName;
+                this.ManagerPhone = FBCustomerDistribution.SalesManagerPhone == null ? "" : FBCustomerDistribution.SalesManagerPhone;
+            }
+            else
+            {
+                this.ManagerName = WebConfigurationManager.AppSettings["ManagerName"];
+                this.ManagerPhone = Utility.FormatPhoneNumber(WebConfigurationManager.AppSettings["ManagerPhone"]);
+            }
             this.CustomerId = customer.ContactID.ToString();
             this.CustomerName = customer.CompanyName;
+            this.CustomerType = customer.SearchType;
             this.Address = customer.Address1;
             this.Address2 = customer.Address2;
             this.City = customer.City;
@@ -95,6 +112,8 @@ namespace FarmerBrothers.Models
             this.ServiceLevel = customer.ServiceLevelCode;
             this.LastSaleDate = customer.LastSaleDate;
             this.ParentNumber = customer.PricingParentID;
+            this.BillingCode = customer.BillingCode;
+            this.NonFBCustomerNumber = customer.PricingParentID;
 
             this.unknownCustomer = customer.IsUnknownUser == null ? false : customer.IsUnknownUser == 1 ? true : false;
             this.IsNonFBCustomer = customer.IsNonFbCustomer == null ? false : Convert.ToBoolean(customer.IsNonFbCustomer);
@@ -141,6 +160,8 @@ namespace FarmerBrothers.Models
             using (FarmerBrothersEntities entities = new FarmerBrothersEntities())
             {
                 States = Utility.GetStates(entities);
+                CashSaleStatusList = Utility.GetCashSaleStatusList(entities);
+                NonFBCustomerList = Utility.GetNonFBCustomers(entities);
                 /*var ESMDSMRSMs = entities.ESMDSMRSMs.FirstOrDefault(x => x.BranchNO == customer.Branch);
                 if (ESMDSMRSMs != null)
                 {
@@ -334,6 +355,7 @@ namespace FarmerBrothers.Models
 
         public string ParentNumber { get; set; }
         public bool unknownCustomer { get; set; }
+        public string NonFBCustomerNumber { get; set; }
 
         public string PaymentTermDesc { get; set; }
         public decimal NetSalesAmt { get; set; }
@@ -352,7 +374,7 @@ namespace FarmerBrothers.Models
 
         public string Message { get; set; } //Used in Bulk Customer Upload process
 
-        public bool IsNonFBCustomer { get; set; }
+        public bool IsNonFBCustomer { get; set; }       
 
         public void CreateUnknownCustomer(CustomerModel CustModel, FarmerBrothersEntities FBE)
         {
@@ -373,9 +395,9 @@ namespace FarmerBrothers.Models
 
             customer.DateCreated = CurrentTime;
             customer.IsUnknownUser = 1;
-
-            string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-            customer.IsNonFbCustomer = CustModel.ParentNumber == IsNonFBCustomerParentId ? true : false;
+            
+            NonFBCustomer nonFBCustomer = FBE.NonFBCustomers.Where(n => n.NonFBCustomerId == CustModel.ParentNumber).FirstOrDefault();
+            customer.IsNonFbCustomer = nonFBCustomer == null ? false : true;
 
             IndexCounter counter = Utility.GetIndexCounter("UnknownCustomerID", 1);
             int id = Convert.ToInt32(counter.IndexValue++);
@@ -621,5 +643,69 @@ namespace FarmerBrothers.Models
             }
         }
 
+    }
+
+
+    public class NonFBCustomerModel
+    {
+        public int id { get; set; }
+        public string NonFBCustomreId { get; set; }
+        public string NonFBCustomerName { get; set; }
+    }
+
+    public class CustomerDashboardModel
+    {
+        public CustomerDashboardModel()
+        {
+
+        }
+
+        public CustomerDashboardModel(WorkorderSchedule workOrderSchedule, FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            this.WorkOrderId = workOrderSchedule.WorkorderID;
+            this.TechId = workOrderSchedule.Techid;
+            this.WorkorderCalltypeid = workOrderSchedule.WorkOrder.WorkorderCalltypeid;
+            this.WorkorderCalltypeDesc = workOrderSchedule.WorkOrder.WorkorderCalltypeDesc;//WorkOrderLookup.GetWorkOrderTypesById(Convert.ToInt32(this.WorkorderCalltypeid), FarmerBrothersEntitites);
+            this.WorkOrderCallStatus = workOrderSchedule.WorkOrder.WorkorderCallstatus;
+            this.CustomerName = workOrderSchedule.WorkOrder.CustomerName;
+            this.CustomerId = workOrderSchedule.WorkOrder.CustomerID;
+
+            Contact cnct = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrderSchedule.WorkOrder.CustomerID).FirstOrDefault();
+
+            this.Address1 = cnct == null ? "" : (cnct.Address1 == null ? "" : cnct.Address1);
+            this.Address2 = cnct == null ? "" : (cnct.Address2 == null ? "" : cnct.Address2);
+            this.CustomerPO = workOrderSchedule.WorkOrder.CustomerPO == null ? null : workOrderSchedule.WorkOrder.CustomerPO.ToString();
+            this.CustomerCity = workOrderSchedule.WorkOrder.CustomerCity;
+            this.CustomerState = workOrderSchedule.WorkOrder.CustomerState;
+            this.AppointmentDate = workOrderSchedule.WorkOrder.AppointmentDate == null ? null : workOrderSchedule.WorkOrder.AppointmentDate.ToString();
+            this.EntryDate = workOrderSchedule.WorkOrder.WorkorderEntryDate == null ? null : workOrderSchedule.WorkOrder.WorkorderEntryDate.ToString();
+            this.DispatchDate = workOrderSchedule.ModifiedScheduleDate == null ? null : workOrderSchedule.ModifiedScheduleDate.ToString();
+            this.SLACountDown = (DateTime.UtcNow - Convert.ToDateTime(this.DispatchDate)).Days;
+            this.ScheduledDate = workOrderSchedule.EventScheduleDate == null ? null : workOrderSchedule.AssignedStatus == "Scheduled" ? workOrderSchedule.EventScheduleDate.ToString() : null;
+            using (FarmerBrothersEntities entity = new FarmerBrothersEntities())
+            {
+                this.EquipmentCount = entity.WorkorderEquipments.Where(wr => wr.WorkorderID == this.WorkOrderId).Count();
+            }
+
+        }
+
+        public int? WorkOrderId { get; set; }
+        public int? TechId { get; set; }
+        public int? WorkorderCalltypeid { get; set; }
+        public string WorkorderCalltypeDesc { get; set; }
+        public string WorkOrderCallStatus { get; set; }
+        public int? CustomerId { get; set; }
+        public string CustomerName { get; set; }
+        public string CustomerCity { get; set; }
+        public string CustomerState { get; set; }
+        public string AppointmentDate { get; set; }
+        public string EntryDate { get; set; }
+        public string DispatchDate { get; set; }
+        public int SLACountDown { get; set; }
+        public int EquipmentCount { get; set; }
+        public string ScheduledDate { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string CustomerPO { get; set; }
     }
 }

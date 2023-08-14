@@ -582,7 +582,7 @@
 
             .Columns(col =>
             {
-            col.Field("TechId").HeaderText("Tech ID").IsPrimaryKey(true).Type("number").Format("{0:N0}").Add();
+            col.Field("TechId").HeaderText("Tech ID").IsPrimaryKey(true).Type("number").Add();
         col.Field("TechName").HeaderText("Company Name").ValidationRules(v => v.AddRule("required", true)).Add();
         col.Field("City").HeaderText("City").AllowEditing(false).Add();
         col.Field("State").HeaderText("State").AllowEditing(false).Add();
@@ -600,7 +600,7 @@
         col.Field("FamilyAff").HeaderText("FamilyAff").AllowEditing(false).Add();
         //col.Field("FieldServiceManager").HeaderText("ESM").AllowEditing(false).Add();
         col.Field("FieldServiceManager").HeaderText("ESM").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.FSM)).Add();
-        col.Field("BranchName").HeaderText("Branch Name").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.Branches)).Add();
+        col.Field("BranchName").HeaderText("Branch Name").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.BranchesForSearchData)).Add();
         col.Field("BranchNumber").HeaderText("Branch Number").ForeignKeyField("Number").ForeignKeyValue("Number").DataSource(((IEnumerable<object>)Model.Branches)).AllowEditing(false).Add();
         col.Field("ParentTechnicianName").HeaderText("Parent Technician").ForeignKeyField("Name").ForeignKeyValue("Name").DataSource(((IEnumerable<object>)Model.PrimaryTech)).Add();
 

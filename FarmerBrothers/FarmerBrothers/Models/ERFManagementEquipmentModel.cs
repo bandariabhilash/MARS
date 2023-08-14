@@ -42,6 +42,13 @@ namespace FarmerBrothers.Models
             InternalOrderNumber = equipment.InternalOrderType;
             VendorOrderNumber = equipment.VendorOrderType;
 
+            SerialNumber = equipment.SerialNumber != null ? equipment.SerialNumber : "";
+            OrderType = equipment.OrderType != null ? equipment.OrderType : "";
+            DepositInvoiceNumber = equipment.DepositInvoiceNumber != null ? equipment.DepositInvoiceNumber : "";
+            DepositAmount = equipment.DepositAmount != null ? equipment.DepositAmount.ToString() : "";
+            FinalInvoceNumber = equipment.FinalInvoiceNumber != null ? equipment.FinalInvoiceNumber : "";
+            InvoiceTotal = equipment.InvoiceTotal != null ? equipment.InvoiceTotal.ToString() : "";
+
         }
 
        
@@ -68,5 +75,12 @@ namespace FarmerBrothers.Models
 
         public string InternalOrderNumber { get; set; }
         public string VendorOrderNumber { get; set; }
+
+        public string SerialNumber { get; set; }
+        public string OrderType { get; set; }
+        public string DepositInvoiceNumber { get; set; }
+        public string DepositAmount { get; set; }
+        public string FinalInvoceNumber { get; set; }
+        public string InvoiceTotal { get; set; }
     }
 }

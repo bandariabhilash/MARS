@@ -97,6 +97,4 @@ namespace FarmerBrothers.Models
         public decimal CashSale { get; set; }
         public decimal Rental { get; set; }
     }
-
-
 }

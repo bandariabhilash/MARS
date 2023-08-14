@@ -10,6 +10,7 @@ namespace FarmerBrothers.Models
         public IList<ErfWorkorderLogModel> ErfWorkOrderLogs;
         public IList<ERFManagementExpendableModel> ExpendableList;
         public IList<ERFManagementEquipmentModel> EquipmentList;
+        public IList<ERFManagementPOSModel> PosList;
         public IList<AllFBStatu> Reasons;
         public string PlacementReason { get; set; }
         public string SelectedWorkOrderId { get; set; }
@@ -24,6 +25,7 @@ namespace FarmerBrothers.Models
         public IList<TransactionTypeModel> ErfTransactionTypes;
         public IList<EquipmentTypeModel> ErfEquipmentTypes;
         public IList<SubstituionModel> ErfSubstituion;
+        public IList<VendorModelModel> ExpOrderTypes;
 
         //New Fields
         public IList<ErfEqpViewModel> ErfEqpCategory;
@@ -34,6 +36,10 @@ namespace FarmerBrothers.Models
         public IList<ErfEqpViewModel> ErfExpCategory;
         public IList<ErfEqpViewModel> ErfExpModels;
         public IList<ERFEqpModel> ErfExpCategoryDetsils;
+
+        public IList<ErfEqpViewModel> ErfPosCategory;
+        public IList<ErfEqpViewModel> ErfPosModels;
+        public IList<ERFEqpModel> ErfPosCategoryDetsils;
 
         public IList<Contact> ShipToCustomerList;
         public int ShipToCustomer { get; set; }

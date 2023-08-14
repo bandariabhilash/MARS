@@ -1,0 +1,1430 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
+}
+
+@model FarmerBrothers.Models.ProcessCardModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+
+@* Clover Iframe *@
+<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
+<script src="https://checkout.sandbox.dev.clover.com/sdk.js"></script>
+@*<script src="https://checkout.clover.com/sdk.js"></script>*@
+
+<script type="text/javascript">
+    var LaborTotal = 0, PartsTotal = 0, TravelTotal = 0, SalesTotal = 0;
+    var SalesTax = 0;
+    $(document).ready(function () {
+        //PartsGrid();
+
+        $("#salesTaxHeader").html("Sales Tax (" + @Model.SaleTax +" %)");
+        $("#preTravelTxt").val("$" + @Model.PreTravelCost);
+        $("#partsDiscountHeader").html("Parts Discount (" + @Model.PartsDiscount +" %)");
+
+        //$("#salesTxt").val(@Model.SaleTax);
+        //UpdateDetailedCostValues("SalesTax");
+        $("#salesTxt").on("change", function (e) {
+            SalesTax = parseInt($(this).val());
+            UpdateDetailedCostValues("SalesTax");
+        });
+
+        $("#cardfinalProcessBtn").on("click", function () {
+            $('[data-popup="popup-cloverpayment"]').fadeIn(350);
+        });
+
+
+        $("#BillingTotalLbl").html(Number(@Model.BillingTotal).toFixed(2));
+
+        UpdateDetailedCostValues("PartsGrid");
+        UpdateDetailedCostValues("BillingGrid");
+        TotalCost = @Model.BillingTotal;
+
+
+        $("#cardProcessform").submit(function (event) {
+            var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource ? $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json : $("#BillingDetails").ejGrid("instance").model.dataSource;
+            if ($("#BillingDetailsHidden").length) {
+                $("#BillingDetailsHidden").val(JSON.stringify(billingData));
+            }
+            else {
+                if ($("#BillingDetails").ejGrid("instance").model != undefined) {
+                    var input1 = $("<input id='BillingDetailsHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "BillingDetailsHidden").val(JSON.stringify(billingData));
+                    $(this).append($(input1));
+                }
+            }
+
+            if ($("#PartsDetailsHidden").length) {
+                $("#PartsDetailsHidden").val(JSON.stringify($("#PartsDetails").ejGrid("instance").model.dataSource.dataSource.json));
+            }
+            else {
+                if ($("#PartsDetails").ejGrid("instance").model != undefined) {
+                    var input2 = $("<input id='PartsDetailsHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "PartsDetailsHidden").val(JSON.stringify($("#PartsDetails").ejGrid("instance").model.dataSource.dataSource.json));
+                    $(this).append($(input2));
+                }
+            }
+
+            //var laborValue = $("#laborTxt").val();
+            if ($("#laborTxtHidden").length) {
+                $("#laborTxtHidden").val(LaborTotal);
+            }
+            else {
+                var input3 = $("<input id='laborTxtHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "laborTxtHidden").val(LaborTotal);
+                $(this).append($(input3));
+            }
+            //var input3 = $("#laborTxt");
+            //$(this).append($(input3));
+
+            //var travelValue = $("#travelTxt").val();
+            if ($("#ltravelTxtHidden").length) {
+                $("#travelTxtHidden").val(TravelTotal);
+            }
+            else {
+                var input4 = $("<input id='travelTxtHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "travelTxtHidden").val(TravelTotal);
+                $(this).append($(input4));
+            }
+            //var input4 = $("#travelTxt");
+            //$(this).append($(input4));
+
+            //var partsValue = $("#partsTxt").val();
+            if ($("#partsTxtHidden").length) {
+                $("#partsTxtHidden").val(PartsTotal);
+            }
+            else {
+                var input5 = $("<input id='partsTxtHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "partsTxtHidden").val(PartsTotal);
+                $(this).append($(input5));
+            }
+            //var input5 = $("#partsTxt");
+            //$(this).append($(input5));
+
+            //var salesValue = $("#salesTxt").val();
+            if ($("#salesTxtHidden").length) {
+                $("#salesTxtHidden").val(SalesTotal);
+            }
+            else {
+                var input6 = $("<input id='salesTxtHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "salesTxtHidden").val(SalesTotal);
+                $(this).append($(input6));
+            }
+            //var input6 = $("#salesTxt");
+            //$(this).append($(input6));
+
+            var billTotValue = $("#BillingTotalLbl").html();
+            if ($("#BillingTotalLblHidden").length) {
+                $("#BillingTotalLblHidden").val(billTotValue);
+            }
+            else {
+                var input7 = $("<input id='BillingTotalLblHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "BillingTotalLblHidden").val(billTotValue);
+                $(this).append($(input7));
+            }
+            //var input7 = $("#BillingTotalLbl");
+            //$(this).append($(input7));
+
+            var transValue = $("#cloverTransactionId").val();
+            if ($("#cloverTransactionIdHidden").length) {
+                $("#cloverTransactionIdHidden").val(transValue);
+            }
+            else {
+                var input8 = $("<input id='cloverTransactionIdHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "cloverTransactionIdHidden").val(transValue);
+                $(this).append($(input8));
+            }
+            //var input8 = $("#cloverTransactionId");
+            //$(this).append($(input8));
+
+            var wrkOrdId = $("#WorkorderId").val();
+            if ($("#WorkorderIdHidden").length) {
+                $("#WorkorderIdHidden").val(wrkOrdId);
+            }
+            else {
+                var input9 = $("<input id='WorkorderIdHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "WorkorderIdHidden").val(wrkOrdId);
+                $(this).append($(input9));
+            }
+
+            var startTime = $("#StartDateTime").val();
+            if ($("#StartDateTimeHidden").length) {
+                $("#StartDateTimeHidden").val(startTime);
+            }
+            else {
+                var input10= $("<input id='StartDateTimeHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "StartDateTimeHidden").val(startTime);
+                $(this).append($(input10));
+            }
+
+            var arrivalTime = $("#ArrivalDateTime").val();
+            if ($("#ArrivalDateTimeHidden").length) {
+                $("#ArrivalDateTimeHidden").val(arrivalTime);
+            }
+            else {
+                var input11 = $("<input id='ArrivalDateTimeHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "ArrivalDateTimeHidden").val(arrivalTime);
+                $(this).append($(input11));
+            }
+
+            var completionTime = $("#CompletionDateTime").val();
+            if ($("#CompletionDateTimeHidden").length) {
+                $("#CompletionDateTimeHidden").val(completionTime);
+            }
+            else {
+                var input12 = $("<input id='CompletionDateTimeHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "CompletionDateTimeHidden").val(completionTime);
+                $(this).append($(input12));
+            }
+
+            var $this = $(this);
+            var frmValues = $this.serialize();
+            $.ajax({
+                type: "Post",
+                url: "@Url.Action("SaveWorkorderFinalBillingDetails", "DispatchResponse")",
+                data: frmValues,
+                success: function (response) {
+                    if (response != null && response.success == true) {
+                        if (response.ReturnValue > 0) {
+                            $('[data-popup="popup-successBlock"]').fadeIn(350);
+                            AlertPopup(response.message);
+                            //AlertPopup("|Payment Process Successfully Completed !");
+                        }
+                        else {
+                            AlertPopup(response.message);
+                        }
+                    }
+
+                },
+                error: function (er) {
+
+                }
+            });
+
+            event.preventDefault();
+
+        });
+
+        var finalTransaction = $("#FinalTransactionId").val();
+        if (finalTransaction) {
+            $('[data-popup="popup-successBlock"]').fadeIn(350);
+        }
+
+        var workorderDate = new Date($("#WorkorderEntryDate").val());
+        var minutes = (((workorderDate.getMinutes() + 7.5) / 15 | 0) * 15) % 60;
+        workorderDate.setMinutes(minutes);
+        var startDate = new Date($("#StartDateTime").val());
+        var startMinutes = (((startDate.getMinutes() + 7.5) / 15 | 0) * 15) % 60;
+        startDate.setMinutes(startMinutes);
+        if ($("#StartDateTime").val() != null && $("#StartDateTime").val() != "") {
+            $("#StartDateTime").ejDateTimePicker(
+                {
+                    minDateTime: workorderDate,
+                    value: new Date($("#StartDateTime").val()),
+                    maxDateTime: new Date($("#CurrentDateTime").val()),
+                    interval: 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d, interval: 15 });
+                        }
+                        else {
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                        SetBillingData();
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d, interval: 15 });
+                        }
+                        else {
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                    }
+                });
+        }
+        else {
+            $("#StartDateTime").ejDateTimePicker(
+                {
+                    minDateTime: workorderDate,
+                    maxDateTime: new Date($("#CurrentDateTime").val()),
+                    interval: 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d, interval: 15 });
+                        }
+                        else {
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                        SetBillingData();
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
+
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d, interval: 15 });
+                        }
+                        else {
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                    }
+                });
+        }
+
+        var arrivalDate = new Date($("#ArrivalDateTime").val());
+        var arrivalMinutes = (((arrivalDate.getMinutes() + 7.5) / 15 | 0) * 15) % 60;
+        arrivalDate.setMinutes(arrivalMinutes);
+
+        var strtDate = new Date($("#StartDateTime").val());
+        strtDate.setHours(strtDate.getHours() + 4, strtDate.getMinutes(), strtDate.getSeconds());
+
+        if ($("#ArrivalDateTime").val() != null && $("#ArrivalDateTime").val() != "") {
+            $("#ArrivalDateTime").ejDateTimePicker(
+                {
+                    value: new Date($("#ArrivalDateTime").val()),
+                    minDateTime: new Date($("#StartDateTime").val()),
+                    maxDateTime: strtDate,
+                    interval: 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval: 15 });
+
+                        }
+                        else {
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                        SetBillingData();
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval: 15 });
+                        }
+                        else {
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                    }
+                });
+        }
+        else {
+            $("#ArrivalDateTime").ejDateTimePicker(
+                {
+                    minDateTime: new Date($("#StartDateTime").val()),
+                    maxDateTime: strtDate,
+                    interval: 15,
+                    close: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d, interval: 15 });
+                        }
+                        else {
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                        SetBillingData();
+                    },
+                    focusOut: function (args) {
+                        if (args.value != '' && args.value != null) {
+                            var start_actual_time = new Date($("#StartDateTime").val());
+                            var end_actual_time = new Date($("#ArrivalDateTime").val());
+
+                            var diff = end_actual_time - start_actual_time;
+
+                            var diffSeconds = diff / 1000;
+                            var HH = Math.floor(diffSeconds / 3600);
+                            var MM = Math.floor(diffSeconds % 3600) / 60;
+
+                            $("#TravelTimeHours").val(HH);
+                            $("#TravelMinutes").val(MM);
+
+
+                            var d = new Date(args.value);
+                            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d, interval: 15 });
+                        }
+                        else {
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
+                        }
+                    }
+                });
+        }
+
+
+        if ($("#CompletionDateTime").val() != null && $("#CompletionDateTime").val() != "")
+        {
+            var d = new Date($("#ArrivalDateTime").val());
+            d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
+            $("#CompletionDateTime").ejDateTimePicker(
+                {
+                    value: new Date($("#CompletionDateTime").val()),
+                    minDateTime: new Date($("#ArrivalDateTime").val()),
+                    maxDateTime: d,
+                    enabled: true,
+                    interval: 15,
+                    close: function (args) {
+                        SetBillingData();
+                    }
+                });
+        }
+        else {
+            if ($("#StartDateTime").val() != '' && $("#StartDateTime").val() != null) {
+                $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()), interval: 15});
+
+                if ($("#ArrivalDateTime").val() != '' && $("#ArrivalDateTime").val() != null) {
+                    $("#CompletionDateTime").ejDateTimePicker({ enabled: true, interval: 15, close: function (args) { SetBillingData(); }  });
+                }
+                else {
+                    $("#CompletionDateTime").ejDateTimePicker({ enabled: false, interval: 15, close: function (args) { SetBillingData(); }  });
+                }
+            }
+            else {
+                $("#CompletionDateTime").ejDateTimePicker({ enabled: false, interval: 15, close: function (args) { SetBillingData(); }  });
+                $("#ArrivalDateTime").ejDateTimePicker({ enabled: false, interval: 15 });
+            }
+
+        }
+
+
+    })
+
+
+    function SetBillingData() {
+        //var startTime = new Date($("#StartDateTime").val());
+        //var arrivalTime = new Date($("#ArrivalDateTime").val());
+        //var completionTime = new Date($("#CompletionDateTime").val());
+
+        var startTime = $("#StartDateTime").val();
+        var arrivalTime = $("#ArrivalDateTime").val();
+        var completionTime =$("#CompletionDateTime").val();
+        var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource ? $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json : $("#BillingDetails").ejGrid("instance").model.dataSource;
+         $.ajax({
+            url: '@Url.Action("UpdateBillingData", "DispatchResponse")',
+            type: 'GET',
+             data: { "StartTime": startTime, "ArrivalTime": arrivalTime, "CompletionTime": completionTime, "WorkorderId": $("#WorkorderId").val(), "DataSource": JSON.stringify(billingData) },
+            success: function (jsonResult) {
+                if (jsonResult.success == true) {
+                    var obj = $("#BillingDetails").ejGrid("instance");
+                    obj.dataSource(jsonResult.data);
+                    //$("#BillingDetails").ejGrid("instance").model.dataSource.dataSource = jsonResult.data;
+                    $("#BillingTotalLbl").html(Number(jsonResult.Total).toFixed(2));
+                    UpdateDetailedCostValues("BillingGrid");
+                }
+                else {
+                    AlertPopup("|There is a problem in Updating the BillingData!");
+                }
+            }
+        });
+
+
+        //var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json;
+        //for (i = 0; i < billingData.length; i++) {
+        //    switch (billingData[i].BillingType.toLowerCase()) {
+        //        case "labor":
+        //            var lbrDuration = (completionTime - arrivalTime);
+        //            var seconds = lbrDuration / 1000;
+        //            var hour = Math.floor(seconds / 3600);
+        //            var minute = Math.floor((seconds / 60) % 60);
+        //            var second = seconds % 60;
+
+        //            billingData[i].Duration = hour + ":" + minute + "Hrs";
+        //            billingData[i].Duration;
+        //            break;
+        //        case "travel time":
+        //            var trvlDuration = (arrivalTime - startTime);
+        //            var seconds = trvlDuration / 1000;
+        //            var hour = Math.floor(seconds / 3600);
+        //            var minute = Math.floor((seconds / 60) % 60);
+        //            var second = seconds % 60;
+
+
+        //            billingData[i].Duration = pad(hour,2) + ":" + pad(minute,2) + "Hrs";
+        //            break;
+        //    }
+        //}
+
+    }
+
+    function pad(n, width) {
+        var n = n + '';
+        return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+    }
+
+    var BillableSku;
+    var BillableQty;
+    var BillableUnitPrice;
+    var BillableDesc;
+
+    function PartsDetailsBeginEdit( args )
+    {
+        var children = args.row.children();
+        BillableSku = $(children[1]).text();
+        BillableDesc = $(children[2]).text();
+        BillableQty = $(children[3]).text();
+        BillableUnitPrice = $(children[4]).text();
+
+    }
+    function CompletePartsModels( args )
+    {
+        if ( args.requestType == "beginedit" || args.requestType == "add" )
+        {
+            if ( args.requestType == "beginedit" )
+            {
+
+                $("#PartsDetailsSKU").ejDropDownList().data("ejDropDownList").selectItemByText(BillableSku);
+                $("#PartsDetailsDescription").val(BillableDesc)
+                $("#PartsDetailsQty").val(BillableQty )
+                $("#PartsDetailsUnitPrice").val(BillableUnitPrice )
+                GetSkuDetails(BillableSku);
+            }
+
+            $("#PartsDetailsSKU").ejDropDownList({ change: "PartsDetailsModelNoChange", enableFilterSearch: true } );
+        }
+    }
+    function PartsDetailsBegin(args) {
+        $('#PartsDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function PartsDetailsEndEdit(args) {
+        $('#PartsDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function PartsDetailsEndAdd(args) {
+        //TotalCost += Number(parseInt(args.data.Qty) * Number(args.data.UnitPrice));
+        //$("#BillingTotalLbl").html(TotalCost);
+
+        UpdateDetailedCostValues("PartsGrid");
+        $('#PartsDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function queryCellInfoParts(args) {
+
+        if (args.column.headerText === "Total Line Amount") {
+            //alert(args.row.children().length);
+            //alert((args.data.Qty === null || args.data.Qty == 0) && (args.row.children().length > 0));
+            var Qty = args.data.Qty;
+            if ((args.data.Qty === null || args.data.Qty == 0)) {
+                Qty = 1;
+            }
+            if (args.data.UnitPrice !== null && args.data.UnitPrice != 0) {
+                $(args.cell).text("$" + (Qty * Number(args.data.UnitPrice)).toFixed(2));
+            }
+            else {
+
+                $(args.cell).text("$" + (Qty * Number(args.data.UnitPrice).toFixed(2)));
+            }
+
+
+        }
+        if (args.column.headerText === "Unit Price") {
+            if (args.data.UnitPrice !== null && args.data.UnitPrice != 0) {
+
+                $(args.cell).text("$" + Number(args.data.UnitPrice).toFixed(2));
+            }
+            else {
+
+                $(args.cell).text("$" + Number(args.data.UnitPrice).toFixed(2));
+            }
+
+        }
+        if (args.column.headerText === "Qty") {
+            if ((args.data.Qty === null || args.data.Qty == 0)) {
+                $(args.cell).text(1);
+            }
+        }
+    }
+    function DetailRowExpand(args) {
+        var noPartsNeededHidden = $(args.detailsRow).find('.NoPartsNeededHidden');
+
+        if (noPartsNeededHidden.val() == "true") {
+            $(args.detailsRow).find('.NoPartsNeeded').attr("checked", true);
+        }
+
+        if (workOrderStatus.localeCompare("Closed") == 0
+            || workOrderStatus.localeCompare("Invoiced") == 0) {
+            $('.WorkOrderFields').prop("readonly", true);
+            $('.WorkOrderFields').attr("disabled", true);
+            $("#AppointmentDate").ejDatePicker({ enabled: false });
+            $("#PartsOrderDateNeeded").ejDatePicker({ enabled: false });
+            $("#StartDateTime").ejDateTimePicker({ enabled: false });
+            $("#ArrivalDateTime").ejDateTimePicker({ enabled: false });
+            $("#CompletionDateTime").ejDateTimePicker({ enabled: false });
+            $('.issuepicturecls').prop('disabled', false);
+        }
+    }
+    function onPartsToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+    }
+
+    function PartsDetailsModelNoChange( e )
+    {
+        GetSkuDetails(e.value);
+    }
+
+    function GetSkuDetails(BillableSku) {
+        $.ajax({
+            url: '@Url.Action("GetSkuDetails", "DispatchResponse")',
+            type: 'GET',
+            data: { "sku": BillableSku },
+            success: function (jsonResult) {
+                if (jsonResult.success == true) {
+                    $("#PartsDetailsUnitPrice").val(jsonResult.data)
+                    $("#PartsDetailsDescription").val(jsonResult.desc)
+                    //$("#PartsDetailsManufacturer").val(jsonResult.mnftrer)
+                }
+                else {
+                    AlertPopup("|There is a problem in getting Billable SKU details!");
+                }
+            }
+        });
+    }
+
+
+
+    //*******Billing Grid*******
+
+     function CompleteBillingModel(args) {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            if (args.requestType == "beginedit") {
+                $("#BillingDetailsBillingType").ejDropDownList().data("ejDropDownList").selectItemByText(BillingType);
+                $("#BillingDetailsBillingCode").val(BillingCode)
+                $("#BillingDetailsQty").val(BillingQty)
+                $("#BillingDetailsUnitPrice").val(BillingUnitPrice)
+                $("#BillingDetailsTotal").val(BillingTotal)
+            }
+
+            $("#BillingDetailsBillingType").ejDropDownList({ change: "BillingTypeChange", enableFilterSearch: true });
+            $("#BillingDetailsQuantity").on("keyup", BillingQuantityChange);
+        }
+    }
+
+    function BillingQuantityChange(e) {
+        var price = $("#BillingDetailsCost").val();
+
+        if (price) {
+            const priceArray = price.split("$");
+
+            var total = parseInt(e.key) * priceArray[1];
+            $("#BillingDetailsTotal").val("$" + total.toFixed(2));
+        }
+    }
+
+    function BillingTypeChange(e) {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetBillingItem", "DispatchResponse")",
+            data: { "ItemName": e.selectedValue},
+        }).done(function (jsonResult) {
+            if (jsonResult.success == true) {
+                var result = jsonResult.data;
+                $("#BillingDetailsBillingCode").val(result.BillingCode);
+                $("#BillingDetailsCost").val("$" + result.UnitPrice.toFixed(2));
+            }
+            else {
+                AlertPopup("|Problem fetching the Billing Item!");
+            }
+        });
+
+    }
+
+    var BillingType;
+    var BillingCode;
+    var BillingQty;
+    var BillingUnitPrice;
+    var BillingTotal;
+
+    var TotalCost = 0;
+    function BillingDetailsBeginEdit(args) {
+        var children = args.row.children();
+
+        BillingType = $(children[1]).text();
+        BillingCode = $(children[2]).text();
+        BillingQty = $(children[3]).text();
+        BillingUnitPrice = $(children[4]).text();
+        BillingTotal = $(children[5]).text();
+
+    }
+
+    function BillingDetailsBegin()
+    {
+        $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function BillingDetailsEndEdit()
+    {
+        $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function BillingDetailsEndAdd(args)
+    {
+        UpdateDetailedCostValues("BillingGrid");
+
+        $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function onBillingToolBarClick(args) {
+
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+        if (args.itemName == "Add") {
+
+        }
+
+    }
+
+    function UpdateDetailedCostValues(gridName) {
+
+        if (gridName == "BillingGrid") {
+           // var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json;
+            var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource ? $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json : $("#BillingDetails").ejGrid("instance").model.dataSource;
+            var labor = 0, travel = 0, sales = 0;
+            for (i = 0; i < billingData.length; i++) {
+                switch (billingData[i].BillingType.toLowerCase()) {
+                    case "labor":
+                        labor = labor + Number(billingData[i].Total);
+                        break;
+                    case "travel time":
+                        travel = travel + Number(billingData[i].Total);
+                        break;
+                    //case "sales tax":
+                    //    sales = sales + Number(billingData[i].Total);
+                    //    break;
+                }
+            }
+
+            LaborTotal = Number(labor).toFixed(2);
+            TravelTotal = Number(travel).toFixed(2);
+            //SalesTotal = Number(sales).toFixed(2);
+
+            $("#laborTxt").val("$" + LaborTotal);
+            $("#travelTxt").val("$" + TravelTotal);
+            //$("#salesTxt").val("$" + SalesTotal);
+        }
+        else if (gridName == "PartsGrid") {
+            var PartsData = $("#PartsDetails").ejGrid("instance").model.dataSource.dataSource.json;
+            var parts = 0;
+            for (i = 0; i < PartsData.length; i++) {
+                //parts = parts + parseInt(PartsData[i].Total);
+                parts = parts + Number(parseInt(PartsData[i].Qty) * Number(PartsData[i].UnitPrice));
+            }
+            PartsTotal = Number(parts).toFixed(2)
+            $("#partsTotTxt").val("$" + PartsTotal);
+        }
+        //else if (gridName == "SalesTax") {
+        //    SalesTotal = Number(sales).toFixed(2);
+        //    $("#salesTxt").val("$" + SalesTotal);
+        //}
+
+        TotalCost = Number(LaborTotal) + Number(TravelTotal) + Number(SalesTotal);// + Number(PartsTotal);
+
+        var partsDiscount = Number(PartsTotal) * @Model.PartsDiscount
+        var partsAmount = Number(PartsTotal) - Number(partsDiscount);
+        $("#partsTxt").val("$" + partsAmount.toFixed(2));
+
+        $("#partsDiscountTxt").val("$" + partsDiscount.toFixed(2));
+
+        var TaxAmount = Number(TotalCost) * @Model.SaleTax;
+        $("#salesTxt").val("$" + TaxAmount.toFixed(2));
+
+
+
+        //var salestTax = $("#salesTxt").val();
+        //TotalCost = TotalCost + (TotalCost * salestTax);
+
+        //var salestTax = $("#salesTxt").val();
+        TotalCost = TotalCost + partsAmount + TaxAmount;
+
+
+        $("#BillingTotalLbl").html(Number(TotalCost).toFixed(2));
+
+        var payableTotal = Number(TotalCost) - @Model.PreTravelCost;
+
+        if (payableTotal <= 0) {
+            payableTotal = 0;
+        }
+        $("#PayableTotalLbl").html(Number(payableTotal).toFixed(2));
+
+    }
+
+
+
+    //******End of Billing Grid********
+
+
+
+    //***********PartsGrid*****************
+    function PartsGrid() {
+        $("#partsGrid").ejGrid({
+            dataSource: @Html.Raw(Json.Encode(Model.PartsList)),
+            editSettings: { allowEditing: true, allowAdding: true, allowDeleting: true, mode: 'Normal', newRowPosition: 'Top' },
+            allowPaging: true,
+            pageSettings: { pageSize: 5 },
+            toolbarSettings: { showToolbar: true, toolbarItems: ["add", "edit", "delete", "update", "cancel"] },
+            //toolbar: ['Add', 'Edit', 'Delete', 'Update', 'Cancel'],
+            columns: [
+                //{ field: "Issue", headerText: "Issue", template: true, width: 80, templateID: "#checkboxTemplate", visible: false, textAlign: ej.TextAlign.Center, allowEditing: false },//The checkbox column is bound to the grid using template property and headerTemplateID property
+                { field: "Quantity", headerText: 'Quantity', width: 80, textAlign: ej.TextAlign.Left },
+                {
+                    field: "Sku", headerText: 'Part#/SKU', width: 120, textAlign: ej.TextAlign.Left, width: 120,
+                   // field: 'ShipCountry', headerText: 'Ship Country', width: 150,
+                    edit: {
+                        create: function () {
+                            return "<input>";
+                        },
+                        read: function () {
+                            args.ejAutocomplete('suggestionList').css('display', 'none');
+                            return args.ejAutocomplete("getValue");
+                        },
+                        destroy: function () {
+
+                        },
+                        write: function (args) {
+                            var dataList = @Html.Raw(Json.Encode(Model.SKUList));
+                            var data = ej.DataManager(dataList).executeLocal(new ej.Query().select("VendorDescription"));
+                            args.element.ejAutocomplete(
+                                {
+                                    width: "100%",
+                                    dataSource: data,
+                                    enableDistinct: true,
+                                    value: args.rowdata !== undefined ? args.rowdata["VendorDescription"] : "",
+                                    select: function (argument) {
+                                        var item = argument.item;
+                                        var gridId = this._id.substring(0, this._id.length - 3);
+
+                                        $.ajax({
+                                            url: '@Url.Action("GetCloserNonTaggedManufacturer", "Workorder")',
+                                            type: 'GET',
+                                            data: { "skuValue": item },
+                                            success: function (jsonResult) {
+                                                if (jsonResult.success == true) {
+                                                    $("#" + gridId + "Manufacturer").val(jsonResult.data[0].text);
+                                                }
+                                            }
+                                        });
+
+                                        $.ajax({
+                                            url: '@Url.Action("GetCloserSkuDescription", "Workorder")',
+                                            type: 'GET',
+                                            data: { "skuValue": item },
+                                            success: function (jsonResult) {
+                                                if (jsonResult.success == true) {
+                                                    $("#" + gridId + "Description").val(jsonResult.data);
+                                                }
+                                                else {
+                                                    AlertPopup("|There is a problem in getting Model description!");
+                                                }
+                                            }
+                                        });
+
+                                        var proxy = this;
+                                        if (proxy.inputSearch && proxy.inputSearch.val() != "") {
+                                            var item = {}, alreadyAdded = false;
+                                            item[proxy.model.fields.value] = args.selectedValue;
+                                            item[proxy.model.fields.text] = args.selectedText;
+                                            if (args.isChecked) {
+                                                for (var i = 0; i < selectedItemsOnSearch.length; i++) {
+                                                    if (selectedItemsOnSearch[i].value == args.value) {
+                                                        alreadyAdded = true;
+                                                    }
+                                                }
+                                                if (!alreadyAdded) selectedItemsOnSearch.push(item);
+                                            }
+                                            else {
+                                                for (var i = 0; i < selectedItemsOnSearch.length; i++) {
+                                                    if (selectedItemsOnSearch[i].value == args.value) {
+                                                        selectedItemsOnSearch.splice(i, 1);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else if (selectedItemsOnSearch.length > 0) {
+                                            appendList(proxy, selectedItemsOnSearch);
+                                            selectedItemsOnSearch = [];
+                                        }
+                                    }
+                                });
+                        }
+                    }
+                },
+                { field: "Manufacturer", headerText: 'Manufacturer', width: 200, textAlign: ej.TextAlign.Left },
+                { field: "Description", headerText: 'Description', width: 400, textAlign: ej.TextAlign.Left }
+            ]
+        }).keyup(function (e) {
+            //if (e.keyCode == 40 && $(e.target).hasClass("e-autocomplete"))
+            {
+                var autocomp = $("#partsGrid_VendorDescription").ejAutocomplete("instance")
+                if (autocomp.getValue() != "" && autocomp.getActiveText() != "No suggestions")
+                    $(e.target).val(autocomp.getActiveText());
+            }
+        });
+
+        //$("#partsGrid").append(grid);
+
+    }
+    //********End Of PartsGrid************
+
+
+</script>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "cardProcessform" }))
+{
+    @Html.HiddenFor(w => Model.WorkorderEntryDate)
+
+    <section class="container-fluid white-bg pad fixedSecond">
+        <section class="container-fluid white-bg pad fixedSecond header">
+            <div class="row vertical-align">
+
+                <div class="col-md-12">
+                    <div class="col-md-8" style="padding: 1em; background: #ececec;">
+                        <div class="row">
+                            <div class="col-md-4">
+                                Start Date/Time:<br />
+                                @Html.TextBoxFor(w => Model.StartDateTime, new { @class = "form-control WorkOrderFields", @Id = "StartDateTime" })
+                            </div>
+                            <div class="col-md-4">
+                                Arrival Date/Time:<br />
+                                @Html.TextBoxFor(w => Model.ArrivalDateTime, new { @class = "form-control WorkOrderFields", @Id = "ArrivalDateTime" })
+                            </div>
+                            <div class="col-md-4">
+                                Completion Date/Time:<br />
+                                @Html.TextBoxFor(w => Model.CompletionDateTime, new { @class = "form-control WorkOrderFields", @Id = "CompletionDateTime" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row vertical-align">
+                <div class="col-md-12">
+                    <div class="col-md-8" style="padding-top:1em;">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <b>Work Order ID:</b>
+                                @if (Model.WorkorderId > 0)
+                                {
+                                    <span>@Model.WorkorderId</span>
+                                }
+                                @Html.HiddenFor(w => w.WorkorderId)
+                            </div>
+                            <div style="text-align:right;">
+                                @if (string.IsNullOrEmpty(Model.FinalTransactionId))
+                                {
+                                    <button id="SaveProcessDataId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose">Save</button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <hr style="border-color: #d1c0c0; margin-top: auto;" />
+
+        <section class="block margin-top">
+            <div class="container-fluid">
+                <h2 class="billing-head arrow-down tabheader">Parts Used</h2>
+                <div class="billing-content margin-top" style="display:block !important;">
+                    <div class="col-md-12">
+
+                        @*<div class="table-responsive" id="partsGrid"></div>*@
+
+                        <div class="table-responsive">
+                            @(Html.EJ().Grid<FarmerBrothers.Models.FbWorkorderBillableSKUModel>
+            ("PartsDetails")
+            .Datasource(ds => ds.Json((IEnumerable<object>)Model.PartsList)
+            .UpdateURL(Url.Action("PartUpdate", "DispatchResponse"))
+            .InsertURL(Url.Action("PartInsert", "DispatchResponse"))
+            .RemoveURL(Url.Action("PartDelete", "DispatchResponse"))
+            .Adaptor(AdaptorType.RemoteSaveAdaptor))
+            .EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+            .AllowPaging()
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    items.AddTool(ToolBarItems.Add);
+                    items.AddTool(ToolBarItems.Edit);
+                    items.AddTool(ToolBarItems.Delete);
+                    items.AddTool(ToolBarItems.Update);
+                    items.AddTool(ToolBarItems.Cancel);
+                });
+            })
+
+            .Columns(col =>
+            {
+                col.Field("WorkOrderSKUId").HeaderText("SKU ID").IsPrimaryKey(true).Visible(false).Add();
+                col.Field("SKU").HeaderText("SKU").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>)Model.SKUList))
+                .ValidationRules(r => r.AddRule("required", true)).Add();
+                col.Field("Description").HeaderText("Description").AllowEditing(false).Add();
+                //col.Field("Manufacturer").HeaderText("Manufacturer").AllowEditing(false).Add();
+                col.Field("Qty").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
+                col.Field("UnitPrice").HeaderTextAlign(TextAlign.Right).HeaderText("Unit Price").TextAlign(TextAlign.Right).AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
+                col.Field("PartsTotal").HeaderTextAlign(TextAlign.Right).HeaderText("Total Line Amount").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:n2}").Add();
+
+            })
+            .ClientSideEvents(eve =>
+            {
+                eve.ActionComplete("CompletePartsModels")
+                .BeginEdit("PartsDetailsBeginEdit")
+                .ActionBegin("PartsDetailsBegin")
+                .EndEdit("PartsDetailsEndEdit")
+                .EndAdd("PartsDetailsEndAdd")
+                .QueryCellInfo("queryCellInfoParts")
+                .DetailsExpand("DetailRowExpand")
+                .ToolbarClick("onPartsToolbarClick");
+            }))
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="block margin-top">
+
+            <div class="container-fluid">
+                <h2 class="billing-head arrow-down tabheader">Billing Details</h2>
+                <div class="billing-content margin-top" style="display:block !important;">
+                    <div class="col-md-12">
+
+                        @*<div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">*@
+                        <div class="table-responsive">
+                            @(Html.EJ().Grid<FarmerBrothers.Models.BillingModel>
+("BillingDetails")
+.Datasource(ds => ds.Json((IEnumerable<object>)Model.BillingDetails)
+ .UpdateURL(Url.Action("BillingDataUpdate", "DispatchResponse"))
+        .InsertURL(Url.Action("BillingDataInsert", "DispatchResponse"))
+        .RemoveURL(Url.Action("BillingDataDelete", "DispatchResponse"))
+.Adaptor(AdaptorType.RemoteSaveAdaptor))
+.EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+.AllowPaging()
+.ToolbarSettings(toolbar =>
+{
+    toolbar.ShowToolbar().ToolbarItems(items =>
+    {
+        items.AddTool(ToolBarItems.Add);
+        items.AddTool(ToolBarItems.Edit);
+        items.AddTool(ToolBarItems.Delete);
+        items.AddTool(ToolBarItems.Update);
+        items.AddTool(ToolBarItems.Cancel);
+    });
+})
+.Columns(col =>
+{
+    col.Field("Id").HeaderText("Id").IsPrimaryKey(true).Visible(false).Add();
+    col.Field("BillingType").HeaderText("Billable Type").ForeignKeyField("Category").ForeignKeyValue("Category").DataSource(((IEnumerable<object>)Model.BillingItems))
+    .ValidationRules(r => r.AddRule("required", true)).Add();
+    col.Field("BillingCode").HeaderText("Billable Code").AllowEditing(false).Add();
+    //col.Field("Quantity").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
+    col.Field("Duration").HeaderText("Duration").Type(ColumnType.Number).AllowEditing(false).Add();
+    col.Field("Cost").HeaderTextAlign(TextAlign.Right).HeaderText("Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:c2}").Add();
+    col.Field("Total").HeaderTextAlign(TextAlign.Right).HeaderText("Total Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:c2}").Add();
+
+})
+.ClientSideEvents(eve =>
+{
+    eve.ActionComplete("CompleteBillingModel")
+    .BeginEdit("BillingDetailsBeginEdit")
+    .ActionBegin("BillingDetailsBegin")
+    .EndEdit("BillingDetailsEndEdit")
+    .EndAdd("BillingDetailsEndAdd")
+    //.QueryCellInfo("queryCellInfoBillable")
+    //.DetailsExpand("DetailRowExpand")
+    .ToolbarClick("onBillableToolbarClick");
+}))
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5">Pre-TRAVEL Cost:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="preTravelTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5">PARTS Total: </span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="partsTotTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5"  id="partsDiscountHeader">PARTS Discount:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="partsDiscountTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
+
+
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5 required">Actual TRAVEL Cost:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="travelTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5 required">LABOR AND SERVICE COST:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="laborTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5 required">PARTS Total: (Parts Cost - Parts discount)</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="partsTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5" id="salesTaxHeader">SALES TAX:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="salesTxt" class="form-control" readonly />
+                            </div>
+                        </div>
+                    </div>
+
+                    @*<div class="col-sm-6-o">
+                <div class="col-md-12">
+                    <hr style="border-color:#ff0000;">
+                </div>
+            </div>*@
+
+                    <div class="col-sm-6-o">
+                        <div class="col-md-12">
+                            <hr style="border-color:#ff0000;">
+                        </div>
+                        <span class="col-md-5"><h3>Total :</h3></span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <span class="col-md-7"><h4><b>$ <label id="BillingTotalLbl"></label></b></h4></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
+                    
+
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5"><h3>Payable Amount :</h3> (Total - Pre-Travel Cost)</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <span class="col-md-7" style="color:#ff0000"><h3><b>$ <label id="PayableTotalLbl"></label></b></h3></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <input name="cloverTransaction" id="cloverTransactionId" type="hidden" value="@Model.PaymentTransactionId" />
+                <input id="FinalTransactionId" type="hidden" value="@Model.FinalTransactionId" />
+
+
+                @*<div class="col-sm-6-o">
+            <span class="col-md-5 required">Name on Card:</span>
+            <div class="col-md-7">
+                <div class="form-group">
+                    <input type="text" id="cardNameTxt" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6-o">
+            <span class="col-md-5 required">Credit Card#:</span>
+            <div class="col-md-7">
+                <div class="form-group">
+                    <input type="text" id="cardNoTxt" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6-o">
+            <span class="col-md-5 required">Exp Date(MM/YYYY):</span>
+            <div class="col-md-7">
+                <div class="form-group">
+                    <input type="month" id="expDateTxt" />
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6-o">
+            <span class="col-md-5 required">CVV:</span>
+            <div class="col-md-7">
+                <div class="form-group">
+                    <input type="text" id="cvvTxt" />
+                </div>
+            </div>
+        </div>*@
+
+                <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
+                    <div class="col-sm-6-o"> </div>
+                    <div class="col-sm-6-o"> </div>
+                    <div class="col-sm-6-o"> </div>
+                    <div class="col-sm-6-o">
+                        <div class="col-sm-6-o">
+                            <span class="col-md-8" style="text-align: center; top: 15em;">
+                                <img id="cardfinalProcessBtn" src="~/img/CardProcessingImg.png" style="width:50%;cursor:pointer" />
+                            </span>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+                @*<div class="col-md-6 customer-col1 sm-pad-reset margin-top">
+            <div class="col-sm-6-o">
+                <span class="col-md-5"><h1>Total Cost:</h1></span>
+                <div class="col-md-7">
+                    <div class="form-group">
+                        <span class="col-md-7" style="color:#ff0000"><h3><b>$ @Model.BillingTotal</b></h3></span>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="col-sm-6-o">
+                <span class="col-md-8" style="text-align:center;">
+                    <img src="~/img/CardProcessingImg.png" style="width:50%;cursor:pointer;" />
+                </span>
+
+            </div>
+        </div>*@
+            </div>
+
+</section>
+    </section>
+}
+
+
+<div class="popup" data-popup="popup-cloverpayment">
+
+    <div class="popup-inner" style="width: 100%; border-radius: 1em; padding: 1.5em; ">
+        <h2>Credit Card Processing</h2>
+        <hr style="border-color: #b89898;" />
+
+        <script>
+    var accessKey = '@System.Configuration.ConfigurationManager.AppSettings["CloverAccessKey"].ToString()';
+    const clover = new Clover(accessKey);
+    const elements = clover.elements();
+    const form = document.getElementById('clover-form');
+
+    const styles = {
+        'card-number input': {
+            'width': '100%',
+            'height': '100%',
+            'font-size': '20px',
+            'padding': '3px',
+            'font-weight': 'bold'
+        }
+        //'card-number input': {
+        //    'background-color': '#BBBBBB'
+        //},
+        //'card-date input': {
+        //    'background-color': '#CCCCCC'
+        //},
+        //'card-cvv input': {
+        //    'background-color': '#DDDDDD'
+        //},
+        //'card-postal-code input': {
+        //    'background-color': '#EEEEEE'
+        //}
+    };
+
+                    $(document).ready(function () {
+                        const cardNumber = elements.create('CARD_NUMBER', styles);
+                        const cardDate = elements.create('CARD_DATE', styles);
+                        const cardCvv = elements.create('CARD_CVV', styles);
+                        const cardPostalCode = elements.create('CARD_POSTAL_CODE', styles);
+
+                        cardNumber.mount('#card-number');
+                        cardDate.mount('#card-date');
+                        cardCvv.mount('#card-cvv');
+                        cardPostalCode.mount('#card-postal-code');
+
+                        const cardResponse = document.getElementById('card-response');
+                        const displayCardNumberError = document.getElementById('card-number-errors');
+                        const displayCardDateError = document.getElementById('card-date-errors');
+                        const displayCardCvvError = document.getElementById('card-cvv-errors');
+                        const displayCardPostalCodeError = document.getElementById('card-postal-code-errors');
+
+                        // Handle real-time validation errors from the card element
+                        cardNumber.addEventListener('change', function (event) {
+                            console.log(`cardNumber changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardNumber.addEventListener('blur', function (event) {
+                            console.log(`cardNumber blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardDate.addEventListener('change', function (event) {
+                            console.log(`cardDate changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardDate.addEventListener('blur', function (event) {
+                            console.log(`cardDate blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardCvv.addEventListener('change', function (event) {
+                            console.log(`cardCvv changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardCvv.addEventListener('blur', function (event) {
+                            console.log(`cardCvv blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardPostalCode.addEventListener('change', function (event) {
+                            console.log(`cardPostalCode changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardPostalCode.addEventListener('blur', function (event) {
+                            console.log(`cardPostalCode blur ${JSON.stringify(event)}`);
+                        });
+
+                        $('#clover-form').submit(function (event) {
+                            event.preventDefault();
+                            // Use the iframe's tokenization method with the user-entered card details
+                            clover.createToken()
+                                .then(function (result) {
+                                    if (result.errors) {
+                                        Object.values(result.errors).forEach(function (value) {
+                                            displayCardNumberError.textContent = value;
+                                        });
+                                    } else {
+                                        //VoidOldPayment(result.token);
+                                        ProcessPayment(result.token)
+                                    }
+                                });
+                        });
+                    });
+
+            function ProcessPayment(token) {
+                var Amount = Number($("#PayableTotalLbl").html());
+                        $.ajax({
+                            url: '@Url.Action("ProcessBillPayment", "DispatchResponse")',
+                            type: 'POST',
+                            data: { "sourceToken": token, "Amount": Amount, "Capture": true },
+                            success: function (jsonResult) {
+                                if (jsonResult.success == true) {
+                                    $("#cloverTransactionId").val(jsonResult.data);
+                                }
+                                $('[data-popup="popup-cloverpayment"]').fadeOut(350);
+                                AlertPopup("Transaction Success, Proceed to Save");
+                            },
+                            error: function (er) {
+                                AlertPopup("Problem in Processing the Payment, Please contact Support !");
+                            }
+                        });
+                    }
+
+                    function VoidOldPayment(token) {
+                        $.ajax({
+                            url: '@Url.Action("VoidPayment", "DispatchResponse")',
+                            type: 'POST',
+                            data: { "WorkorderId": $("#WorkorderId").val()},
+                            success: function (jsonResult) {
+                                if (jsonResult.success == true) {
+                                    ProcessPayment(token);
+                                }
+                            },
+                            error: function (er) {
+                                AlertPopup("Problem in Refund, Please contact Support !");
+                            }
+                        });
+                    }
+
+
+        </script>
+
+
+        <form id="clover-form">
+            <div class="form-control" style="margin: 1em 0em; height: 50px; ">
+                <div id="card-number" style="height:100%;"></div>
+                <div class="input-errors" id="card-number-errors" role="alert"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 220px 20px auto; grid-template-rows: auto;">
+                <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start:1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 3;">
+                    <div id="card-date" style="height:100%;"></div>
+                    <div class="input-errors" id="card-date-errors" role="alert"></div>
+                </div>
+
+                <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start: 3; grid-column-end: 4; grid-row-start: 1; grid-row-end: 1;">
+                    <div id="card-cvv" style="height:100%;"></div>
+                    <div class="input-errors" id="card-cvv-errors" role="alert"></div>
+                </div>
+
+                <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start: 5; grid-column-end: 6; grid-row-start: 1; grid-row-end: 1;">
+                    <div id="card-postal-code" style="height:100%;"></div>
+                    <div class="input-errors" id="card-postal-code-errors" role="alert"></div>
+                </div>
+            </div>
+            <div id="card-response" role="alert"></div>
+
+            <div class="button-container">
+                <input type="submit" value="Submit Paymnt">
+            </div>
+        </form>
+        <a class="popup-close" data-popup-close="popup-cloverpayment" href="#">x</a>
+    </div>
+</div>
+
+<div class="popup" data-popup="popup-successBlock" style="background: rgb(179 166 166 / 45%);">
+</div>

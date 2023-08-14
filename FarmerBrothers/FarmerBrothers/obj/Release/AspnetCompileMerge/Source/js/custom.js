@@ -112,6 +112,18 @@ $(document).ready(function() {
 	 $(".bulkERF-head").click(function () {
 	     $(".bulkERF-content").slideToggle();
 	 });
+
+	$(".parentPricing-head").click(function () {
+		$(".parentPricing-content").slideToggle();
+	});
+
+	$(".thirdPartyPricing-head").click(function () {
+		$(".thirdPartyPricing-content").slideToggle();
+	});
+
+	$(".statePricing-head").click(function () {
+		$(".statePricing-content").slideToggle();
+	});
 });
 
 

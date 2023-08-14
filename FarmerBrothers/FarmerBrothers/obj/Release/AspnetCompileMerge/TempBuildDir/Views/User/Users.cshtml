@@ -95,7 +95,7 @@
         if (args.column.field == "UserPassword") {
             args.cell.innerText = "*******";
         }
-    } 
+    }
 
     function create() {
         return $("<input type='password' style='text- align: left; width: 100 %; height: 30px;'>");
@@ -355,10 +355,9 @@
                     $( this ).append( $( input3 ) );
                 }
                 //alert( "submit click 2" )
-                if ( ValidateProfile() == true && ValidatePassword() == true)
+                if (ValidateProfile() == true && ValidatePassword() == true && ValidateIsTechnician() == true)
                 {
-                    if ( ( $( '#Phone' ).val() != '' && ValidatePhoneNumber( $( '#Phone' ).val() ) == true ) ||
-                     ( $( '#Phone' ).val() == '' ) )
+                    if (($('#Phone').val() != '' && ValidatePhoneNumber($('#Phone').val()) == true) || ($('#Phone').val() == ''))
                     {
                         //alert( "1" )
                         $.ajax( {
@@ -390,7 +389,7 @@
                                                 url: "@Url.Action("CreateProfile", "User")",
                                                 data: frmValues
                                             } ).done( function ( response )
-                                            {                                                
+                                            {
                                                 if ( response != null && response.success == 0 )
                                                 {
                                                     AlertPopup('|User Profile created Successfully!');
@@ -405,12 +404,10 @@
                                         }
                                         else
                                         {
-                                            AlertPopup( '|Enter Technician ID is already used or Its Invalid Technician!' );
+                                            AlertPopup( '|Invalid TechnicianID OR The TechId is already assigned to another User' );
                                             e.preventDefault();
                                         }
                                     } );
-
-
                                 }
                                 else
                                 {
@@ -540,6 +537,21 @@
             AlertPopup( "|Please Enter Valid Phone Number" );
             return false;
         }
+    }
+
+    function ValidateIsTechnician()
+    {
+        var valid = true;
+        if ($('#IsPrimaryTechnician').is(":checked"))
+        {
+            if($('#TechId').val()=='')
+            {
+                AlertPopup("|Please Enter the TechnicianId");
+                valid = false;
+            }
+        }
+
+        return valid;
     }
 
     function ValidateEmailInGrid( sEmail )
@@ -986,6 +998,7 @@
                                                                         col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
                                                                         col.Field("CanExport").HeaderText("CanExport").EditType(EditingType.Boolean).Add();
                                                                         col.Field("IsTechnician").HeaderText("IsTechnician").EditType(EditingType.Boolean).Add();
+                                                                        col.Field("CustomerParent").HeaderText("CustomerParent").Add();
                                                                     })
                                                .ChildGrid<FarmerBrothers.Models.ApplicationRoleModel>(child =>
                                                {
@@ -1053,7 +1066,7 @@
                                                                         col.Field("IsActive").HeaderText("IsActive").EditType(EditingType.Boolean).Add();
                                                                         col.Field("CanExport").HeaderText("CanExport").EditType(EditingType.Boolean).Add();
                                                                         col.Field("IsTechnician").HeaderText("IsTechnician").EditType(EditingType.Boolean).Add();
-
+                                                                        col.Field("CustomerParent").HeaderText("CustomerParent").Add();
                                                                     })
                                                .ChildGrid<FarmerBrothers.Models.ApplicationRoleModel>(child =>
                                                {

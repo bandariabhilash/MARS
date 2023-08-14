@@ -210,6 +210,9 @@ namespace FarmerBrothers.Controllers
                     user.PasswordUpdatedDate = DateTime.UtcNow.ToShortDateString();
                     user.UpdatedDate = DateTime.UtcNow.ToShortDateString();
                 }
+
+                user.CustomerParent = value.CustomerParent;
+
                 FarmerBrothersEntitites.SaveChanges();
                 message = "|User Details saved successfully!";
             }
@@ -307,6 +310,8 @@ namespace FarmerBrothers.Controllers
                     user.IsFirstTimeLogin = 1;
                     user.CreatedDate = DateTime.UtcNow.ToShortDateString();
                     user.UpdatedDate = DateTime.UtcNow.ToShortDateString();
+                    user.CreatedUserId = (int)System.Web.HttpContext.Current.Session["UserId"];
+                    user.CreatedUserName = UserName;
 
                     if (profile.IsPrimaryTechnician && PrimaryTechId > 0)
                     {
@@ -321,6 +326,22 @@ namespace FarmerBrothers.Controllers
                             user.IsTechnician = 1;
                         }
                     }
+
+
+                    /*if (profile.IsPrimaryTechnician && (profile.TechId != null && Convert.ToInt32(profile.TechId) != 0))
+                    {
+                        user.TechId = Convert.ToInt32(profile.TechId);
+                        user.IsTechnician = 1;
+                    }
+                    else
+                    {
+                        if (profile.TechId != null && Convert.ToInt32(profile.TechId) != 0)
+                        {
+                            user.TechId = Convert.ToInt32(profile.TechId);
+                            user.IsTechnician = 1;
+                        }
+                    }*/
+
 
                     //if(profile.IsTechnician)
                     //{

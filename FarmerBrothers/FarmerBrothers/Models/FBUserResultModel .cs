@@ -33,7 +33,7 @@ namespace FarmerBrothers.Models
             this.IsTechnician = Convert.ToBoolean(user.IsTechnician);
             this.UserPassword = user.Password;
             this.EmailId = user.EmailId;
-           
+            this.CustomerParent = user.CustomerParent;
         }
         public int UserId { get; set; }
         public string FirstName { get; set; }
@@ -52,7 +52,7 @@ namespace FarmerBrothers.Models
         public bool CanExport { get; set; }
         public Nullable<int> TechId { get; set; }
         public bool IsTechnician { get; set; }
-
+        public string CustomerParent { get; set; }
         public string UserPassword { get; set; }
         public string EmailId { get; set; }
     }

@@ -187,6 +187,8 @@ namespace FarmerBrothers.Models
         public List<string> HardnessRatingList { get; set; }
         public string HardnessRating { get; set; }
 
+        public decimal TDS { get; set; }
+
         public IList<WorkOrderManagementEquipmentModel> WorkOrderEquipments;
         public IList<AllFBStatu> PhoneSolveList;
         public IList<SpecialClosureModel> SpecialClosureList;

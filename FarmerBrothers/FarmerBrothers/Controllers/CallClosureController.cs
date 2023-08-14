@@ -757,8 +757,13 @@ namespace FarmerBrothers.Controllers
             }
 
             workOrderManagementModel.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
-            int? custId = Convert.ToInt32(workOrderManagementModel.Customer.CustomerId);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            //int? custId = Convert.ToInt32(workOrderManagementModel.Customer.CustomerId);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrderManagementModel.Customer.CustomerId);
+            int parentId = string.IsNullOrEmpty(workOrderManagementModel.Customer.ParentNumber) ? 0 : Convert.ToInt32(workOrderManagementModel.Customer.ParentNumber);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
+
             foreach (var dbCustNotes in custNotes)
             {
                 workOrderManagementModel.Notes.CustomerNotesResults.Add(new CustomerNotesModel(dbCustNotes));
@@ -774,6 +779,13 @@ namespace FarmerBrothers.Controllers
             if (workOrderManagementModel.WorkOrder.ProjectID.HasValue)
             {
                 workOrderManagementModel.Notes.ProjectNumber = workOrderManagementModel.WorkOrder.ProjectID.Value;
+            }
+
+            //if (workOrderManagementModel.Customer.ServiceTier == "5" && (!string.IsNullOrEmpty(workOrderManagementModel.Customer.CustomerType) && workOrderManagementModel.Customer.CustomerType.ToLower() != "ce")
+            //                && (string.IsNullOrEmpty(workOrderManagementModel.Customer.ParentNumber) || workOrderManagementModel.Customer.ParentNumber == "0"))
+            if (!string.IsNullOrEmpty(workOrderManagementModel.Customer.BillingCode) && workOrderManagementModel.Customer.BillingCode.ToLower() == "s08")
+            {
+                workOrderManagementModel.IsCCProcessComplete = workOrderManagementModel.WorkOrder.FinalTransactionId == null ? false : true;
             }
 
             return workOrderManagementModel;
@@ -1149,6 +1161,17 @@ namespace FarmerBrothers.Controllers
                                         }
                                     }
 
+                                    if (!string.IsNullOrEmpty(workorderManagement.Customer.BillingCode) && workorderManagement.Customer.BillingCode.ToLower() == "s08")
+                                    {
+                                        WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workorderManagement.WorkOrder.WorkorderID).FirstOrDefault();
+
+                                        if (!string.IsNullOrEmpty(wo.AuthTransactionId) && string.IsNullOrEmpty(wo.FinalTransactionId))
+                                        {
+                                            message = @"Please process the Credit Card from Email Link, before Closing the Event!";
+                                            isValid = false;
+                                        }
+                                    }
+
                                     if (isNSRAsset)
                                     {
                                         isValid = true;
@@ -1242,7 +1265,7 @@ namespace FarmerBrothers.Controllers
                                         }*/
 
                                     }
-                                }
+                                }                                
                                 else
                                 {
                                     message = @"|Mileage is not updated!";
@@ -1357,6 +1380,7 @@ namespace FarmerBrothers.Controllers
                     workOrderDetail.WaterTested = workorderManagement.Closure.WaterTested;
                     workOrderDetail.HardnessRating = workorderManagement.Closure.HardnessRating;
                     workOrderDetail.CustomerSignatureBy = workorderManagement.Closure.CustomerSignedBy;
+                    workOrderDetail.TotalDissolvedSolids = workorderManagement.Closure.TDS;
 
                     if (schedule != null)
                     {
@@ -1425,7 +1449,8 @@ namespace FarmerBrothers.Controllers
                         SpecialClosure = specialClosure,
                         TravelTime = workorderManagement.Closure.TravelHours + ":" + workorderManagement.Closure.TravelMinutes,
                         WaterTested = workorderManagement.Closure.WaterTested,
-                        HardnessRating = workorderManagement.Closure.HardnessRating
+                        HardnessRating = workorderManagement.Closure.HardnessRating,
+                        TotalDissolvedSolids = workorderManagement.Closure.TDS
                     };
 
                     if (workorderManagement.Closure.PhoneSolveid > 0)

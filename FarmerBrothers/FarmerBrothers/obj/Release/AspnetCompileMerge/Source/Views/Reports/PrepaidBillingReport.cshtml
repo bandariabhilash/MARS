@@ -1,0 +1,289 @@
+﻿@model FarmerBrothers.Models.BillingReportModel
+
+@using FarmerBrothers.Data;
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+<style>
+    .e-grid .e-toolbar > .e-horizontal.e-ul {
+        vertical-align: middle;
+        float: left;
+        height: auto;
+    }
+
+    a.disabled {
+        pointer-events: none;
+    }
+</style>
+<script type="text/javascript">
+    var searchCriteria;
+    function queryCellInfo(args)
+    {
+        if (args.column.field == "ToatlEventsByTech") {
+            args.cell.className	+= " urlStyle";
+        }
+        if ( args.column.field == "BranchName" && args.data["BranchName"] == "Total Calls" )
+            args.cell.className += " totalFieldStyle";
+    }
+    function SetSubmitOperation(operation)
+    {
+        $("#Operation").val(operation);
+    }
+    $(document).ready(function () {
+        $('#ReportLink').css("color", "white");
+
+        $("#billingFromDate").ejDatePicker({ value: new Date($("#billingFromDate").val()) });
+        $("#billingToDate").ejDatePicker({ value: new Date($("#billingToDate").val()) });
+
+        $("#TechID").change(function () {
+            $.ajax({
+            url: "@Url.Action("TechnicianByFamilyAff", "Reports")",
+            data: { FamilyAff: $('#TechID option:selected').val() },
+            success: function (Result) {
+                $('#TechniciansId').empty()
+                $.each(Result, function (key, value) {
+                    $("#TechniciansId").append($("<option></option>").val(value.DealerId).html(value.CompanyName));
+                });
+
+            }
+
+            })
+        });
+
+
+        $('#billingResults').ejGrid({
+            exportToExcelAction : '@Url.Action("PrepaidBillingReportExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            pageSettings: { pageSize: 25 },
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "WorkorderID", headerText: "WorkorderID" },
+                { field: "AuthTransactionId", headerText: "AuthTransactionId" },
+                { field: "FinalTransactionId", headerText: "FinalTransactionId" },
+                 { field: "WorkorderEntryDate", headerText: "WorkorderEntryDate"},
+                 { field: "CustomerID", headerText: "CustomerID"},
+                 { field: "CompanyName", headerText: "CompanyName"},
+                 { field: "Address1", headerText: "Address1"},
+                 { field: "Address2", headerText: "Address2"},
+                { field: "City", headerText: "City" },
+                { field: "CustomerState", headerText: "CustomerState" },
+                { field: "PostalCode", headerText: "PostalCode" },
+                 { field: "Route", headerText: "Route"},
+                 { field: "Branch", headerText: "Branch"},
+                 { field: "Techid", headerText: "Techid"},
+                 { field: "TechName", headerText: "TechName"},
+                 { field: "WorkorderCallstatus", headerText: "WorkorderCallstatus"},
+                 { field: "StartDateTime", headerText: "StartDateTime"},
+                 { field: "ArrivalDateTime", headerText: "ArrivalDateTime"},
+                 { field: "CompletionDateTime", headerText: "CompletionDateTime"},
+                 { field: "PurchaseOrder", headerText: "PurchaseOrder"},
+                 { field: "BillingID", headerText: "BillingID"},
+                 { field: "ScheduleDate", headerText: "ScheduleDate"},
+                  { field: "AppointmentDate", headerText: "AppointmentDate"},
+                 { field: "WorkorderEquipCount", headerText: "WorkorderEquipCount"},
+                 { field: "ThirdPartyPO", headerText: "ThirdPartyPO"},
+                 { field: "Estimate", headerText: "Estimate"},
+                 { field: "FinalEstimate", headerText: "FinalEstimate"},
+                 { field: "EstimateApprovedBy", headerText: "EstimateApprovedBy"},
+                 { field: "OriginalWorkorderid", headerText: "OriginalWorkorderid"},
+                 { field: "WorkorderCalltypeid", headerText: "WorkorderCalltypeid"},
+                 { field: "TechCalled", headerText: "TechCalled"},
+                 { field: "DispatchTechID", headerText: "DispatchTechID"},
+                 { field: "DispatchTechName", headerText: "DispatchTechName"},
+                 { field: "NoServiceRequired", headerText: "NoServiceRequired"},
+                 { field: "NSRReason", headerText: "NSRReason"},
+                 { field: "PricingParentID", headerText: "PricingParentID"},
+                 { field: "Category", headerText: "Category"},
+                 { field: "SerialNumber", headerText: "SerialNumber"},
+                 { field: "Model", headerText: "Model"},
+                 { field: "Manufacturer", headerText: "Manufacturer"},
+                 { field: "Solutionid", headerText: "Solutionid"},
+                 { field: "WorkPerformedNotes", headerText: "WorkPerformedNotes"},
+                 { field: "Quantity", headerText: "Quantity"},
+                 { field: "Sku", headerText: "Sku"},
+                  { field: "SKUCost", headerText: "SKUCost"},
+                 { field: "VendorCode", headerText: "VendorCode"},
+                 { field: "Description", headerText: "Description"},
+                 { field: "OrderSource", headerText: "OrderSource"},
+                 { field: "Supplier", headerText: "Supplier"},
+                 { field: "TravelTotal", headerText: "TravelTotal", format: "{0:C2}"},
+                 { field: "LaborTotal", headerText: "LaborTotal", format: "{0:C2}"},
+                { field: "PartsTotal", headerText: "PartsTotal", format: "{0:C2}" },
+                { field: "SalesTaxTotal", headerText: "SalesTaxTotal", format: "{0:C2}" },
+                 { field: "TotalInvoice", headerText: "TotalInvoice", format: "{0:C2}"},
+                { field: "CustomerPO", headerText: "CustomerPO" },
+                { field: "HardnessRating", headerText: "HardnessRating"},
+                { field: "Distance", headerText: "Distance"}
+
+
+            ]
+        });
+
+        $("form").submit(function (e) {
+            if (ValidateSearchCriteria() == true) {
+                var frmValues = $("form").serialize();
+                $.ajax({
+                    type: "post",
+                    url: "@Url.Action("SearchPrepaidBillingReport", "Reports")",
+                    data: frmValues
+                }).done(function( result ) {
+                    var obj = $("#billingResults").ejGrid("instance");
+                    obj.dataSource(result.rows);
+                });
+            }
+            $("#HiddenFromDate").val($("#billingFromDate").val());
+            $("#HiddenToDate").val($("#billingToDate").val());
+            $("#HiddenDealerId").val($("#TechID").val());
+            $("#HiddenTechID").val($("#DealerId").val());
+            $("#HiddenParentACC").val($("#ParentACC").val());
+            $("#HiddenAccountNo").val($("#AccountNo").val());
+            e.preventDefault();
+        });
+
+        if (!($('#billingFromDate').val() == ""
+            && $('#billingToDate').val() == ""
+        )) {
+            $('form').submit();
+        }
+
+        ClearBillingReportSearchResults();
+    });
+
+    function ValidateSearchCriteria()
+    {
+        var valid = true;
+        if ($('#billingFromDate').val() == ""
+            || $('#billingToDate').val() == "")
+        {
+            AlertPopup("|Please Select StartDate and EndDate!");
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    function ClearAdvBillingReportSearchResults() {billingToDate
+        $('.form-control').val('');
+
+        $.ajax({
+            type: "post",
+            url: "@Url.Action("ClearPrepaidBillingResults", "Reports")",
+        }).done(function( result ) {
+            var obj = $("#billingResults").ejGrid("instance");
+            obj.dataSource(result);
+
+        });
+
+        $( '#billingFromDate' ).val( '' );
+        $( '#billingToDate' ).val( '' );
+        $( '#TechID' ).val( 'All' );
+        $( '#TechniciansId' ).val( '-1' );
+        $( '#ParentACC' ).val( '0' );
+        $( '#AccountNo' ).val( '0' );
+
+        return false;
+    }
+
+</script>
+
+
+@using (Html.BeginForm())
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-md-11">
+                <b>Prepaid Billing Report</b>
+            </div>
+            <div class="col-md-1">
+                @Html.ActionLink("Back", "AllReports", "Reports", new { @IsBack = 1 }, new { @Class = "btn btn-primary" })
+            </div>
+        </div>
+
+    </section>
+
+    <section class="well">
+        <div class="row top-info">
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date :
+                                @Html.TextBoxFor(c => c.BillingFromDate, new { @class = "form-control SearchPanelControl", @Id = "billingFromDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                End Date :
+                                @Html.TextBoxFor(c => c.BillingToDate, new { @class = "form-control SearchPanelControl", @Id = "billingToDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Account#:
+                                @Html.TextBoxFor(c => c.AccountNo, new { @class = "form-control SearchPanelControl", @Id = "AccountNo" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Family Aff :
+                                @Html.DropDownListFor(c => c.TechID, new SelectList(Model.FamilyAffs, "TechID", "TechName", "None"), new { @class = "form-control SearchPanelControl" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Technician :
+                                @Html.DropDownListFor(t => t.DealerId, new SelectList(Model.Technicianlist, "DealerId", "CompanyName", "None"), new { @class = "form-control SearchPanelControl", @Id = "TechniciansId" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Parent Account#:
+                                @Html.TextBoxFor(c => c.ParentACC, new { @class = "form-control SearchPanelControl", @Id = "ParentACC" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                                <a onclick="ClearAdvBillingReportSearchResults()" class="btn btn-orange">Clear</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+}
+
+<section class="block margin-top">
+    <div class="container-fluid">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>Search Results</b>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                <table id="billingResults" class="display" cellspacing="0" width="100%"></table>
+                @Html.HiddenFor(c => c.HiddenFromDate)
+                @Html.HiddenFor(c => c.HiddenToDate)
+                @Html.HiddenFor(c => c.HiddenDealerId)
+                @Html.HiddenFor(c => c.HiddenTechID)
+                @Html.HiddenFor(c => c.HiddenParentACC)
+                @Html.HiddenFor(c => c.HiddenAccountNo)
+            </div>
+        </div>
+    </div>
+</section>
+

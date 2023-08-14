@@ -274,6 +274,48 @@ namespace FarmerBrothers.Utilities
             return System.Convert.ToDecimal(distance);
         }
 
+        public static dynamic GetTravelDetailsBetweenZipCodes(string fromAddress, string toAddress)
+        {
+            dynamic jObject = null;
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=");
+                stringBuilder.Append("origins=");
+                stringBuilder.Append(fromAddress);
+                stringBuilder.Append("&destinations=");
+                stringBuilder.Append(toAddress);
+                stringBuilder.Append("&key=AIzaSyCjMfuakjLPeYGF2CLY56lqz40IH9UfxLM");
+
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=");
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                    HttpResponseMessage response = client.GetAsync(stringBuilder.ToString()).Result;
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        jObject = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                        //if (jObject != null)
+                        //{
+                        //    var element = jObject.rows[0].elements[0];
+                        //    duration = element.duration.value / 3600.00;
+                        //    duration = Math.Round(duration, 2);
+                        //}
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            //return System.Convert.ToDecimal(duration); ;
+            return jObject;
+        }
+
         public static void PopulateDistances(IDictionary<decimal, string> branchZipCodes, IList<BranchModel> branches, string customerZip)
         {
             try
@@ -428,6 +470,37 @@ namespace FarmerBrothers.Utilities
             states.Insert(0, blankState);
 
             return states;
+        }
+
+        public static IList<CashSaleModel> GetCashSaleStatusList(FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            IList<CashSaleModel> csList = new List<CashSaleModel>(){
+                new CashSaleModel() {StatusCode="1", StatusName="Order Entered by Originator" },
+                new CashSaleModel() {StatusCode="2", StatusName="Down Payment Invoice Created" },
+                new CashSaleModel() {StatusCode="3", StatusName="Down Payment Applied" },
+                new CashSaleModel() {StatusCode="4", StatusName="Order Processed with Vendor" },
+                new CashSaleModel() {StatusCode="5", StatusName="Order Received" },
+                new CashSaleModel() {StatusCode="6", StatusName="Complete, Final Invoice Created"} };
+
+            CashSaleModel blankState = new CashSaleModel() { StatusCode = "", StatusName = " " };
+            csList.Insert(0, blankState);
+
+            return csList;
+        }
+
+        public static IList<NonFBCustomer> GetNonFBCustomers(FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            IList<NonFBCustomer> nonFBCustomers = FarmerBrothersEntitites.NonFBCustomers.ToList();
+
+            foreach(NonFBCustomer nonFbCust in nonFBCustomers)
+            {
+                nonFbCust.NonFBCustomerName = nonFbCust.NonFBCustomerName + " - " + nonFbCust.NonFBCustomerId;
+            }
+
+            NonFBCustomer blankState = new NonFBCustomer() { Id = -1, NonFBCustomerId = "n/a", NonFBCustomerName = "Please Select" };
+            nonFBCustomers.Insert(0, blankState);
+
+            return nonFBCustomers;
         }
 
         public static IList<Role> GetRoles(FarmerBrothersEntities FarmerBrothersEntitites)
@@ -887,6 +960,33 @@ namespace FarmerBrothers.Utilities
             return re.IsMatch(inputEmail);
         }
 
+        public static List<WorkorderType> GetCallTypeList(FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                                ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+
+
+            List<WorkorderType> callTypeList = new List<WorkorderType>();
+            List<WorkorderType> FullCallTypesList =  FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.Active == 1).OrderBy(wt => wt.Sequence).ToList();
+
+            if (UserPrivilege["CallTypeAccess"] != "Full") {
+                foreach (WorkorderType callType in FullCallTypesList)
+                {
+                    if(callType.CallTypeID != 1130 && callType.CallTypeID != 1230)
+                    {
+                        callTypeList.Add(callType);
+                    }
+                }
+            }
+            else
+            {
+                callTypeList.AddRange(FullCallTypesList);
+            }
+
+            return callTypeList;
+        }
+
         #region DecryptUrl
         public static string DecryptUrl(string RequestURL)
         {
@@ -990,6 +1090,99 @@ namespace FarmerBrothers.Utilities
         }
         #endregion
 
+        public static PricingDetail GetPricingDetails(int? CustomerID, int? TechId, string CustomerState, FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+            Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == CustomerID).FirstOrDefault();
 
+            PricingDetail priceDtls = null;
+            if (!string.IsNullOrEmpty(contact.PricingParentID) && contact.PricingParentID != "0")
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 501 && p.PricingEntityId == contact.PricingParentID).FirstOrDefault();
+            }
+
+            if (priceDtls == null || priceDtls.HourlyTravlRate == 0)
+            {   
+                if (TechId != 0)
+                {
+                    TECH_HIERARCHY tech = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == TechId).FirstOrDefault();
+                    if (tech.FamilyAff == "SPT")
+                    {
+                        string tId = TechId.ToString();
+                        priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 502 && p.PricingEntityId == tId).FirstOrDefault();
+                    }
+                }
+            }
+
+            if (priceDtls == null || priceDtls.HourlyTravlRate == 0)
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 503 && p.PricingEntityId == CustomerState).FirstOrDefault();
+            }
+
+            /*else if (TechId != 0)
+            {
+                string tId = TechId.ToString();
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 502 && p.PricingEntityId == tId).FirstOrDefault();
+            }
+            else
+            {
+                priceDtls = FarmerBrothersEntitites.PricingDetails.Where(p => p.PricingTypeId == 503 && p.PricingEntityId == CustomerState).FirstOrDefault();
+            }*/
+
+
+            if (priceDtls == null || priceDtls.HourlyTravlRate == 0)
+            {
+                BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+                BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+
+                priceDtls = new PricingDetail();
+                priceDtls.HourlyLablrRate = TravelItem.UnitPrice;
+                priceDtls.HourlyTravlRate = laborItem.UnitPrice;
+            }
+
+            return priceDtls;
+        }
+
+        public static dynamic GetCustomreNotes(int ClientId, int ParentId, FarmerBrothersEntities FarmerBrothersEntities)
+        {
+            var CustomerNotes = FarmerBrothersEntities.FBCustomerNotes.Where(c => c.CustomerId == ClientId && c.IsActive == true).ToList();
+
+            if (ParentId != 0)
+            {
+                CustomerNotes = FarmerBrothersEntities.FBCustomerNotes.Where(c => c.ParentId == ParentId && c.IsActive == true).ToList();
+            }
+
+            return CustomerNotes;
+        }
+
+        public static bool IsBillableCriteria(int Clientid, int Workorderid, FarmerBrothersEntities FarmerBrothersEntities)
+        {
+            bool isBilllable = false;
+
+            List<CustomCriteria> criteriaList = FarmerBrothersEntities.CustomCriterias.Where(c => c.CategoryType.ToLower() == "billing").ToList();
+            List<string> categoryKeys = criteriaList.Select(s => s.CategoryName).ToList();
+
+            Contact cntct = FarmerBrothersEntities.Contacts.Where(c => c.ContactID == Clientid).FirstOrDefault();
+            WorkOrder wo = FarmerBrothersEntities.WorkOrders.Where(w => w.WorkorderID == Workorderid).FirstOrDefault();
+
+            foreach(string ctgry in categoryKeys)
+            {
+                CustomCriteria category =  criteriaList.Where(s => s.CategoryName == ctgry).FirstOrDefault();
+                if (category != null)
+                {
+                    if (cntct != null)
+                    {
+                        string fieldValue = cntct.GetType().GetProperty(ctgry) != null ? (cntct.GetType().GetProperty(ctgry).GetValue(cntct, null) != null ? cntct.GetType().GetProperty(ctgry).GetValue(cntct, null).ToString() : "") : "";
+                        if(!string.IsNullOrEmpty(fieldValue) && fieldValue.ToLower() == category.CategoryValue.ToLower())
+                        {
+                            isBilllable = true;
+                        }
+                    }
+                }
+
+            }
+
+            return isBilllable;
+        }
     }
 }

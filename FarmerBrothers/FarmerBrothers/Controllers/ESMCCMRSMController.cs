@@ -1,10 +1,12 @@
-﻿using FarmerBrothers.Models;
+﻿using FarmerBrothers.Data;
+using FarmerBrothers.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -66,7 +68,19 @@ namespace FarmerBrothers.Controllers
 
                     if (fileData != null && fileData.IsValid)
                     {
-                        ESMCCMRSMModel.InsertData(fileData.EsmDataList, FarmerBrothersEntitites);
+
+                        //decimal ListCount = (Convert.ToDecimal(fileData.EsmDataList.Count()) / 1000);
+                        //int chunkLength = Convert.ToInt32(Math.Ceiling(ListCount));
+
+                        List<List<ESMCCMRSMModel>> FinalList = ESMCCMRSMModel.ChunkBy(fileData.EsmDataList, 100);
+
+                        Parallel.ForEach(FinalList, List =>
+                        {
+                            FarmerBrothersEntities fbentity = new FarmerBrothersEntities(); 
+                            ESMCCMRSMModel.InsertData(List, fbentity);                            
+                        });
+
+                        //ESMCCMRSMModel.InsertData(fileData.EsmDataList, FarmerBrothersEntitites);
                         ESMCCMRSMModel.UpdateContacts(FarmerBrothersEntitites);
                         string CompletedFilePath = Path.Combine(DirPath, "Completed");
                         if (!Directory.Exists(CompletedFilePath))

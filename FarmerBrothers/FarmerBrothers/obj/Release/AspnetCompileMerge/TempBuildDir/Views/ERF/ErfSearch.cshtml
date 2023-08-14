@@ -69,7 +69,9 @@
                     { field: "ApprovalStatus", width:80, headerText: "Approval Status"},
                      { field: "Status", width:80, headerText: "ERF Status" },
                     //{ field: "Reason", headerText: "Reason" },
-                    { field: "OriginatorName", headerText: "Originator" }
+                    { field: "OriginatorName", headerText: "Originator" },
+                    { field: "OrderType", headerText: "Order Type" },
+                    { field: "CashSaleStatus", headerText: "Cash Sale Status" }
                 ],
             });
         }
@@ -96,7 +98,9 @@
                     { field: "ApprovalStatus", width:80, headerText: "Approval Status"},
                     { field: "Status", width:80, headerText: "ERF Status" },
                     //{ field: "Reason", headerText: "Reason" },
-                    { field: "OriginatorName", headerText: "Originator" }
+                    { field: "OriginatorName", headerText: "Originator" },
+                    { field: "OrderType", headerText: "Order Type" },
+                    { field: "CashSaleStatus", headerText: "Cash Sale Status" }
                 ],
             });
         }
@@ -144,6 +148,7 @@
             && $('#StatesDropDown').val() =="n/a"
             && $('#txtzipcode').val() == ""
             && $('#ReasonsDropDown').val() == "-1"
+            && $('#CashSaleStatusDropDown').val() == "-1"
             && $('#Esm').val() == "")
         {
             AlertPopup("|Please Select at least one Search Criteria!");
@@ -158,6 +163,7 @@
         obj.dataSource('');
         $('#ReasonsDropDown').val(-1);
         $('#StatesDropDown').val("n/a");
+        $('#CashSaleStatusDropDown').val(-1);
         //$('.EsmDropDownList').val("");
         $('.EsmDropDownList').data("ejDropDownList").selectItemByValue("");
     }
@@ -182,15 +188,15 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     Account Number:
-                                    @Html.TextBoxFor(a => a.CustomerId, new { @id = "txtcustomerid", @Value = "", @class = "form-control" ,@style="max-width:100%" , onkeypress = "return isNumberKey(event)" })
+                                    @Html.TextBoxFor(a => a.CustomerId, new { @id = "txtcustomerid", @Value = "", @class = "form-control", @style = "max-width:100%", onkeypress = "return isNumberKey(event)" })
                                 </div>
                             </div>
                             @*<div class="col-md-3">
-                                <div class="form-group">
-                                    Customer Phone:
-                                    @Html.TextBoxFor(a => a.Phone, new { @id = "txtcustomerPhone", @class = "form-control", @style = "max-width:100%", @type = "number" })
-                                </div>
-                            </div>*@
+            <div class="form-group">
+                Customer Phone:
+                @Html.TextBoxFor(a => a.Phone, new { @id = "txtcustomerPhone", @class = "form-control", @style = "max-width:100%", @type = "number" })
+            </div>
+        </div>*@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     Originator Name:
@@ -240,13 +246,13 @@
                                 </div>
                             </div>
                             @*<div class="col-sm-6">
-                                    <span class="col-md-5">FEAST Movement ID:</span>
-                                    <div class="col-md-7">
-                                        <div class="form-group">
-                                            @Html.TextBoxFor(a => a.FeastMovement, new { @id = "txtfeastmovementID", @class = "form-control" })
-                                        </div>
-                                    </div>
-                                </div>*@
+            <span class="col-md-5">FEAST Movement ID:</span>
+            <div class="col-md-7">
+                <div class="form-group">
+                    @Html.TextBoxFor(a => a.FeastMovement, new { @id = "txtfeastmovementID", @class = "form-control" })
+                </div>
+            </div>
+        </div>*@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     State:
@@ -262,13 +268,25 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     Zip Code:
-                                    @Html.TextBoxFor(a => a.ZipCode, new { @id = "txtzipcode", @Value = "", @class = "form-control", @style="max-width:100%" })
+                                    @Html.TextBoxFor(a => a.ZipCode, new { @id = "txtzipcode", @Value = "", @class = "form-control", @style = "max-width:100%" })
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     ESM:
                                     @Html.TextBoxFor(c => c.Esm, new { @class = "form-control SearchPanelControl EsmDropDownList" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Cash Sales Status:
+                                    @Html.DropDownListFor(c => c.CashSaleStatus, new SelectList(Model.CashSalesList, "StatusCode", "StatusName"), new { @Id = "CashSaleStatusDropDown", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    ERF Status:
+                                    @Html.DropDownListFor(c => c.ErfStatus, new SelectList(Model.ERFStatusList, "StatusName", "StatusName"), new { @Id = "ErfStatusDropDown", @class = "form-control" })
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -280,7 +298,8 @@
                             </div>
 
                             <div class="col-md-3">
-                                <div class="form-group"><br/>
+                                <div class="form-group">
+                                    <br />
                                     @*@Html.ActionLink("Create ERF", "ERFManagement", "ERF", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })*@
                                 </div>
                             </div>

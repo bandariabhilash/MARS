@@ -51,6 +51,20 @@
 
         $( "form" ).submit( function ( event )
         {
+            if ($("#CustomerId").val() == '' || $("#CustomerId").val() == ' ') {
+               
+                var nonFBCustChk = $(".IsNonFBCustomerChk").is(":checked");
+                if (nonFBCustChk == true) {
+                    var nonFBCustomerName = $(".nonFbCustomerList").val();
+                    if (nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a') {
+                        AlertPopup("|Please Select NonFBCustomer from the Dropdown list");
+                        event.preventDefault();
+                        return false;
+                    }
+                }
+            }
+
+
             //alert("1");
             var operation = $("#Operation").val();
 

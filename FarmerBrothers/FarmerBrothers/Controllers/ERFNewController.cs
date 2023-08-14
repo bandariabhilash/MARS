@@ -17,6 +17,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 
@@ -98,22 +99,6 @@ namespace FarmerBrothers.Controllers
             }
             erfManagementModel.ErfAssetsModel.ErfEqpCategory.Insert(0, new ErfEqpViewModel(0, ""));
 
-
-            //============
-
-            List<ContingentDetail> erfeqpModels = FarmerBrothersEntitites.ContingentDetails.Where(c => c.IsActive == true).ToList();//.Select(s => s.ModelNO).Distinct();
-            erfManagementModel.ErfAssetsModel.ErfEqpModels = new List<ErfEqpViewModel>();
-            erfManagementModel.ErfAssetsModel.ErfExpModels = new List<ErfEqpViewModel>();
-            foreach (ContingentDetail model in erfeqpModels)
-            {
-                erfManagementModel.ErfAssetsModel.ErfEqpModels.Add(new ErfEqpViewModel(model.ID, model.Name));
-                erfManagementModel.ErfAssetsModel.ErfExpModels.Add(new ErfEqpViewModel(model.ID, model.Name));
-            }
-            erfManagementModel.ErfAssetsModel.ErfEqpModels.Insert(0, new ErfEqpViewModel(0, ""));
-            erfManagementModel.ErfAssetsModel.ErfExpModels.Insert(0, new ErfEqpViewModel(0, ""));
-            //============
-
-
             List<Contingent> erfExpCategory = FarmerBrothersEntitites.Contingents.Where(e => e.ContingentType.ToLower() == "exp" && e.IsActive == true).ToList();//.Select(s => s.ModelNO).Distinct();
             erfManagementModel.ErfAssetsModel.ErfExpCategory = new List<ErfEqpViewModel>();
             foreach (Contingent model in erfExpCategory)
@@ -121,6 +106,31 @@ namespace FarmerBrothers.Controllers
                 erfManagementModel.ErfAssetsModel.ErfExpCategory.Add(new ErfEqpViewModel(model.ContingentID, model.ContingentName));
             }
             erfManagementModel.ErfAssetsModel.ErfExpCategory.Insert(0, new ErfEqpViewModel(0, ""));
+
+            List<Contingent> posCategory = FarmerBrothersEntitites.Contingents.Where(e => e.ContingentType.ToLower() == "pos" && e.IsActive == true).ToList();
+            erfManagementModel.ErfAssetsModel.ErfPosCategory = new List<ErfEqpViewModel>();
+            foreach (Contingent model in posCategory)
+            {
+                erfManagementModel.ErfAssetsModel.ErfPosCategory.Add(new ErfEqpViewModel(model.ContingentID, model.ContingentName));
+            }
+            erfManagementModel.ErfAssetsModel.ErfPosCategory.Insert(0, new ErfEqpViewModel(0, ""));
+
+            //============
+
+            List<ContingentDetail> erfeqpModels = FarmerBrothersEntitites.ContingentDetails.Where(c => c.IsActive == true).ToList();//.Select(s => s.ModelNO).Distinct();
+            erfManagementModel.ErfAssetsModel.ErfEqpModels = new List<ErfEqpViewModel>();
+            erfManagementModel.ErfAssetsModel.ErfExpModels = new List<ErfEqpViewModel>();
+            erfManagementModel.ErfAssetsModel.ErfPosModels = new List<ErfEqpViewModel>();
+            foreach (ContingentDetail model in erfeqpModels)
+            {
+                erfManagementModel.ErfAssetsModel.ErfEqpModels.Add(new ErfEqpViewModel(model.ID, model.Name));
+                erfManagementModel.ErfAssetsModel.ErfExpModels.Add(new ErfEqpViewModel(model.ID, model.Name));
+                erfManagementModel.ErfAssetsModel.ErfPosModels.Add(new ErfEqpViewModel(model.ID, model.Name));
+            }
+            erfManagementModel.ErfAssetsModel.ErfEqpModels.Insert(0, new ErfEqpViewModel(0, ""));
+            erfManagementModel.ErfAssetsModel.ErfExpModels.Insert(0, new ErfEqpViewModel(0, ""));
+            erfManagementModel.ErfAssetsModel.ErfPosModels.Insert(0, new ErfEqpViewModel(0, ""));
+            //============
 
             //IQueryable<string> models = FarmerBrothersEntitites.FBEquipments.Select(s => s.ModelNO).Distinct();
             erfManagementModel.ErfAssetsModel.ErfEquipmentModels = new List<VendorModelModel>();
@@ -214,7 +224,9 @@ namespace FarmerBrothers.Controllers
 
             erfManagementModel.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
             cid = Convert.ToInt32(erfManagementModel.Customer.CustomerId);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == cid && c.IsActive == true).ToList();
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == cid && c.IsActive == true).ToList();            
+            int parentId = string.IsNullOrEmpty(erfManagementModel.Customer.ParentNumber) ? 0 : Convert.ToInt32(erfManagementModel.Customer.ParentNumber);
+            var custNotes = Utility.GetCustomreNotes(cid, parentId, FarmerBrothersEntitites);
             foreach (var dbCustNotes in custNotes)
             {
                 erfManagementModel.Notes.CustomerNotesResults.Add(new CustomerNotesModel(dbCustNotes));
@@ -519,6 +531,77 @@ namespace FarmerBrothers.Controllers
             return Json(ExpendableItems, JsonRequestBehavior.AllowGet);
         }
 
+
+
+        public ActionResult PosUpdate(ERFManagementPOSModel value)
+        {
+            IList<ERFManagementPOSModel> PosItems = TempData["Expendable"] as IList<ERFManagementPOSModel>;
+            if (PosItems == null)
+            {
+                PosItems = new List<ERFManagementPOSModel>();
+            }
+            ERFManagementPOSModel PosItem = PosItems.Where(n => n.ERFPosId == value.ERFPosId).FirstOrDefault();
+
+            if (PosItem != null)
+            {
+                PosItem.ModelNo = value.ModelNo;
+                PosItem.ProdNo = value.ProdNo;
+                PosItem.Quantity = value.Quantity;
+                PosItem.UnitPrice = value.UnitPrice;
+                PosItem.Description = value.Description;
+                PosItem.InternalOrderNumber = value.InternalOrderNumber;
+                PosItem.VendorOrderNumber = value.VendorOrderNumber;
+                PosItem.Category = value.Category;
+                PosItem.Branch = value.Branch;
+                PosItem.Brand = value.Brand;
+                PosItem.Substitution = value.Substitution;
+                PosItem.TotalCost = value.TotalCost;
+                PosItem.TransactionType = value.TransactionType;
+                PosItem.EquipmentType = value.EquipmentType;
+                PosItem.LaidInCost = value.LaidInCost;
+                PosItem.RentalCost = value.RentalCost;
+            }
+
+            TempData["Pos"] = PosItems;
+            TempData.Keep("Pos");
+            return Json(value, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult PosInsert(ERFManagementPOSModel value)
+        {
+            IList<ERFManagementPOSModel> PosItems = TempData["Pos"] as IList<ERFManagementPOSModel>;
+            if (PosItems == null)
+            {
+                PosItems = new List<ERFManagementPOSModel>();
+            }
+
+            if (TempData["ERFPosId"] != null)
+            {
+                int assetId = Convert.ToInt32(TempData["ERFPosId"]);
+                TempData["ERFPosId"] = assetId + 1;
+            }
+            else
+            {
+                value.ERFPosId = 1;
+                TempData["ERFPosId"] = 1;
+            }
+
+            PosItems.Add(value);
+            TempData["Pos"] = PosItems;
+            TempData.Keep("Pos");
+            return Json(value, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult PosDelete(int key)
+        {
+            IList<ERFManagementPOSModel> PosItems = TempData["Pos"] as IList<ERFManagementPOSModel>;
+            ERFManagementPOSModel PosItem = PosItems.Where(n => n.ERFPosId == key).FirstOrDefault();
+            PosItems.Remove(PosItem);
+            TempData["Pos"] = PosItems;
+            TempData.Keep("Pos");
+            return Json(PosItems, JsonRequestBehavior.AllowGet);
+        }
+
         private int ERFSave(ErfModel erfModel, out Erf erf, out string message)
         {
             int returnValue = 0;
@@ -577,8 +660,10 @@ namespace FarmerBrothers.Controllers
                 erf.Phone = Utilities.Utility.FormatPhoneNumber(erfModel.ErfAssetsModel.Erf.Phone);
                 erf.TotalNSV =  erfModel.TotalNSV;
 
-                decimal currentNSV = Convert.ToDecimal(erfModel.TotalNSV + erfModel.CurrentNSV);
-                erf.CurrentNSV = currentNSV;
+                /*decimal currentNSV = Convert.ToDecimal(erfModel.TotalNSV + erfModel.CurrentNSV);
+                erf.CurrentNSV = currentNSV;*/
+
+                erf.CurrentNSV = erfModel.CurrentNSV;
                 erf.ContributionMargin = string.IsNullOrEmpty(erfModel.ContributionMargin) ?"":erfModel.ContributionMargin;
 
                 erf.CurrentEqp =  erfModel.CurrentEquipmentTotal;
@@ -688,8 +773,11 @@ namespace FarmerBrothers.Controllers
 
             SaveNotes(erfModel, Convert.ToInt32(erf.WorkorderID));
 
+            string EqpNotes = "";
+            string ExpNotes = "";
             if (erfModel.ErfAssetsModel.EquipmentList != null)
             {
+                int eqpCount = 1;
                 foreach (ERFManagementEquipmentModel equipment in erfModel.ErfAssetsModel.EquipmentList)
                 {
                     FBERFEquipment eq = new FBERFEquipment()
@@ -714,12 +802,29 @@ namespace FarmerBrothers.Controllers
 
                     };
 
+                    Contingent eqpCon = FarmerBrothersEntitites.Contingents.Where(c => c.ContingentID == equipment.Category).FirstOrDefault();
+                    ContingentDetail eqpConDtl = FarmerBrothersEntitites.ContingentDetails.Where(c => c.ID == equipment.Brand).FirstOrDefault();
+                    string eqpCategoryName = "";
+                    string eqpBrandName = "";
+                    if (eqpCon != null)
+                    {
+                        eqpCategoryName = eqpCon.ContingentName;
+                    }
+                    if (eqpConDtl != null)
+                    {
+                        eqpBrandName = eqpConDtl.Name;
+                    }
+
+                    EqpNotes += eqpCount + ") Category: " + eqpCategoryName + ", Brand: " + eqpBrandName + ", Quantity: " + equipment.Quantity + ", UsingBranch: " + equipment.Branch + "\n\r";
+                    eqpCount++;
+
                     FarmerBrothersEntitites.FBERFEquipments.Add(eq);
                 }
             }
 
             if (erfModel.ErfAssetsModel.ExpendableList != null)
             {
+                int expCount = 1;
                 foreach (ERFManagementExpendableModel expItems in erfModel.ErfAssetsModel.ExpendableList)
                 {
                     FBERFExpendable eq = new FBERFExpendable()
@@ -743,9 +848,72 @@ namespace FarmerBrothers.Controllers
                         UsingBranch = expItems.Branch
 
                     };
+
+
+                    Contingent expCon = FarmerBrothersEntitites.Contingents.Where(c => c.ContingentID == expItems.Category).FirstOrDefault(); 
+                    ContingentDetail expConDtl = FarmerBrothersEntitites.ContingentDetails.Where(c => c.ID == expItems.Brand).FirstOrDefault();
+                    string expCategoryName = "";
+                    string expBrandName = "";
+                    if (expCon != null)
+                    {
+                        expCategoryName = expCon.ContingentName;
+                    }
+                    if (expConDtl != null)
+                    {
+                        expBrandName = expConDtl.Name;
+                    }
+
+                    ExpNotes += expCount + ") Category: " + expCategoryName + ", Brand: " + expBrandName + ", Quantity: " + expItems.Quantity + ", UsingBranch: " + expItems.Branch + "\n\r";
+                    expCount++;
+
                     FarmerBrothersEntitites.FBERFExpendables.Add(eq);
                 }
             }
+
+
+            NotesHistory eqpNotesHistory = new NotesHistory()
+            {
+                AutomaticNotes = 1,
+                EntryDate = CurrentTime,
+                Notes = "Equipments: " + EqpNotes + "Expendables: " + ExpNotes,
+                Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                UserName = UserName,
+                ErfID = erf.ErfID,
+                WorkorderID = erf.WorkorderID,
+                isDispatchNotes = 0
+            };
+
+            FarmerBrothersEntitites.NotesHistories.Add(eqpNotesHistory);
+
+            //if (erfModel.ErfAssetsModel.PosList != null)
+            //{
+            //    foreach (ERFManagementPOSModel posItem in erfModel.ErfAssetsModel.PosList)
+            //    {
+            //        FBERFPos pos = new FBERFPos()
+            //        {
+            //            ERFId = erf.ErfID,
+            //            WorkOrderId = erf.WorkorderID,
+            //            ModelNo = posItem.ModelNo,
+            //            Quantity = posItem.Quantity,
+            //            ProdNo = posItem.ProdNo,
+            //            EquipmentType = posItem.EquipmentType,
+            //            UnitPrice = Convert.ToDecimal(posItem.UnitPrice),
+            //            TransactionType = posItem.TransactionType,
+            //            Substitution = posItem.Substitution,
+            //            Extra = posItem.Extra,
+            //            Description = posItem.Description,
+            //            LaidInCost = Convert.ToDecimal(posItem.LaidInCost),
+            //            RentalCost = Convert.ToDecimal(posItem.RentalCost),
+            //            TotalCost = Convert.ToDecimal(posItem.TotalCost),
+            //            ContingentCategoryId = posItem.Category,
+            //            ContingentCategoryTypeId = posItem.Brand,
+            //            UsingBranch = posItem.Branch
+
+            //        };
+
+            //        FarmerBrothersEntitites.FBERFPos.Add(pos);
+            //    }
+            //}
 
             decimal? eqpTotal = Convert.ToDecimal(erfModel.ErfAssetsModel.EquipmentList.Sum(x => x.TotalCost));
             decimal? expTotal = Convert.ToDecimal(erfModel.ErfAssetsModel.ExpendableList.Sum(x => x.TotalCost));
@@ -775,8 +943,8 @@ namespace FarmerBrothers.Controllers
             {
                 erf.ERFStatus = "Pending";
             }
-
-
+            erf.CashSaleStatus = "1"; // Default value for CashSaleStatus while ERF Creation
+            
             int woSaveEffectRecords = WOFBEntity.SaveChanges();
             int woReturnValue = woSaveEffectRecords > 0 ? 1 : 0;
             //if (((!erfModel.CrateWorkOrder && erf.ApprovalStatus.ToLower() == "approved for processing" && erfModel.OrderType.ToLower() != "branch stock") && woReturnValue == 1)
@@ -793,7 +961,7 @@ namespace FarmerBrothers.Controllers
             if (!erfModel.CrateWorkOrder && erf.ApprovalStatus.ToLower() == "approved for processing" && workOrder != null)
             {
                 string usrName = System.Web.HttpContext.Current.Session["UserName"] == null ? "" : System.Web.HttpContext.Current.Session["UserName"].ToString();
-                wc.StartAutoDispatchProcess(workOrder, usrName);
+                //wc.StartAutoDispatchProcess(workOrder, usrName);
             }            
 
             return returnValue;
@@ -859,7 +1027,9 @@ namespace FarmerBrothers.Controllers
 
                         if((erfModel.ErfAssetsModel.EquipmentList == null || erfModel.ErfAssetsModel.EquipmentList.Count <=0)
                             && (erfModel.ErfAssetsModel.ExpendableList == null || erfModel.ErfAssetsModel.ExpendableList.Count <= 0))
+                            //&& (erfModel.ErfAssetsModel.PosList == null || erfModel.ErfAssetsModel.PosList.Count <= 0))
                         {
+                            //message = @"|Equipments Or Expendables Or PointOfSales are Required";
                             message = @"|Equipments Or Expendables are Required";
                             isValid = false;
                         }
@@ -980,7 +1150,9 @@ namespace FarmerBrothers.Controllers
                         }
                         if ((erfModel.ErfAssetsModel.EquipmentList == null || erfModel.ErfAssetsModel.EquipmentList.Count <= 0)
                             && (erfModel.ErfAssetsModel.ExpendableList == null || erfModel.ErfAssetsModel.ExpendableList.Count <= 0))
+                            //&& (erfModel.ErfAssetsModel.PosList == null || erfModel.ErfAssetsModel.PosList.Count <= 0))
                         {
+                            //message = @"|Equipments Or Expendables Or PointOfSales are Required";
                             message = @"|Equipments Or Expendables are Required";
                             isValid = false;
                         }
@@ -1116,6 +1288,7 @@ namespace FarmerBrothers.Controllers
                     ESMEmail = customer.ESMEmail == null ? "" : customer.ESMEmail;
                 }
                 
+
                 /*ESMDSMRSM esmdsmrsmView = new ESMDSMRSM();
                 if (!string.IsNullOrEmpty(customerBranch))
                 {
@@ -1134,7 +1307,7 @@ namespace FarmerBrothers.Controllers
 
                 //if (esmdsmrsmView != null)
                 //{
-                    decimal? eqpTotal = FarmerBrothersEntitites.FBERFEquipments.Where(eqp => eqp.ERFId == erfData.ErfID).Sum(x => x.TotalCost);
+                decimal? eqpTotal = FarmerBrothersEntitites.FBERFEquipments.Where(eqp => eqp.ERFId == erfData.ErfID).Sum(x => x.TotalCost);
                     decimal? expTotal = FarmerBrothersEntitites.FBERFExpendables.Where(eqp => eqp.ERFId == erfData.ErfID).Sum(x => x.TotalCost);
 
                     decimal GrandTotal = 0;
@@ -1405,7 +1578,57 @@ namespace FarmerBrothers.Controllers
                     salesEmailBody.Append("<BR>");
                     salesEmailBody.Append("<BR>");
 
-                    salesEmailBody.Append("<b>CALL NOTES: </b>");
+                //****************POS**********************
+
+                //salesEmailBody.Append("<b>Point of Sale: </b>");
+                //salesEmailBody.Append("<BR>");
+
+                //salesEmailBody.Append("<table cellpadding='5'>");
+                //salesEmailBody.Append("<tr>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Quantity</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Equipment Category</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Brand - Equipment Model Number - Description</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Using Branch Stock</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Substitution Possible</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Trans Type</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Equipment Type</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Laid-In-Cost</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Rental Cost</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>Total</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>ST/ON #</th>");
+                //salesEmailBody.Append("<th style='border: 1px solid;'>OT #</th>");
+                //salesEmailBody.Append("</tr>");
+
+                //List<FBERFPos> posModelList = FarmerBrothersEntitites.FBERFPos.Where(eqp => eqp.ERFId == erfData.ErfID).ToList();
+                //foreach (FBERFPos pos in posModelList)
+                //{
+                //    ContingentDetail Brand = FarmerBrothersEntitites.ContingentDetails.Where(cat => cat.ID == pos.ContingentCategoryTypeId).FirstOrDefault();
+                //    Contingent category = FarmerBrothersEntitites.Contingents.Where(c => c.ContingentID == pos.ContingentCategoryId).FirstOrDefault();
+
+                //    salesEmailBody.Append("<tr>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + pos.Quantity + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (category != null ? category.ContingentName : "") + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (Brand != null ? Brand.Name : "") + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (string.IsNullOrEmpty(pos.UsingBranch) ? "" : pos.UsingBranch) + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (string.IsNullOrEmpty(pos.Substitution) ? "" : pos.Substitution) + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (string.IsNullOrEmpty(pos.TransactionType) ? "" : pos.TransactionType) + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (string.IsNullOrEmpty(pos.EquipmentType) ? "" : pos.EquipmentType) + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + pos.LaidInCost + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + pos.RentalCost + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + pos.TotalCost + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (string.IsNullOrEmpty(pos.InternalOrderType) ? "" : pos.InternalOrderType) + "</td>");
+                //    salesEmailBody.Append("<td style='border: 1px solid;'>" + (string.IsNullOrEmpty(pos.VendorOrderType) ? "" : pos.VendorOrderType) + "</td>");
+                //    salesEmailBody.Append("</tr>");
+                //}
+                //salesEmailBody.Append("</table>");
+
+                //salesEmailBody.Append("<BR>");
+                //salesEmailBody.Append("<BR>");
+
+
+                //****************POS End**********************
+
+                salesEmailBody.Append("<b>CALL NOTES: </b>");
                     salesEmailBody.Append("<BR>");
 
 
@@ -1706,7 +1929,7 @@ namespace FarmerBrothers.Controllers
                         }
                     }
 
-                        string fromAddress = ConfigurationManager.AppSettings["DispatchMailFromAddress"];
+                    string fromAddress = "reviveservice@mktalt.com";// ConfigurationManager.AppSettings["DispatchMailFromAddress"];
                         message.From = new MailAddress(fromAddress);
                         message.Subject = subject.ToString();
                         message.IsBodyHtml = true;
@@ -1907,7 +2130,7 @@ namespace FarmerBrothers.Controllers
             }*/
             erfDataMain.BranchList = GetBranchDetailsData();
 
-            List<string> cntgnType = new List<string>() { "", "Eqp", "Exp" };
+            List<string> cntgnType = new List<string>() { "", "Eqp", "Exp", "Pos" };
             erfDataMain.ContingentTypeList = new List<SubstituionModel>();
             foreach (string cntgTyp in cntgnType)
             {
@@ -2077,7 +2300,7 @@ namespace FarmerBrothers.Controllers
 
                 Contingent cn = contingentsList.Where(c => c.ContingentID == contindtl.ContingentID).FirstOrDefault();
 
-                cdm.ContingentName = (cn == null) ? "" : string.IsNullOrEmpty(cn.ContingentName) ? "" : cn.ContingentName;
+                cdm.ContingentName = (cn == null) ? "" : string.IsNullOrEmpty(cn.ContingentName) ? "" : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cn.ContingentName.ToUpper().Trim().ToLower());
                 cdm.IsActive = Convert.ToBoolean(contindtl.IsActive);
                 ContingentItemsList.Add(cdm);
             }
@@ -2492,7 +2715,7 @@ namespace FarmerBrothers.Controllers
             {
                 List<ERFBulkUploadDataModel> grpDataList = erfDataList.Where(e => e.AccountNumber == actNo).ToList();
                 ERFBulkUploadDataModel grpData = grpDataList[0];
-
+                string message = ""; bool validFlag = true;
                 ErfModel erfMdl = new ErfModel();
                 CustomerModel custMdl = GetCustomerDetails(grpData.AccountNumber, FarmerBrothersEntities);
 
@@ -2508,6 +2731,58 @@ namespace FarmerBrothers.Controllers
                     erfModelList.Add(erfResult);
 
                     continue;
+                }
+
+                
+                if(string.IsNullOrEmpty(grpData.OrderType))
+                {
+                    message += " | Order Type Required ";
+                    validFlag = false;
+                }
+                if (string.IsNullOrEmpty(grpData.ShipToBranch))
+                {
+                    message += " | ShipTo Branch Required";
+                    validFlag = false;
+                }
+                if (grpData.FormDate == null)
+                {
+                    message += " | Form Date Required";
+                    validFlag = false;
+                }
+                if (grpData.ERFReceivedDate == null)
+                {
+                    message += " | ERF Received Date Required";
+                    validFlag = false;
+                }
+                if (grpData.ERFProcessedDate == null)
+                {
+                    message += " | ERF Processed Date Required";
+                    validFlag = false;
+                }
+                if (grpData.InstallDate == null)
+                {
+                    message += " | InstallDate Date Required";
+                    validFlag = false;
+                }
+                if (string.IsNullOrEmpty(grpData.HoursofOperation))
+                {
+                    message += " | Hours Of Operation Required";
+                    validFlag = false;
+                }
+                if (string.IsNullOrEmpty(grpData.InstallLocation))
+                {
+                    message += " | Install Location Required";
+                    validFlag = false;
+                }
+                if (string.IsNullOrEmpty(grpData.SiteReady))
+                {
+                    message += " | Site Ready Value Required";
+                    validFlag = false;
+                }
+                if (grpData.AdditionalNSV == 0)
+                {
+                    message += " | Additional NSV Required";
+                    validFlag = false;
                 }
 
                 erfMdl.Customer = custMdl;
@@ -2529,11 +2804,13 @@ namespace FarmerBrothers.Controllers
                 erfMdl.Customer.MainContactName = grpData.MainContactName;
                 erfMdl.Customer.PhoneNumber = grpData.MainContactNum;
                 erfMdl.ErfAssetsModel.Erf.Phone = grpData.MainContactNum;
-                erfMdl.ErfAssetsModel.Erf.DateERFReceived = currentDate;
-                erfMdl.ErfAssetsModel.Erf.DateERFProcessed = currentDate;
-                erfMdl.ErfAssetsModel.Erf.DateOnERF = currentDate;
+                erfMdl.ErfAssetsModel.Erf.DateERFReceived = grpData.ERFReceivedDate;
+                erfMdl.ErfAssetsModel.Erf.DateERFProcessed = grpData.ERFProcessedDate;
+                erfMdl.ErfAssetsModel.Erf.DateOnERF = grpData.FormDate;
                 erfMdl.ErfAssetsModel.Erf.OriginalRequestedDate = grpData.InstallDate == null ? currentDate : Convert.ToDateTime(grpData.InstallDate);
-
+                erfMdl.ErfAssetsModel.Erf.HoursofOperation = grpData.HoursofOperation;
+                erfMdl.ErfAssetsModel.Erf.InstallLocation = grpData.InstallLocation;
+                erfMdl.ErfAssetsModel.Erf.SiteReady = grpData.SiteReady;
 
                 List<FBCBE> fbcbeList = FarmerBrothersEntitites.FBCBEs.Where(cbe => cbe.CurrentCustomerId == grpData.AccountNumber).ToList();
                 if (fbcbeList != null)
@@ -2549,8 +2826,8 @@ namespace FarmerBrothers.Controllers
                 erfMdl.ContributionMargin = string.IsNullOrEmpty(erfMdl.Customer.ContributionMargin) ? "" : (Convert.ToDouble(erfMdl.Customer.ContributionMargin) * 100) + "%";
                 erfMdl.TotalNSV = grpData.AdditionalNSV;
 
-                bool validFlag = true;
-                string message = "";
+                
+                
                 List<ERFManagementEquipmentModel> erfEqpList = new List<ERFManagementEquipmentModel>();
                 List<ERFManagementExpendableModel> erfExpList = new List<ERFManagementExpendableModel>();
                 foreach (ERFBulkUploadDataModel grpDataEqp in grpDataList)
@@ -2624,13 +2901,13 @@ namespace FarmerBrothers.Controllers
                             else
                             {
                                 validFlag = false;
-                                message = "| Invalid Equipment Brand ";
+                                message += " | Invalid Equipment Brand ";
                             }
                         }
                         else
                         {
                             validFlag = false;
-                            message = "| Invalid Equipment Category ";
+                            message += " | Invalid Equipment Category ";
                         }
                     }
 
@@ -2683,13 +2960,13 @@ namespace FarmerBrothers.Controllers
                             else
                             {
                                 validFlag = false;
-                                message = "| Invalid Expendable Brand ";
+                                message += " | Invalid Expendable Brand ";
                             }
                         }
                         else
                         {
                             validFlag = false;
-                            message = "| Invalid Expendable Category ";
+                            message += " | Invalid Expendable Category ";
                         }
                     }
                     
@@ -2745,8 +3022,6 @@ namespace FarmerBrothers.Controllers
                 }
                 else
                 {
-                    
-
                     erfResult.CustomerID = grpData.AccountNumber;
                     erfResult.CustomerName = grpData.MainContactName;
                     erfResult.GroupId = grpData.groupNum;
@@ -3179,132 +3454,174 @@ namespace FarmerBrothers.Controllers
                         }
                         break;
                     case 3:
+                        if (hdrValue != "hours of operation")
+                        {
+                            fr.ErrorMsg += "\n Hours Of Operation Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 4:
+                        if (hdrValue != "install location")
+                        {
+                            fr.ErrorMsg += "\n Install Location Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 5:
+                        if (hdrValue != "site ready(yes/no)")
+                        {
+                            fr.ErrorMsg += "\n Site Ready Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 6:
                         if (hdrValue != "erf notes")
                         {
                             fr.ErrorMsg += "\n ERF Notes  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 4:
+                    case 7:
                         if (hdrValue != "erf ordertype")
                         {
                             fr.ErrorMsg += "\n ERF OrderType Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 5:
+                    case 8:
                         if (hdrValue != "shipto branch")
                         {
                             fr.ErrorMsg += "\n ShipTo Branch Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 6:
+                    case 9:
                         if (hdrValue != "install date")
                         {
                             fr.ErrorMsg += "\n  Install Date Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 7:
+                    case 10:
                         if (hdrValue != "additional nsv")
                         {
                             fr.ErrorMsg += "\n Additional NSV Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 8:
+                    case 11:
+                        if (hdrValue != "form date")
+                        {
+                            fr.ErrorMsg += "\n Form Date Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 12:
+                        if (hdrValue != "erf received date")
+                        {
+                            fr.ErrorMsg += "\n ERF Received Date Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 13:
+                        if (hdrValue != "erf processed date")
+                        {
+                            fr.ErrorMsg += "\n ERF Processed Date Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 14:
                         if (hdrValue != "equipment category")
                         {
                             fr.ErrorMsg += "\n Equipment Category  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 9:
+                    case 15:
                         if (hdrValue != "equipment brand")
                         {
                             fr.ErrorMsg += "\n Equipment Brand  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 10:
+                    case 16:
                         if (hdrValue != "equipment quantity")
                         {
                             fr.ErrorMsg += "\n Equipment Quantity  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 11:
+                    case 17:
                         if (hdrValue != "equipment using branch (yes/no)")
                         {
                             fr.ErrorMsg += "\n Equipment Using Branch(YES / NO) Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 12:
+                    case 18:
                         if (hdrValue != "equipment substitution possible (yes/no)")
                         {
                             fr.ErrorMsg += "\n Equipment Substitution Possible(YES / NO) Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 13:
+                    case 19:
                         if (hdrValue != "equipment trans type (cash sale/loan/rental)")
                         {
                             fr.ErrorMsg += "\n Equipment Trans Type(CASH SALE / LOAN / RENTAL) Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 14:
+                    case 20:
                         if (hdrValue != "equipment type (new/refurb)")
                         {
                             fr.ErrorMsg += "\n Equipment Type (NEW / REFURB)  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 15:
+                    case 21:
                         if (hdrValue != "expendable category")
                         {
                             fr.ErrorMsg += "\n Expendable Category  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 16:
+                    case 22:
                         if (hdrValue != "expendable brand")
                         {
                             fr.ErrorMsg += "\n  Expendable Brand Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 17:
+                    case 23:
                         if (hdrValue != "expendable quantity")
                         {
                             fr.ErrorMsg += "\n Expendable Quantity Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 18:
+                    case 24:
                         if (hdrValue != "expendable using branch (yes/no)")
                         {
                             fr.ErrorMsg += "\n Expendable Using Branch(YES / NO) Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 19:
+                    case 25:
                         if (hdrValue != "expendable substitution possible (yes/no)")
                         {
                             fr.ErrorMsg += "\n Expendable Substitution Possible(YES / NO)  Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 20:
+                    case 26:
                         if (hdrValue != "expendable trans type (cash sale/loan/rental)")
                         {
                             fr.ErrorMsg += "\n Expendable Trans Type(CASH SALE / LOAN / RENTAL) Column Missing";
                             fr.IsValid = false;
                         }
                         break;
-                    case 21:
+                    case 27:
                         if (hdrValue != "expendable type (new/refurb)")
                         {
                             fr.ErrorMsg += "\n Expendable Type(NEW / REFURB) Column Missing";

@@ -20,6 +20,12 @@ namespace FarmerBrothers.Models
             this.WorkOrderCallStatus = workOrderSchedule.WorkOrder.WorkorderCallstatus;
             this.CustomerName = workOrderSchedule.WorkOrder.CustomerName;
             this.CustomerId = workOrderSchedule.WorkOrder.CustomerID;
+
+            Contact cnct = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrderSchedule.WorkOrder.CustomerID).FirstOrDefault();
+
+            this.Address1 = cnct == null ? "" : (cnct.Address1==null ? "" : cnct.Address1);
+            this.Address2 = cnct == null ? "" : (cnct.Address2==null ? "" : cnct.Address2);
+            this.CustomerPO = workOrderSchedule.WorkOrder.CustomerPO == null ? null : workOrderSchedule.WorkOrder.CustomerPO.ToString();
             this.CustomerCity = workOrderSchedule.WorkOrder.CustomerCity;
             this.CustomerState = workOrderSchedule.WorkOrder.CustomerState;
             this.AppointmentDate = workOrderSchedule.WorkOrder.AppointmentDate == null ? null : workOrderSchedule.WorkOrder.AppointmentDate.ToString();
@@ -49,6 +55,9 @@ namespace FarmerBrothers.Models
         public int SLACountDown { get; set; }
         public int EquipmentCount { get; set; }
         public string ScheduledDate { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string CustomerPO { get; set; }
 
     }
 }

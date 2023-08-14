@@ -41,9 +41,8 @@ namespace FarmerBrothers.Models
         public bool IsTechUser { get; set; }
         //public bool IsERFUser { get; set; }
 
-        public WorkOrderManagementSubmitType Operation { get; set; }
-        
-
+        public WorkOrderManagementSubmitType Operation { get; set; }        
+        public string CustomerParent { get; set; }
     }
     public class UserModulePrivilegeModel
     {

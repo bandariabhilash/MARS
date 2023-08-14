@@ -283,10 +283,11 @@
                         //eqpHeightRatio.push(hgt / wid);
                         //eqpImgArr.push(img);
 
-                        doc.addPage();
+			//TODO: Uncomment once updated terms are ready
+                        /*doc.addPage();
                         var width = doc.internal.pageSize.width;
                         var height = doc.internal.pageSize.height;
-                        doc.addImage(img, 'PNG', x, y, width, height, 'Image', 'fast');
+                        doc.addImage(img, 'PNG', x, y, width, height, 'Image', 'fast');*/
 
                         doc.save('WorkorderFor_' + workorderPDFId + '.pdf');
 
@@ -709,7 +710,12 @@
         $("#AppointmentDateFrom").ejDatePicker({  value: new Date($("#AppointmentDateFrom").val()) });
         //$("#DateFrom").ejDatePicker({ minDate: new Date(date30),  value: new Date($("#DateFrom").val()) });
         $("#DateFrom").ejDatePicker({ value: new Date($("#DateFrom").val()) });
-        $("#DateTo").ejDatePicker({  value: new Date($("#DateTo").val()) });
+        $("#DateTo").ejDatePicker({ value: new Date($("#DateTo").val()) });
+
+        $("#ClosedDate").ejDatePicker({ value: new Date($("#ClosedDate").val()) });
+        $("#StartDate").ejDatePicker({ value: new Date($("#StartDate").val()) });
+        $("#ArrivalDate").ejDatePicker({ value: new Date($("#ArrivalDate").val()) });
+        $("#CompletedDate").ejDatePicker({ value: new Date($("#CompletedDate").val()) });
 
         $(".SavedSearchButton").click(function (){
             $("#SelectedSavedSearchName").val(this.id);
@@ -886,11 +892,17 @@
             && $('#DateFrom').val() == ""
             && $('#DateTo').val() == ""
             && $('#TimeZone').val()  == ""
+            && $('#ParentAccount').val() == ""
             && $('#TechTypeList').val() == ""
             && $('#ServiceCenterList').val() == null
             && $('#TechId').val() == ""
             && $('#City').val() == ""
-            && $('#Esm').val() == "")
+            && $('#Esm').val() == ""
+            && $('#CustomerPO').val() == ""
+            && $('#ClosedDate').val() == ""
+            && $('#StartDate').val() == ""
+            && $('#ArrivalDate').val() == ""
+            && $('#CompletedDate').val() == "")
         {
             var operation = $("#Operation").val();
             if (operation != 4) {
@@ -1058,6 +1070,13 @@
                                 @Html.TextBoxFor(c => c.TimeZone, new { @class = "form-control SearchPanelControl TimeZoneDropDownList" })
                             </div>
                         </div>
+
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Parent Number:
+                                @Html.TextBoxFor(c => c.ParentAccount, new { @class = "form-control SearchPanelControl", @type = "number" })
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-12">
                         <div class="col-md-2">
@@ -1095,31 +1114,75 @@
                                 @Html.TextBoxFor(c => c.Esm, new { @class = "form-control SearchPanelControl EsmDropDownList" })
                             </div>
                         </div>
-
-                        
                         <div class="col-md-2">
-                            <div class="form-group right-inner-addon" style="margin-top: 19px;">
-                                <button type="submit" class="btn btn-primary" onclick="SetSubmitOperation(1);" name="action:WorkorderSearch">Search</button>
-                                <a href="@Url.Action("WorkorderSearch", "Workorder")" style="margin-left:10px;" class="btn btn-orange">Clear</a>
+                            <div class="form-group">
+                                Customer PO:
+                                @Html.TextBoxFor(c => c.CustomerPO, new { @class = "form-control SearchPanelControl" })
                             </div>
-
                         </div>
-                        <div class="col-md-2">
-                            <fieldset class="form-group">
-                                @*<legend>Non Service Work Order</legend>*@
-                                <div class="form-group">
+                        @*</div>
+                            <div class="col-md-12">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        &nbsp;
+                                    </div>
+                                </div>*@
+                        
+                        <!--<div class="col-md-2">
+                        <fieldset class="form-group">-->
+                        @*<legend>Non Service Work Order</legend>*@
+                        <!--<div class="form-group">
                                     <h5>Customer Service Work Order: @Html.CheckBoxFor(m => m.SearchInNonServiceWorkOrder, new { @class = "NoPartsNeeded NonSurveyPanel" })</h5>
 
                                 </div>
                             </fieldset>
+                        </div>-->
+
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Closed Date:
+                                @Html.TextBoxFor(c => c.ClosedDate, new { @class = "form-control SearchPanelControl", @Id = "ClosedDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Start Date Time:
+                                @Html.TextBoxFor(c => c.StartDate, new { @class = "form-control SearchPanelControl", @Id = "StartDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Arrival Date Time:
+                                @Html.TextBoxFor(c => c.ArrivalDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalDate" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon">
+                                Completed Date Time:
+                                @Html.TextBoxFor(c => c.CompletedDate, new { @class = "form-control SearchPanelControl", @Id = "CompletedDate" })
+                            </div>
                         </div>
 
-                        <div class="col-md-12 customer">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    &nbsp;
-                                </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="margin-top: 19px;">
+                                <button type="submit" class="btn btn-primary" onclick="SetSubmitOperation(1);" name="action:WorkorderSearch">Search</button>
+                                <a href="@Url.Action("WorkorderSearch", "Workorder")" style="margin-left:10px;" class="btn btn-orange">Clear</a>
+                                <h5>Customer Service Work Order: @Html.CheckBoxFor(m => m.SearchInNonServiceWorkOrder, new { @class = "NoPartsNeeded NonSurveyPanel" })</h5>
                             </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="col-md-12 customer">
+                            @*<div class="col-md-8">
+                                    <div class="form-group">
+                                        &nbsp;
+                                    </div>
+                                </div>*@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     @Html.TextBoxFor(c => c.SavedSearchName, new { @class = "form-control SearchPanelControl" })
@@ -1279,6 +1342,7 @@
                                 col.Field("CustomerState").HeaderText("State").Width(70).Add();
                                 col.Field("CustomerZipCode").HeaderText("Zip").Width(70).Add();
                                 col.Field("CustomerID").HeaderText("Customer ID").Visible(false).Add();
+                                col.Field("CustomerPO").HeaderText("Customer PO").Width(100).Add();
                                 col.Field("AssignedTech").HeaderText("Assigned Tech").Width(100).Add();
                                 col.Field("TechPhone").HeaderText("Tech Phone").Width(100).Add();
                                 col.Field("TechBranch").HeaderText("Tech Branch").Width(100).Add();
@@ -1366,6 +1430,7 @@
                                 col.Field("CustomerState").HeaderText("State").Width(70).Add();
                                 col.Field("CustomerZipCode").HeaderText("Zip").Width(70).Add();
                                 col.Field("CustomerID").HeaderText("Customer ID").Visible(false).Add();
+                                col.Field("CustomerPO").HeaderText("Customer PO").Width(100).Add();
                                 col.Field("AssignedTech").HeaderText("Assigned Tech").Width(100).Add();
                                 col.Field("TechPhone").HeaderText("Tech Phone").Width(100).Add();
                                 col.Field("TechBranch").HeaderText("Tech Branch").Width(100).Add();
@@ -1394,5 +1459,5 @@
 
 <div id="woPdfDiv" @*style="display:none;"*@>
     <canvas id="WoCanvasElement" style="border:2px solid black;display:none" width="200" height="200"></canvas>
-    
+
 </div>

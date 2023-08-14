@@ -113,7 +113,7 @@ namespace FarmerBrothers.Controllers
                             TECH_HIERARCHY tech where " + subsql + " and searchType='SP' GROUP BY tech.Dealerid, tech.CompanyName+' - '+ tech.city";
 
                 strQuery1 = @"SELECT tech.Dealerid as Tech_Id, tech.CompanyName+' - '+ tech.city as Tech_Name from 
-                            TECH_HIERARCHY tech where searchType in ('SP','NA') GROUP BY tech.Dealerid, tech.CompanyName+' - '+ tech.city";
+                            TECH_HIERARCHY tech where searchType in ('SP','NA') and FamilyAff != 'SPT' GROUP BY tech.Dealerid, tech.CompanyName+' - '+ tech.city";
 
                 CalendarTechnicianModel objTechnicianModel = new CalendarTechnicianModel();
                 objTechnicianModel.TimeZone = TimeZone;
@@ -228,6 +228,11 @@ namespace FarmerBrothers.Controllers
             if (param.action == "insert" || (param.action == "batch" && param.added != null))
             {
                 var value = param.action == "insert" ? param.value : param.added[0];
+
+                int tchid = Convert.ToInt32(value.TechnicianId);
+                string tchZipCode = FarmerBrothersEntitites.TECH_HIERARCHY.Where(tid => tid.DealerId == tchid).Select(tid => tid.PostalCode).FirstOrDefault();
+                DateTime currTime = Utility.GetCurrentTime(tchZipCode, FarmerBrothersEntitites);
+
                 if (param.action == "insert")
                 {
                     if (!value.AllDay)
@@ -240,6 +245,10 @@ namespace FarmerBrothers.Controllers
                             ScheduleDate = value.StartTime.Date,
                             ScheduleEndDate = value.EndTime.Date,
                             EntryUserName = UserName,
+                            ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            ModifiedUserName = UserName,
+                            ModifiedDate = currTime,
+                            ScheduleCreatedDate = currTime,
                         };
                         FarmerBrothersEntitites.TechOnCalls.Add(appoint);
                         FarmerBrothersEntitites.SaveChanges();
@@ -257,6 +266,10 @@ namespace FarmerBrothers.Controllers
                                 ScheduleDate = value.StartTime.AddDays(i).Date.AddHours(startTime),
                                 ScheduleEndDate = value.StartTime.AddDays(i + 1).Date.AddHours(endTime),
                                 EntryUserName = UserName,
+                                ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                                ModifiedUserName = UserName,
+                                ModifiedDate = currTime,
+                                ScheduleCreatedDate = currTime,
 
                             };
                             FarmerBrothersEntitites.TechOnCalls.Add(appoint);
@@ -298,6 +311,10 @@ namespace FarmerBrothers.Controllers
                                         ScheduleDate = item.StartTime.AddDays(i).AddHours(ClientHour - (ServerHour)).AddMinutes(ClientMinutes - ServerMinutes),
                                         ScheduleEndDate = dt1.Date == dt2.Date ? item.StartTime.AddHours(ClientHour - (ServerHour)).AddMinutes(ClientMinutes - ServerMinutes).AddDays(i).Date.AddHours(ah).AddMinutes(am) : item.StartTime.AddHours(ClientHour - (ServerHour)).AddMinutes(ClientMinutes - ServerMinutes).AddDays(i + 1).Date.AddHours(ah).AddMinutes(am),
                                         EntryUserName = UserName,
+                                        ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                                        ModifiedUserName = UserName,
+                                        ModifiedDate = currentTime,
+                                        ScheduleCreatedDate = currentTime,
                                     };
                                     FarmerBrothersEntitites.TechOnCalls.Add(appoint);
                                     FarmerBrothersEntitites.SaveChanges();
@@ -335,7 +352,7 @@ namespace FarmerBrothers.Controllers
                                             ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
                                             ModifiedUserName = UserName,
                                             ModifiedDate = currentTime,
-                                            ScheduleCreatedDate = currentTime
+                                            ScheduleCreatedDate = currentTime,
                                         };
                                         FarmerBrothersEntitites.TechOnCalls.Add(appoint);
                                     }
@@ -353,7 +370,7 @@ namespace FarmerBrothers.Controllers
                                             ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
                                             ModifiedUserName = UserName,
                                             ModifiedDate = currentTime,
-                                            ScheduleCreatedDate = currentTime
+                                            ScheduleCreatedDate = currentTime,
                                         };
                                         FarmerBrothersEntitites.TechOnCalls.Add(appoint);
                                     }
@@ -454,6 +471,25 @@ namespace FarmerBrothers.Controllers
                          }
                  ).ToList().Where(c => Resourcelist.Split(',').ToList().Contains(c.TechnicianId.ToString())).ToList();
 
+
+            var ScheduledEventsQuery = (from c in FarmerBrothersEntitites.WorkOrders
+                                        join v in FarmerBrothersEntitites.WorkorderSchedules on c.WorkorderID equals v.WorkorderID
+                                        where(c.WorkorderCallstatus == "Scheduled" && v.AssignedStatus == "Scheduled")
+                                        select new
+                                        {
+                                            CallTypeId = c.WorkorderCalltypeid,
+                                            Id = c.WorkorderID,
+                                            ContactName = c.CustomerName,
+                                            ContactId = c.CustomerID,
+                                            ErfId = c.WorkorderErfid,
+                                            TechnicianId = v.Techid,
+                                            StartTime = (v.EventScheduleDate) ?? DateTime.Now,
+                                            EndTime = (v.EventScheduleDate) ?? DateTime.Now
+                                        }
+              ).ToList().Where(c => Resourcelist.Split(',').ToList().Contains(c.TechnicianId.ToString())).ToList();
+
+
+
             double onTechStartTime = Convert.ToDouble(ConfigurationManager.AppSettings["OnTechStartTime"]);
             double onTechEndTime = Convert.ToDouble(ConfigurationManager.AppSettings["OnTechEndTime"]);
 
@@ -462,9 +498,25 @@ namespace FarmerBrothers.Controllers
                 Appoint.Add(new ScheduleData
                 {
                     Subject = new List<int>() { 1100, 1110, 1120, 1130 }.Contains(item.CallTypeId ?? 0) ? "PWO " + item.Id : (new List<int>() { 1300, 1310 }.Contains(item.CallTypeId ?? 0)) ? "IWO " + item.Id : (new List<int>() { 1400, 1410 }.Contains(item.CallTypeId ?? 0)) ? "RWO " + item.Id : "",
-                    StartTime = new DateTime(item.StartTime.Year, item.StartTime.Month, item.StartTime.Day, 0, 0, 0).AddHours(onTechStartTime),
-                    EndTime = new DateTime(item.StartTime.Year, item.StartTime.Month, item.StartTime.Day, 0, 0, 0).AddHours(onTechEndTime),
-                    AllDay = true,
+                    StartTime = item.StartTime,//new DateTime(item.StartTime.Year, item.StartTime.Month, item.StartTime.Day, 0, 0, 0).AddHours(onTechStartTime),
+                    EndTime = item.StartTime,//new DateTime(item.StartTime.Year, item.StartTime.Month, item.StartTime.Day, 0, 0, 0).AddHours(onTechEndTime),
+                    //AllDay = true,
+                    StartTimeZone = "UTC -05:00",
+                    EndTimeZone = "UTC -05:00",
+                    TechnicianId = item.TechnicianId.ToString(),
+                    Id = item.Id
+
+                });
+            }
+
+            foreach (var item in ScheduledEventsQuery)
+            {
+                Appoint.Add(new ScheduleData
+                {
+                    Subject =  "Scheduled EventId: " + item.Id + ", ERFId: " + item.ErfId + ", \r\n ContactId: " + item.Id + ", AccountName: " + item.ContactName,
+                    StartTime = item.StartTime,//new DateTime(item.StartTime.Year, item.StartTime.Month, item.StartTime.Day, 0, 0, 0).AddHours(onTechStartTime),
+                    EndTime = item.EndTime,//new DateTime(item.StartTime.Year, item.StartTime.Month, item.StartTime.Day, 0, 0, 0).AddHours(onTechEndTime),
+                    //AllDay = true,
                     StartTimeZone = "UTC -05:00",
                     EndTimeZone = "UTC -05:00",
                     TechnicianId = item.TechnicianId.ToString(),
@@ -524,6 +576,10 @@ namespace FarmerBrothers.Controllers
                     counter.IndexValue += totaldays + 1;
                     //FarmerBrothersEntitites.Entry(counter).State = System.Data.Entity.EntityState.Modified;
 
+                    int tchid = Convert.ToInt32(value.TechnicianId);
+                    string tchZipCode = FarmerBrothersEntitites.TECH_HIERARCHY.Where(tid => tid.DealerId == tchid).Select(tid => tid.PostalCode).FirstOrDefault();
+                    DateTime currTime = Utility.GetCurrentTime(tchZipCode, FarmerBrothersEntitites);
+
                     for (int i = 0; i <= totaldays; i++)
                     {
                         TechSchedule appoint = new TechSchedule()
@@ -535,6 +591,10 @@ namespace FarmerBrothers.Controllers
                             ScheduleDate = value.StartTime.AddDays(i),
                             WorkOrderID = null,
                             Availability = "UnAvailable",
+                            ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            ModifiedUserName = UserName,
+                            ModifiedDate = currTime,
+                            ScheduleCreatedDate = currTime
                         };
                         FarmerBrothersEntitites.TechSchedules.Add(appoint);
                         FarmerBrothersEntitites.SaveChanges();
@@ -655,7 +715,7 @@ namespace FarmerBrothers.Controllers
                     StartTimeZone = "UTC -05:00",
                     EndTimeZone = "UTC -05:00",
                     TechnicianId = item.TechnicianId.ToString(),
-                    Id = item.Id
+                    Id = item.Id,
 
                 });
 

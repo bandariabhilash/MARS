@@ -25,6 +25,8 @@ namespace FarmerBrothers.CacheManager
             public const string WOTYPE = "WOTYPE";
             public const string CITIES = "CITIES";
 
+            public const string BILLING_CLOSER_SKU = "BILLING_CLOSER_SKU";
+
         }
         public const string TYPE_PREFIX = "TYPE";
 

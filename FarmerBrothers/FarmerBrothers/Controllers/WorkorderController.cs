@@ -1,6 +1,7 @@
 ﻿using FarmerBrothers.Data;
 using FarmerBrothers.Models;
 using FarmerBrothers.Utilities;
+using FarmerBrothersMailResponse.Controllers;
 using LinqKit;
 using Syncfusion.EJ.Export;
 using Syncfusion.HtmlConverter;
@@ -56,12 +57,12 @@ namespace FarmerBrothers.Controllers
         #region load workorder view
 
         [HttpGet]
-        public ActionResult WorkorderManagement(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false)
+        public ActionResult WorkorderManagement(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false, bool isCustomerDashboard = false)
         {
             WorkorderManagementModel workOrderManagementModel = null;
             try
             {
-                workOrderManagementModel = ConstructWorkorderManagementModel(customerId, workOrderId, isNewPartsOrder, showAllTechs);
+                workOrderManagementModel = ConstructWorkorderManagementModel(customerId, workOrderId, isNewPartsOrder, showAllTechs, isCustomerDashboard);
 
             }
             catch (Exception ex)
@@ -176,6 +177,10 @@ namespace FarmerBrothers.Controllers
                 objDisplayPdf.TechnicianSign = workOrderDetail.TechnicianSignatureDetails;
                 objDisplayPdf.CustomerSignatureBy = workOrderDetail.CustomerSignatureBy;
             }
+
+            Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == objDisplayPdf.objWorkOrder.CustomerID).FirstOrDefault();
+
+            objDisplayPdf.Route = contact == null ? "" : contact.Route;
 
             objDisplayPdf.objWorkorderDetails = FarmerBrothersEntitites.WorkorderDetails.Where(w => w.WorkorderID == WorkorderID).FirstOrDefault();
             //FarmerBrothersEntitites.WorkorderDetails.Where(wr => wr.WorkorderID == workOrderId).Select(w => w.CustomerSignatureDetails).FirstOrDefault();
@@ -625,12 +630,65 @@ namespace FarmerBrothers.Controllers
             return isCustSpec;
         }
 
-        public WorkorderManagementModel ConstructWorkorderManagementModel(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false)
+        [HttpGet]
+        public JsonResult CloserSKU(string searchParams, FarmerBrothersEntities FarmerBrothersEntitites)
+        {
+            List<VendorDataModel> CloserSkusList = new List<VendorDataModel>();
+
+            try
+            {
+                IQueryable<string> CloserPartOrSKU = FarmerBrothersEntitites.FBClosureParts.Where(s => s.SkuActive == true).Select(s => s.ItemNo).Distinct();//.Take(5000);
+
+                foreach (string vendor in CloserPartOrSKU)
+                {
+                    CloserSkusList.Add(new VendorDataModel(vendor));
+                }
+                CloserSkusList.OrderBy(v => v.VendorDescription).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to get the closer SKU ", ex);
+            }
+           
+            ;
+            JsonResult jsonResult = new JsonResult();
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = CloserSkusList };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+
+        public JsonResult GetCloserSKUs(string SearchString)
+        {
+            List<VendorDataModel> CloserSkusList = new List<VendorDataModel>();
+            try
+            {
+                IQueryable<string> CloserPartOrSKU = FarmerBrothersEntitites.FBClosureParts.Where(s => s.SkuActive == true && s.ItemNo.Contains(SearchString)).Select(s => s.ItemNo).Distinct();
+                foreach (string vendor in CloserPartOrSKU)
+                {
+                    CloserSkusList.Add(new VendorDataModel(vendor));
+                }
+                CloserSkusList.OrderBy(v => v.VendorDescription).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Unable to get the closer SKU ", ex);
+            }
+
+            JsonResult jsonResult = new JsonResult();
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = CloserSkusList };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        public WorkorderManagementModel ConstructWorkorderManagementModel(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false, bool isCustomerDashboard = false)
         {
             #region construct wo
             WorkorderManagementModel workOrderManagementModel = new WorkorderManagementModel();
             try
             {
+                workOrderManagementModel.Documents = new DocumentModel();
+
                 //billable changes 
                 workOrderManagementModel.SKUModel = new FbWorkorderBillableSKUModel();
                 IQueryable<string> skus = FarmerBrothersEntitites.FbBillableSKUs.Select(s => s.SKU).Distinct();
@@ -640,7 +698,7 @@ namespace FarmerBrothers.Controllers
                     workOrderManagementModel.SKUList.Add(new VendorModelModel(sku));
                 }
 
-
+                workOrderManagementModel.isCustomerDashboard = isCustomerDashboard;
                 workOrderManagementModel.ShowAllTech = showAllTechs;
                 workOrderManagementModel.PriorityList = FarmerBrothersEntitites.AllFBStatus.Where(p => p.StatusFor == "Priority" && p.Active == 1).OrderBy(p => p.StatusSequence).ToList();
 
@@ -688,8 +746,8 @@ namespace FarmerBrothers.Controllers
 
                 workOrderManagementModel.BrandNames = FarmerBrothersEntitites.BrandNames.Where(b => b.Active == 1).OrderBy(n => n.BrandName1).ToList();
                 workOrderManagementModel.SalesNotificationReasonCodes = FarmerBrothersEntitites.AllFBStatus.Where(p => p.StatusFor == "Notify Sales" && p.Active == 1).OrderBy(p => p.StatusSequence).ToList();
-                workOrderManagementModel.CallTypes = FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.Active == 1).OrderBy(wt => wt.Sequence).ToList();
-                workOrderManagementModel.ClosureCallTypes = FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.Active == 1).OrderBy(wt => wt.Sequence).ToList();
+                workOrderManagementModel.CallTypes = Utility.GetCallTypeList(FarmerBrothersEntitites);//FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.Active == 1).OrderBy(wt => wt.Sequence).ToList();
+                workOrderManagementModel.ClosureCallTypes = Utility.GetCallTypeList(FarmerBrothersEntitites);//FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.Active == 1).OrderBy(wt => wt.Sequence).ToList();
                 workOrderManagementModel.EquipmentTypes = FarmerBrothersEntitites.EquipTypes.OrderBy(e => e.Sequence).ToList();
                 workOrderManagementModel.NonSerializedList = new List<WorkOrderManagementNonSerializedModel>();
                 workOrderManagementModel.WorkOrderEquipments = new List<WorkOrderManagementEquipmentModel>();
@@ -720,7 +778,7 @@ namespace FarmerBrothers.Controllers
                     workOrderManagementModel.Closure.HardnessRatingList.Add(rating);
                 }
                 workOrderManagementModel.Closure.HardnessRating = FarmerBrothersEntitites.WorkorderDetails.Where(wr => wr.WorkorderID == workOrderId).Select(w => w.HardnessRating).FirstOrDefault();
-
+                workOrderManagementModel.Closure.TDS = Convert.ToDecimal(FarmerBrothersEntitites.WorkorderDetails.Where(wr => wr.WorkorderID == workOrderId).Select(w => w.TotalDissolvedSolids).FirstOrDefault());
 
                 workOrderManagementModel.BranchIds = new List<int>();
                 workOrderManagementModel.AssistTechIds = new List<int>();
@@ -751,6 +809,15 @@ namespace FarmerBrothers.Controllers
                 {
                     workOrderManagementModel.TaggedCategories.Add(new CategoryModel(category));
                 }
+                                
+                workOrderManagementModel.ShippigPriorities = FarmerBrothersEntitites.AllFBStatus.Where(p => p.StatusFor == "ShippingPriority" && p.Active == 1).OrderBy(p => p.StatusSequence).ToList();
+                workOrderManagementModel.ShippigPriorities.Insert(0, new AllFBStatu()
+                {
+                    FBStatusID = 0,
+                    FBStatus = "",
+                    Active = 1,
+                    StatusSequence = 0
+                });
 
                 workOrderManagementModel.Symptoms = FarmerBrothersEntitites.Symptoms.Where(s => s.Active == 1).OrderBy(s => s.Description).ToList();
                 workOrderManagementModel.Symptoms.Insert(0, new Symptom()
@@ -832,6 +899,72 @@ namespace FarmerBrothers.Controllers
                 workOrderManagementModel.NonTaggedModels = WorkOrderLookup.PartOrderSKU(FarmerBrothersEntitites);                
 
                 workOrderManagementModel.IsOpen = false;
+                workOrderManagementModel.BillingTotal = 0;
+
+                List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+                List<CategoryModel> billingItms = new List<CategoryModel>();
+                foreach(BillingItem item in blngItmsList)
+                {                    
+                    billingItms.Add(new CategoryModel(item.BillingName));
+                }
+                workOrderManagementModel.BillingItems = billingItms;
+
+                List<BillingModel> bmList = new List<BillingModel>();
+                //BillingModel bmItem = new BillingModel();
+                //bmItem.BillingType = "TRAVEL TIME";
+                //bmItem.BillingCode = "913654";
+                //bmItem.Quantity = 2;
+                //bmItem.Cost = Convert.ToDecimal(70.45);
+
+                //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                //bmItem.Total = tot;
+
+                //workOrderManagementModel.BillingTotal += tot;
+                //bmList.Add(bmItem);
+
+                if (workOrderId.HasValue)
+                {
+                    List<WorkorderBillingDetail> wbdList = FarmerBrothersEntitites.WorkorderBillingDetails.Where(w => w.WorkorderId == workOrderId).ToList();
+                    foreach (WorkorderBillingDetail bitem in wbdList)
+                    {
+                        BillingItem blngItm = FarmerBrothersEntitites.BillingItems.Where(b => b.BillingCode == bitem.BillingCode).FirstOrDefault();
+
+                        if (blngItm != null)
+                        {
+                            BillingModel bmItem = new BillingModel();
+                            bmItem.BillingType = blngItm.BillingName;
+                            bmItem.BillingCode = bitem.BillingCode;
+                            bmItem.Quantity = Convert.ToInt32(bitem.Quantity);
+                            bmItem.Cost = Convert.ToDecimal(blngItm.UnitPrice);
+                            decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                            bmItem.Total = tot;
+
+                            workOrderManagementModel.BillingTotal += tot;
+                            bmList.Add(bmItem);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (BillingItem item in blngItmsList)
+                    {
+                        if (item.BillingCode == "091.4425")
+                        {
+                            BillingModel bmItem = new BillingModel();
+                            bmItem.BillingType = item.BillingName;
+                            bmItem.BillingCode = item.BillingCode;
+                            bmItem.Quantity = 1;
+                            bmItem.Duration = "1:00 Hrs";
+                            bmItem.Cost = Convert.ToDecimal(item.UnitPrice);
+                            decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+                            bmItem.Total = tot;
+
+                            workOrderManagementModel.BillingTotal += tot;
+                            bmList.Add(bmItem);
+                        }
+                    }
+                }
+                workOrderManagementModel.BillingDetails = bmList;
 
                 Customer serviceCustomer = null;
                 bool workEqumentAdded = false;
@@ -857,6 +990,7 @@ namespace FarmerBrothers.Controllers
                     serviceCustomer = FarmerBrothersEntitites.Contacts.Where(x => x.ContactID == (int)workOrderManagementModel.WorkOrder.CustomerID).FirstOrDefault();
                     if (serviceCustomer != null)
                     {
+                        workOrderManagementModel.Customer.BillingCode = serviceCustomer.BillingCode;
                         if (!string.IsNullOrEmpty(serviceCustomer.BillingCode))
                         {
                             workOrderManagementModel.Customer.IsBillable = CustomerModel.IsBillableService(serviceCustomer.BillingCode, workOrderManagementModel.Customer.TotalCallsCount);
@@ -1424,6 +1558,7 @@ namespace FarmerBrothers.Controllers
                             workOrderManagementModel.Customer = new CustomerModel(serviceCustomer, FarmerBrothersEntitites);
                             workOrderManagementModel.Customer = Utility.PopulateCustomerWithZonePriorityDetails(FarmerBrothersEntitites, workOrderManagementModel.Customer);
                             workOrderManagementModel.Customer.TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrderManagementModel.Customer.CustomerId);
+                            workOrderManagementModel.Customer.BillingCode = serviceCustomer.BillingCode;
                             if (!string.IsNullOrEmpty(serviceCustomer.BillingCode))
                             {
                                 workOrderManagementModel.Customer.IsBillable = CustomerModel.IsBillableService(serviceCustomer.BillingCode, workOrderManagementModel.Customer.TotalCallsCount);
@@ -1476,7 +1611,37 @@ namespace FarmerBrothers.Controllers
                                 workOrderManagementModel.Solutions.Remove(item);
                             }
                         }
+
+                        if(techHView != null)
+                        { 
+                            //CalculateServiceQuote(workOrderManagementModel.WorkOrder.CustomerZipCode, techHView.PostalCode);
+
+                            dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, workOrderManagementModel.WorkOrder.CustomerZipCode);
+                            if (travelDetails != null)
+                            {
+                                var element = travelDetails.rows[0].elements[0];
+                                decimal distance = element == null ? 0 : (element.distance == null ? 0 : element.distance.value * (decimal)0.000621371192);
+                                distance = Math.Round(distance, 0);
+                                decimal travelTime = element == null ? Convert.ToDecimal(1800.00 / 3600.00) : (element.duration == null ? Convert.ToDecimal(1800.00 / 3600.00) : element.duration.value / 3600.00);
+                                decimal duration = Math.Round(travelTime, 2);
+
+                                decimal TravelHour = Convert.ToDecimal(Math.Truncate(duration));
+                                decimal TravelMinutes = (Convert.ToDecimal(travelTime) - (TravelHour)) * Convert.ToDecimal(60.00);
+
+                                workOrderManagementModel.TravelDistance = distance + " Miles";
+                                workOrderManagementModel.TravelTime = "Hr " + Math.Abs(TravelHour) + ":" + Math.Round(TravelMinutes) + " Minutes";
+
+                                decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
+                                workOrderManagementModel.Labor = LaborCost;
+
+                                decimal total = (duration * LaborCost) + LaborCost;
+                                //workOrderManagementModel.TotalServiceQuote = duration + " * 85 " + " + " + " $85 Labor Cost = " + string.Format("{0:c2}", total);
+                                workOrderManagementModel.TotalServiceQuote = string.Format("{0:c2}", total);
+                            }
+                        }
                     }
+
+                    workOrderManagementModel.Documents.WorkorderDocuments = GetWorkorderDocuments(workOrderManagementModel.WorkOrder.WorkorderID);
                 }
 
                 if (workOrderManagementModel.WorkOrder != null)
@@ -1547,8 +1712,9 @@ namespace FarmerBrothers.Controllers
                 }
 
                 workOrderManagementModel.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
-                int? custId = Convert.ToInt32(workOrderManagementModel.Customer.CustomerId);
-                var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+                int custId = Convert.ToInt32(workOrderManagementModel.Customer.CustomerId);
+                int parentId = string.IsNullOrEmpty(workOrderManagementModel.Customer.ParentNumber) ? 0 : Convert.ToInt32(workOrderManagementModel.Customer.ParentNumber);
+                var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);//FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
                 foreach (var dbCustNotes in custNotes)
                 {
                     workOrderManagementModel.Notes.CustomerNotesResults.Add(new CustomerNotesModel(dbCustNotes));
@@ -1594,6 +1760,28 @@ namespace FarmerBrothers.Controllers
                 {
                     workOrderManagementModel.Notes.ErfID = workOrderManagementModel.Erf.ErfID;
                 }
+
+                //if (workOrderManagementModel.Customer.ServiceTier == "5" && (!string.IsNullOrEmpty(workOrderManagementModel.Customer.CustomerType) && workOrderManagementModel.Customer.CustomerType.ToLower() != "ce")
+                //           && (string.IsNullOrEmpty(workOrderManagementModel.Customer.ParentNumber) || workOrderManagementModel.Customer.ParentNumber == "0"))
+
+                //bool isBilling = Utility.IsBillableCriteria(Convert.ToInt32(workOrderManagementModel.Customer.CustomerId), workOrderManagementModel.WorkOrder.WorkorderID, FarmerBrothersEntitites);
+
+                if (!string.IsNullOrEmpty(workOrderManagementModel.Customer.BillingCode) && workOrderManagementModel.Customer.BillingCode.ToLower() == "s08")
+                //if(isBilling)
+                {                    
+                    workOrderManagementModel.IsCCProcessComplete = workOrderManagementModel.WorkOrder.FinalTransactionId == null ? false : true;
+                }
+                
+                workOrderManagementModel.Documents.WorkOrderID = workOrderManagementModel.WorkOrder.WorkorderID;
+                workOrderManagementModel.Documents.UserName = UserName;
+                if (workOrderId.HasValue)
+                {
+                    workOrderManagementModel.Documents.isNewEvent = false;
+                }
+                else
+                {
+                    workOrderManagementModel.Documents.isNewEvent = true;
+                }
             }
             catch (Exception ex)
             {
@@ -1603,6 +1791,11 @@ namespace FarmerBrothers.Controllers
 
             #endregion
             return workOrderManagementModel;
+        }
+
+        private void CalculateServiceQuote(string CustomerZip, string TechZip)
+        {
+            
         }
 
         [HttpGet]
@@ -2041,12 +2234,11 @@ namespace FarmerBrothers.Controllers
                                 ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
                                 (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
 
-                    string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-                    if (contact.PricingParentID == IsNonFBCustomerParentId && UserPrivilege["NonFBCustomer"] != "Full")
+                    NonFBCustomer nonFBCustomer = FarmerBrothersEntitites.NonFBCustomers.Where(n => n.NonFBCustomerId == contact.PricingParentID).FirstOrDefault();
+                    if (nonFBCustomer != null && UserPrivilege["NonFBCustomer"] != "Full")
                     {
                         continue;
                     }
-                    
                 }
 
                 searchResults.Add(new WorkorderSearchResultModel(workOrder, FarmerBrothersEntitites));
@@ -2071,26 +2263,15 @@ namespace FarmerBrothers.Controllers
             #region Generate WO Search Query
             woSearchSelectQuery.Append(@"select w.WorkorderID ,wt.description, w.WorkorderCallstatus, st.fbstatus, c.ServiceLevelCode,w.WorkorderEntryDate,w.AppointmentDate,
                                  w.CustomerName, w.CustomerCity, w.CustomerState, w.CustomerZipCode ,w.CustomerID, ws.TechName,ws.TechPhone,ws.ServiceCenterName,ws.AssignedStatus,
-                                 ws.ScheduleDate,ws.ModifiedScheduleDate,ws.ServiceCenterID ");
-
-            //if (UserPrivilege["NonFBCustomer"] != "Full")
-            //{
-            //    string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-
-            //    woSearchJoinQuery.Append(@" from workorder w WITH (NOLOCK)
-            //                            inner join dbo.Contact c WITH (NOLOCK) ON w.CustomerID = c.ContactID and c.PricingParentID != " + IsNonFBCustomerParentId + @"
-            //                            inner join WorkorderType wt WITH (NOLOCK) on w.WorkorderCalltypeid = wt.calltypeid
-            //                            inner join AllFBStatus st WITH (NOLOCK) on  w.PriorityCode =st.fbstatusid
-            //                            left join WorkorderSchedule ws WITH (NOLOCK) on w.WorkorderID = ws.WorkorderID and  (ws.AssignedStatus = 'Accepted' or ws.AssignedStatus = 'Sent') ");
-            //}
-            //else
-            //{
+                                 ws.ScheduleDate,ws.ModifiedScheduleDate,ws.ServiceCenterID,w.CustomerPO ");
+            
                 woSearchJoinQuery.Append(@" from workorder w WITH (NOLOCK)
                                         inner join dbo.Contact c WITH (NOLOCK) ON w.CustomerID = c.ContactID
+                                        inner join WorkorderDetails wd WITH (NOLOCK) on w.Workorderid = wd.Workorderid
                                         inner join WorkorderType wt WITH (NOLOCK) on w.WorkorderCalltypeid = wt.calltypeid
                                         inner join AllFBStatus st WITH (NOLOCK) on  w.PriorityCode =st.fbstatusid
-                                        left join WorkorderSchedule ws WITH (NOLOCK) on w.WorkorderID = ws.WorkorderID and  (ws.AssignedStatus = 'Accepted' or ws.AssignedStatus = 'Sent') ");
-            //}
+                                        left join WorkorderSchedule ws WITH (NOLOCK) on w.WorkorderID = ws.WorkorderID and  (ws.AssignedStatus = 'Accepted' or ws.AssignedStatus = 'Sent' or ws.AssignedStatus = 'Scheduled') ");
+         
 
             woSearchWhereQuery.Append(@" where ");
 
@@ -2426,6 +2607,18 @@ namespace FarmerBrothers.Controllers
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(workorderSearchModel.ParentAccount))
+            {
+                if (woSearchWhereQuery.ToString() == " where ")
+                {
+                    woSearchWhereQuery.Append(@" c.PricingParentId = " + workorderSearchModel.ParentAccount);
+                }
+                else
+                {
+                    woSearchWhereQuery.Append(@" and c.PricingParentId = " + workorderSearchModel.ParentAccount);
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(workorderSearchModel.TechId.ToString()))
             {
                 if (woSearchWhereQuery.ToString() == " where ")
@@ -2488,26 +2681,94 @@ namespace FarmerBrothers.Controllers
                 }
 
             }
-            if (!hasOnlyWorkOrderId)
-            {
-                if (workorderSearchModel.Status == null || workorderSearchModel.Status.Count <= 0 ||
-                    (workorderSearchModel.Status != null && workorderSearchModel.Status.Count > 0 &&
-                    !(workorderSearchModel.Status.Exists(x => string.Equals(x, "Closed", StringComparison.OrdinalIgnoreCase)))))
-                {
-                    if (woSearchWhereQuery.ToString() == " where ")
-                    {
+            //if (!hasOnlyWorkOrderId)
+            //{
+            //    if (workorderSearchModel.Status == null || workorderSearchModel.Status.Count <= 0 ||
+            //        (workorderSearchModel.Status != null && workorderSearchModel.Status.Count > 0 &&
+            //        !(workorderSearchModel.Status.Exists(x => string.Equals(x, "Closed", StringComparison.OrdinalIgnoreCase)))))
+            //    {
+            //        if (woSearchWhereQuery.ToString() == " where ")
+            //        {
 
-                        woSearchWhereQuery.Append(@" w.WorkorderCallstatus != 'Closed'");
-                    }
-                    else
-                    {
-                        woSearchWhereQuery.Append(@" and w.WorkorderCallstatus != 'Closed'");
-                    }
+            //            woSearchWhereQuery.Append(@" w.WorkorderCallstatus != 'Closed'");
+            //        }
+            //        else
+            //        {
+            //            woSearchWhereQuery.Append(@" and w.WorkorderCallstatus != 'Closed'");
+            //        }
+            //    }
+
+            //}
+
+            if (workorderSearchModel.CustomerPO != null && !string.IsNullOrWhiteSpace(workorderSearchModel.CustomerPO.ToString()))
+            {
+                if (woSearchWhereQuery.ToString() == " where ")
+                {
+                    woSearchWhereQuery.Append(@" w.CustomerPO like '%" + workorderSearchModel.CustomerPO + "%'");
+                }
+                else
+                {
+                    woSearchWhereQuery.Append(@" and w.CustomerPO like '%" + workorderSearchModel.CustomerPO + "%'");
                 }
 
             }
 
+            if (workorderSearchModel.ClosedDate.HasValue)
+            {
+                DateTime ClosFrmDt = Convert.ToDateTime(workorderSearchModel.ClosedDate);
+                DateTime ClosToDt = Convert.ToDateTime(workorderSearchModel.ClosedDate).AddDays(1);
 
+                if (woSearchWhereQuery.ToString() == " where ")
+                {
+                    woSearchWhereQuery.Append(@" w.workorderClosedate >= '" + ClosFrmDt + "' and w.workorderClosedate < '" + ClosToDt + "'");
+                }
+                else
+                {
+                    woSearchWhereQuery.Append(@" and w.workorderClosedate >= '" + ClosFrmDt + "' and w.workorderClosedate < '" + ClosToDt + "'");
+                }
+            }
+            if (workorderSearchModel.StartDate.HasValue)
+            {
+                DateTime StrtFrmDt = Convert.ToDateTime(workorderSearchModel.StartDate);
+                DateTime StrtToDt = Convert.ToDateTime(workorderSearchModel.StartDate).AddDays(1);
+
+                if (woSearchWhereQuery.ToString() == " where ")
+                {
+                    woSearchWhereQuery.Append(@" wd.StartDateTime >= '" + StrtFrmDt + "' and wd.StartDateTime < '" + StrtToDt + "'");
+                }
+                else
+                {
+                    woSearchWhereQuery.Append(@" and wd.StartDateTime >= '" + StrtFrmDt + "' and wd.StartDateTime < '" + StrtToDt + "'");
+                }
+            }
+            if (workorderSearchModel.ArrivalDate.HasValue)
+            {
+                DateTime ArrivalFrmDt = Convert.ToDateTime(workorderSearchModel.ArrivalDate);
+                DateTime ArrivalToDt = Convert.ToDateTime(workorderSearchModel.ArrivalDate).AddDays(1);
+
+                if (woSearchWhereQuery.ToString() == " where ")
+                {
+                    woSearchWhereQuery.Append(@" wd.ArrivalDateTime >= '" + ArrivalFrmDt + "' and wd.ArrivalDateTime < '" + ArrivalToDt + "'");
+                }
+                else
+                {
+                    woSearchWhereQuery.Append(@" and wd.ArrivalDateTime >= '" + ArrivalFrmDt + "' and wd.ArrivalDateTime < '" + ArrivalToDt + "'");
+                }
+            }
+            if (workorderSearchModel.CompletedDate.HasValue)
+            {
+                DateTime CompFrmDt = Convert.ToDateTime(workorderSearchModel.CompletedDate);
+                DateTime CompToDt = Convert.ToDateTime(workorderSearchModel.CompletedDate).AddDays(1);
+
+                if (woSearchWhereQuery.ToString() == " where ")
+                {
+                    woSearchWhereQuery.Append(@" wd.CompletionDateTime >= '" + CompFrmDt + "' and wd.CompletionDateTime < '" + CompToDt + "'");
+                }
+                else
+                {
+                    woSearchWhereQuery.Append(@" and wd.CompletionDateTime >= '" + CompFrmDt + "' and wd.CompletionDateTime < '" + CompToDt + "'");
+                }
+            }
             #endregion
 
             string finalWOSearchQuery = @" select dbo.getWOElapsedTime(woresults.WorkorderID) ElapsedTime,* from ( " + woSearchSelectQuery.ToString() + " " + woSearchJoinQuery.ToString() + " " + woSearchWhereQuery.ToString() + " ) woresults order by WorkorderEntryDate desc";
@@ -2534,8 +2795,8 @@ namespace FarmerBrothers.Controllers
                         Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == customerID).FirstOrDefault();
                         if (contact != null)
                         {
-                            string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-                            if (contact.PricingParentID == IsNonFBCustomerParentId && UserPrivilege["NonFBCustomer"] != "Full")
+                            NonFBCustomer nonFBCustomer = FarmerBrothersEntitites.NonFBCustomers.Where(n => n.NonFBCustomerId == contact.PricingParentID).FirstOrDefault();
+                            if(nonFBCustomer != null && UserPrivilege["NonFBCustomer"] != "Full")
                             {
                                 continue;
                             }
@@ -3216,6 +3477,22 @@ namespace FarmerBrothers.Controllers
             return jsonResult;
         }
 
+        public JsonResult GetFBClosureSku(string manufacturer, string Desc)
+        {
+            FBClosurePart skus = FarmerBrothersEntitites.FBClosureParts.Where(s => s.Supplier == manufacturer && s.Description == Desc).FirstOrDefault();
+            string skuValue = "";
+
+            if (skus != null)
+            {
+                skuValue = skus.ItemNo;
+            }            
+
+            JsonResult jsonResult = new JsonResult();
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = skuValue };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
         [HttpPost]
         [MultipleButton(Name = "action", Argument = "WorkorderSave")]
         [ActionName("SaveWorkOrder")]
@@ -3372,6 +3649,17 @@ namespace FarmerBrothers.Controllers
                             }
                         }
 
+                        //if (workorderManagement.Customer.ServiceTier == "5" && (!string.IsNullOrEmpty(workorderManagement.Customer.CustomerType) && workorderManagement.Customer.CustomerType.ToLower() != "ce")
+                        //     && (string.IsNullOrEmpty(workorderManagement.Customer.ParentNumber) || workorderManagement.Customer.ParentNumber == "0"))
+                        if (workorderManagement.WorkOrder.WorkorderID == 0 && !string.IsNullOrEmpty(workorderManagement.Customer.BillingCode) && workorderManagement.Customer.BillingCode.ToLower() == "s08")
+                        {
+                            if (string.IsNullOrEmpty(workorderManagement.PaymentTransactionId))
+                            {
+                                message = @"|Credit Card Processing Incomplete";
+                                isValid = false;
+                            }
+                        }
+
                         if (workorderManagement.NewNotes.Count <= 0)
                         {
                             message = @"|Notes required to save Work Order!";
@@ -3404,6 +3692,13 @@ namespace FarmerBrothers.Controllers
                                 isValid = false;
                             }
                         }
+                        
+                        //if(workorderManagement.Customer.IsNonFBCustomer && (string.IsNullOrEmpty(workorderManagement.Customer.NonFBCustomerNumber) || workorderManagement.Customer.NonFBCustomerNumber.ToLower() == "n/a"))
+                        //{
+                        //    message = @"|Please Select NonFBCustomer from the List!";
+                        //    returnValue = -1;
+                        //    isValid = false;
+                        //}
 
                         /* if (workorderManagement.WorkOrder.WorkorderCallstatus != "Closed")
                          {
@@ -3662,6 +3957,17 @@ namespace FarmerBrothers.Controllers
                                         isValid = false;
                                     }
                                 }
+                                if (string.IsNullOrEmpty(workorderManagement.Closure.CustomerSignatureDetails))
+                                {
+                                    message += @"|Customer Signature Required!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrEmpty(workorderManagement.Closure.CustomerSignedBy))
+                                {
+                                    message += @"|SignatureBy Required!";
+                                    isValid = false;
+                                }
+
 
                                 if (workOrder.WorkorderEquipments.Count <= 0)
                                 {
@@ -3738,8 +4044,7 @@ namespace FarmerBrothers.Controllers
                                     }
                                     nCount++;
                                 }
-
-
+                                                               
                                 if (workorderManagement.WorkOrder.WorkorderCalltypeid == 1300 && (!string.IsNullOrWhiteSpace(workorderManagement.WorkOrder.WorkorderErfid)))
                                 {
                                     Erf woErf = FarmerBrothersEntitites.Erfs.Where(er => er.ErfID == workorderManagement.WorkOrder.WorkorderErfid).FirstOrDefault();
@@ -3753,6 +4058,17 @@ namespace FarmerBrothers.Controllers
                                             message += @"| Enter the Reason Code ";
                                             isValid = false;
                                         }
+                                    }
+                                }
+
+                                if (!string.IsNullOrEmpty(workorderManagement.Customer.BillingCode) && workorderManagement.Customer.BillingCode.ToLower() == "s08")
+                                {
+                                    WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workorderManagement.WorkOrder.WorkorderID).FirstOrDefault();
+
+                                    if (!string.IsNullOrEmpty(wo.AuthTransactionId) && string.IsNullOrEmpty(wo.FinalTransactionId))
+                                    {
+                                        message = @"Please process the Credit Card from Email Link, before Closing the Event!";
+                                        isValid = false;
                                     }
                                 }
 
@@ -3899,7 +4215,17 @@ namespace FarmerBrothers.Controllers
                 if (workorderManagement.Operation == WorkOrderManagementSubmitType.COMPLETE)
                 {
                     string WorkorderID = workOrder.WorkorderID.ToString();
-                    WOConfirmationCode = WorkorderID.Substring(0, 3) + sGenPwd(2) + WorkorderID.Substring(WorkorderID.Length - 6);
+
+                    if (WorkorderID.Length == 5) // For Test server events
+                    {
+                        WOConfirmationCode = WorkorderID.Substring(0, 1) + sGenPwd(2) + WorkorderID.Substring(WorkorderID.Length - 2);
+                    }
+                    else
+                    {
+                        WOConfirmationCode = WorkorderID.Substring(0, 3) + sGenPwd(2) + WorkorderID.Substring(WorkorderID.Length - 6);
+                    }
+
+
                     WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workOrder.WorkorderID).FirstOrDefault();
                     wo.WorkorderClosureConfirmationNo = WOConfirmationCode;
 
@@ -3983,17 +4309,22 @@ namespace FarmerBrothers.Controllers
                         }
                     }
 
+                    if(workorderManagement.IsNewPartsOrder == true)
+                    {
+                        SendPartsOrderMail(workOrder.WorkorderID);
+                    }
+
                     if (workorderManagement.WorkOrder.WorkorderID == 0 || FromERF)
                     {
                         //Start Auto Dispatch Process
                         if (FromERF)
                         {
                             string usrName = System.Web.HttpContext.Current.Session["UserName"] == null ? "" : System.Web.HttpContext.Current.Session["UserName"].ToString();
-                            StartAutoDispatchProcess(workOrder, usrName);
+                            //StartAutoDispatchProcess(workOrder, usrName);
                         }
                         else
                         {
-                            StartAutoDispatchProcess(workOrder);
+                            //StartAutoDispatchProcess(workOrder);
                         }
                     }
 
@@ -4346,6 +4677,50 @@ namespace FarmerBrothers.Controllers
                             workOrder.WorkorderEquipCount = Convert.ToInt16(workorderManagement.WorkOrderEquipmentsRequested.Count());
 
 
+                            if (workorderManagement.WorkOrderEquipmentsRequested != null)
+                            {
+                                WorkOrderManagementEquipmentModel equipment = workorderManagement.WorkOrderEquipmentsRequested.Where(e => e.CallTypeID == 1200).FirstOrDefault();
+                                if (equipment != null)
+                                {
+                                    workOrder.WorkorderCalltypeid = equipment.CallTypeID;
+                                    WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeID).FirstOrDefault();
+                                    if (workOrderType != null)
+                                    {
+                                        workOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                        workOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                                    }
+                                }                               
+                                else
+                                {
+                                    WorkOrderManagementEquipmentModel equipmentExist = workorderManagement.WorkOrderEquipmentsRequested.Where(e => e.CallTypeID == workorderManagement.WorkOrder.WorkorderCalltypeid).FirstOrDefault();
+                                    if (equipmentExist != null)
+                                    {
+                                        workOrder.WorkorderCalltypeid = equipmentExist.CallTypeID;
+                                        WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipmentExist.CallTypeID).FirstOrDefault();
+                                        if (workOrderType != null)
+                                        {
+                                            workOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                            workOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        equipment = workorderManagement.WorkOrderEquipmentsRequested.ElementAt(0);
+                                        if (equipment != null)
+                                        {
+                                            workOrder.WorkorderCalltypeid = equipment.CallTypeID;
+                                            WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeID).FirstOrDefault();
+                                            if (workOrderType != null)
+                                            {
+                                                workOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                                workOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
                             if (workorderManagement.Notes.IsAutoDispatched == true)
                             {
                                 AgentDispatchLog autodispatchLog = new AgentDispatchLog()
@@ -4408,9 +4783,7 @@ namespace FarmerBrothers.Controllers
 
                     }
                     else
-                    {
-
-
+                    {                        
                         //Customer serviceCustomer = null;
                         //if (!string.IsNullOrEmpty(workorderManagement.Customer.CustomerId))
                         //{
@@ -4444,6 +4817,20 @@ namespace FarmerBrothers.Controllers
                         {
                             workOrder.FollowupCallID = new Nullable<int>(Convert.ToInt32(workorderManagement.Notes.FollowUpRequestID));
                         }
+
+                        workOrder.AuthTransactionId = workorderManagement.PaymentTransactionId;
+                        NotesHistory authTransactionHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 1,
+                            EntryDate = currentTime,
+                            Notes = @"Auth Payment TransactionId : " + workorderManagement.PaymentTransactionId,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
+                            isDispatchNotes = 0
+                        };
+
+                        workOrder.NotesHistories.Add(authTransactionHistory);
+
 
 
                         NotesHistory notesHistory = new NotesHistory()
@@ -4618,6 +5005,8 @@ namespace FarmerBrothers.Controllers
                         SavePhoneSolveDetails(workorderManagement, workOrder, out phoneSolveMessage);
                         message += "|" + phoneSolveMessage;
                     }
+                                        
+                    double BillingTotal = SaveBillingDetails(workorderManagement.BillingDetails.ToList(), workOrder.WorkorderID);
 
                     double totalPrice = SaveBillableList(workorderManagement);
                     workOrder.TotalUnitPrice = totalPrice.ToString();
@@ -4675,6 +5064,7 @@ namespace FarmerBrothers.Controllers
                     returnValue = -2;
                 }
             }
+
 
             return returnValue;
         }
@@ -5498,7 +5888,8 @@ namespace FarmerBrothers.Controllers
         }
         */
 
-        private void CreateSpawnWorkOrder(WorkorderManagementModel workorderManagement, List<WorkorderEquipment> equipment, out string message)
+        //Removed on Aug 31, 2021
+        private void CreateSpawnWorkOrder_Old(WorkorderManagementModel workorderManagement, List<WorkorderEquipment> equipment, out string message)
         {
             List<int?> uniqueSolutionIds = workorderManagement.WorkOrder.WorkorderEquipments.Select(x => x.Solutionid).Distinct().ToList();
 
@@ -5953,7 +6344,1077 @@ namespace FarmerBrothers.Controllers
                 message = @"";
             }
         }
-        
+
+        private void CreateSpawnWorkOrder1(WorkorderManagementModel workorderManagement, List<WorkorderEquipment> equipment, out string message)
+        {
+            List<int?> uniqueSolutionIds = workorderManagement.WorkOrder.WorkorderEquipments.Select(x => x.Solutionid).Distinct().ToList();
+
+            WorkOrder workOrder = FarmerBrothersEntitites.WorkOrders.FirstOrDefault(w => w.WorkorderID == workorderManagement.WorkOrder.WorkorderID);
+            DateTime currentTime = Utility.GetCurrentTime(workOrder.CustomerZipCode, FarmerBrothersEntitites);
+
+            string SpawnedWOsCreated = "";
+            foreach (int soluitonId in uniqueSolutionIds)
+            {
+                if (soluitonId == 5115
+                 || soluitonId == 5120
+                 || soluitonId == 5130
+                 || soluitonId == 5135
+                 || soluitonId == 5140
+                 || soluitonId == 5170
+                 || soluitonId == 5171
+                 || soluitonId == 5181
+                 || soluitonId == 5191)
+                {
+
+                    List<WorkorderEquipment> workorderEqps = workorderManagement.WorkOrder.WorkorderEquipments.Where(eq => eq.Solutionid == soluitonId).ToList();
+
+                    WorkOrder spawnWorkOrder = new WorkOrder();
+                    List<Type> collections = new List<Type>() { typeof(IEnumerable<>), typeof(IEnumerable) };
+
+                    int? responsibleTechId = null;
+
+                    foreach (var property in workOrder.GetType().GetProperties())
+                    {
+                        if (property.PropertyType == typeof(string) || !property.PropertyType.GetInterfaces().Any(i => collections.Any(c => i == c)))
+                        {
+                            property.SetValue(spawnWorkOrder, property.GetValue(workOrder));
+                        }
+                    }
+
+                    FarmerBrothersEntities newEntity = new FarmerBrothersEntities();
+
+                    IndexCounter workOrderCounter = Utility.GetIndexCounter("WorkorderID", 1);
+                    workOrderCounter.IndexValue++;
+
+                    spawnWorkOrder.WorkorderID = workOrderCounter.IndexValue.Value;
+                    spawnWorkOrder.WorkorderEntryDate = currentTime;
+                    spawnWorkOrder.WorkorderCallstatus = "Open";
+                    spawnWorkOrder.WorkorderSpawnEvent = 1;
+                    spawnWorkOrder.WorkorderCloseDate = null;
+                    if (workOrder.OriginalWorkorderid.HasValue)
+                    {
+                        spawnWorkOrder.OriginalWorkorderid = workOrder.OriginalWorkorderid;
+                    }
+                    else
+                    {
+                        spawnWorkOrder.OriginalWorkorderid = workOrder.WorkorderID;
+                    }
+
+                    spawnWorkOrder.ParentWorkorderid = workOrder.WorkorderID;
+                    if (workOrder.SpawnCounter.HasValue)
+                    {
+                        spawnWorkOrder.SpawnCounter = workOrder.SpawnCounter.Value + 1;
+                    }
+                    else
+                    {
+                        spawnWorkOrder.SpawnCounter = 1;
+                    }
+
+                    WorkorderDetail spawnWorkOrderDetail = new WorkorderDetail();
+                    if (workOrder.WorkorderDetails.Count > 0)
+                    {
+                        WorkorderDetail workOrderDetail = workOrder.WorkorderDetails.ElementAt(0);
+                        foreach (var property in workOrderDetail.GetType().GetProperties())
+                        {
+                            if (property.GetValue(workOrderDetail) != null && property.GetValue(workOrderDetail).GetType() != null && (property.GetValue(workOrderDetail).GetType().IsValueType || property.GetValue(workOrderDetail).GetType() == typeof(string)))
+                            {
+                                property.SetValue(spawnWorkOrderDetail, property.GetValue(workOrderDetail));
+                            }
+                        }
+                        spawnWorkOrderDetail.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrderDetail.ArrivalDateTime = null;
+                        spawnWorkOrderDetail.CompletionDateTime = null;
+                        spawnWorkOrderDetail.StartDateTime = null;
+                        spawnWorkOrderDetail.EntryDate = null;
+                        spawnWorkOrderDetail.ModifiedDate = null;
+                        spawnWorkOrderDetail.SpecialClosure = "";
+                        spawnWorkOrderDetail.TravelTime = "";
+                        spawnWorkOrderDetail.InvoiceNo = "";
+                        spawnWorkOrderDetail.SolutionId = soluitonId;
+
+                        spawnWorkOrder.WorkorderDetails.Add(spawnWorkOrderDetail);
+                    }
+
+
+                    foreach (WorkOrderBrand brand in workOrder.WorkOrderBrands)
+                    {
+                        WorkOrderBrand newBrand = new WorkOrderBrand();
+                        foreach (var property in brand.GetType().GetProperties())
+                        {
+                            if (property.GetValue(brand) != null && property.GetValue(brand).GetType() != null && (property.GetValue(brand).GetType().IsValueType || property.GetValue(brand).GetType() == typeof(string)))
+                            {
+                                property.SetValue(newBrand, property.GetValue(brand));
+                            }
+                        }
+                        newBrand.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrder.WorkOrderBrands.Add(newBrand);
+                    }
+
+                    foreach (NotesHistory notes in workOrder.NotesHistories)
+                    {
+                        NotesHistory newNotes = new NotesHistory();
+                        foreach (var property in notes.GetType().GetProperties())
+                        {
+                            if (property.GetValue(notes) != null && property.GetValue(notes).GetType() != null && (property.GetValue(notes).GetType().IsValueType || property.GetValue(notes).GetType() == typeof(string)))
+                            {
+                                property.SetValue(newNotes, property.GetValue(notes));
+                            }
+                        }
+                        newNotes.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrder.NotesHistories.Add(newNotes);
+                    }
+
+                    NotesHistory notesHistory = new NotesHistory()
+                    {
+                        AutomaticNotes = 1,
+                        EntryDate = currentTime,
+                        Notes = @"Work Order spawned in MARS from work order " + workOrder.WorkorderID,
+                        Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                        UserName = UserName,
+                        isDispatchNotes = 0
+                    };
+                    spawnWorkOrder.NotesHistories.Add(notesHistory);
+
+                    NotesHistory WONotesHistory = new NotesHistory()
+                    {
+                        AutomaticNotes = 1,
+                        EntryDate = currentTime,
+                        Notes = @"Workorder " + spawnWorkOrder.WorkorderID + " spawned due to Solution Code " + soluitonId,
+                        Userid = 1234, 
+                        UserName = UserName,
+                        isDispatchNotes = 0
+                    };
+                    workOrder.NotesHistories.Add(WONotesHistory);
+
+                    foreach (WorkorderReasonlog reasonLog in workOrder.WorkorderReasonlogs)
+                    {
+                        WorkorderReasonlog newReasonLog = new WorkorderReasonlog();
+                        foreach (var property in reasonLog.GetType().GetProperties())
+                        {
+                            if (property.GetValue(reasonLog) != null && property.GetValue(reasonLog).GetType() != null && (property.GetValue(reasonLog).GetType().IsValueType || property.GetValue(reasonLog).GetType() == typeof(string)))
+                            {
+                                property.SetValue(newReasonLog, property.GetValue(reasonLog));
+                            }
+                        }
+                        newReasonLog.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrder.WorkorderReasonlogs.Add(newReasonLog);
+                    }
+
+                    WorkorderType newWorkOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.CallTypeID == 1310).FirstOrDefault();
+
+                    if (soluitonId == 5160 && newWorkOrderType != null)
+                    {
+                        spawnWorkOrder.WorkorderCalltypeid = newWorkOrderType.CallTypeID;
+                        spawnWorkOrder.WorkorderCalltypeDesc = newWorkOrderType.Description;
+                    }
+                    else
+                    {
+                        WorkorderEquipment eqp = workorderEqps.Where(e => e.CallTypeid == 1200).FirstOrDefault();
+                        if (eqp != null)
+                        {
+                            WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == eqp.CallTypeid).FirstOrDefault();
+                            if (workOrderType != null)
+                            {
+                                spawnWorkOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                spawnWorkOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                            }
+                        }
+                        else
+                        {
+                            eqp = workorderEqps.OrderBy(equip => equip.Assetid).ElementAt(0);
+                            if (eqp != null)
+                            {
+                                WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == eqp.CallTypeid).FirstOrDefault();
+                                if (workOrderType != null)
+                                {
+                                    spawnWorkOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                    spawnWorkOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                                }
+                            }
+                        }
+                        
+                    }
+
+                    if (soluitonId == 5160 || soluitonId == 5191)
+                    {
+                        if (!string.IsNullOrWhiteSpace(workorderManagement.SpawnReason))
+                        {
+                            spawnWorkOrderDetail.SpawnReason = Convert.ToInt32(workorderManagement.SpawnReason);
+                        }
+
+                        notesHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 0,
+                            EntryDate = currentTime,
+                            Notes = workorderManagement.SpawnNotes,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName,
+                            isDispatchNotes = 0
+                        };
+                        spawnWorkOrder.NotesHistories.Add(notesHistory);
+                    }
+
+                    if (soluitonId == 9999)
+                    {
+                        if (!string.IsNullOrWhiteSpace(workorderManagement.NSRReason))
+                        {
+                            spawnWorkOrderDetail.NSRReason = Convert.ToInt32(workorderManagement.NSRReason);
+                        }
+
+                        notesHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 0,
+                            EntryDate = currentTime,
+                            Notes = workorderManagement.NSRNotes,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName,
+                            isDispatchNotes = 1
+                        };
+                        spawnWorkOrder.NotesHistories.Add(notesHistory);
+                    }
+
+                    foreach (WorkorderEquipment eqpItem in workorderEqps)
+                    {
+
+                        notesHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 0,
+                            EntryDate = currentTime,
+                            Notes = "SpawnedEquipment : SerialNumber - " + eqpItem.SerialNumber + ", Description - " + eqpItem.WorkDescription,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName,
+                            isDispatchNotes = 0
+                        };
+                        spawnWorkOrder.NotesHistories.Add(notesHistory);
+
+                        WorkorderEquipmentRequested spawnEquipmentRequested = new WorkorderEquipmentRequested();
+                        WorkorderEquipmentRequested workOrderReq = FarmerBrothersEntitites.WorkorderEquipmentRequesteds.Where(wr => wr.Assetid == eqpItem.Assetid).FirstOrDefault();
+
+                        spawnEquipmentRequested.Assetid = eqpItem.Assetid;
+                        spawnEquipmentRequested.CallTypeid = eqpItem.CallTypeid;
+                        spawnEquipmentRequested.CatalogID = eqpItem.CatalogID;
+                        spawnEquipmentRequested.Category = eqpItem.Category;
+                        spawnEquipmentRequested.EquipmentId = eqpItem.EquipmentId;
+                        spawnEquipmentRequested.FeastMovementid = eqpItem.FeastMovementid;
+                        spawnEquipmentRequested.Location = eqpItem.Location;
+                        spawnEquipmentRequested.Manufacturer = eqpItem.Manufacturer;
+                        spawnEquipmentRequested.Model = eqpItem.Model;
+                        spawnEquipmentRequested.Name = eqpItem.Name;
+                        spawnEquipmentRequested.QualityIssue = eqpItem.QualityIssue;
+                        spawnEquipmentRequested.SerialNumber = eqpItem.SerialNumber;
+                        spawnEquipmentRequested.WorkorderID = eqpItem.WorkorderID;
+                        spawnEquipmentRequested.Temperature = "";
+                        spawnEquipmentRequested.Weight = "";
+                        spawnEquipmentRequested.Ratio = "";
+                        spawnEquipmentRequested.Settings = "";
+                        spawnEquipmentRequested.WorkPerformedCounter = "";
+                        spawnEquipmentRequested.WorkDescription = "";
+                        spawnEquipmentRequested.Systemid = eqpItem.Systemid;
+                        spawnEquipmentRequested.Symptomid = eqpItem.Symptomid;
+                        spawnEquipmentRequested.Email = "";
+                        spawnEquipmentRequested.NoPartsNeeded = null;
+                        spawnEquipmentRequested.Solutionid = null;
+
+                        if (soluitonId == 5160)
+                        {
+                            spawnEquipmentRequested.CallTypeid = 1310;
+                        }
+
+                        IndexCounter assetCounter = Utility.GetIndexCounter("AssetID", 1);
+                        assetCounter.IndexValue++;                        
+                        spawnEquipmentRequested.Assetid = assetCounter.IndexValue.Value;
+                        spawnWorkOrder.WorkorderEquipmentRequesteds.Add(spawnEquipmentRequested);
+
+
+                        if (soluitonId == 5160)
+                        {
+                            WorkorderEquipment spawnEquipment2 = new WorkorderEquipment();
+                            WorkorderEquipmentRequested spawnEquipmentRequested2 = new WorkorderEquipmentRequested();
+                            WorkorderEquipmentRequested workOrderReq2 = FarmerBrothersEntitites.WorkorderEquipmentRequesteds.Where(wr => wr.Assetid == eqpItem.Assetid).FirstOrDefault();
+                            spawnEquipment2.Assetid = eqpItem.Assetid;
+                            spawnEquipment2.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipment2.CatalogID = eqpItem.CatalogID;
+                            spawnEquipment2.Category = eqpItem.Category;
+                            spawnEquipment2.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipment2.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipment2.IsSlNumberImageExist = eqpItem.IsSlNumberImageExist;
+                            spawnEquipment2.Location = eqpItem.Location;
+                            spawnEquipment2.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipment2.Model = eqpItem.Model;
+                            spawnEquipment2.Name = eqpItem.Name;
+                            spawnEquipment2.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipment2.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipment2.CallTypeid = 1410;
+                            spawnEquipment2.WorkorderID = spawnWorkOrder.WorkorderID;
+                            spawnEquipment2.Temperature = "";
+                            spawnEquipment2.Weight = "";
+                            spawnEquipment2.Ratio = "";
+                            spawnEquipment2.Settings = "";
+                            spawnEquipment2.WorkPerformedCounter = "";
+                            spawnEquipment2.WorkDescription = "";
+                            spawnEquipment2.Systemid = eqpItem.Systemid;
+                            spawnEquipment2.Symptomid = eqpItem.Symptomid;
+                            spawnEquipment2.Email = "";
+                            spawnEquipment2.NoPartsNeeded = null;
+                            spawnEquipment2.Solutionid = null;
+                                                        
+
+                            spawnEquipmentRequested2.Assetid = eqpItem.Assetid;
+                            spawnEquipmentRequested2.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipmentRequested2.CatalogID = eqpItem.CatalogID;
+                            spawnEquipmentRequested2.Category = eqpItem.Category;
+                            spawnEquipmentRequested2.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipmentRequested2.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipmentRequested2.Location = eqpItem.Location;
+                            spawnEquipmentRequested2.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipmentRequested2.Model = eqpItem.Model;
+                            spawnEquipmentRequested2.Name = eqpItem.Name;
+                            spawnEquipmentRequested2.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipmentRequested2.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipmentRequested2.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested2.CallTypeid = 1410;
+                            spawnEquipmentRequested2.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested2.Temperature = "";
+                            spawnEquipmentRequested2.Weight = "";
+                            spawnEquipmentRequested2.Ratio = "";
+                            spawnEquipmentRequested2.Settings = "";
+                            spawnEquipmentRequested2.WorkPerformedCounter = "";
+                            spawnEquipmentRequested2.WorkDescription = "";
+                            spawnEquipmentRequested2.Systemid = eqpItem.Systemid;
+                            spawnEquipmentRequested2.Symptomid = eqpItem.Symptomid;
+                            spawnEquipmentRequested2.Email = "";
+                            spawnEquipmentRequested2.NoPartsNeeded = null;
+                            spawnEquipmentRequested2.Solutionid = null;
+
+                            IndexCounter assetCounter2 = Utility.GetIndexCounter("AssetID", 1);
+                            assetCounter2.IndexValue++;
+                            
+                            spawnEquipment2.Assetid = assetCounter2.IndexValue.Value;
+                            spawnEquipmentRequested2.Assetid = assetCounter2.IndexValue.Value;
+
+                            spawnWorkOrder.WorkorderEquipments.Add(spawnEquipment2);
+                            spawnWorkOrder.WorkorderEquipmentRequesteds.Add(spawnEquipmentRequested2);
+                        }
+                        else if (soluitonId == 5140 || soluitonId == 5170 || soluitonId == 5171 || soluitonId == 5181 || soluitonId == 5191 || 
+                                    soluitonId == 5115 || soluitonId == 5120 || soluitonId == 5130 || soluitonId == 5135)
+                        {
+                            int calltypeId = 0;
+                            switch(soluitonId)
+                            {
+                                case 5140:
+                                    calltypeId = 1210;
+                                    break;
+                                case 5170:
+                                case 5171:
+                                case 5181:
+                                case 5191:
+                                    calltypeId = 1220;
+                                    break;
+                                case 5115:
+                                case 5120:
+                                case 5130:
+                                case 5135:
+                                    calltypeId = 1310;
+                                    break;
+                            }
+
+
+                            WorkorderEquipment spawnEquipment3 = new WorkorderEquipment();
+                            WorkorderEquipmentRequested spawnEquipmentRequested3 = new WorkorderEquipmentRequested();
+                            WorkorderEquipmentRequested workOrderReq3 = FarmerBrothersEntitites.WorkorderEquipmentRequesteds.Where(wr => wr.Assetid == eqpItem.Assetid).FirstOrDefault();
+                            spawnEquipment3.Assetid = eqpItem.Assetid;
+                            spawnEquipment3.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipment3.CatalogID = eqpItem.CatalogID;
+                            spawnEquipment3.Category = eqpItem.Category;
+                            spawnEquipment3.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipment3.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipment3.IsSlNumberImageExist = eqpItem.IsSlNumberImageExist;
+                            spawnEquipment3.Location = eqpItem.Location;
+                            spawnEquipment3.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipment3.Model = eqpItem.Model;
+                            spawnEquipment3.Name = eqpItem.Name;
+                            spawnEquipment3.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipment3.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipment3.CallTypeid = calltypeId;
+                            spawnEquipment3.WorkorderID = spawnWorkOrder.WorkorderID;
+                            spawnEquipment3.Temperature = "";
+                            spawnEquipment3.Weight = "";
+                            spawnEquipment3.Ratio = "";
+                            spawnEquipment3.Settings = "";
+                            spawnEquipment3.WorkPerformedCounter = "";
+                            spawnEquipment3.WorkDescription = "";
+                            spawnEquipment3.Systemid = eqpItem.Systemid;
+                            spawnEquipment3.Symptomid = eqpItem.Symptomid;
+                            spawnEquipment3.Email = "";
+                            spawnEquipment3.NoPartsNeeded = null;
+                            spawnEquipment3.Solutionid = null;
+
+
+                            spawnEquipmentRequested3.Assetid = eqpItem.Assetid;
+                            spawnEquipmentRequested3.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipmentRequested3.CatalogID = eqpItem.CatalogID;
+                            spawnEquipmentRequested3.Category = eqpItem.Category;
+                            spawnEquipmentRequested3.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipmentRequested3.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipmentRequested3.Location = eqpItem.Location;
+                            spawnEquipmentRequested3.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipmentRequested3.Model = eqpItem.Model;
+                            spawnEquipmentRequested3.Name = eqpItem.Name;
+                            spawnEquipmentRequested3.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipmentRequested3.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipmentRequested3.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested3.CallTypeid = calltypeId;
+                            spawnEquipmentRequested3.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested3.Temperature = "";
+                            spawnEquipmentRequested3.Weight = "";
+                            spawnEquipmentRequested3.Ratio = "";
+                            spawnEquipmentRequested3.Settings = "";
+                            spawnEquipmentRequested3.WorkPerformedCounter = "";
+                            spawnEquipmentRequested3.WorkDescription = "";
+                            spawnEquipmentRequested3.Systemid = eqpItem.Systemid;
+                            spawnEquipmentRequested3.Symptomid = eqpItem.Symptomid;
+                            spawnEquipmentRequested3.Email = "";
+                            spawnEquipmentRequested3.NoPartsNeeded = null;
+                            spawnEquipmentRequested3.Solutionid = null;
+
+                            IndexCounter assetCounter3 = Utility.GetIndexCounter("AssetID", 1);
+                            assetCounter3.IndexValue++;
+
+                            spawnEquipment3.Assetid = assetCounter3.IndexValue.Value;
+                            spawnEquipmentRequested3.Assetid = assetCounter3.IndexValue.Value;
+
+                            spawnWorkOrder.WorkorderEquipments.Add(spawnEquipment3);
+                            spawnWorkOrder.WorkorderEquipmentRequesteds.Add(spawnEquipmentRequested3);
+                        }
+                    }
+
+                    newEntity.WorkOrders.Add(spawnWorkOrder);
+                    newEntity.SaveChanges();
+
+                    if (newEntity != null)
+                    {
+                        newEntity.Dispose();
+                    }
+
+                    string emailAddresses = string.Empty;
+
+
+                    StringBuilder subject = new StringBuilder();
+                    subject.Append("Spawned Workorder - Original WO: ");
+                    subject.Append(spawnWorkOrder.OriginalWorkorderid);
+                    subject.Append(" ST: ");
+                    subject.Append(spawnWorkOrder.CustomerState);
+                    subject.Append(" Call Type: ");
+                    subject.Append(spawnWorkOrder.WorkorderCalltypeDesc);
+
+                    SendWorkOrderMail(spawnWorkOrder, subject.ToString(), emailAddresses, ConfigurationManager.AppSettings["DispatchMailFromAddress"], null, MailType.INFO, false, null);
+
+                    if (responsibleTechId.HasValue)
+                    {
+                        subject = new StringBuilder();
+                        subject.Append("WO:");
+                        subject.Append(spawnWorkOrder.WorkorderID);
+                        subject.Append(" ST:");
+                        subject.Append(spawnWorkOrder.CustomerState);
+                        subject.Append(" Call Type:");
+                        subject.Append(spawnWorkOrder.WorkorderCalltypeDesc);
+
+
+                        string emailAddress = string.Empty;
+                        string salesEmailAddress = string.Empty;
+                        var CustomerId = int.Parse(responsibleTechId.Value.ToString());
+                        Customer serviceCustomer = FarmerBrothersEntitites.Contacts.Where(x => x.ContactID == CustomerId).FirstOrDefault();
+                        if (serviceCustomer != null)
+                        {
+                            emailAddress = serviceCustomer.Email;
+                            if (!string.IsNullOrEmpty(serviceCustomer.SalesEmail))
+                            {
+                                salesEmailAddress = serviceCustomer.SalesEmail;
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["TestEmail"]))
+                        {
+                            emailAddress = ConfigurationManager.AppSettings["TestEmail"];
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(emailAddress))
+                        {
+                            SendWorkOrderMail(spawnWorkOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], responsibleTechId, MailType.SPAWN, true, null, string.Empty, false, salesEmailAddress);
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(SpawnedWOsCreated))
+                    {
+                        SpawnedWOsCreated += spawnWorkOrder.WorkorderID;
+                    }
+                    else
+                    {
+                        SpawnedWOsCreated += ", " + spawnWorkOrder.WorkorderID;
+                    }
+                    //message = @"Spawned Work Order " + spawnWorkOrder.WorkorderID + " is created!";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(SpawnedWOsCreated))
+            {
+                NotesHistory WONotesHistory = new NotesHistory()
+                {
+                    AutomaticNotes = 1,
+                    EntryDate = currentTime,
+                    Notes = @"Spawned Work Order " + SpawnedWOsCreated + " created in MARS ",
+                    Userid = 1234, //TBD
+                    UserName = UserName,
+                    isDispatchNotes = 0
+                };
+                //workOrder.NotesHistories.Add(WONotesHistory);
+                //FarmerBrothersEntitites.SaveChanges();
+
+                message = @"Spawned Work Order " + SpawnedWOsCreated + " created!";
+            }
+            else
+            {
+                message = @"";
+            }
+        }
+
+        private void CreateSpawnWorkOrder(WorkorderManagementModel workorderManagement, List<WorkorderEquipment> equipment, out string message)
+        {
+            List<int?> uniqueSolutionIds = workorderManagement.WorkOrder.WorkorderEquipments.Select(x => x.Solutionid).Distinct().ToList();
+
+            WorkOrder workOrder = FarmerBrothersEntitites.WorkOrders.FirstOrDefault(w => w.WorkorderID == workorderManagement.WorkOrder.WorkorderID);
+            DateTime currentTime = Utility.GetCurrentTime(workOrder.CustomerZipCode, FarmerBrothersEntitites);
+
+            string SpawnedWOsCreated = "";
+            foreach (int soluitonId in uniqueSolutionIds)
+            {
+                if (soluitonId == 5115
+                 || soluitonId == 5120
+                 || soluitonId == 5130
+                 || soluitonId == 5135
+                 || soluitonId == 5140
+                 || soluitonId == 5170
+                 || soluitonId == 5171
+                 || soluitonId == 5181
+                 || soluitonId == 5191)
+                {
+
+                    List<WorkorderEquipment> workorderEqps = workorderManagement.WorkOrder.WorkorderEquipments.Where(eq => eq.Solutionid == soluitonId).ToList();
+
+                    WorkOrder spawnWorkOrder = new WorkOrder();
+                    List<Type> collections = new List<Type>() { typeof(IEnumerable<>), typeof(IEnumerable) };
+
+                    int? responsibleTechId = null;
+
+                    foreach (var property in workOrder.GetType().GetProperties())
+                    {
+                        if (property.PropertyType == typeof(string) || !property.PropertyType.GetInterfaces().Any(i => collections.Any(c => i == c)))
+                        {
+                            property.SetValue(spawnWorkOrder, property.GetValue(workOrder));
+                        }
+                    }
+
+                    FarmerBrothersEntities newEntity = new FarmerBrothersEntities();
+
+                    IndexCounter workOrderCounter = Utility.GetIndexCounter("WorkorderID", 1);
+                    workOrderCounter.IndexValue++;
+
+                    spawnWorkOrder.WorkorderID = workOrderCounter.IndexValue.Value;
+                    spawnWorkOrder.WorkorderEntryDate = currentTime;
+                    spawnWorkOrder.WorkorderCallstatus = "Open";
+                    spawnWorkOrder.WorkorderSpawnEvent = 1;
+                    spawnWorkOrder.WorkorderCloseDate = null;
+                    spawnWorkOrder.CustomerPO = workOrder.CustomerPO;
+                    if (workOrder.OriginalWorkorderid.HasValue)
+                    {
+                        spawnWorkOrder.OriginalWorkorderid = workOrder.OriginalWorkorderid;
+                    }
+                    else
+                    {
+                        spawnWorkOrder.OriginalWorkorderid = workOrder.WorkorderID;
+                    }
+
+                    spawnWorkOrder.ParentWorkorderid = workOrder.WorkorderID;
+                    if (workOrder.SpawnCounter.HasValue)
+                    {
+                        spawnWorkOrder.SpawnCounter = workOrder.SpawnCounter.Value + 1;
+                    }
+                    else
+                    {
+                        spawnWorkOrder.SpawnCounter = 1;
+                    }
+
+                    WorkorderDetail spawnWorkOrderDetail = new WorkorderDetail();
+                    if (workOrder.WorkorderDetails.Count > 0)
+                    {
+                        WorkorderDetail workOrderDetail = workOrder.WorkorderDetails.ElementAt(0);
+                        foreach (var property in workOrderDetail.GetType().GetProperties())
+                        {
+                            if (property.GetValue(workOrderDetail) != null && property.GetValue(workOrderDetail).GetType() != null && (property.GetValue(workOrderDetail).GetType().IsValueType || property.GetValue(workOrderDetail).GetType() == typeof(string)))
+                            {
+                                property.SetValue(spawnWorkOrderDetail, property.GetValue(workOrderDetail));
+                            }
+                        }
+                        spawnWorkOrderDetail.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrderDetail.ArrivalDateTime = null;
+                        spawnWorkOrderDetail.CompletionDateTime = null;
+                        spawnWorkOrderDetail.StartDateTime = null;
+                        spawnWorkOrderDetail.EntryDate = null;
+                        spawnWorkOrderDetail.ModifiedDate = null;
+                        spawnWorkOrderDetail.SpecialClosure = "";
+                        spawnWorkOrderDetail.TravelTime = "";
+                        spawnWorkOrderDetail.InvoiceNo = "";
+                        spawnWorkOrderDetail.SolutionId = soluitonId;
+
+                        spawnWorkOrder.WorkorderDetails.Add(spawnWorkOrderDetail);
+                    }
+
+
+                    foreach (WorkOrderBrand brand in workOrder.WorkOrderBrands)
+                    {
+                        WorkOrderBrand newBrand = new WorkOrderBrand();
+                        foreach (var property in brand.GetType().GetProperties())
+                        {
+                            if (property.GetValue(brand) != null && property.GetValue(brand).GetType() != null && (property.GetValue(brand).GetType().IsValueType || property.GetValue(brand).GetType() == typeof(string)))
+                            {
+                                property.SetValue(newBrand, property.GetValue(brand));
+                            }
+                        }
+                        newBrand.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrder.WorkOrderBrands.Add(newBrand);
+                    }
+
+                    foreach (NotesHistory notes in workOrder.NotesHistories)
+                    {
+                        NotesHistory newNotes = new NotesHistory();
+                        foreach (var property in notes.GetType().GetProperties())
+                        {
+                            if (property.GetValue(notes) != null && property.GetValue(notes).GetType() != null && (property.GetValue(notes).GetType().IsValueType || property.GetValue(notes).GetType() == typeof(string)))
+                            {
+                                property.SetValue(newNotes, property.GetValue(notes));
+                            }
+                        }
+                        newNotes.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrder.NotesHistories.Add(newNotes);
+                    }
+
+                    NotesHistory notesHistory = new NotesHistory()
+                    {
+                        AutomaticNotes = 1,
+                        EntryDate = currentTime,
+                        Notes = @"Work Order spawned in MARS from work order " + workOrder.WorkorderID,
+                        Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                        UserName = UserName,
+                        isDispatchNotes = 0
+                    };
+                    spawnWorkOrder.NotesHistories.Add(notesHistory);
+
+                    NotesHistory WONotesHistory = new NotesHistory()
+                    {
+                        AutomaticNotes = 1,
+                        EntryDate = currentTime,
+                        Notes = @"Workorder " + spawnWorkOrder.WorkorderID + " spawned due to Solution Code " + soluitonId,
+                        Userid = 1234,
+                        UserName = UserName,
+                        isDispatchNotes = 0
+                    };
+                    workOrder.NotesHistories.Add(WONotesHistory);
+
+                    foreach (WorkorderReasonlog reasonLog in workOrder.WorkorderReasonlogs)
+                    {
+                        WorkorderReasonlog newReasonLog = new WorkorderReasonlog();
+                        foreach (var property in reasonLog.GetType().GetProperties())
+                        {
+                            if (property.GetValue(reasonLog) != null && property.GetValue(reasonLog).GetType() != null && (property.GetValue(reasonLog).GetType().IsValueType || property.GetValue(reasonLog).GetType() == typeof(string)))
+                            {
+                                property.SetValue(newReasonLog, property.GetValue(reasonLog));
+                            }
+                        }
+                        newReasonLog.WorkorderID = spawnWorkOrder.WorkorderID;
+                        spawnWorkOrder.WorkorderReasonlogs.Add(newReasonLog);
+                    }
+
+                    /*WorkorderType newWorkOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.CallTypeID == 1310).FirstOrDefault();
+
+                    if (soluitonId == 5160 && newWorkOrderType != null)
+                    {
+                        spawnWorkOrder.WorkorderCalltypeid = newWorkOrderType.CallTypeID;
+                        spawnWorkOrder.WorkorderCalltypeDesc = newWorkOrderType.Description;
+                    }
+                    else
+                    {
+                        WorkorderEquipment eqp = workorderEqps.Where(e => e.CallTypeid == 1200).FirstOrDefault();
+                        if (eqp != null)
+                        {
+                            WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == eqp.CallTypeid).FirstOrDefault();
+                            if (workOrderType != null)
+                            {
+                                spawnWorkOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                spawnWorkOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                            }
+                        }
+                        else
+                        {
+                            eqp = workorderEqps.OrderBy(equip => equip.Assetid).ElementAt(0);
+                            if (eqp != null)
+                            {
+                                WorkorderType workOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == eqp.CallTypeid).FirstOrDefault();
+                                if (workOrderType != null)
+                                {
+                                    spawnWorkOrder.WorkorderCalltypeid = workOrderType.CallTypeID;
+                                    spawnWorkOrder.WorkorderCalltypeDesc = workOrderType.Description;
+                                }
+                            }
+                        }
+
+                    }*/
+
+                    if (soluitonId == 5160 || soluitonId == 5191)
+                    {
+                        if (!string.IsNullOrWhiteSpace(workorderManagement.SpawnReason))
+                        {
+                            spawnWorkOrderDetail.SpawnReason = Convert.ToInt32(workorderManagement.SpawnReason);
+                        }
+
+                        notesHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 0,
+                            EntryDate = currentTime,
+                            Notes = workorderManagement.SpawnNotes,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName,
+                            isDispatchNotes = 0
+                        };
+                        spawnWorkOrder.NotesHistories.Add(notesHistory);
+                    }
+
+                    if (soluitonId == 9999)
+                    {
+                        if (!string.IsNullOrWhiteSpace(workorderManagement.NSRReason))
+                        {
+                            spawnWorkOrderDetail.NSRReason = Convert.ToInt32(workorderManagement.NSRReason);
+                        }
+
+                        notesHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 0,
+                            EntryDate = currentTime,
+                            Notes = workorderManagement.NSRNotes,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName,
+                            isDispatchNotes = 1
+                        };
+                        spawnWorkOrder.NotesHistories.Add(notesHistory);
+                    }
+
+                    foreach (WorkorderEquipment eqpItem in workorderEqps)
+                    {
+
+                        notesHistory = new NotesHistory()
+                        {
+                            AutomaticNotes = 0,
+                            EntryDate = currentTime,
+                            Notes = "SpawnedEquipment : SerialNumber - " + eqpItem.SerialNumber + ", Description - " + eqpItem.WorkDescription,
+                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                            UserName = UserName,
+                            isDispatchNotes = 0
+                        };
+                        spawnWorkOrder.NotesHistories.Add(notesHistory);
+
+                        WorkorderEquipmentRequested spawnEquipmentRequested = new WorkorderEquipmentRequested();
+                       // WorkorderEquipmentRequested workOrderReq = FarmerBrothersEntitites.WorkorderEquipmentRequesteds.Where(wr => wr.Assetid == eqpItem.Assetid).FirstOrDefault();
+                        if (soluitonId == 5160)
+                        {
+                            WorkorderType newWorkOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.CallTypeID == 1310).FirstOrDefault();
+                            spawnWorkOrder.WorkorderCalltypeid = newWorkOrderType.CallTypeID;
+                            spawnWorkOrder.WorkorderCalltypeDesc = newWorkOrderType.Description;
+
+
+                            spawnEquipmentRequested.Assetid = eqpItem.Assetid;
+                            spawnEquipmentRequested.CallTypeid = 1310;
+                            spawnEquipmentRequested.CatalogID = eqpItem.CatalogID;
+                            spawnEquipmentRequested.Category = eqpItem.Category;
+                            spawnEquipmentRequested.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipmentRequested.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipmentRequested.Location = eqpItem.Location;
+                            spawnEquipmentRequested.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipmentRequested.Model = eqpItem.Model;
+                            spawnEquipmentRequested.Name = eqpItem.Name;
+                            spawnEquipmentRequested.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipmentRequested.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipmentRequested.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested.Temperature = "";
+                            spawnEquipmentRequested.Weight = "";
+                            spawnEquipmentRequested.Ratio = "";
+                            spawnEquipmentRequested.Settings = "";
+                            spawnEquipmentRequested.WorkPerformedCounter = "";
+                            spawnEquipmentRequested.WorkDescription = "";
+                            spawnEquipmentRequested.Systemid = eqpItem.Systemid;
+                            spawnEquipmentRequested.Symptomid = eqpItem.Symptomid;
+                            spawnEquipmentRequested.Email = "";
+                            spawnEquipmentRequested.NoPartsNeeded = null;
+                            spawnEquipmentRequested.Solutionid = null;
+
+                            IndexCounter assetCounter = Utility.GetIndexCounter("AssetID", 1);
+                            assetCounter.IndexValue++;
+                            spawnEquipmentRequested.Assetid = assetCounter.IndexValue.Value;
+                            spawnWorkOrder.WorkorderEquipmentRequesteds.Add(spawnEquipmentRequested);
+
+
+
+                            WorkorderEquipment spawnEquipment2 = new WorkorderEquipment();
+                            WorkorderEquipmentRequested spawnEquipmentRequested2 = new WorkorderEquipmentRequested();
+                            WorkorderEquipmentRequested workOrderReq2 = FarmerBrothersEntitites.WorkorderEquipmentRequesteds.Where(wr => wr.Assetid == eqpItem.Assetid).FirstOrDefault();
+                            spawnEquipment2.Assetid = eqpItem.Assetid;
+                            spawnEquipment2.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipment2.CatalogID = eqpItem.CatalogID;
+                            spawnEquipment2.Category = eqpItem.Category;
+                            spawnEquipment2.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipment2.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipment2.IsSlNumberImageExist = eqpItem.IsSlNumberImageExist;
+                            spawnEquipment2.Location = eqpItem.Location;
+                            spawnEquipment2.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipment2.Model = eqpItem.Model;
+                            spawnEquipment2.Name = eqpItem.Name;
+                            spawnEquipment2.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipment2.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipment2.CallTypeid = 1410;
+                            spawnEquipment2.WorkorderID = spawnWorkOrder.WorkorderID;
+                            spawnEquipment2.Temperature = "";
+                            spawnEquipment2.Weight = "";
+                            spawnEquipment2.Ratio = "";
+                            spawnEquipment2.Settings = "";
+                            spawnEquipment2.WorkPerformedCounter = "";
+                            spawnEquipment2.WorkDescription = "";
+                            spawnEquipment2.Systemid = eqpItem.Systemid;
+                            spawnEquipment2.Symptomid = eqpItem.Symptomid;
+                            spawnEquipment2.Email = "";
+                            spawnEquipment2.NoPartsNeeded = null;
+                            spawnEquipment2.Solutionid = null;
+
+
+                            spawnEquipmentRequested2.Assetid = eqpItem.Assetid;
+                            spawnEquipmentRequested2.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipmentRequested2.CatalogID = eqpItem.CatalogID;
+                            spawnEquipmentRequested2.Category = eqpItem.Category;
+                            spawnEquipmentRequested2.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipmentRequested2.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipmentRequested2.Location = eqpItem.Location;
+                            spawnEquipmentRequested2.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipmentRequested2.Model = eqpItem.Model;
+                            spawnEquipmentRequested2.Name = eqpItem.Name;
+                            spawnEquipmentRequested2.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipmentRequested2.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipmentRequested2.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested2.CallTypeid = 1410;
+                            spawnEquipmentRequested2.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested2.Temperature = "";
+                            spawnEquipmentRequested2.Weight = "";
+                            spawnEquipmentRequested2.Ratio = "";
+                            spawnEquipmentRequested2.Settings = "";
+                            spawnEquipmentRequested2.WorkPerformedCounter = "";
+                            spawnEquipmentRequested2.WorkDescription = "";
+                            spawnEquipmentRequested2.Systemid = eqpItem.Systemid;
+                            spawnEquipmentRequested2.Symptomid = eqpItem.Symptomid;
+                            spawnEquipmentRequested2.Email = "";
+                            spawnEquipmentRequested2.NoPartsNeeded = null;
+                            spawnEquipmentRequested2.Solutionid = null;
+
+                            IndexCounter assetCounter2 = Utility.GetIndexCounter("AssetID", 1);
+                            assetCounter2.IndexValue++;
+
+                            spawnEquipment2.Assetid = assetCounter2.IndexValue.Value;
+                            spawnEquipmentRequested2.Assetid = assetCounter2.IndexValue.Value;
+
+                            spawnWorkOrder.WorkorderEquipments.Add(spawnEquipment2);
+                            spawnWorkOrder.WorkorderEquipmentRequesteds.Add(spawnEquipmentRequested2);
+                        }
+                        else if (soluitonId == 5140 || soluitonId == 5170 || soluitonId == 5171 || soluitonId == 5181 || soluitonId == 5191 ||
+                                    soluitonId == 5115 || soluitonId == 5120 || soluitonId == 5130 || soluitonId == 5135)
+                        {
+                            int calltypeId = 0;
+                            switch (soluitonId)
+                            {
+                                case 5140:
+                                    calltypeId = 1210;
+                                    break;
+                                case 5170:
+                                case 5171:
+                                case 5181:
+                                case 5191:
+                                    calltypeId = 1220;
+                                    break;
+                                case 5115:
+                                case 5120:
+                                case 5130:
+                                case 5135:
+                                    calltypeId = 1310;
+                                    break;
+                            }
+
+                            WorkorderType newWorkOrderType = FarmerBrothersEntitites.WorkorderTypes.Where(wt => wt.CallTypeID == calltypeId).FirstOrDefault();
+                            spawnWorkOrder.WorkorderCalltypeid = newWorkOrderType.CallTypeID;
+                            spawnWorkOrder.WorkorderCalltypeDesc = newWorkOrderType.Description;
+
+                            WorkorderEquipment spawnEquipment3 = new WorkorderEquipment();
+                            WorkorderEquipmentRequested spawnEquipmentRequested3 = new WorkorderEquipmentRequested();
+                            WorkorderEquipmentRequested workOrderReq3 = FarmerBrothersEntitites.WorkorderEquipmentRequesteds.Where(wr => wr.Assetid == eqpItem.Assetid).FirstOrDefault();
+                            spawnEquipment3.Assetid = eqpItem.Assetid;
+                            spawnEquipment3.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipment3.CatalogID = eqpItem.CatalogID;
+                            spawnEquipment3.Category = eqpItem.Category;
+                            spawnEquipment3.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipment3.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipment3.IsSlNumberImageExist = eqpItem.IsSlNumberImageExist;
+                            spawnEquipment3.Location = eqpItem.Location;
+                            spawnEquipment3.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipment3.Model = eqpItem.Model;
+                            spawnEquipment3.Name = eqpItem.Name;
+                            spawnEquipment3.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipment3.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipment3.CallTypeid = calltypeId;
+                            spawnEquipment3.WorkorderID = spawnWorkOrder.WorkorderID;
+                            spawnEquipment3.Temperature = "";
+                            spawnEquipment3.Weight = "";
+                            spawnEquipment3.Ratio = "";
+                            spawnEquipment3.Settings = "";
+                            spawnEquipment3.WorkPerformedCounter = "";
+                            spawnEquipment3.WorkDescription = "";
+                            spawnEquipment3.Systemid = eqpItem.Systemid;
+                            spawnEquipment3.Symptomid = eqpItem.Symptomid;
+                            spawnEquipment3.Email = "";
+                            spawnEquipment3.NoPartsNeeded = null;
+                            spawnEquipment3.Solutionid = null;
+
+
+                            spawnEquipmentRequested3.Assetid = eqpItem.Assetid;
+                            spawnEquipmentRequested3.CallTypeid = eqpItem.CallTypeid;
+                            spawnEquipmentRequested3.CatalogID = eqpItem.CatalogID;
+                            spawnEquipmentRequested3.Category = eqpItem.Category;
+                            spawnEquipmentRequested3.EquipmentId = eqpItem.EquipmentId;
+                            spawnEquipmentRequested3.FeastMovementid = eqpItem.FeastMovementid;
+                            spawnEquipmentRequested3.Location = eqpItem.Location;
+                            spawnEquipmentRequested3.Manufacturer = eqpItem.Manufacturer;
+                            spawnEquipmentRequested3.Model = eqpItem.Model;
+                            spawnEquipmentRequested3.Name = eqpItem.Name;
+                            spawnEquipmentRequested3.QualityIssue = eqpItem.QualityIssue;
+                            spawnEquipmentRequested3.SerialNumber = eqpItem.SerialNumber;
+                            spawnEquipmentRequested3.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested3.CallTypeid = calltypeId;
+                            spawnEquipmentRequested3.WorkorderID = eqpItem.WorkorderID;
+                            spawnEquipmentRequested3.Temperature = "";
+                            spawnEquipmentRequested3.Weight = "";
+                            spawnEquipmentRequested3.Ratio = "";
+                            spawnEquipmentRequested3.Settings = "";
+                            spawnEquipmentRequested3.WorkPerformedCounter = "";
+                            spawnEquipmentRequested3.WorkDescription = "";
+                            spawnEquipmentRequested3.Systemid = eqpItem.Systemid;
+                            spawnEquipmentRequested3.Symptomid = eqpItem.Symptomid;
+                            spawnEquipmentRequested3.Email = "";
+                            spawnEquipmentRequested3.NoPartsNeeded = null;
+                            spawnEquipmentRequested3.Solutionid = null;
+
+                            IndexCounter assetCounter3 = Utility.GetIndexCounter("AssetID", 1);
+                            assetCounter3.IndexValue++;
+
+                            spawnEquipment3.Assetid = assetCounter3.IndexValue.Value;
+                            spawnEquipmentRequested3.Assetid = assetCounter3.IndexValue.Value;
+
+                            spawnWorkOrder.WorkorderEquipments.Add(spawnEquipment3);
+                            spawnWorkOrder.WorkorderEquipmentRequesteds.Add(spawnEquipmentRequested3);
+                        }
+                    }
+
+                    newEntity.WorkOrders.Add(spawnWorkOrder);
+                    newEntity.SaveChanges();
+
+                    if (newEntity != null)
+                    {
+                        newEntity.Dispose();
+                    }
+
+                    string emailAddresses = string.Empty;
+
+
+                    StringBuilder subject = new StringBuilder();
+                    subject.Append("Spawned Workorder - Original WO: ");
+                    subject.Append(spawnWorkOrder.OriginalWorkorderid);
+                    subject.Append(" ST: ");
+                    subject.Append(spawnWorkOrder.CustomerState);
+                    subject.Append(" Call Type: ");
+                    subject.Append(spawnWorkOrder.WorkorderCalltypeDesc);
+
+                    SendWorkOrderMail(spawnWorkOrder, subject.ToString(), emailAddresses, ConfigurationManager.AppSettings["DispatchMailFromAddress"], null, MailType.INFO, false, null);
+
+                    if (responsibleTechId.HasValue)
+                    {
+                        subject = new StringBuilder();
+                        subject.Append("WO:");
+                        subject.Append(spawnWorkOrder.WorkorderID);
+                        subject.Append(" ST:");
+                        subject.Append(spawnWorkOrder.CustomerState);
+                        subject.Append(" Call Type:");
+                        subject.Append(spawnWorkOrder.WorkorderCalltypeDesc);
+
+
+                        string emailAddress = string.Empty;
+                        string salesEmailAddress = string.Empty;
+                        var CustomerId = int.Parse(responsibleTechId.Value.ToString());
+                        Customer serviceCustomer = FarmerBrothersEntitites.Contacts.Where(x => x.ContactID == CustomerId).FirstOrDefault();
+                        if (serviceCustomer != null)
+                        {
+                            emailAddress = serviceCustomer.Email;
+                            if (!string.IsNullOrEmpty(serviceCustomer.SalesEmail))
+                            {
+                                salesEmailAddress = serviceCustomer.SalesEmail;
+                            }
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(ConfigurationManager.AppSettings["TestEmail"]))
+                        {
+                            emailAddress = ConfigurationManager.AppSettings["TestEmail"];
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(emailAddress))
+                        {
+                            SendWorkOrderMail(spawnWorkOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], responsibleTechId, MailType.SPAWN, true, null, string.Empty, false, salesEmailAddress);
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(SpawnedWOsCreated))
+                    {
+                        SpawnedWOsCreated += spawnWorkOrder.WorkorderID;
+                    }
+                    else
+                    {
+                        SpawnedWOsCreated += ", " + spawnWorkOrder.WorkorderID;
+                    }
+                    //message = @"Spawned Work Order " + spawnWorkOrder.WorkorderID + " is created!";
+                }
+            }
+
+            if (!string.IsNullOrEmpty(SpawnedWOsCreated))
+            {
+                NotesHistory WONotesHistory = new NotesHistory()
+                {
+                    AutomaticNotes = 1,
+                    EntryDate = currentTime,
+                    Notes = @"Spawned Work Order " + SpawnedWOsCreated + " created in MARS ",
+                    Userid = 1234, //TBD
+                    UserName = UserName,
+                    isDispatchNotes = 0
+                };
+                //workOrder.NotesHistories.Add(WONotesHistory);
+                //FarmerBrothersEntitites.SaveChanges();
+
+                message = @"Spawned Work Order " + SpawnedWOsCreated + " created!";
+            }
+            else
+            {
+                message = @"";
+            }
+        }
+
         public void SaveClosureDetails(WorkorderManagementModel workorderManagement, WorkOrder workOrder)
         {
             if (workorderManagement.Closure != null)
@@ -6019,6 +7480,7 @@ namespace FarmerBrothers.Controllers
 
                     workOrderDetail.WaterTested = workorderManagement.Closure.WaterTested;
                     workOrderDetail.HardnessRating = workorderManagement.Closure.HardnessRating;
+                    workOrderDetail.TotalDissolvedSolids = workorderManagement.Closure.TDS;
 
                     if (schedule != null)
                     {
@@ -6089,7 +7551,8 @@ namespace FarmerBrothers.Controllers
                         SpecialClosure = specialClosure,
                         TravelTime = workorderManagement.Closure.TravelHours + ":" + workorderManagement.Closure.TravelMinutes,
                         WaterTested = workorderManagement.Closure.WaterTested,
-                        HardnessRating = workorderManagement.Closure.HardnessRating
+                        HardnessRating = workorderManagement.Closure.HardnessRating,
+                        TotalDissolvedSolids = workorderManagement.Closure.TDS
                     };
 
 
@@ -7380,6 +8843,45 @@ namespace FarmerBrothers.Controllers
             return totalPrice;
         }
 
+        [AllowAnonymous]
+        public double SaveBillingDetails(IList<BillingModel> newFBWOList, int WorkorderID)
+        {
+            double totalPrice = 0;
+            double UnitPrice = 0;
+            IEnumerable<WorkorderBillingDetail> FBBillingList = FarmerBrothersEntitites.WorkorderBillingDetails.Where(a => a.WorkorderId == WorkorderID).ToList();
+
+            if (FBBillingList != null)
+            {
+                for (int count = FBBillingList.Count() - 1; count >= 0; count--)
+                {
+                    WorkorderBillingDetail FBWOSku = FBBillingList.ElementAt(count);
+                    FarmerBrothersEntitites.WorkorderBillingDetails.Remove(FBWOSku);
+                }
+            }
+
+            if (newFBWOList.Count() > 0)
+            {
+                foreach (BillingModel newFBWOItem in newFBWOList)
+                {
+                    WorkorderBillingDetail FBWOSku = new WorkorderBillingDetail()
+                    {
+                        WorkorderId = WorkorderID,
+                        Quantity = newFBWOItem.Quantity,
+                        EntryDate = DateTime.Now,
+                        BillingCode = newFBWOItem.BillingCode
+                    };
+                    using (FarmerBrothersEntities entity = new FarmerBrothersEntities())
+                    {
+                        UnitPrice = Convert.ToDouble(entity.BillingItems.Where(s => s.BillingCode == newFBWOItem.BillingCode).Select(s => s.UnitPrice).FirstOrDefault());
+                    }
+                    totalPrice += Convert.ToDouble(newFBWOItem.Quantity * UnitPrice);
+                    FarmerBrothersEntitites.WorkorderBillingDetails.Add(FBWOSku);
+                }
+            }
+
+            return totalPrice;
+        }
+
         private bool ValidateSkuList(IList<FbWorkorderBillableSKUModel> SKUList)
         {
             List<String> duplicates = SKUList.GroupBy(x => x.SKU)
@@ -7580,15 +9082,1316 @@ namespace FarmerBrothers.Controllers
             }
 
         }
-        public bool SendWorkOrderMail(WorkOrder workOrder, string subject, string toAddress, string fromAddress, int? techId, MailType mailType, bool isResponsible, string additionalMessage, string mailFrom = "", bool isFromEmailCloserLink = false, string SalesEmailAddress = "")
+
+        public StringBuilder GetEmailBodyWithOutLinks(WorkOrder workOrder, string subject, string toAddress, string fromAddress, int? techId, MailType mailType, bool isResponsible, string additionalMessage, string mailFrom = "", bool isFromEmailCloserLink = false, string SalesEmailAddress = "", string esmEmailAddress = "")
+        {
+            StringBuilder salesEmailBody = new StringBuilder();
+
+            Contact customer = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrder.CustomerID).FirstOrDefault();
+            int TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrder.CustomerID.ToString());
+
+            List<CustomerNotesModel> CustomerNotesResults = new List<CustomerNotesModel>();
+            //int? custId = Convert.ToInt32(workOrder.CustomerID);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrder.CustomerID);
+            int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
+
+            string BccEmailAddress = fromAddress;
+            ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
+            if (esmEscalation != null)
+            {
+                fromAddress = esmEscalation.ESMEmail != null ? esmEscalation.ESMEmail : BccEmailAddress;
+            }
+            else
+            {
+                fromAddress = BccEmailAddress;
+            }
+
+
+            string IsBillable = "";
+            string ServiceLevelDesc = "";
+            if (!string.IsNullOrEmpty(customer.BillingCode))
+            {
+                IsBillable = CustomerModel.IsBillableService(customer.BillingCode, TotalCallsCount);
+                ServiceLevelDesc = CustomerModel.GetServiceLevelDesc(FarmerBrothersEntitites, customer.BillingCode);
+            }
+            else
+            {
+                IsBillable = " ";
+                ServiceLevelDesc = " - ";
+            }
+
+
+            salesEmailBody.Append(@"<img src='cid:logo' width='15%' height='15%'>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            
+
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+            if (tchView != null)
+            {
+                salesEmailBody.Append("<b>");
+                salesEmailBody.Append("Dispatched To : ");
+                salesEmailBody.Append("</b>");
+                salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                salesEmailBody.Append(tchView.CompanyName);
+                salesEmailBody.Append("</b></span>");
+
+                if (tchView.FamilyAff.ToUpper() == "SPT")
+                {
+                    salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                    salesEmailBody.Append("Third Party Dispatch ");
+                    salesEmailBody.Append("</b></span>");
+                }
+            }
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            if (!string.IsNullOrEmpty(additionalMessage) && mailFrom == "TRANSMIT")
+            {
+                salesEmailBody.Append("<b>ADDITIONAL NOTES: </b>");
+                salesEmailBody.Append(Environment.NewLine);
+                //salesEmailBody.Append(Utility.GetStringWithNewLine(additionalMessage));
+                salesEmailBody.Append(additionalMessage);
+                salesEmailBody.Append("<BR>");
+            }
+
+            if (custNotes != null && custNotes.Count > 0)
+            {
+                salesEmailBody.Append("<b>CUSTOMER NOTES: </b>");
+                salesEmailBody.Append(Environment.NewLine);
+                foreach (var dbCustNotes in custNotes)
+                {
+                    salesEmailBody.Append("[" + dbCustNotes.UserName + "] : " + dbCustNotes.Notes + Environment.NewLine);
+                }
+                salesEmailBody.Append("<BR>");
+            }
+
+            if (!string.IsNullOrEmpty(additionalMessage) && mailFrom == "ESCALATION")
+            {
+                salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                salesEmailBody.Append("ESCALATION NOTES: ");
+                //salesEmailBody.Append(Utility.GetStringWithNewLine(additionalMessage));
+                salesEmailBody.Append(additionalMessage);
+                salesEmailBody.Append("</b></span>");
+                salesEmailBody.Append("<BR>");
+            }
+            salesEmailBody.Append("CALL TIME: ");
+            salesEmailBody.Append(workOrder.WorkorderEntryDate);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("Work Order ID#: ");
+            salesEmailBody.Append(workOrder.WorkorderID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("ERF#: ");
+            salesEmailBody.Append(workOrder.WorkorderErfid);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Appointment Date: ");
+            salesEmailBody.Append(workOrder.AppointmentDate);
+            salesEmailBody.Append("<BR>");
+
+            WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == workOrder.WorkorderID && (w.AssignedStatus == "Accepted" || w.AssignedStatus == "Scheduled")).FirstOrDefault();
+            string schedlDate = ws == null ? "" : ws.EventScheduleDate.ToString();
+
+            if (workOrder.WorkorderCalltypeid == 1300)
+            {
+                Erf workorderERF = FarmerBrothersEntitites.Erfs.Where(ew => ew.ErfID == workOrder.WorkorderErfid).FirstOrDefault();
+                schedlDate = workorderERF == null ? schedlDate : workorderERF.OriginalRequestedDate.ToString();
+            }
+
+            salesEmailBody.Append("Schedule Date: ");
+            salesEmailBody.Append(schedlDate);
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Service Level: ");
+            salesEmailBody.Append(ServiceLevelDesc);
+            salesEmailBody.Append("<BR>");
+
+            string ServiceTier = customer == null ? "" : string.IsNullOrEmpty(customer.ProfitabilityTier) ? " - " : customer.ProfitabilityTier;
+            string paymentTerm = customer == null ? "" : (string.IsNullOrEmpty(customer.PaymentTerm) ? "" : customer.PaymentTerm);
+            string PaymentTermDesc = "";
+            if (!string.IsNullOrEmpty(paymentTerm))
+            {
+                JDEPaymentTerm paymentDesc = FarmerBrothersEntitites.JDEPaymentTerms.Where(c => c.PaymentTerm == paymentTerm).FirstOrDefault();
+                PaymentTermDesc = paymentDesc == null ? "" : paymentDesc.Description;
+            }
+            else
+            {
+                PaymentTermDesc = "";
+            }
+
+            salesEmailBody.Append("Tier: ");
+            salesEmailBody.Append(ServiceTier);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Payment Terms: ");
+            salesEmailBody.Append(PaymentTermDesc);
+            salesEmailBody.Append("<BR>");
+
+            AllFBStatu priority = FarmerBrothersEntitites.AllFBStatus.Where(p => p.FBStatusID == workOrder.PriorityCode).FirstOrDefault();
+            string priorityDesc = priority == null ? "" : priority.FBStatus;
+
+            salesEmailBody.Append("Service Priority: ");
+            salesEmailBody.Append(priorityDesc);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Parent: ");
+            if (customer.PricingParentID != null)
+            {
+                NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                string parentNum = "", ParentName = "";
+                if (nonfbcust != null)
+                {
+                    parentNum = nonfbcust.NonFBCustomerId;
+                    ParentName = nonfbcust.NonFBCustomerName;
+                }
+                else
+                {
+                    parentNum = customer.PricingParentID;
+                    ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                }
+                salesEmailBody.Append(parentNum + " " + ParentName);
+            }
+            else
+            {
+                salesEmailBody.Append("");
+            }
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Billable: ");
+            salesEmailBody.Append(IsBillable);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Customer PO: ");
+            salesEmailBody.Append(workOrder.CustomerPO);
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CUSTOMER INFORMATION: ");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CUSTOMER#: ");
+            salesEmailBody.Append(workOrder.CustomerID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.CustomerName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(customer.Address1);
+            salesEmailBody.Append(",");
+            salesEmailBody.Append(customer.Address2);
+            salesEmailBody.Append("<BR>");
+            //salesEmailBody.Append(workOrder.CustomerCity);
+            salesEmailBody.Append(customer.City);
+            salesEmailBody.Append(",");
+            //salesEmailBody.Append(workOrder.CustomerState);
+            salesEmailBody.Append(customer.State);
+            salesEmailBody.Append(" ");
+            //salesEmailBody.Append(workOrder.CustomerZipCode);
+            salesEmailBody.Append(customer.PostalCode);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.WorkorderContactName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("PHONE: ");
+            salesEmailBody.Append(workOrder.WorkorderContactPhone);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("BRANCH: ");
+            salesEmailBody.Append(customer.Branch);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("ROUTE#: ");
+            salesEmailBody.Append(customer.Route);
+            salesEmailBody.Append("<BR>");
+            if (workOrder.FollowupCallID == 601 || workOrder.FollowupCallID == 602)
+            {
+                int? followupId = workOrder.FollowupCallID;
+                AllFBStatu status = FarmerBrothersEntitites.AllFBStatus.Where(s => s.FBStatusID == followupId).FirstOrDefault();
+                if (status != null && !string.IsNullOrEmpty(status.FBStatus))
+                {
+                    //salesEmailBody.Append("Follow Up Reason: ");
+                    //salesEmailBody.Append(status.FBStatus);
+                    if (workOrder.FollowupCallID == 601)
+                        salesEmailBody.Append("Customer requesting an ETA phone call within the hour");
+                    else if (workOrder.FollowupCallID == 602)
+                        salesEmailBody.Append("Contact Customer Within The Hour");
+                    salesEmailBody.Append("<BR>");
+                }
+            }
+            salesEmailBody.Append("<span style='color:#ff0000'><b>");
+            salesEmailBody.Append("LAST SALES DATE: ");
+            salesEmailBody.Append(GetCustomerById(workOrder.CustomerID).LastSaleDate);
+            salesEmailBody.Append("</b></span>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("HOURS OF OPERATION: ");
+            salesEmailBody.Append(workOrder.HoursOfOperation);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CALL CODES: ");
+            salesEmailBody.Append("<BR>");
+
+            foreach (WorkorderEquipmentRequested equipment in workOrder.WorkorderEquipmentRequesteds)
+            {
+                salesEmailBody.Append("EQUIPMENT TYPE: ");
+                salesEmailBody.Append(equipment.Category);
+                salesEmailBody.Append("<BR>");
+
+                WorkorderType callType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeid).FirstOrDefault();
+                if (callType != null)
+                {
+                    salesEmailBody.Append("SERVICE CODE: ");
+                    salesEmailBody.Append(callType.CallTypeID);
+                    salesEmailBody.Append(" - ");
+                    salesEmailBody.Append(callType.Description);
+                    salesEmailBody.Append("<BR>");
+                }
+                Symptom symptom = FarmerBrothersEntitites.Symptoms.Where(s => s.SymptomID == equipment.Symptomid).FirstOrDefault();
+                if (symptom != null)
+                {
+                    salesEmailBody.Append("SYMPTOM: ");
+                    salesEmailBody.Append(symptom.SymptomID);
+                    salesEmailBody.Append(" - ");
+                    salesEmailBody.Append(symptom.Description);
+                    salesEmailBody.Append("<BR>");
+                }
+                salesEmailBody.Append("LOCATION: ");
+                salesEmailBody.Append(equipment.Location);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("SERIAL NUMBER: ");
+                salesEmailBody.Append(equipment.SerialNumber);
+
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CALL NOTES: ");
+            salesEmailBody.Append("<BR>");
+            IEnumerable<NotesHistory> histories = workOrder.NotesHistories.Where(n => n.AutomaticNotes == 0).OrderByDescending(n => n.EntryDate);
+
+            foreach (NotesHistory history in histories)
+            {
+                //Remove Redirected/Rejected notes for 3rd Party Tech
+                if (tchView != null && tchView.FamilyAff.ToUpper() == "SPT")
+                {
+                    if (history != null && history.Notes != null)
+                    {
+                        if (history.Notes.ToLower().Contains("redirected") || history.Notes.ToLower().Contains("rejected") || history.Notes.ToLower().Contains("declined"))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                salesEmailBody.Append(history.UserName);
+                salesEmailBody.Append(" ");
+                salesEmailBody.Append(history.EntryDate);
+                salesEmailBody.Append(" ");
+                //salesEmailBody.Append(history.Notes.Replace("\\n", " ").Replace("\\t", " ").Replace("\\r", " ").Replace("\n", " ").Replace("\t", " ").Replace("\r", " "));
+                salesEmailBody.Append(history.Notes);
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("SERVICE HISTORY:");
+            salesEmailBody.Append("<BR>");
+
+            DateTime currentTime = Utility.GetCurrentTime(workOrder.CustomerZipCode, FarmerBrothersEntitites);
+
+            /*IEnumerable<WorkOrder> previousWorkOrders = FarmerBrothersEntitites.WorkOrders.
+                Where(w => w.CustomerID == workOrder.CustomerID && (DbFunctions.DiffDays(w.WorkorderEntryDate, currentTime) < 90
+                              && DbFunctions.DiffDays(w.WorkorderEntryDate, currentTime) > -90));*/
+
+            IEnumerable<WorkOrder> previousWorkOrders = FarmerBrothersEntitites.WorkOrders.
+                Where(w => w.CustomerID == workOrder.CustomerID).OrderByDescending(ed => ed.WorkorderEntryDate).Take(3);
+
+            foreach (WorkOrder previousWorkOrder in previousWorkOrders)
+            {
+                salesEmailBody.Append("Work Order ID#: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderID);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("ENTRY DATE: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderEntryDate);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("STATUS: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderCallstatus);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("CALL CODES: ");
+                salesEmailBody.Append("<BR>");
+
+                foreach (WorkorderEquipment equipment in previousWorkOrder.WorkorderEquipments)
+                {
+                    salesEmailBody.Append("MAKE: ");
+                    salesEmailBody.Append(equipment.Manufacturer);
+                    salesEmailBody.Append("<BR>");
+                    salesEmailBody.Append("MODEL#: ");
+                    salesEmailBody.Append(equipment.Model);
+                    salesEmailBody.Append("<BR>");
+
+                    WorkorderType callType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeid).FirstOrDefault();
+                    if (callType != null)
+                    {
+                        salesEmailBody.Append("SERVICE CODE: ");
+                        salesEmailBody.Append(callType.CallTypeID);
+                        salesEmailBody.Append(" - ");
+                        salesEmailBody.Append(callType.Description);
+                        salesEmailBody.Append("<BR>");
+                    }
+
+                    Symptom symptom = FarmerBrothersEntitites.Symptoms.Where(s => s.SymptomID == equipment.Symptomid).FirstOrDefault();
+                    if (symptom != null)
+                    {
+                        salesEmailBody.Append("SYMPTOM: ");
+                        salesEmailBody.Append(symptom.SymptomID);
+                        salesEmailBody.Append(" - ");
+                        salesEmailBody.Append(symptom.Description);
+                        salesEmailBody.Append("<BR>");
+                    }
+
+                    salesEmailBody.Append("Location: ");
+                    salesEmailBody.Append(equipment.Location);
+                    salesEmailBody.Append("<BR>");
+                }
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<a href=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></a>");           
+
+            return salesEmailBody;
+        }
+
+        public StringBuilder GetEmailBodyWithLinks(WorkOrder workOrder, string subject, string toAddress, string fromAddress, int? techId, MailType mailType, bool isResponsible, string additionalMessage, string mailFrom = "", bool isFromEmailCloserLink = false, string SalesEmailAddress = "", string esmEmailAddress = "")
+        {
+            StringBuilder salesEmailBody = new StringBuilder();
+
+            Contact customer = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrder.CustomerID).FirstOrDefault();
+            int TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrder.CustomerID.ToString());
+
+            List<CustomerNotesModel> CustomerNotesResults = new List<CustomerNotesModel>();
+            //int? custId = Convert.ToInt32(workOrder.CustomerID);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrder.CustomerID);
+            int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
+
+
+            string BccEmailAddress = fromAddress;
+            ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
+            if (esmEscalation != null)
+            {
+                fromAddress = esmEscalation.ESMEmail != null ? esmEscalation.ESMEmail : BccEmailAddress;
+            }
+            else
+            {
+                fromAddress = BccEmailAddress;
+            }
+
+
+            string IsBillable = "";
+            string ServiceLevelDesc = "";
+            if (!string.IsNullOrEmpty(customer.BillingCode))
+            {
+                IsBillable = CustomerModel.IsBillableService(customer.BillingCode, TotalCallsCount);
+                ServiceLevelDesc = CustomerModel.GetServiceLevelDesc(FarmerBrothersEntitites, customer.BillingCode);
+            }
+            else
+            {
+                IsBillable = " ";
+                ServiceLevelDesc = " - ";
+            }
+
+
+            salesEmailBody.Append(@"<img src='cid:logo' width='15%' height='15%'>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            string url = ConfigurationManager.AppSettings["DispatchResponseUrl"];
+            string Redircturl = ConfigurationManager.AppSettings["RedirectResponseUrl"];
+            string Closureurl = ConfigurationManager.AppSettings["CallClosureUrl"];
+            string processCardurl = ConfigurationManager.AppSettings["ProcessCardUrl"];
+            //string finalUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=@response&isResponsible=" + isResponsible.ToString()));
+
+            salesEmailBody.Append("<a href=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></a>");
+            if (isFromEmailCloserLink)
+            {
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+            }
+            else
+            {
+                if ((mailType == MailType.DISPATCH || mailType == MailType.SPAWN) && techId.HasValue)
+                {
+                    if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0)
+                    {
+                        TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+
+
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=8&isResponsible=" + isResponsible.ToString())) + "\">SCHEDULE EVENT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=9&isResponsible=" + isResponsible.ToString())) + "\">ESM ESCALATION</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
+
+
+                        if (mailType == MailType.DISPATCH)
+                        {
+                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        }
+                        if (workOrder.WorkorderCallstatus == "Pending Acceptance" && techView.FamilyAff != "SPT")
+                        {
+                            /*string redirectFinalUrl = string.Format("{0}{1}&encrypt=yes", Redircturl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible.ToString()));                                
+                            salesEmailBody.Append("<a href=\"" + redirectFinalUrl + "\">REDIRECT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
+                        }
+                        /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=6&isResponsible=" + isResponsible.ToString())) + "\">START</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=2&isResponsible=" + isResponsible.ToString())) + "\">ARRIVAL</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", processCardurl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=10&isResponsible=" + isResponsible.ToString())) + "\">PROCESS CARD</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        //}
+                    }
+                }
+                else if (mailType == MailType.REDIRECTED)
+                {
+                    //salesEmailBody.Append("<a href=\"" + url + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible + "\">DISREGARD</a>");
+                    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible.ToString())) + "\">DISREGARD</a>");
+                }
+
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+            if (tchView != null && tchView.FamilyAff.ToUpper() == "SPT")
+            {
+                salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                salesEmailBody.Append("Third Party Dispatch ");
+                salesEmailBody.Append("</b></span>");
+            }
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            if (!string.IsNullOrEmpty(additionalMessage) && mailFrom == "TRANSMIT")
+            {
+                salesEmailBody.Append("<b>ADDITIONAL NOTES: </b>");
+                salesEmailBody.Append(Environment.NewLine);
+                //salesEmailBody.Append(Utility.GetStringWithNewLine(additionalMessage));
+                salesEmailBody.Append(additionalMessage);
+                salesEmailBody.Append("<BR>");
+            }
+
+            if (custNotes != null && custNotes.Count > 0)
+            {
+                salesEmailBody.Append("<b>CUSTOMER NOTES: </b>");
+                salesEmailBody.Append(Environment.NewLine);
+                foreach (var dbCustNotes in custNotes)
+                {
+                    salesEmailBody.Append("[" + dbCustNotes.UserName + "] : " + dbCustNotes.Notes + Environment.NewLine);
+                }
+                salesEmailBody.Append("<BR>");
+            }
+
+            if (!string.IsNullOrEmpty(additionalMessage) && mailFrom == "ESCALATION")
+            {
+                salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                salesEmailBody.Append("ESCALATION NOTES: ");
+                //salesEmailBody.Append(Utility.GetStringWithNewLine(additionalMessage));
+                salesEmailBody.Append(additionalMessage);
+                salesEmailBody.Append("</b></span>");
+                salesEmailBody.Append("<BR>");
+            }
+            salesEmailBody.Append("CALL TIME: ");
+            salesEmailBody.Append(workOrder.WorkorderEntryDate);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("Work Order ID#: ");
+            salesEmailBody.Append(workOrder.WorkorderID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("ERF#: ");
+            salesEmailBody.Append(workOrder.WorkorderErfid);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Appointment Date: ");
+            salesEmailBody.Append(workOrder.AppointmentDate);
+            salesEmailBody.Append("<BR>");
+
+            WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == workOrder.WorkorderID && (w.AssignedStatus == "Accepted" || w.AssignedStatus == "Scheduled")).FirstOrDefault();
+            string schedlDate = ws == null ? "" : ws.EventScheduleDate.ToString();
+
+            if (workOrder.WorkorderCalltypeid == 1300)
+            {
+                Erf workorderERF = FarmerBrothersEntitites.Erfs.Where(ew => ew.ErfID == workOrder.WorkorderErfid).FirstOrDefault();
+                schedlDate = workorderERF == null ? schedlDate : workorderERF.OriginalRequestedDate.ToString();
+            }
+
+            salesEmailBody.Append("Schedule Date: ");
+            salesEmailBody.Append(schedlDate);
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Service Level: ");
+            salesEmailBody.Append(ServiceLevelDesc);
+            salesEmailBody.Append("<BR>");
+
+            string ServiceTier = customer == null ? "" : string.IsNullOrEmpty(customer.ProfitabilityTier) ? " - " : customer.ProfitabilityTier;
+            string paymentTerm = customer == null ? "" : (string.IsNullOrEmpty(customer.PaymentTerm) ? "" : customer.PaymentTerm);
+            string PaymentTermDesc = "";
+            if (!string.IsNullOrEmpty(paymentTerm))
+            {
+                JDEPaymentTerm paymentDesc = FarmerBrothersEntitites.JDEPaymentTerms.Where(c => c.PaymentTerm == paymentTerm).FirstOrDefault();
+                PaymentTermDesc = paymentDesc == null ? "" : paymentDesc.Description;
+            }
+            else
+            {
+                PaymentTermDesc = "";
+            }
+
+            salesEmailBody.Append("Tier: ");
+            salesEmailBody.Append(ServiceTier);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Payment Terms: ");
+            salesEmailBody.Append(PaymentTermDesc);
+            salesEmailBody.Append("<BR>");
+
+            AllFBStatu priority = FarmerBrothersEntitites.AllFBStatus.Where(p => p.FBStatusID == workOrder.PriorityCode).FirstOrDefault();
+            string priorityDesc = priority == null ? "" : priority.FBStatus;
+
+            salesEmailBody.Append("Service Priority: ");
+            salesEmailBody.Append(priorityDesc);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Parent: ");
+            if (customer.PricingParentID != null)
+            {
+                NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                string parentNum = "", ParentName = "";
+                if (nonfbcust != null)
+                {
+                    parentNum = nonfbcust.NonFBCustomerId;
+                    ParentName = nonfbcust.NonFBCustomerName;
+                }
+                else
+                {
+                    parentNum = customer.PricingParentID;
+                    ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                }
+                salesEmailBody.Append(parentNum + " " + ParentName);
+            }
+            else
+            {
+                salesEmailBody.Append("");
+            }
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Billable: ");
+            salesEmailBody.Append(IsBillable);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Customer PO: ");
+            salesEmailBody.Append(workOrder.CustomerPO);
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CUSTOMER INFORMATION: ");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CUSTOMER#: ");
+            salesEmailBody.Append(workOrder.CustomerID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.CustomerName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(customer.Address1);
+            salesEmailBody.Append(",");
+            salesEmailBody.Append(customer.Address2);
+            salesEmailBody.Append("<BR>");
+            //salesEmailBody.Append(workOrder.CustomerCity);
+            salesEmailBody.Append(customer.City);
+            salesEmailBody.Append(",");
+            //salesEmailBody.Append(workOrder.CustomerState);
+            salesEmailBody.Append(customer.State);
+            salesEmailBody.Append(" ");
+            //salesEmailBody.Append(workOrder.CustomerZipCode);
+            salesEmailBody.Append(customer.PostalCode);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.WorkorderContactName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("PHONE: ");
+            salesEmailBody.Append(workOrder.WorkorderContactPhone);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("BRANCH: ");
+            salesEmailBody.Append(customer.Branch);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("ROUTE#: ");
+            salesEmailBody.Append(customer.Route);
+            salesEmailBody.Append("<BR>");
+            if (workOrder.FollowupCallID == 601 || workOrder.FollowupCallID == 602)
+            {
+                int? followupId = workOrder.FollowupCallID;
+                AllFBStatu status = FarmerBrothersEntitites.AllFBStatus.Where(s => s.FBStatusID == followupId).FirstOrDefault();
+                if (status != null && !string.IsNullOrEmpty(status.FBStatus))
+                {
+                    //salesEmailBody.Append("Follow Up Reason: ");
+                    //salesEmailBody.Append(status.FBStatus);
+                    if (workOrder.FollowupCallID == 601)
+                        salesEmailBody.Append("Customer requesting an ETA phone call within the hour");
+                    else if (workOrder.FollowupCallID == 602)
+                        salesEmailBody.Append("Contact Customer Within The Hour");
+                    salesEmailBody.Append("<BR>");
+                }
+            }
+            salesEmailBody.Append("<span style='color:#ff0000'><b>");
+            salesEmailBody.Append("LAST SALES DATE: ");
+            salesEmailBody.Append(GetCustomerById(workOrder.CustomerID).LastSaleDate);
+            salesEmailBody.Append("</b></span>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("HOURS OF OPERATION: ");
+            salesEmailBody.Append(workOrder.HoursOfOperation);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CALL CODES: ");
+            salesEmailBody.Append("<BR>");
+
+            foreach (WorkorderEquipmentRequested equipment in workOrder.WorkorderEquipmentRequesteds)
+            {
+                salesEmailBody.Append("EQUIPMENT TYPE: ");
+                salesEmailBody.Append(equipment.Category);
+                salesEmailBody.Append("<BR>");
+
+                WorkorderType callType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeid).FirstOrDefault();
+                if (callType != null)
+                {
+                    salesEmailBody.Append("SERVICE CODE: ");
+                    salesEmailBody.Append(callType.CallTypeID);
+                    salesEmailBody.Append(" - ");
+                    salesEmailBody.Append(callType.Description);
+                    salesEmailBody.Append("<BR>");
+                }
+                Symptom symptom = FarmerBrothersEntitites.Symptoms.Where(s => s.SymptomID == equipment.Symptomid).FirstOrDefault();
+                if (symptom != null)
+                {
+                    salesEmailBody.Append("SYMPTOM: ");
+                    salesEmailBody.Append(symptom.SymptomID);
+                    salesEmailBody.Append(" - ");
+                    salesEmailBody.Append(symptom.Description);
+                    salesEmailBody.Append("<BR>");
+                }
+                salesEmailBody.Append("LOCATION: ");
+                salesEmailBody.Append(equipment.Location);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("SERIAL NUMBER: ");
+                salesEmailBody.Append(equipment.SerialNumber);
+
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CALL NOTES: ");
+            salesEmailBody.Append("<BR>");
+            IEnumerable<NotesHistory> histories = workOrder.NotesHistories.Where(n => n.AutomaticNotes == 0).OrderByDescending(n => n.EntryDate);
+
+            foreach (NotesHistory history in histories)
+            {
+                //Remove Redirected/Rejected notes for 3rd Party Tech
+                if (tchView != null && tchView.FamilyAff.ToUpper() == "SPT")
+                {
+                    if (history != null && history.Notes != null)
+                    {
+                        if (history.Notes.ToLower().Contains("redirected") || history.Notes.ToLower().Contains("rejected") || history.Notes.ToLower().Contains("declined"))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                salesEmailBody.Append(history.UserName);
+                salesEmailBody.Append(" ");
+                salesEmailBody.Append(history.EntryDate);
+                salesEmailBody.Append(" ");
+                //salesEmailBody.Append(history.Notes.Replace("\\n", " ").Replace("\\t", " ").Replace("\\r", " ").Replace("\n", " ").Replace("\t", " ").Replace("\r", " "));
+                salesEmailBody.Append(history.Notes);
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("SERVICE HISTORY:");
+            salesEmailBody.Append("<BR>");
+
+            DateTime currentTime = Utility.GetCurrentTime(workOrder.CustomerZipCode, FarmerBrothersEntitites);
+
+            /*IEnumerable<WorkOrder> previousWorkOrders = FarmerBrothersEntitites.WorkOrders.
+                Where(w => w.CustomerID == workOrder.CustomerID && (DbFunctions.DiffDays(w.WorkorderEntryDate, currentTime) < 90
+                              && DbFunctions.DiffDays(w.WorkorderEntryDate, currentTime) > -90));*/
+
+            IEnumerable<WorkOrder> previousWorkOrders = FarmerBrothersEntitites.WorkOrders.
+                Where(w => w.CustomerID == workOrder.CustomerID).OrderByDescending(ed => ed.WorkorderEntryDate).Take(3);
+
+            foreach (WorkOrder previousWorkOrder in previousWorkOrders)
+            {
+                salesEmailBody.Append("Work Order ID#: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderID);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("ENTRY DATE: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderEntryDate);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("STATUS: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderCallstatus);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("CALL CODES: ");
+                salesEmailBody.Append("<BR>");
+
+                foreach (WorkorderEquipment equipment in previousWorkOrder.WorkorderEquipments)
+                {
+                    salesEmailBody.Append("MAKE: ");
+                    salesEmailBody.Append(equipment.Manufacturer);
+                    salesEmailBody.Append("<BR>");
+                    salesEmailBody.Append("MODEL#: ");
+                    salesEmailBody.Append(equipment.Model);
+                    salesEmailBody.Append("<BR>");
+
+                    WorkorderType callType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeid).FirstOrDefault();
+                    if (callType != null)
+                    {
+                        salesEmailBody.Append("SERVICE CODE: ");
+                        salesEmailBody.Append(callType.CallTypeID);
+                        salesEmailBody.Append(" - ");
+                        salesEmailBody.Append(callType.Description);
+                        salesEmailBody.Append("<BR>");
+                    }
+
+                    Symptom symptom = FarmerBrothersEntitites.Symptoms.Where(s => s.SymptomID == equipment.Symptomid).FirstOrDefault();
+                    if (symptom != null)
+                    {
+                        salesEmailBody.Append("SYMPTOM: ");
+                        salesEmailBody.Append(symptom.SymptomID);
+                        salesEmailBody.Append(" - ");
+                        salesEmailBody.Append(symptom.Description);
+                        salesEmailBody.Append("<BR>");
+                    }
+
+                    salesEmailBody.Append("Location: ");
+                    salesEmailBody.Append(equipment.Location);
+                    salesEmailBody.Append("<BR>");
+                }
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<a href=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></a>");
+            if (isFromEmailCloserLink)
+            {
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+            }
+            else
+            {
+                if ((mailType == MailType.DISPATCH || mailType == MailType.SPAWN) && techId.HasValue)
+                {
+                    if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0)
+                    {
+                        TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=9&isResponsible=" + isResponsible.ToString())) + "\">ESM ESCALATION</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        if (mailType == MailType.DISPATCH)
+                        {
+                            /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
+                        }
+                        if (workOrder.WorkorderCallstatus == "Pending Acceptance" && techView.FamilyAff != "SPT")
+                        {
+                            // salesEmailBody.Append("<a href=\"" + Redircturl + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible + "\">REDIRECT</a>");
+                            string redirectFinalUrl = string.Format("{0}{1}&encrypt=yes", Redircturl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible.ToString()));
+                            salesEmailBody.Append("<a href=\"" + redirectFinalUrl + "\">REDIRECT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        }
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        // }
+                    }
+                }
+                else if (mailType == MailType.REDIRECTED)
+                {
+                    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible.ToString())) + "\">DISREGARD</a>");
+                }
+            }
+
+            return salesEmailBody;
+        }
+
+        public bool SendWorkOrderMail(WorkOrder workOrder, string subject, string toAddress, string fromAddress, int? techId, MailType mailType, bool isResponsible, string additionalMessage, string mailFrom = "", bool isFromEmailCloserLink = false, string SalesEmailAddress = "", string esmEmailAddress = "")
         {
             Contact customer = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrder.CustomerID).FirstOrDefault();
             int TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrder.CustomerID.ToString());
 
             List<CustomerNotesModel> CustomerNotesResults = new List<CustomerNotesModel>();
-            int? custId = Convert.ToInt32(workOrder.CustomerID);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            //int? custId = Convert.ToInt32(workOrder.CustomerID);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrder.CustomerID);
+            int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
+
+
+            string BccEmailAddress = fromAddress;
+            ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
+            if (esmEscalation != null)
+            {
+                fromAddress = esmEscalation.ESMEmail != null ? esmEscalation.ESMEmail : BccEmailAddress;
+            }
+            else
+            {
+                fromAddress = BccEmailAddress;
+            }
+
+            StringBuilder salesEmailBodywithLinks = GetEmailBodyWithLinks(workOrder, subject, toAddress, fromAddress, techId, mailType, isResponsible, additionalMessage, mailFrom, isFromEmailCloserLink, SalesEmailAddress, esmEmailAddress);
+            StringBuilder salesEmailBodywithOutLinks = GetEmailBodyWithOutLinks(workOrder, subject, toAddress, fromAddress, techId, mailType, isResponsible, additionalMessage, mailFrom, isFromEmailCloserLink, SalesEmailAddress, esmEmailAddress);
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+
+            string IsBillable = "";
+            string ServiceLevelDesc = "";
+            if (!string.IsNullOrEmpty(customer.BillingCode))
+            {
+                IsBillable = CustomerModel.IsBillableService(customer.BillingCode, TotalCallsCount);
+                ServiceLevelDesc = CustomerModel.GetServiceLevelDesc(FarmerBrothersEntitites, customer.BillingCode);
+            }
+            else
+            {
+                IsBillable = " ";
+                ServiceLevelDesc = " - ";
+            }
+            bool result = true;
+
+            string toMailAddress = string.Empty;
+            string ccMailAddress = string.Empty;
+            if (!string.IsNullOrWhiteSpace(toAddress))
+            {
+                if (toAddress.Contains("#"))
+                {
+                    string[] mailToAddress = toAddress.Split('#');
+                    if (mailToAddress.Count() > 0)
+                    {
+                        string[] addresses = mailToAddress[0].Split(';');
+                        foreach (string address in addresses)
+                        {
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                                toMailAddress += address + ";";
+                            }
+                        }
+
+                        string[] ccaddresses = mailToAddress[1].Split(';');
+                        foreach (string address in ccaddresses)
+                        {
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                                ccMailAddress += address + ";";
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    string[] addresses = toAddress.Split(';');
+                    foreach (string address in addresses)
+                    {
+                        if (!string.IsNullOrWhiteSpace(address))
+                        {
+                            if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                            toMailAddress += address + ";";
+                        }
+                    }
+                }
+            }
+            bool toResult = sendToListEmail(salesEmailBodywithLinks, fromAddress, toMailAddress, BccEmailAddress, subject, techId, customer);
+
+            FBCustomerServiceDistribution fbcs = FarmerBrothersEntitites.FBCustomerServiceDistributions.Where(f => f.Route == customer.Route).FirstOrDefault();             
+            if (fbcs != null)
+            {
+                if (fbcs.SalesMmanagerEmail != null)
+                {
+                    ccMailAddress += fbcs.SalesMmanagerEmail + ";";
+                }
+                if (fbcs.RegionalsEmail != null)
+                {
+                    ccMailAddress += fbcs.RegionalsEmail + ";";
+                }
+                if (fbcs.RSREmail != null)
+                {
+                    ccMailAddress += fbcs.RSREmail + ";";
+                }                
+            }
+               
+            bool ccResult = sendCCListEmail(salesEmailBodywithOutLinks, fromAddress, ccMailAddress, BccEmailAddress, subject, techId, customer, SalesEmailAddress, esmEmailAddress);
+
+
+            //FarmerBrothersEntities fbent = new FarmerBrothersEntities();
+            //NotesHistory nh = new NotesHistory();
+            //nh.WorkorderID = workOrder.WorkorderID;
+            //nh.Notes = "Dispatch E-mail sent to : " + toMailAddress + ", and Copied to : " + ccMailAddress;
+            //nh.EntryDate = DateTime.Now;
+            //nh.AutomaticNotes = 1;
+            //fbent.NotesHistories.Add(nh);
+            //fbent.SaveChanges();
+
+            result = toResult;
+
+            return result;
+        }
+
+        public bool sendToListEmail_old(StringBuilder salesEmailBodywithLinks, string fromAddress, string toAddress, string BccEmailAddress, string subject, int? techId, Contact customer)
+        {
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+            string contentId = Guid.NewGuid().ToString();
+            string logoPath = string.Empty;
+            if (Server == null)
+            {
+                logoPath = Path.Combine(HttpRuntime.AppDomainAppPath, "img/mainlogo.jpg");
+            }
+            else
+            {
+                logoPath = Server.MapPath("~/img/mainlogo.jpg");
+            }
+
+            StringBuilder salesEmailBody = new StringBuilder();
+
+            salesEmailBody = salesEmailBodywithLinks;
+            salesEmailBody = salesEmailBody.Replace("cid:logo", "cid:" + contentId);
+
+            AlternateView avHtml = AlternateView.CreateAlternateViewFromString
+               (salesEmailBody.ToString(), null, MediaTypeNames.Text.Html);
+
+            LinkedResource inline = new LinkedResource(logoPath, MediaTypeNames.Image.Jpeg);
+            inline.ContentId = contentId;
+            avHtml.LinkedResources.Add(inline);
+
+            var message = new MailMessage();
+
+            message.AlternateViews.Add(avHtml);
+
+            message.IsBodyHtml = true;
+            message.Body = salesEmailBody.Replace("cid:logo", "cid:" + inline.ContentId).ToString();
+
+            string ToAddr = string.Empty;
+            string CcAddr = string.Empty;
+            bool result = true;
+            if (!string.IsNullOrEmpty(toAddress))
+            {
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+                {
+                    toAddress = ConfigurationManager.AppSettings["TestEmail"];
+                    if (toAddress.Contains("#"))
+                    {
+                        string[] mailCCAddress = toAddress.Split('#');
+
+                        if (mailCCAddress.Count() > 0)
+                        {
+                            ToAddr = mailCCAddress[0];
+                            //string[] addresses = mailCCAddress[0].Split(';');
+                            //foreach (string address in addresses)
+                            //{
+                            //    if (address.ToLower().Contains("@jmsmucker.com")) continue;
+                            //    if (!string.IsNullOrWhiteSpace(address))
+                            //    {
+                            //        ToAddr += address;
+                            //    }
+                            //}
+                        }
+                    }
+
+                }
+                //string[] addresses = toAddress.Split(';');
+                //foreach (string address in addresses)
+                //{
+                //    if (!string.IsNullOrWhiteSpace(address))
+                //    {
+                //        if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                //        message.To.Add(new MailAddress(address));
+                //        ToAddr += address;
+                //    }
+                //}
+
+
+
+                //message.Bcc.Add(BccEmailAddress);
+
+                message.From = new MailAddress(fromAddress);
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+
+                if (tchView != null && tchView.FamilyAff != "SP")
+                {
+                    message.Priority = MailPriority.High;
+                }
+
+                EmailUtility eu = new EmailUtility();
+                eu.SendEmail(fromAddress, ToAddr, CcAddr, subject, salesEmailBody.Replace("cid:logo", "cid:" + inline.ContentId).ToString());
+
+                //using (var smtp = new SmtpClient())
+                //{
+                //    smtp.Host = ConfigurationManager.AppSettings["MailServer"];
+                //    smtp.Port = 25;
+
+                //    try
+                //    {
+                //        smtp.Send(message);
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        result = false;
+                //    }
+                //}
+            }
+
+            return result;
+        }
+        public bool sendCCListEmail_old(StringBuilder salesEmailBodywithoutLinks, string fromAddress,string ccMailAddress, string BccEmailAddress, string subject, int? techId, Contact customer, string SalesEmailAddress, string esmEmailAddress)
+        {
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+            string contentId = Guid.NewGuid().ToString();
+            string logoPath = string.Empty;
+            if (Server == null)
+            {
+                logoPath = Path.Combine(HttpRuntime.AppDomainAppPath, "img/mainlogo.jpg");
+            }
+            else
+            {
+                logoPath = Server.MapPath("~/img/mainlogo.jpg");
+            }
+            StringBuilder salesEmailBody = new StringBuilder();
+
+            salesEmailBody = salesEmailBodywithoutLinks;
+            salesEmailBody = salesEmailBody.Replace("cid:logo", "cid:" + contentId);
+
+            AlternateView avHtml = AlternateView.CreateAlternateViewFromString
+               (salesEmailBody.ToString(), null, MediaTypeNames.Text.Html);
+
+            LinkedResource inline = new LinkedResource(logoPath, MediaTypeNames.Image.Jpeg);
+            inline.ContentId = contentId;
+            avHtml.LinkedResources.Add(inline);
+
+            var message = new MailMessage();
+
+            message.AlternateViews.Add(avHtml);
+
+            message.IsBodyHtml = true;
+            message.Body = salesEmailBody.Replace("cid:logo", "cid:" + inline.ContentId).ToString();
+
+            string ToAddr = string.Empty;
+            string CcAddr = string.Empty;
+            bool result = true;
+            if (!string.IsNullOrEmpty(ccMailAddress))
+            {
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+                {
+                    ccMailAddress = ConfigurationManager.AppSettings["TestEmail"];
+                    if (ccMailAddress.Contains("#"))
+                    {
+                        string[] mailCCAddress = ccMailAddress.Split('#');
+
+                        if (mailCCAddress.Count() > 0)
+                        {
+                            CcAddr = mailCCAddress[1];
+                            //string[] addresses = mailCCAddress[1].Split(';');
+                            //foreach (string address in addresses)
+                            //{
+                            //    if (address.ToLower().Contains("@jmsmucker.com")) continue;
+                            //    if (!string.IsNullOrWhiteSpace(address))
+                            //    {
+                            //        CcAddr += address;
+                            //    }
+                            //}
+                        }
+                    }
+
+                }
+
+                //if (ccMailAddress.Contains(";"))
+                //{
+                //    string[] addresses = ccMailAddress.Split(';');
+                //    foreach (string address in addresses)
+                //    {
+                //        if (!string.IsNullOrWhiteSpace(address))
+                //        {
+                //            if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                //            message.CC.Add(new MailAddress(address));
+                //        }
+                //    }
+                //}
+
+
+                //message.Bcc.Add(BccEmailAddress);
+
+                message.From = new MailAddress(fromAddress);
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+
+                if (tchView != null && tchView.FamilyAff != "SP")
+                {
+                    message.Priority = MailPriority.High;
+                }
+
+
+                EmailUtility eu = new EmailUtility();
+                eu.SendEmail(fromAddress, ToAddr, CcAddr, subject, salesEmailBody.Replace("cid:logo", "cid:" + inline.ContentId).ToString());
+
+                //using (var smtp = new SmtpClient())
+                //{
+                //    smtp.Host = ConfigurationManager.AppSettings["MailServer"];
+                //    smtp.Port = 25;
+
+                //    try
+                //    {
+                //        smtp.Send(message);
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        result = false;
+                //    }
+                //}
+            }
             
+            return result;
+        }
+
+        public bool sendToListEmail(StringBuilder salesEmailBodywithLinks, string fromAddress, string toAddress, string BccEmailAddress, string subject, int? techId, Contact customer)
+        {
+            StringBuilder salesEmailBody = new StringBuilder();
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+
+
+            salesEmailBody = salesEmailBodywithLinks;
+
+            string ToAddr = string.Empty;
+            string CcAddr = string.Empty;
+            bool result = true;
+            if (!string.IsNullOrEmpty(toAddress))
+            {
+               
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+                {
+                    toAddress = ConfigurationManager.AppSettings["TestEmail"];
+                }
+
+                if (toAddress.Contains("#"))
+                {
+                    string[] mailCCAddress = toAddress.Split('#');
+
+                    if (mailCCAddress.Count() > 0)
+                    {
+                        ToAddr = mailCCAddress[0];
+                    }
+                }
+                else
+                {
+                    ToAddr = toAddress;
+                }
+
+                
+
+
+                EmailUtility eu = new EmailUtility();
+                eu.SendEmail(fromAddress, ToAddr, CcAddr, subject, salesEmailBody.ToString());
+
+                
+            }
+            return result;
+        }
+
+        public bool sendCCListEmail(StringBuilder salesEmailBodywithoutLinks, string fromAddress, string ccMailAddress, string BccEmailAddress, string subject, int? techId, Contact customer, string SalesEmailAddress, string esmEmailAddress)
+        {
+            StringBuilder salesEmailBody = new StringBuilder();
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+
+
+            salesEmailBody = salesEmailBodywithoutLinks;
+
+            string ToAddr = string.Empty;
+            string CcAddr = string.Empty;
+            bool result = true;
+            if (!string.IsNullOrEmpty(ccMailAddress))
+            {
+                if (Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+                {
+                    ccMailAddress = ConfigurationManager.AppSettings["TestEmail"];
+                }
+                if (ccMailAddress.Contains("#"))
+                {
+                    string[] mailCCAddress = ccMailAddress.Split('#');
+
+                    if (mailCCAddress.Count() > 0)
+                    {
+                        CcAddr = mailCCAddress[1];
+                    }
+                }
+                else
+                {
+                    CcAddr = ccMailAddress;
+                }
+
+                
+
+
+                EmailUtility eu = new EmailUtility();
+                eu.SendEmail(fromAddress, ToAddr, CcAddr, subject, salesEmailBody.ToString());
+
+
+            }
+            return result;
+        }
+
+        public bool SendWorkOrderMail_New_Backup(WorkOrder workOrder, string subject, string toAddress, string fromAddress, int? techId, MailType mailType, bool isResponsible, string additionalMessage, string mailFrom = "", bool isFromEmailCloserLink = false, string SalesEmailAddress = "", string esmEmailAddress = "")
+        {
+            Contact customer = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrder.CustomerID).FirstOrDefault();
+            int TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrder.CustomerID.ToString());
+
+            List<CustomerNotesModel> CustomerNotesResults = new List<CustomerNotesModel>();
+            //int? custId = Convert.ToInt32(workOrder.CustomerID);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrder.CustomerID);
+            int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
+
+
+            string BccEmailAddress = fromAddress;
+            ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
+            if(esmEscalation != null)
+            {
+                fromAddress = esmEscalation.ESMEmail != null ? esmEscalation.ESMEmail : BccEmailAddress;
+            }
+            else
+            {
+                fromAddress = BccEmailAddress;
+            }
+
 
             string IsBillable = "";
             string ServiceLevelDesc = "";
@@ -7631,30 +10434,28 @@ namespace FarmerBrothers.Controllers
                     if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0)
                     {
                         TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
-                        //if (techView.FamilyAff == "SPT")
-                        //{
-                        //    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
-                        //    salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                        //    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
-                        //    salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                        //}
-                        //else
-                        //{
-                            if (mailType == MailType.DISPATCH)
-                            {
-                                //salesEmailBody.Append("<a href=\"" + url + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible + "\">ACCEPT</a>");                        
+
+
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=8&isResponsible=" + isResponsible.ToString())) + "\">SCHEDULE EVENT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=9&isResponsible=" + isResponsible.ToString())) + "\">ESM ESCALATION</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
+
+
+                        if (mailType == MailType.DISPATCH)
+                            {   
                                 salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
                                 salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                             }
                             if (workOrder.WorkorderCallstatus == "Pending Acceptance" && techView.FamilyAff != "SPT")
                             {
-                                string redirectFinalUrl = string.Format("{0}{1}&encrypt=yes", Redircturl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible.ToString()));
-                                //salesEmailBody.Append("<a href=\"" + Redircturl + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible + "\">REDIRECT</a>");
+                                /*string redirectFinalUrl = string.Format("{0}{1}&encrypt=yes", Redircturl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible.ToString()));                                
                                 salesEmailBody.Append("<a href=\"" + redirectFinalUrl + "\">REDIRECT</a>");
-                                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
                             }
-                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
-                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                            /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=6&isResponsible=" + isResponsible.ToString())) + "\">START</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=2&isResponsible=" + isResponsible.ToString())) + "\">ARRIVAL</a>");
@@ -7663,8 +10464,7 @@ namespace FarmerBrothers.Controllers
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=8&isResponsible=" + isResponsible.ToString())) + "\">SCHEDULE EVENT</a>");
-                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                            
                         //}
                     }
                 }
@@ -7775,6 +10575,28 @@ namespace FarmerBrothers.Controllers
 
             salesEmailBody.Append("Service Priority: ");
             salesEmailBody.Append(priorityDesc);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Parent: ");
+            if (customer.PricingParentID != null)
+            {
+                NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                string parentNum = "", ParentName = "";
+                if (nonfbcust != null)
+                {
+                    parentNum = nonfbcust.NonFBCustomerId;
+                    ParentName = nonfbcust.NonFBCustomerName;
+                }
+                else
+                {
+                    parentNum = customer.PricingParentID;
+                    ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                }
+                salesEmailBody.Append(parentNum + " " + ParentName);
+            }
+            else
+            {
+                salesEmailBody.Append("");
+            }
             salesEmailBody.Append("<BR>");
             salesEmailBody.Append("Billable: ");
             salesEmailBody.Append(IsBillable);
@@ -7989,20 +10811,14 @@ namespace FarmerBrothers.Controllers
                     if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0)
                     {
                         TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
-                        //if (techView.FamilyAff == "SPT")
-                        //{
-                        //    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
-                        //    salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                        //    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
-                        //    salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                        //}
-                        //else
-                        //{
-                            if (mailType == MailType.DISPATCH)
-                            {
-                                //salesEmailBody.Append("<a href=\"" + url + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible + "\">ACCEPT</a>");
-                                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
-                                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                       
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=9&isResponsible=" + isResponsible.ToString())) + "\">ESM ESCALATION</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        if (mailType == MailType.DISPATCH)
+                            {                                
+                                /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
+                                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
                             }
                             if (workOrder.WorkorderCallstatus == "Pending Acceptance" && techView.FamilyAff != "SPT")
                             {
@@ -8013,7 +10829,7 @@ namespace FarmerBrothers.Controllers
                             }
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=6&isResponsible=" + isResponsible.ToString())) + "\">START</a>");
+                            /*salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=6&isResponsible=" + isResponsible.ToString())) + "\">START</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=2&isResponsible=" + isResponsible.ToString())) + "\">ARRIVAL</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -8022,7 +10838,7 @@ namespace FarmerBrothers.Controllers
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=8&isResponsible=" + isResponsible.ToString())) + "\">SCHEDULE EVENT</a>");
-                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");*/
                        // }
                     }
                 }
@@ -8127,12 +10943,35 @@ namespace FarmerBrothers.Controllers
                         message.CC.Add(SalesEmailAddress);
                     }
                 }
+                if(!string.IsNullOrEmpty(esmEmailAddress) && !Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+                {
+                    if (esmEmailAddress.Contains(";"))
+                    {
+                        string[] addresses = esmEmailAddress.Split(';');
+                        foreach (string address in addresses)
+                        {
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                if (address.ToLower().Contains("@jmsmucker.com")) continue;
 
-                string IsNonFBCustomerParentId = ConfigurationManager.AppSettings["NonFBCustomerParentID"];
-                if(customer.PricingParentID == IsNonFBCustomerParentId)
+                                message.CC.Add(new MailAddress(address));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        message.CC.Add(esmEmailAddress);
+                    }
+                }
+                                
+                NonFBCustomer nonFBCustomer = FarmerBrothersEntitites.NonFBCustomers.Where(n => n.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();                
+                if(nonFBCustomer != null)
                 {
                     message.CC.Clear();
                 }
+
+                message.Bcc.Add(BccEmailAddress);
+
 
                 message.From = new MailAddress(fromAddress);
                 message.Subject = subject;
@@ -8142,6 +10981,639 @@ namespace FarmerBrothers.Controllers
                 {
                     message.Priority = MailPriority.High;
                 }
+
+                using (var smtp = new SmtpClient())
+                {
+                    smtp.Host = ConfigurationManager.AppSettings["MailServer"];
+                    smtp.Port = 25;
+
+                    try
+                    {
+                        smtp.Send(message);
+                    }
+                    catch (Exception ex)
+                    {
+                        result = false;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public bool SendWorkOrderMail_Old(WorkOrder workOrder, string subject, string toAddress, string fromAddress, int? techId, MailType mailType, bool isResponsible, string additionalMessage, string mailFrom = "", bool isFromEmailCloserLink = false, string SalesEmailAddress = "", string esmEmailAddress = "")
+        {
+            Contact customer = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrder.CustomerID).FirstOrDefault();
+            int TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, workOrder.CustomerID.ToString());
+
+            List<CustomerNotesModel> CustomerNotesResults = new List<CustomerNotesModel>();
+            //int? custId = Convert.ToInt32(workOrder.CustomerID);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+
+            int custId = Convert.ToInt32(workOrder.CustomerID);
+            int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
+
+            string IsBillable = "";
+            string ServiceLevelDesc = "";
+            if (!string.IsNullOrEmpty(customer.BillingCode))
+            {
+                IsBillable = CustomerModel.IsBillableService(customer.BillingCode, TotalCallsCount);
+                ServiceLevelDesc = CustomerModel.GetServiceLevelDesc(FarmerBrothersEntitites, customer.BillingCode);
+            }
+            else
+            {
+                IsBillable = " ";
+                ServiceLevelDesc = " - ";
+            }
+
+            StringBuilder salesEmailBody = new StringBuilder();
+
+            salesEmailBody.Append(@"<img src='cid:logo' width='15%' height='15%'>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            string url = ConfigurationManager.AppSettings["DispatchResponseUrl"];
+            string Redircturl = ConfigurationManager.AppSettings["RedirectResponseUrl"];
+            string processCardurl = ConfigurationManager.AppSettings["ProcessCardUrl"];
+            string Closureurl = ConfigurationManager.AppSettings["CallClosureUrl"];
+            //string finalUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=@response&isResponsible=" + isResponsible.ToString()));
+
+            salesEmailBody.Append("<a href=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></a>");
+            if (isFromEmailCloserLink)
+            {
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+            }
+            else
+            {
+                if ((mailType == MailType.DISPATCH || mailType == MailType.SPAWN) && techId.HasValue)
+                {
+                    if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0)
+                    {
+                        TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+                       
+
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=9&isResponsible=" + isResponsible.ToString())) + "\">ESM ESCALATION</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+
+                        if (mailType == MailType.DISPATCH)
+                        {
+                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        }
+                        if (workOrder.WorkorderCallstatus == "Pending Acceptance" && techView.FamilyAff != "SPT")
+                        {
+                            string redirectFinalUrl = string.Format("{0}{1}&encrypt=yes", Redircturl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible.ToString()));
+                            salesEmailBody.Append("<a href=\"" + redirectFinalUrl + "\">REDIRECT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        }
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=6&isResponsible=" + isResponsible.ToString())) + "\">START</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=2&isResponsible=" + isResponsible.ToString())) + "\">ARRIVAL</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=8&isResponsible=" + isResponsible.ToString())) + "\">SCHEDULE EVENT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", processCardurl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=10&isResponsible=" + isResponsible.ToString())) + "\">PROCESS CARD</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        //}
+                    }
+                }
+                else if (mailType == MailType.REDIRECTED)
+                {
+                    //salesEmailBody.Append("<a href=\"" + url + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible + "\">DISREGARD</a>");
+                    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible.ToString())) + "\">DISREGARD</a>");
+                }
+
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            TECH_HIERARCHY tchView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+            if (tchView != null && tchView.FamilyAff.ToUpper() == "SPT")
+            {
+                salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                salesEmailBody.Append("Third Party Dispatch ");
+                salesEmailBody.Append("</b></span>");
+            }
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            if (!string.IsNullOrEmpty(additionalMessage) && mailFrom == "TRANSMIT")
+            {
+                salesEmailBody.Append("<b>ADDITIONAL NOTES: </b>");
+                salesEmailBody.Append(Environment.NewLine);
+                //salesEmailBody.Append(Utility.GetStringWithNewLine(additionalMessage));
+                salesEmailBody.Append(additionalMessage);
+                salesEmailBody.Append("<BR>");
+            }
+
+            if (custNotes != null && custNotes.Count > 0)
+            {
+                salesEmailBody.Append("<b>CUSTOMER NOTES: </b>");
+                salesEmailBody.Append(Environment.NewLine);
+                foreach (var dbCustNotes in custNotes)
+                {
+                    salesEmailBody.Append("[" + dbCustNotes.UserName + "] : " + dbCustNotes.Notes + Environment.NewLine);
+                }
+                salesEmailBody.Append("<BR>");
+            }
+
+            if (!string.IsNullOrEmpty(additionalMessage) && mailFrom == "ESCALATION")
+            {
+                salesEmailBody.Append("<span style='color:#ff0000'><b>");
+                salesEmailBody.Append("ESCALATION NOTES: ");
+                //salesEmailBody.Append(Utility.GetStringWithNewLine(additionalMessage));
+                salesEmailBody.Append(additionalMessage);
+                salesEmailBody.Append("</b></span>");
+                salesEmailBody.Append("<BR>");
+            }
+            salesEmailBody.Append("CALL TIME: ");
+            salesEmailBody.Append(workOrder.WorkorderEntryDate);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("Work Order ID#: ");
+            salesEmailBody.Append(workOrder.WorkorderID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("ERF#: ");
+            salesEmailBody.Append(workOrder.WorkorderErfid);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Appointment Date: ");
+            salesEmailBody.Append(workOrder.AppointmentDate);
+            salesEmailBody.Append("<BR>");
+
+            WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == workOrder.WorkorderID && (w.AssignedStatus == "Accepted" || w.AssignedStatus == "Scheduled")).FirstOrDefault();
+            string schedlDate = ws == null ? "" : ws.EventScheduleDate.ToString();
+
+            if (workOrder.WorkorderCalltypeid == 1300)
+            {
+                Erf workorderERF = FarmerBrothersEntitites.Erfs.Where(ew => ew.ErfID == workOrder.WorkorderErfid).FirstOrDefault();
+                schedlDate = workorderERF == null ? schedlDate : workorderERF.OriginalRequestedDate.ToString();
+            }
+
+            salesEmailBody.Append("Schedule Date: ");
+            salesEmailBody.Append(schedlDate);
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Service Level: ");
+            salesEmailBody.Append(ServiceLevelDesc);
+            salesEmailBody.Append("<BR>");
+
+            string ServiceTier = customer == null ? "" : string.IsNullOrEmpty(customer.ProfitabilityTier) ? " - " : customer.ProfitabilityTier;
+            string paymentTerm = customer == null ? "" : (string.IsNullOrEmpty(customer.PaymentTerm) ? "" : customer.PaymentTerm);
+            string PaymentTermDesc = "";
+            if (!string.IsNullOrEmpty(paymentTerm))
+            {
+                JDEPaymentTerm paymentDesc = FarmerBrothersEntitites.JDEPaymentTerms.Where(c => c.PaymentTerm == paymentTerm).FirstOrDefault();
+                PaymentTermDesc = paymentDesc == null ? "" : paymentDesc.Description;
+            }
+            else
+            {
+                PaymentTermDesc = "";
+            }
+
+            salesEmailBody.Append("Tier: ");
+            salesEmailBody.Append(ServiceTier);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Payment Terms: ");
+            salesEmailBody.Append(PaymentTermDesc);
+            salesEmailBody.Append("<BR>");
+
+            AllFBStatu priority = FarmerBrothersEntitites.AllFBStatus.Where(p => p.FBStatusID == workOrder.PriorityCode).FirstOrDefault();
+            string priorityDesc = priority == null ? "" : priority.FBStatus;
+
+            salesEmailBody.Append("Service Priority: ");
+            salesEmailBody.Append(priorityDesc);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Parent: ");
+            if (customer.PricingParentID != null)
+            {
+                NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                string parentNum = "", ParentName = "";
+                if (nonfbcust != null)
+                {
+                    parentNum = nonfbcust.NonFBCustomerId;
+                    ParentName = nonfbcust.NonFBCustomerName;
+                }
+                else
+                {
+                    parentNum = customer.PricingParentID;
+                    ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                }
+                salesEmailBody.Append(parentNum + " " + ParentName);
+            }
+            else
+            {
+                salesEmailBody.Append("");
+            }
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Billable: ");
+            salesEmailBody.Append(IsBillable);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Customer PO: ");
+            salesEmailBody.Append(workOrder.CustomerPO);
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CUSTOMER INFORMATION: ");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CUSTOMER#: ");
+            salesEmailBody.Append(workOrder.CustomerID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.CustomerName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(customer.Address1);
+            salesEmailBody.Append(",");
+            salesEmailBody.Append(customer.Address2);
+            salesEmailBody.Append("<BR>");
+            //salesEmailBody.Append(workOrder.CustomerCity);
+            salesEmailBody.Append(customer.City);
+            salesEmailBody.Append(",");
+            //salesEmailBody.Append(workOrder.CustomerState);
+            salesEmailBody.Append(customer.State);
+            salesEmailBody.Append(" ");
+            //salesEmailBody.Append(workOrder.CustomerZipCode);
+            salesEmailBody.Append(customer.PostalCode);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.WorkorderContactName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("PHONE: ");
+            salesEmailBody.Append(workOrder.WorkorderContactPhone);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("BRANCH: ");
+            salesEmailBody.Append(customer.Branch);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("ROUTE#: ");
+            salesEmailBody.Append(customer.Route);
+            salesEmailBody.Append("<BR>");
+            if (workOrder.FollowupCallID == 601 || workOrder.FollowupCallID == 602)
+            {
+                int? followupId = workOrder.FollowupCallID;
+                AllFBStatu status = FarmerBrothersEntitites.AllFBStatus.Where(s => s.FBStatusID == followupId).FirstOrDefault();
+                if (status != null && !string.IsNullOrEmpty(status.FBStatus))
+                {
+                    //salesEmailBody.Append("Follow Up Reason: ");
+                    //salesEmailBody.Append(status.FBStatus);
+                    if (workOrder.FollowupCallID == 601)
+                        salesEmailBody.Append("Customer requesting an ETA phone call within the hour");
+                    else if (workOrder.FollowupCallID == 602)
+                        salesEmailBody.Append("Contact Customer Within The Hour");
+                    salesEmailBody.Append("<BR>");
+                }
+            }
+            salesEmailBody.Append("<span style='color:#ff0000'><b>");
+            salesEmailBody.Append("LAST SALES DATE: ");
+            salesEmailBody.Append(GetCustomerById(workOrder.CustomerID).LastSaleDate);
+            salesEmailBody.Append("</b></span>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("HOURS OF OPERATION: ");
+            salesEmailBody.Append(workOrder.HoursOfOperation);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CALL CODES: ");
+            salesEmailBody.Append("<BR>");
+
+            foreach (WorkorderEquipmentRequested equipment in workOrder.WorkorderEquipmentRequesteds)
+            {
+                salesEmailBody.Append("EQUIPMENT TYPE: ");
+                salesEmailBody.Append(equipment.Category);
+                salesEmailBody.Append("<BR>");
+
+                WorkorderType callType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeid).FirstOrDefault();
+                if (callType != null)
+                {
+                    salesEmailBody.Append("SERVICE CODE: ");
+                    salesEmailBody.Append(callType.CallTypeID);
+                    salesEmailBody.Append(" - ");
+                    salesEmailBody.Append(callType.Description);
+                    salesEmailBody.Append("<BR>");
+                }
+                Symptom symptom = FarmerBrothersEntitites.Symptoms.Where(s => s.SymptomID == equipment.Symptomid).FirstOrDefault();
+                if (symptom != null)
+                {
+                    salesEmailBody.Append("SYMPTOM: ");
+                    salesEmailBody.Append(symptom.SymptomID);
+                    salesEmailBody.Append(" - ");
+                    salesEmailBody.Append(symptom.Description);
+                    salesEmailBody.Append("<BR>");
+                }
+                salesEmailBody.Append("LOCATION: ");
+                salesEmailBody.Append(equipment.Location);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("SERIAL NUMBER: ");
+                salesEmailBody.Append(equipment.SerialNumber);
+
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("CALL NOTES: ");
+            salesEmailBody.Append("<BR>");
+            IEnumerable<NotesHistory> histories = workOrder.NotesHistories.Where(n => n.AutomaticNotes == 0).OrderByDescending(n => n.EntryDate);
+
+            foreach (NotesHistory history in histories)
+            {
+                //Remove Redirected/Rejected notes for 3rd Party Tech
+                if (tchView != null && tchView.FamilyAff.ToUpper() == "SPT")
+                {
+                    if (history != null && history.Notes != null)
+                    {
+                        if (history.Notes.ToLower().Contains("redirected") || history.Notes.ToLower().Contains("rejected") || history.Notes.ToLower().Contains("declined"))
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                salesEmailBody.Append(history.UserName);
+                salesEmailBody.Append(" ");
+                salesEmailBody.Append(history.EntryDate);
+                salesEmailBody.Append(" ");
+                //salesEmailBody.Append(history.Notes.Replace("\\n", " ").Replace("\\t", " ").Replace("\\r", " ").Replace("\n", " ").Replace("\t", " ").Replace("\r", " "));
+                salesEmailBody.Append(history.Notes);
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("SERVICE HISTORY:");
+            salesEmailBody.Append("<BR>");
+
+            DateTime currentTime = Utility.GetCurrentTime(workOrder.CustomerZipCode, FarmerBrothersEntitites);
+
+            /*IEnumerable<WorkOrder> previousWorkOrders = FarmerBrothersEntitites.WorkOrders.
+                Where(w => w.CustomerID == workOrder.CustomerID && (DbFunctions.DiffDays(w.WorkorderEntryDate, currentTime) < 90
+                              && DbFunctions.DiffDays(w.WorkorderEntryDate, currentTime) > -90));*/
+
+            IEnumerable<WorkOrder> previousWorkOrders = FarmerBrothersEntitites.WorkOrders.
+                Where(w => w.CustomerID == workOrder.CustomerID).OrderByDescending(ed => ed.WorkorderEntryDate).Take(3);
+
+            foreach (WorkOrder previousWorkOrder in previousWorkOrders)
+            {
+                salesEmailBody.Append("Work Order ID#: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderID);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("ENTRY DATE: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderEntryDate);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("STATUS: ");
+                salesEmailBody.Append(previousWorkOrder.WorkorderCallstatus);
+                salesEmailBody.Append("<BR>");
+                salesEmailBody.Append("CALL CODES: ");
+                salesEmailBody.Append("<BR>");
+
+                foreach (WorkorderEquipment equipment in previousWorkOrder.WorkorderEquipments)
+                {
+                    salesEmailBody.Append("MAKE: ");
+                    salesEmailBody.Append(equipment.Manufacturer);
+                    salesEmailBody.Append("<BR>");
+                    salesEmailBody.Append("MODEL#: ");
+                    salesEmailBody.Append(equipment.Model);
+                    salesEmailBody.Append("<BR>");
+
+                    WorkorderType callType = FarmerBrothersEntitites.WorkorderTypes.Where(w => w.CallTypeID == equipment.CallTypeid).FirstOrDefault();
+                    if (callType != null)
+                    {
+                        salesEmailBody.Append("SERVICE CODE: ");
+                        salesEmailBody.Append(callType.CallTypeID);
+                        salesEmailBody.Append(" - ");
+                        salesEmailBody.Append(callType.Description);
+                        salesEmailBody.Append("<BR>");
+                    }
+
+                    Symptom symptom = FarmerBrothersEntitites.Symptoms.Where(s => s.SymptomID == equipment.Symptomid).FirstOrDefault();
+                    if (symptom != null)
+                    {
+                        salesEmailBody.Append("SYMPTOM: ");
+                        salesEmailBody.Append(symptom.SymptomID);
+                        salesEmailBody.Append(" - ");
+                        salesEmailBody.Append(symptom.Description);
+                        salesEmailBody.Append("<BR>");
+                    }
+
+                    salesEmailBody.Append("Location: ");
+                    salesEmailBody.Append(equipment.Location);
+                    salesEmailBody.Append("<BR>");
+                }
+                salesEmailBody.Append("<BR>");
+            }
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<a href=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;></a>");
+            if (isFromEmailCloserLink)
+            {
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+            }
+            else
+            {
+                if ((mailType == MailType.DISPATCH || mailType == MailType.SPAWN) && techId.HasValue)
+                {
+                    if (string.Compare(workOrder.WorkorderCallstatus, "Closed", true) != 0)
+                    {
+                        TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == techId).FirstOrDefault();
+
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=9&isResponsible=" + isResponsible.ToString())) + "\">ESM ESCALATION</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        if (mailType == MailType.DISPATCH)
+                        {
+                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=0&isResponsible=" + isResponsible.ToString())) + "\">ACCEPT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        }
+                        if (workOrder.WorkorderCallstatus == "Pending Acceptance" && techView.FamilyAff != "SPT")
+                        {
+                            // salesEmailBody.Append("<a href=\"" + Redircturl + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible + "\">REDIRECT</a>");
+                            string redirectFinalUrl = string.Format("{0}{1}&encrypt=yes", Redircturl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=5&isResponsible=" + isResponsible.ToString()));
+                            salesEmailBody.Append("<a href=\"" + redirectFinalUrl + "\">REDIRECT</a>");
+                            salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        }
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=1&isResponsible=" + isResponsible.ToString())) + "\">REJECT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=6&isResponsible=" + isResponsible.ToString())) + "\">START</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=2&isResponsible=" + isResponsible.ToString())) + "\">ARRIVAL</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=3&isResponsible=" + isResponsible.ToString())) + "\">COMPLETED</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=7&isResponsible=" + isResponsible.ToString() + "&isBillable=" + (IsBillable == "True" ? "True" : "False"))) + "\">CLOSE WORK ORDER</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=8&isResponsible=" + isResponsible.ToString())) + "\">SCHEDULE EVENT</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", processCardurl, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=10&isResponsible=" + isResponsible.ToString())) + "\">PROCESS CARD</a>");
+                        salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                        // }
+                    }
+                }
+                else if (mailType == MailType.REDIRECTED)
+                {
+                    //salesEmailBody.Append("<a href=\"" + url + "?workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible + "\">DISREGARD</a>");
+                    salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrder.WorkorderID + "&techId=" + techId.Value + "&response=4&isResponsible=" + isResponsible.ToString())) + "\">DISREGARD</a>");
+                }
+            }
+
+
+            string contentId = Guid.NewGuid().ToString();
+            string logoPath = string.Empty;
+            if (Server == null)
+            {
+                logoPath = Path.Combine(HttpRuntime.AppDomainAppPath, "img/mainlogo.jpg");
+            }
+            else
+            {
+                logoPath = Server.MapPath("~/img/mainlogo.jpg");
+            }
+
+
+            salesEmailBody = salesEmailBody.Replace("cid:logo", "cid:" + contentId);
+
+            AlternateView avHtml = AlternateView.CreateAlternateViewFromString
+               (salesEmailBody.ToString(), null, MediaTypeNames.Text.Html);
+
+            LinkedResource inline = new LinkedResource(logoPath, MediaTypeNames.Image.Jpeg);
+            inline.ContentId = contentId;
+            avHtml.LinkedResources.Add(inline);
+
+            var message = new MailMessage();
+
+            message.AlternateViews.Add(avHtml);
+
+            message.IsBodyHtml = true;
+            message.Body = salesEmailBody.Replace("cid:logo", "cid:" + inline.ContentId).ToString();
+
+
+            bool result = true;
+            string mailTo = toAddress;
+            string mailCC = string.Empty;
+            string ToAddr = string.Empty;
+            string CcAddr = string.Empty;
+            if (!string.IsNullOrWhiteSpace(mailTo))
+            {
+                if (toAddress.Contains("#"))
+                {
+                    string[] mailCCAddress = toAddress.Split('#');
+                    ToAddr = mailCCAddress[0];
+                    CcAddr = mailCCAddress[1];
+
+                    if (mailCCAddress.Count() > 0)
+                    {
+                        string[] CCAddresses = mailCCAddress[1].Split(';');
+                        foreach (string address in CCAddresses)
+                        {
+                            if (address.ToLower().Contains("@jmsmucker.com")) continue;
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                message.CC.Add(new MailAddress(address));
+                            }
+                        }
+                        string[] addresses = mailCCAddress[0].Split(';');
+                        foreach (string address in addresses)
+                        {
+                            if (address.ToLower().Contains("@jmsmucker.com")) continue;
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                message.To.Add(new MailAddress(address));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    string[] addresses = mailTo.Split(';');
+                    ToAddr = mailTo;
+                    foreach (string address in addresses)
+                    {
+                        if (!string.IsNullOrWhiteSpace(address))
+                        {
+                            if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                            message.To.Add(new MailAddress(address));
+                        }
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(SalesEmailAddress))
+                {
+                    CcAddr = SalesEmailAddress;
+                    if (SalesEmailAddress.Contains(";"))
+                    {
+                        string[] addresses = SalesEmailAddress.Split(';');
+                        foreach (string address in addresses)
+                        {
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                                message.CC.Add(new MailAddress(address));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        message.CC.Add(SalesEmailAddress);
+                    }
+                }
+                //if (!string.IsNullOrEmpty(esmEmailAddress) && !Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+                //{
+                //    if (esmEmailAddress.Contains(";"))
+                //    {
+                //        string[] addresses = esmEmailAddress.Split(';');
+                //        foreach (string address in addresses)
+                //        {
+                //            if (!string.IsNullOrWhiteSpace(address))
+                //            {
+                //                if (address.ToLower().Contains("@jmsmucker.com")) continue;
+
+                //                message.CC.Add(new MailAddress(address));
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        message.CC.Add(esmEmailAddress);
+                //    }
+                //}
+
+                NonFBCustomer nonFBCustomer = FarmerBrothersEntitites.NonFBCustomers.Where(n => n.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                if (nonFBCustomer != null)
+                {
+                    message.CC.Clear();
+                }
+
+                //message.Bcc.Add(BccEmailAddress);
+
+
+                message.From = new MailAddress(fromAddress);
+                //message.ReplyTo = new MailAddress(ConfigurationManager.AppSettings["DispatchMailReplyToAddress"]);
+                message.ReplyToList.Add(new MailAddress(ConfigurationManager.AppSettings["DispatchMailReplyToAddress"], "ReviveService"));
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+
+                if (tchView != null && tchView.FamilyAff != "SP")
+                {
+                    message.Priority = MailPriority.High;
+                }
+
 
                 using (var smtp = new SmtpClient())
                 {
@@ -8581,6 +12053,7 @@ namespace FarmerBrothers.Controllers
 
                     string emailAddress = string.Empty;
                     string salesEmailAddress = string.Empty;
+                    string esmEmailAddress = string.Empty;
                     int userId = System.Web.HttpContext.Current.Session["UserId"] != null ? (int)System.Web.HttpContext.Current.Session["UserId"] : 0;
                     TECH_HIERARCHY techView = GetTechById(techId);
 
@@ -8631,6 +12104,11 @@ namespace FarmerBrothers.Controllers
                         }
                     }
 
+                    ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
+                    if (esmEscalation != null && !string.IsNullOrEmpty(esmEscalation.ESMEmail))
+                    {
+                        esmEmailAddress = esmEscalation.ESMEmail;
+                    }
 
                     if (!string.IsNullOrWhiteSpace(emailAddress))
                     {
@@ -8656,7 +12134,7 @@ namespace FarmerBrothers.Controllers
 
                         }
 
-                        bool result = SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], techId, MailType.DISPATCH, isResponsible, addtionalNotes,  "TRANSMIT", false, salesEmailAddress);
+                        bool result = SendWorkOrderMail(workOrder, subject.ToString(), emailAddress, ConfigurationManager.AppSettings["DispatchMailFromAddress"], techId, MailType.DISPATCH, isResponsible, addtionalNotes,  "TRANSMIT", false, salesEmailAddress, esmEmailAddress);
                         if (result == true)
                         {
                             if (techHierarchyView != null)
@@ -8737,9 +12215,9 @@ namespace FarmerBrothers.Controllers
                         {
                             techWorkOrderSchedule.PrimaryTech = 1;
                         }
-                        else if (techWorkOrderSchedule.AssistTech >= 0)
+                        else if (techWorkOrderSchedule.AssistTech > 0)
                         {
-                            techWorkOrderSchedule.AssistTech = 1;
+                            //techWorkOrderSchedule.AssistTech = 1;
                         }
                         techWorkOrderSchedule.EntryDate = currentTime;
                         techWorkOrderSchedule.ScheduleDate = currentTime;
@@ -8918,7 +12396,7 @@ namespace FarmerBrothers.Controllers
                 result = true;
             }
 
-            if (isAssist >= 0)
+            if (isAssist > 0)
             {
                 TechHierarchyView techHierarchyView = Utility.GetTechDataByResponsibleTechId(FarmerBrothersEntitites, techId);
 
@@ -9404,9 +12882,19 @@ namespace FarmerBrothers.Controllers
 
                     FarmerBrothersEntitites.NotesHistories.Add(systemNotesHistory);
 
-                    workOrder.WorkorderModifiedDate = currentTime;
-                    workOrder.ModifiedUserName = UserName;
+                    if (workOrder.WorkorderCallstatus.ToLower() != "closed")
+                    {
+                        workOrder.WorkorderModifiedDate = currentTime;
+                        workOrder.ModifiedUserName = UserName;
+                        workOrder.WorkorderCallstatus = "Escalated for follow-up";
 
+
+                        WorkorderSchedule techWorkOrderSchedule = workOrder.WorkorderSchedules.Where(ws => ws.AssignedStatus.ToLower() == "accepted").FirstOrDefault();
+                        if (techWorkOrderSchedule != null)
+                        {
+                            techWorkOrderSchedule.AssignedStatus = "Sent";
+                        }
+                    }
                     FarmerBrothersEntitites.SaveChanges();
 
                     string salesEmailAddress = string.Empty;
@@ -10533,6 +14021,176 @@ namespace FarmerBrothers.Controllers
         #endregion
 
 
+        #region DocumentUpload
+        public void WorkorderDocumentUpload111(HttpPostedFileBase file)
+        {
+            try
+            {
+                List<CustomerModel> customerList = new List<CustomerModel>();
+                if (file == null)
+                {
+                    ViewBag.Message = "No File Selected ";
+                    ViewBag.isSuccess = false;
+                    ViewBag.dataSource = new List<CustomerModel>();
+                    //return View("CustomerUpload");
+                }
+
+                //else if (Path.GetExtension(file.FileName).ToLower() != ".csv")
+                //{
+                //    ViewBag.Message = "Selected file is not CSV file ";
+                //    ViewBag.isSuccess = false;
+                //    ViewBag.dataSource = new List<CustomerModel>();
+                //    //return View("CustomerUpload");
+                //}
+
+                if (file.ContentLength > 0)
+                {
+                    string _FileName = Path.GetFileName(file.FileName);
+                    string DirPath = Server.MapPath("~/UploadedFiles/Customer");
+                    DateTime currentDate = DateTime.Now;
+                    if (!Directory.Exists(DirPath))
+                    {
+                        Directory.CreateDirectory(DirPath);
+                    }
+                    string _inputPath = Path.Combine(DirPath, _FileName);
+                    file.SaveAs(_inputPath);
+                }
+
+                
+            }
+            catch (Exception ex)
+            {
+               
+            }
+        }
+
+        [HttpPost]
+        public ActionResult WorkorderDocumentUpload1()
+        {
+            // Checking no of files injected in Request object  
+            if (Request.Files.Count > 0)
+            {
+                try
+                {
+                    //  Get all files from Request object  
+                    HttpFileCollectionBase files = Request.Files;
+                    for (int i = 0; i < files.Count; i++)
+                    {
+                        //string path = AppDomain.CurrentDomain.BaseDirectory + "Uploads/";  
+                        //string filename = Path.GetFileName(Request.Files[i].FileName);  
+
+                        HttpPostedFileBase file = files[i];
+                        string fname;
+
+                        // Checking for Internet Explorer  
+                        if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+                        {
+                            string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                            fname = testfiles[testfiles.Length - 1];
+                        }
+                        else
+                        {
+                            fname = file.FileName;
+                        }
+
+                        int workorderid = Convert.ToInt32(Request.Form["workorderId"].ToString());
+
+                        string DirPath = Server.MapPath("~/UploadedFiles/Documents/"+ workorderid);
+                        DateTime currentDate = DateTime.Now;
+                        if (!Directory.Exists(DirPath))
+                        {
+                            Directory.CreateDirectory(DirPath);
+                        }
+
+                        // Get the complete folder path and store the file inside it.  
+                        fname = Path.Combine(DirPath, fname);
+                        file.SaveAs(fname);
+                    }
+                    // Returns message that successfully uploaded  
+                    return Json("File Uploaded Successfully!");
+                }
+                catch (Exception ex)
+                {
+                    return Json("Error occurred. Error details: " + ex.Message);
+                }
+            }
+            else
+            {
+                return Json("No files selected.");
+            }
+        }
+
+        public ActionResult WorkorderDocumentUpload()
+        {
+            string uname = Request["uploadername"];
+            HttpFileCollectionBase files = Request.Files;
+            for (int i = 0; i < files.Count; i++)
+            {
+                HttpPostedFileBase file = files[i];
+                string fname;
+                // Checking for Internet Explorer      
+                if (Request.Browser.Browser.ToUpper() == "IE" || Request.Browser.Browser.ToUpper() == "INTERNETEXPLORER")
+                {
+                    string[] testfiles = file.FileName.Split(new char[] { '\\' });
+                    fname = testfiles[testfiles.Length - 1];
+                }
+                else
+                {
+                    fname = file.FileName;
+                }
+
+                int workorderid = Convert.ToInt32(Request.Form["workorderId"].ToString());
+
+                string DirPath = Server.MapPath("~/UploadedFiles/Documents/" + workorderid);
+                DateTime currentDate = DateTime.Now;
+                if (!Directory.Exists(DirPath))
+                {
+                    Directory.CreateDirectory(DirPath);
+                }
+
+
+                // Get the complete folder path and store the file inside it.      
+                fname = Path.Combine(DirPath, fname);
+                file.SaveAs(fname);
+            }
+            return Json("Hi, " + uname + ". Your files uploaded successfully", JsonRequestBehavior.AllowGet);
+        }
+
+        private List<WorkorderDocument> GetWorkorderDocuments(int workorderid)
+        {
+            List<WorkorderDocument> DocumentsList = new List<WorkorderDocument>();
+            string path = Server.MapPath("~/UploadedFiles/Documents/" + workorderid);
+            if (Directory.Exists(path))
+            {
+                DataTable ShowContent = new DataTable();
+                DirectoryInfo di = new DirectoryInfo(path);
+                foreach (FileInfo fi in di.GetFiles())
+                {
+                    WorkorderDocument doc = new WorkorderDocument();
+                    doc.Name = fi.Name;
+
+                    var serverPath = Server.MapPath("~/UploadedFiles/Documents/" + workorderid + "/") + fi.Name;
+
+
+                    doc.Path = ConfigurationManager.AppSettings["FileUploadBaseUrl"] + "UploadedFiles/Documents/" + workorderid + "/" + fi.Name;
+
+                    DocumentsList.Add(doc);
+                }
+            }
+
+            return DocumentsList;
+        }
+
+        [HttpGet]
+        public FileResult DownLoadDocument(string Name, string Path)
+        {
+            byte[] fileBytes = System.IO.File.ReadAllBytes(Path);
+            string fileName = Name;
+            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+        }
+
+        #endregion
+
         [HttpPost]
         public JsonResult RemoveCurrentUser(int workOrderId)
         {
@@ -10625,6 +14283,280 @@ namespace FarmerBrothers.Controllers
 
             jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
             return jsonResult;
+        }
+
+        public bool SendPartsOrderMail(int WorkorderId)
+        {
+            bool result = true;
+            StringBuilder salesEmailBody = new StringBuilder();
+            StringBuilder subject = new StringBuilder();
+
+            WorkOrder workOrder = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == WorkorderId).FirstOrDefault();
+            Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == workOrder.CustomerID).FirstOrDefault();
+
+            subject.Append("PARTS ORDER - WO: ");
+            subject.Append(workOrder.WorkorderID);
+            subject.Append(" Customer: ");
+            subject.Append(workOrder.CustomerName);
+            subject.Append(" ST: ");
+            subject.Append(workOrder.CustomerState);
+            subject.Append(" Call Type: ");
+            subject.Append(workOrder.WorkorderCalltypeDesc);
+
+
+            salesEmailBody.Append(@"<img src='cid:logo' width='15%' height='15%' style='margin-right: 100px;margin-bottom: 10px;'>");
+
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("CALL TIME: ");
+            salesEmailBody.Append(workOrder.WorkorderEntryDate);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Work Order ID#: ");
+            salesEmailBody.Append(workOrder.WorkorderID);
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<span style='color:#ff0000'><b>");
+            salesEmailBody.Append("Date Needed:");
+            salesEmailBody.Append(workOrder.DateNeeded);
+            salesEmailBody.Append("</b></span>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Customer PO: ");
+            salesEmailBody.Append(workOrder.CustomerPO);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Customer Email:");
+            salesEmailBody.Append(workOrder.CustomerMainEmail);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<span style='color:#ff0000'><b>");
+            salesEmailBody.Append("CUSTOMER INFORMATION: ");
+            salesEmailBody.Append("</b></span>");
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Route: ");
+            salesEmailBody.Append(contact.Route);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("Customer #: ");
+            salesEmailBody.Append(contact.ContactID);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(contact.Address1);
+            salesEmailBody.Append("<BR>");
+            if (!string.IsNullOrEmpty(contact.Address2))
+            {
+                salesEmailBody.Append(contact.Address2);
+                salesEmailBody.Append("<BR>");
+            }
+            salesEmailBody.Append(contact.City);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(contact.State);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(contact.PostalCode);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("PHONE: ");
+            salesEmailBody.Append(contact.Phone);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<span style='color:#ff0000'><b>");
+            salesEmailBody.Append("SHIP TO LOCATION: ");
+            salesEmailBody.Append("</b></span>");
+            salesEmailBody.Append(workOrder.OtherPartsContactName);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.OtherPartsAddress1);
+            salesEmailBody.Append("<BR>");
+            if (!string.IsNullOrEmpty(workOrder.OtherPartsAddress2))
+            {
+                salesEmailBody.Append(workOrder.OtherPartsAddress2);
+                salesEmailBody.Append("<BR>");
+            }
+            salesEmailBody.Append(workOrder.OtherPartsCity);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.OtherPartsState);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append(workOrder.OtherPartsZip);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("PHONE: ");
+            salesEmailBody.Append(workOrder.OtherPartsPhone);
+            salesEmailBody.Append("<BR>");
+            salesEmailBody.Append("<BR>");
+
+            salesEmailBody.Append("<table>");
+            salesEmailBody.Append("<tbody>");
+            salesEmailBody.Append("<tr>");
+            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Manufacturer</th>");
+            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Quantity</th>");
+            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Vendor#</th>");
+            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Description</th>");
+            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Unit Cost </th>");
+            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Total </th>");
+            salesEmailBody.Append("</tr>");
+
+            /*var partsList = (from wp in FarmerBrothersEntitites.WorkorderParts
+                                             join fbp in FarmerBrothersEntitites.FBClosureParts on wp.Sku equals fbp.ItemNo
+                                             join sk in FarmerBrothersEntitites.Skus on wp.Sku equals sk.Sku1 
+                                             where wp.WorkorderID == WorkorderId
+                                             select new {
+                                                 Manufacturer = wp.Manufacturer,
+                                                 Quantity = wp.Quantity,
+                                                 Vendor = fbp.VendorNo,
+                                                 Desc = wp.Description,
+                                                 Unit = sk.SKUCost,
+                                                 Total = wp.Quantity * sk.SKUCost
+                                             }).ToList();
+            if(partsList != null)
+            {
+                salesEmailBody.Append("<tr>");
+                foreach (var wp in partsList)
+                {
+                    salesEmailBody.Append("<td>" + wp.Manufacturer + "</td>");
+                    salesEmailBody.Append("<td>" + wp.Quantity + "</td>");
+                    salesEmailBody.Append("<td>" + wp.Vendor + "</td>");
+                    salesEmailBody.Append("<td>" + wp.Desc + "</td>");
+                    salesEmailBody.Append("<td>" + wp.Unit + "</td>");
+                    salesEmailBody.Append("<td>" + wp.Total + "</td>");
+                }
+                salesEmailBody.Append("</tr>");
+            }*/
+
+
+            List<WorkorderPart> partsList = FarmerBrothersEntitites.WorkorderParts.Where(p => p.WorkorderID == WorkorderId).ToList();
+
+            if (partsList != null)
+            {
+                
+                foreach (var wp in partsList)
+                {
+                    salesEmailBody.Append("<tr>");
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + wp.Manufacturer + "</td>");
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + wp.Quantity + "</td>");
+
+                    Sku sk = FarmerBrothersEntitites.Skus.Where(s => s.Sku1 == wp.Sku).FirstOrDefault();
+
+                    decimal totl = 0;
+
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + (sk == null ? "" : sk.VEND_ITEM_NUMBER) + "</td>");
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + (sk == null ? "" : sk.Description) + "</td>");
+
+                    decimal? unitCost = sk == null ? 0 : sk.SKUCost;
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + unitCost + "</td>");
+
+                    totl = Convert.ToDecimal(wp.Quantity * unitCost);
+
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + totl + "</td>");
+                    salesEmailBody.Append("</tr>");
+                }
+                
+            }
+
+            salesEmailBody.Append("<tbody>");
+            salesEmailBody.Append("</table>");
+
+
+            string contentId = Guid.NewGuid().ToString();
+            string logoPath = string.Empty;
+            if (Server == null)
+            {
+                logoPath = Path.Combine(HttpRuntime.AppDomainAppPath, "img/mainlogo.jpg");
+            }
+            else
+            {
+                logoPath = Server.MapPath("~/img/mainlogo.jpg");
+            }
+
+            salesEmailBody = salesEmailBody.Replace("cid:logo", "cid:" + contentId);
+
+            AlternateView avHtml = AlternateView.CreateAlternateViewFromString
+               (salesEmailBody.ToString(), null, MediaTypeNames.Text.Html);
+
+            LinkedResource inline = new LinkedResource(logoPath, MediaTypeNames.Image.Jpeg);
+            inline.ContentId = contentId;
+            avHtml.LinkedResources.Add(inline);
+
+            var message = new MailMessage();
+
+            message.AlternateViews.Add(avHtml);
+
+            message.IsBodyHtml = true;
+            message.Body = salesEmailBody.Replace("cid:logo", "cid:" + inline.ContentId).ToString();
+
+            string toAddress = string.Empty;
+            if (Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+            {
+                toAddress = ConfigurationManager.AppSettings["TestEmail"];
+            }
+            else
+            {
+                if (workOrder != null)
+                {
+                    toAddress = "Partsorders@farmerbros.com";
+                }
+            }
+
+            string fromAddress = ConfigurationManager.AppSettings["DispatchMailFromAddress"];
+           
+            string mailTo = toAddress;
+            string mailCC = string.Empty;
+            if (!string.IsNullOrWhiteSpace(mailTo))
+            {
+                if (toAddress.Contains("#"))
+                {
+                    string[] mailCCAddress = toAddress.Split('#');
+
+                    if (mailCCAddress.Count() > 0)
+                    {
+                        string[] CCAddresses = mailCCAddress[1].Split(';');
+                        foreach (string address in CCAddresses)
+                        {
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                message.CC.Add(new MailAddress(address));
+                            }
+                        }
+                        string[] addresses = mailCCAddress[0].Split(';');
+                        foreach (string address in addresses)
+                        {
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                message.To.Add(new MailAddress(address));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    string[] addresses = mailTo.Split(';');
+                    foreach (string address in addresses)
+                    {
+                        if (!string.IsNullOrWhiteSpace(address))
+                        {
+                            message.To.Add(new MailAddress(address));
+                        }
+                    }
+                }
+
+                message.From = new MailAddress(fromAddress);
+                message.Subject = subject.ToString();
+                message.IsBodyHtml = true;
+
+                using (var smtp = new SmtpClient())
+                {
+                    smtp.Host = ConfigurationManager.AppSettings["MailServer"];
+                    smtp.Port = 25;
+
+                    try
+                    {
+                        smtp.Send(message);
+                    }
+                    catch (Exception ex)
+                    {
+                        result = false;
+                    }
+                }
+
+            }
+
+            return result;
         }
 
         public JsonResult GetItemNumber(string serialNumber)

@@ -8,6 +8,7 @@ using System.Web;
 using System.Configuration;
 using System.IO;
 using System.Data;
+using FarmerBrothers.Utilities;
 
 namespace FarmerBrothers.Models
 {
@@ -29,8 +30,7 @@ namespace FarmerBrothers.Models
         public int RSMId { get; set; }
         public string RSMName { get; set; }
         public string RSMEmail { get; set; }
-        public string RSMPhone { get; set; }
-
+        public string RSMPhone { get; set; }        
 
         public static void InsertData(List<ESMCCMRSMModel> esmList, FarmerBrothersEntities fileUploadEntity)
         {
@@ -118,6 +118,14 @@ namespace FarmerBrothers.Models
             fileUploadEntity.SaveChanges();
         }
 
+        public static List<List<T>> ChunkBy<T>(List<T> source, int chunkSize)
+        {
+            return source
+                .Select((x, i) => new { Index = i, Value = x })
+                .GroupBy(x => x.Index / chunkSize)
+                .Select(x => x.Select(v => v.Value).ToList())
+                .ToList();
+        }
     }
 
     class FBCustomerServiceDistributionModel
@@ -140,7 +148,7 @@ namespace FarmerBrothers.Models
         public static void InsertData(List<FBCustomerServiceDistributionModel> escalationList, FarmerBrothersEntities fileUploadEntity)
         {
             var maxValue = fileUploadEntity.FBCustomerServiceDistributions.Max(x => x.ServiceId);
-            int tmpServiceId = maxValue + 1;
+            int tmpServiceId = maxValue + 1;            
             foreach (FBCustomerServiceDistributionModel escalationItem in escalationList)
             {
                 FBCustomerServiceDistribution esmccmrsmEscalation = new FBCustomerServiceDistribution();
@@ -162,6 +170,9 @@ namespace FarmerBrothers.Models
                     esmEscalationItem.RegionalsName = escalationItem.RegionalsName;
                     esmEscalationItem.RegionalsEmail = escalationItem.RegionalsEmail;
                     esmEscalationItem.RegonalsPhone = escalationItem.RegionalsPhone;
+
+                    esmEscalationItem.ModifiedDate = DateTime.Now;
+                    esmEscalationItem.ModifiedUserId = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234;
                 }
                 else
                 {
@@ -181,6 +192,12 @@ namespace FarmerBrothers.Models
                     fbcsd.RegionalsName = escalationItem.RegionalsName;
                     fbcsd.RegionalsEmail = escalationItem.RegionalsEmail;
                     fbcsd.RegonalsPhone = escalationItem.RegionalsPhone;
+
+                    fbcsd.CreatedDate = DateTime.Now;
+                    fbcsd.CreatedUserId = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234;
+
+                    fbcsd.ModifiedDate = DateTime.Now;
+                    fbcsd.ModifiedUserId = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234;
 
                     fileUploadEntity.FBCustomerServiceDistributions.Add(fbcsd);
 

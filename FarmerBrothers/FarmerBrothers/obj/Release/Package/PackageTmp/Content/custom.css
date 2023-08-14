@@ -1,5 +1,5 @@
 body {
-    background: #faf8f0;
+    background: #ffffff;
     font-family: 'PT Sans', sans-serif;
     font-size: 14px;
 }
@@ -22,7 +22,7 @@ body {
 }
 
 .dark-bg {
-    background: #572600;
+    background: #000000;
 }
 
 .white-bg {
@@ -79,8 +79,10 @@ body {
 .orderTypeItem-head,
 .branchItem-head,
 .eqp-summary-head,
-.branchPSP-head,
-.bulkERF-head {
+.parentPricing-head,
+.thirdPartyPricing-head,
+.statePricing-head,
+.branchPSP-head {
     cursor: pointer;
 }
 
@@ -168,7 +170,7 @@ body {
 }
 
     .navbar a {
-        color: #fdb813;
+        color: #fff;
         font-family: 'PT Sans', sans-serif;
         font-size:13px;
 
@@ -176,7 +178,7 @@ body {
 
 .nav > li > a:hover, .nav > li > a:focus, .nav > li > a:active {
     background-color: transparent;
-    color: #fff;
+    color: #b10505;
 }
 
 .navbar-nav {
@@ -232,7 +234,7 @@ body {
 
 .btn-orange {
     border-color: transparent;
-    background: #FFA500;
+    background: #7f7159;
     color: white;
 }
 
@@ -241,7 +243,7 @@ body {
     }
 
     .btn-orange:hover {
-        background: #FF8C00;
+        background: #6e6350;
     }
 
 .btn-green {

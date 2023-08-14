@@ -1,5 +1,7 @@
 ﻿using FarmerBrothers.Data;
+using FarmerBrothers.Utilities;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
@@ -83,7 +85,7 @@ namespace FarmerBrothers.Models
                 ApprovalStatus = dr["ApprovalStatus"].ToString();
             }
 
-            if(dr.Table.Columns.Contains("FirstName") && dr["FirstName"] != DBNull.Value && dr.Table.Columns.Contains("LastName") && dr["LastName"] != DBNull.Value)
+            /*if(dr.Table.Columns.Contains("FirstName") && dr["FirstName"] != DBNull.Value && dr.Table.Columns.Contains("LastName") && dr["LastName"] != DBNull.Value)
             {
                 OriginatorName = dr["FirstName"].ToString() + " " + dr["LastName"].ToString(); 
             }
@@ -94,7 +96,40 @@ namespace FarmerBrothers.Models
             else if (dr.Table.Columns.Contains("LastName") && dr["LastName"] != DBNull.Value)
             {
                 OriginatorName = dr["LastName"].ToString() ;
+            }*/
+
+            if (dr.Table.Columns.Contains("EntryUserId") && dr["EntryUserId"] != DBNull.Value)
+            {
+                int entryUserId = Convert.ToInt32(dr["EntryUserId"]);
+                using (FarmerBrothersEntities fbEntities = new FarmerBrothersEntities())
+                {
+                    FbUserMaster user = fbEntities.FbUserMasters.Where(r => r.UserId == entryUserId).FirstOrDefault();
+                    if (user != null)
+                    {
+                        OriginatorName = user.FirstName + " " + user.LastName;
+                    }
+
+                }
             }
+
+            if (dr.Table.Columns.Contains("OrderType") && dr["OrderType"] != DBNull.Value)
+            {
+                OrderType = dr["OrderType"].ToString();
+            }
+
+            if (dr.Table.Columns.Contains("CashSaleStatus") && dr["CashSaleStatus"] != DBNull.Value)
+            {
+               
+                string cshstatus = dr["CashSaleStatus"].ToString();
+                using (FarmerBrothersEntities fbEntities = new FarmerBrothersEntities())
+                {
+                    IList<CashSaleModel> salesList = Utility.GetCashSaleStatusList(fbEntities);
+                    string saleStatusName = salesList.Where(s => s.StatusCode == cshstatus).Select(c => c.StatusName).FirstOrDefault();
+                    CashSaleStatus = string.IsNullOrEmpty(saleStatusName) ? "" : saleStatusName;
+
+                }
+            }
+            
         }
 
         public string ErfID { get; set; }
@@ -109,5 +144,7 @@ namespace FarmerBrothers.Models
         public string Status { get; set; }
         public string WorkorderId { get; set; }
         public string ApprovalStatus { get; set; }
+        public string OrderType { get; set; }
+        public string CashSaleStatus { get; set; }
     }
 }

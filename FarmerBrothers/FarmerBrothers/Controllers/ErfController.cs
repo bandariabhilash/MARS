@@ -70,6 +70,9 @@ namespace FarmerBrothers.Controllers
             AllFBStatu smuckersStatus = new AllFBStatu() { FBStatus = "Please Select", FBStatusID = -1 };
             erfSearchModel.Reasons.Insert(0, smuckersStatus);
 
+            erfSearchModel.CashSalesList = Utility.GetCashSaleStatusList(FarmerBrothersEntitites);
+            erfSearchModel.ERFStatusList = ERFStatusModel.GetERFStatusList();
+
             List<ESMCCMRSMEscalation> esmList = FarmerBrothersEntitites.ESMCCMRSMEscalations.DistinctBy(x => x.ESMName).ToList();
             erfSearchModel.EsmList = new List<ESMCCMRSMEscalation>();
             foreach (ESMCCMRSMEscalation esm in esmList)
@@ -213,8 +216,8 @@ namespace FarmerBrothers.Controllers
             IList<string> userIds = new List<string>();
             StringBuilder erfSearchSelectQuery = new StringBuilder();
 
-            erfSearchSelectQuery.Append(@"Select Top 500 e.ERFId, e.EntryDate, e.CustomerID, e.CustomerName, e.CustomerAddress, e.CustomerCity, e.CustomerState, e.ERFStatus, 
-                                                                     e.WorkorderID,  e.ApprovalStatus, c.FirstName, c.LastName from ERF e
+            erfSearchSelectQuery.Append(@"Select Top 500 e.ERFId, e.EntryDate, e.CustomerID, e.CustomerName, e.CustomerAddress, e.CustomerCity, e.CustomerState, e.ERFStatus, e.EntryUserId,
+                                                                     e.WorkorderID,  e.ApprovalStatus, e.OrderType, c.FirstName, c.LastName, e.CashSaleStatus from ERF e
                                                                     Inner Join Contact c on e.CustomerID = c.ContactID
                                                                     Inner Join FbUserMaster u on e.EntryUserID = u.UserId
                                                                     where 1 = 1");
@@ -273,6 +276,16 @@ namespace FarmerBrothers.Controllers
             {
                 erfSearchSelectQuery.Append(@" and e.EntryDate <= '" + erfSearchModel.CreatedTo + "'");
             }
+            if (!string.IsNullOrWhiteSpace(erfSearchModel.CashSaleStatus))
+            {
+                erfSearchSelectQuery.Append(@" and e.CashSaleStatus like '%" + erfSearchModel.CashSaleStatus + "%'");
+
+            }
+            if (!string.IsNullOrWhiteSpace(erfSearchModel.ErfStatus))
+            {
+                erfSearchSelectQuery.Append(@" and e.erfstatus like '%" + erfSearchModel.ErfStatus + "%'");
+
+            }
 
             if (erfSearchModel.Esm != null && erfSearchModel.Esm.Count > 0)
             {
@@ -292,7 +305,7 @@ namespace FarmerBrothers.Controllers
 
             if (!string.IsNullOrWhiteSpace(erfSearchModel.OriginatorName))
             {
-                erfSearchSelectQuery.Append(@" and(u.FirstName like '%"+ erfSearchModel.OriginatorName + "%' or u.LastName like '%" + erfSearchModel.OriginatorName + "%'");
+                erfSearchSelectQuery.Append(@" and(u.FirstName like '%"+ erfSearchModel.OriginatorName + "%' or u.LastName like '%" + erfSearchModel.OriginatorName + "%')");
             }
 
           //  string finalERFSearchQuery = @" select dbo.getWOElapsedTime(woresults.WorkorderID) ElapsedTime,* from ( " + woSearchSelectQuery.ToString() + " " + woSearchJoinQuery.ToString() + " " + woSearchWhereQuery.ToString() + " ) woresults order by WorkorderEntryDate desc";
@@ -345,15 +358,20 @@ namespace FarmerBrothers.Controllers
             //    new CategoryModel("Complete"),
             //    new CategoryModel("Cancel")};
 
-            erfModel.Customer.ERFStatusList = new List<ERFStatusModel>(){
-                 new ERFStatusModel() {StatusId=0, StatusName=" " },
-                new ERFStatusModel() {StatusId=1, StatusName="Processed" },
-                new ERFStatusModel() {StatusId=2, StatusName="Shipped" },
-                new ERFStatusModel() {StatusId=3, StatusName="Pending" },
-                new ERFStatusModel() {StatusId=4, StatusName="Complete" },
-                new ERFStatusModel() {StatusId=5, StatusName="Cancel"} };
+            erfModel.Customer.ERFStatusList = ERFStatusModel.GetERFStatusList();
+                //new List<ERFStatusModel>(){
+                // new ERFStatusModel() {StatusId=0, StatusName=" " },
+                //new ERFStatusModel() {StatusId=1, StatusName="Processed" },
+                //new ERFStatusModel() {StatusId=2, StatusName="Shipped" },
+                //new ERFStatusModel() {StatusId=3, StatusName="Pending" },
+                //new ERFStatusModel() {StatusId=4, StatusName="Complete" },
+                //new ERFStatusModel() {StatusId=5, StatusName="Cancel"},
+                //new ERFStatusModel() {StatusId=6, StatusName="Sourcing 3rd Party"}};
 
+
+            erfModel.Customer.CashSaleStatus = erfModel.ErfAssetsModel.Erf.CashSaleStatus == null ? " " : erfModel.ErfAssetsModel.Erf.CashSaleStatus;
             erfModel.Customer.ERFStatus = erfModel.ErfAssetsModel.Erf.ERFStatus == null ? " " : erfModel.ErfAssetsModel.Erf.ERFStatus;
+            
 
             erfModel.Customer.MainContactName = erfModel.ErfAssetsModel.Erf.CustomerMainContactName == null ? "" : erfModel.ErfAssetsModel.Erf.CustomerMainContactName.ToString();
             erfModel.Customer.PhoneNumber = erfModel.ErfAssetsModel.Erf.CustomerPhone == null ? "" : erfModel.ErfAssetsModel.Erf.CustomerPhone.ToString();
@@ -373,13 +391,16 @@ namespace FarmerBrothers.Controllers
             List<ContingentDetail> erfeqpModels = FarmerBrothersEntitites.ContingentDetails.Where(c => c.IsActive == true).ToList();//.Select(s => s.ModelNO).Distinct();
             erfModel.ErfAssetsModel.ErfEqpModels = new List<ErfEqpViewModel>();
             erfModel.ErfAssetsModel.ErfExpModels = new List<ErfEqpViewModel>();
+            erfModel.ErfAssetsModel.ErfPosModels = new List<ErfEqpViewModel>();
             foreach (ContingentDetail model in erfeqpModels)
             {
                 erfModel.ErfAssetsModel.ErfEqpModels.Add(new ErfEqpViewModel(model.ID, model.Name));
                 erfModel.ErfAssetsModel.ErfExpModels.Add(new ErfEqpViewModel(model.ID, model.Name));
+                erfModel.ErfAssetsModel.ErfPosModels.Add(new ErfEqpViewModel(model.ID, model.Name));
             }
             erfModel.ErfAssetsModel.ErfEqpModels.Insert(0, new ErfEqpViewModel(0, ""));
             erfModel.ErfAssetsModel.ErfExpModels.Insert(0, new ErfEqpViewModel(0, ""));
+            erfModel.ErfAssetsModel.ErfPosModels.Insert(0, new ErfEqpViewModel(0, ""));
             //============
             List<Contingent> erfExpCategory = FarmerBrothersEntitites.Contingents.Where(e => e.ContingentType.ToLower() == "exp" && e.IsActive == true).ToList();//.Select(s => s.ModelNO).Distinct();
             erfModel.ErfAssetsModel.ErfExpCategory = new List<ErfEqpViewModel>();
@@ -389,11 +410,20 @@ namespace FarmerBrothers.Controllers
             }
             erfModel.ErfAssetsModel.ErfExpCategory.Insert(0, new ErfEqpViewModel(0, ""));
 
+            List<Contingent> erfPosCategory = FarmerBrothersEntitites.Contingents.Where(e => e.ContingentType.ToLower() == "pos" && e.IsActive == true).ToList();
+            erfModel.ErfAssetsModel.ErfPosCategory = new List<ErfEqpViewModel>();
+            foreach (Contingent model in erfPosCategory)
+            {
+                erfModel.ErfAssetsModel.ErfPosCategory.Add(new ErfEqpViewModel(model.ContingentID, model.ContingentName));
+            }
+            erfModel.ErfAssetsModel.ErfPosCategory.Insert(0, new ErfEqpViewModel(0, ""));
+
 
             erfModel.Customer.WorkOrderId = "1";
             int? localerfid = Convert.ToInt32(erfModel.ErfAssetsModel.Erf.ErfID);
             erfModel.ErfAssetsModel.EquipmentList = new List<ERFManagementEquipmentModel>();
             erfModel.ErfAssetsModel.ExpendableList = new List<ERFManagementExpendableModel>();
+            erfModel.ErfAssetsModel.PosList = new List<ERFManagementPOSModel>();
             var equipmentItems = FarmerBrothersEntitites.FBERFEquipments.Where(x => x.ERFId == erfModel.ErfAssetsModel.Erf.ErfID).ToList();
             foreach (FBERFEquipment equpItem in equipmentItems)
             {
@@ -409,6 +439,14 @@ namespace FarmerBrothers.Controllers
                 erfModel.ErfAssetsModel.ExpendableList.Add(exmodle);
             }
             TempData["Expendable"] = erfModel.ErfAssetsModel.ExpendableList;
+
+            var posItems = FarmerBrothersEntitites.FBERFPos.Where(x => x.ERFId == erfModel.ErfAssetsModel.Erf.ErfID).ToList();
+            foreach (FBERFPos posItem in posItems)
+            {
+                ERFManagementPOSModel posmodle = new ERFManagementPOSModel(posItem);
+                erfModel.ErfAssetsModel.PosList.Add(posmodle);
+            }
+            TempData["Pos"] = erfModel.ErfAssetsModel.PosList;
 
             IQueryable<ErfWorkorderLog> workOrderLogs = FarmerBrothersEntitites.ErfWorkorderLogs.Where(ew => ew.ErfID == erfModel.ErfAssetsModel.Erf.ErfID);
             erfModel.ErfAssetsModel.ErfWorkOrderLogs = new List<ErfWorkorderLogModel>();
@@ -449,8 +487,11 @@ namespace FarmerBrothers.Controllers
             }
 
             erfModel.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
-            int? custId = Convert.ToInt32(erfModel.Customer.CustomerId);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            //int? custId = Convert.ToInt32(erfModel.Customer.CustomerId);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            int custId = Convert.ToInt32(erfModel.Customer.CustomerId);
+            int parentId = string.IsNullOrEmpty(erfModel.Customer.ParentNumber) ? 0 : Convert.ToInt32(erfModel.Customer.ParentNumber);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
             foreach (var dbCustNotes in custNotes)
             {
                 erfModel.Notes.CustomerNotesResults.Add(new CustomerNotesModel(dbCustNotes));
@@ -495,6 +536,13 @@ namespace FarmerBrothers.Controllers
                 erfModel.ErfAssetsModel.ErfExpendableModels.Add(new VendorModelModel(model));
             }
             erfModel.ErfAssetsModel.ErfExpendableModels.OrderBy(v => v.Model).ToList();
+
+            erfModel.ErfAssetsModel.ExpOrderTypes = new List<VendorModelModel>();
+            erfModel.ErfAssetsModel.ExpOrderTypes.Add(new VendorModelModel("SE"));
+            erfModel.ErfAssetsModel.ExpOrderTypes.Add(new VendorModelModel("SR"));
+            erfModel.ErfAssetsModel.ExpOrderTypes.Add(new VendorModelModel("CE"));
+            erfModel.ErfAssetsModel.ExpOrderTypes.Add(new VendorModelModel("CR"));           
+            erfModel.ErfAssetsModel.ExpOrderTypes.OrderBy(v => v.Model).ToList();
 
 
             string eqproductNum = FarmerBrothersEntitites.FBEquipments.Select(s => s.ProdNo).FirstOrDefault();
@@ -704,7 +752,9 @@ namespace FarmerBrothers.Controllers
 
             erfManagementModel.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
             cid = Convert.ToInt32(erfManagementModel.Customer.CustomerId);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == cid && c.IsActive == true).ToList();
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == cid && c.IsActive == true).ToList();            
+            int parentId = string.IsNullOrEmpty(erfManagementModel.Customer.ParentNumber) ? 0 : Convert.ToInt32(erfManagementModel.Customer.ParentNumber);
+            var custNotes = Utility.GetCustomreNotes(cid, parentId, FarmerBrothersEntitites);
             foreach (var dbCustNotes in custNotes)
             {
                 erfManagementModel.Notes.CustomerNotesResults.Add(new CustomerNotesModel(dbCustNotes));
@@ -1092,6 +1142,7 @@ namespace FarmerBrothers.Controllers
                                     erf.CustomerPhoneExtn = erfModel.Customer.PhoneExtn;
                                     erf.CustomerState = erfModel.Customer.State;
                                     erf.CustomerZipCode = erfModel.Customer.ZipCode;
+                                    erf.CashSaleStatus = erfModel.Customer.CashSaleStatus;
                                 }
                             }
                             List<FBERFEquipment> eqList = FarmerBrothersEntitites.FBERFEquipments.Where(e => e.ERFId == erfModel.ErfAssetsModel.Erf.ErfID).ToList();
@@ -1103,6 +1154,11 @@ namespace FarmerBrothers.Controllers
                             foreach (FBERFExpendable item in exList)
                             {
                                 FarmerBrothersEntitites.FBERFExpendables.Remove(item);
+                            }
+                            List<FBERFPos> posList = FarmerBrothersEntitites.FBERFPos.Where(e => e.ERFId == erfModel.ErfAssetsModel.Erf.ErfID).ToList();
+                            foreach (FBERFPos item in posList)
+                            {
+                                FarmerBrothersEntitites.FBERFPos.Remove(item);
                             }
 
                             if (erfModel.ErfAssetsModel.EquipmentList != null)
@@ -1129,8 +1185,13 @@ namespace FarmerBrothers.Controllers
                                         LaidInCost = Convert.ToDecimal(equipment.LaidInCost),
                                         RentalCost = Convert.ToDecimal(equipment.RentalCost),
                                         TotalCost = Convert.ToDecimal(equipment.TotalCost),
-                                        UsingBranch = equipment.Branch
-
+                                        UsingBranch = equipment.Branch,
+                                        SerialNumber = equipment.SerialNumber,
+                                        OrderType = equipment.OrderType,
+                                        DepositInvoiceNumber = equipment.DepositInvoiceNumber,
+                                        DepositAmount = string.IsNullOrEmpty(equipment.DepositAmount) ? 0 : Convert.ToDecimal(equipment.DepositAmount),
+                                        FinalInvoiceNumber = equipment.FinalInvoceNumber,
+                                        InvoiceTotal = string.IsNullOrEmpty(equipment.InvoiceTotal) ? 0 : Convert.ToDecimal(equipment.InvoiceTotal)
                                     };
 
                                     FarmerBrothersEntitites.FBERFEquipments.Add(eq);
@@ -1165,6 +1226,37 @@ namespace FarmerBrothers.Controllers
 
                                     };
                                     FarmerBrothersEntitites.FBERFExpendables.Add(eq);
+                                }
+                            }
+
+                            if (erfModel.ErfAssetsModel.PosList != null)
+                            {
+                                foreach (ERFManagementPOSModel posItems in erfModel.ErfAssetsModel.PosList)
+                                {
+                                    FBERFPos pos = new FBERFPos()
+                                    {
+                                        ERFId = erf.ErfID,
+                                        WorkOrderId = erf.WorkorderID,
+                                        ModelNo = posItems.ModelNo,
+                                        Quantity = posItems.Quantity,
+                                        ProdNo = posItems.ProdNo,
+                                        UnitPrice = Convert.ToDecimal(posItems.UnitPrice),
+                                        TransactionType = posItems.TransactionType,
+                                        Extra = posItems.Extra,
+                                        Description = posItems.Description,
+                                        ContingentCategoryId = posItems.Category,
+                                        ContingentCategoryTypeId = posItems.Brand,
+                                        LaidInCost = Convert.ToDecimal(posItems.LaidInCost),
+                                        RentalCost = Convert.ToDecimal(posItems.RentalCost),
+                                        TotalCost = Convert.ToDecimal(posItems.TotalCost),
+                                        UsingBranch = posItems.Branch,
+                                        Substitution = posItems.Substitution,
+                                        EquipmentType = posItems.EquipmentType,
+                                        InternalOrderType = posItems.InternalOrderNumber,
+                                        VendorOrderType = posItems.InternalOrderNumber
+
+                                    };
+                                    FarmerBrothersEntitites.FBERFPos.Add(pos);
                                 }
                             }
 
@@ -1293,7 +1385,7 @@ namespace FarmerBrothers.Controllers
                 erf.Phone = Utilities.Utility.FormatPhoneNumber(erfModel.ErfAssetsModel.Erf.Phone);
 
                 erf.SiteReady = erfModel.ErfAssetsModel.Erf.SiteReady;
-
+                erf.CashSaleStatus = erfModel.Customer.CashSaleStatus;
 
             }
             FarmerBrothersEntitites.Erfs.Add(erf);
@@ -1437,6 +1529,29 @@ namespace FarmerBrothers.Controllers
 
                     };
                     FarmerBrothersEntitites.FBERFExpendables.Add(eq);
+                }
+            }
+
+            if (erfModel.ErfAssetsModel.PosList != null)
+            {
+                foreach (ERFManagementPOSModel posItems in erfModel.ErfAssetsModel.PosList)
+                {
+                    FBERFPos pos = new FBERFPos()
+                    {
+                        ERFId = erf.ErfID,
+                        WorkOrderId = erf.WorkorderID,
+                        ModelNo = posItems.ModelNo,
+                        Quantity = posItems.Quantity,
+                        ProdNo = posItems.ProdNo,
+                        UnitPrice = Convert.ToDecimal(posItems.UnitPrice),
+                        TransactionType = posItems.TransactionType,
+                        Extra = posItems.Extra,
+                        Description = posItems.Description,
+                        Substitution = posItems.Substitution,
+                        EquipmentType = posItems.EquipmentType
+
+                    };
+                    FarmerBrothersEntitites.FBERFPos.Add(pos);
                 }
             }
             effectedRecords = FarmerBrothersEntitites.SaveChanges();

@@ -33,6 +33,8 @@ namespace FarmerBrothers.Models
         public IList<State> States;
         public IList<ErfSearchResultModel> SearchResults;
         public IList<AllFBStatu> Reasons;
+        public IList<CashSaleModel> CashSalesList;
+        public IList<ERFStatusModel> ERFStatusList;
 
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
@@ -46,6 +48,8 @@ namespace FarmerBrothers.Models
         public string Reason { get; set; }
         public string ZipCode { get; set; }
         public string OriginatorName { get; set; }
+        public string CashSaleStatus { get; set; }
+        public string ErfStatus { get; set; }
 
         public DateTime? CreatedFrom { get; set; }
         public DateTime? CreatedTo { get; set; }

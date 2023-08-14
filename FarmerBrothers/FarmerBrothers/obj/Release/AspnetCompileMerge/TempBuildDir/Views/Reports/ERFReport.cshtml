@@ -331,11 +331,11 @@
                             </div>
                         </div>
                         @*<div class="col-md-2">
-                                <div class="form-group">
-                                    Parent Account#:
-                                    @Html.TextBoxFor(c => c.ParentAccount, new { @class = "form-control SearchPanelControl", @type = "number" })
-                                </div>
-                            </div>*@
+            <div class="form-group">
+                Parent Account#:
+                @Html.TextBoxFor(c => c.ParentAccount, new { @class = "form-control SearchPanelControl", @type = "number" })
+            </div>
+        </div>*@
                         <div class="col-md-2">
                             <div class="form-group">
                                 State:
@@ -343,11 +343,11 @@
                             </div>
                         </div>
                         @*<div class="col-md-2">
-                                <div class="form-group">
-                                    Status:
-                                    @Html.TextBoxFor(c => c.Status, new { @class = "form-control SearchPanelControl StatusDropDownList" })
-                                </div>
-                            </div>*@
+            <div class="form-group">
+                Status:
+                @Html.TextBoxFor(c => c.Status, new { @class = "form-control SearchPanelControl StatusDropDownList" })
+            </div>
+        </div>*@
                         <div class="col-md-2">
                             <div class="form-group right-inner-addon">
                                 Start Date:
@@ -374,50 +374,62 @@
                                 @Html.TextBoxFor(c => c.WorkorderId, new { @class = "form-control SearchPanelControl" })
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                Cash Sales Status:
+                                @Html.DropDownListFor(c => c.CashSaleStatus, new SelectList(Model.CashSalesList, "StatusCode", "StatusName"), new { @Id = "CashSaleStatusDropDown", @class = "form-control" })
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                ERF Status:
+                                @Html.DropDownListFor(c => c.ErfStatus, new SelectList(Model.ERFStatusList, "StatusName", "StatusName"), new { @Id = "ErfStatusDropDown", @class = "form-control" })
+                            </div>
+                        </div>
 
                         @*<div class="col-md-2">
-                                <div class="form-group">
-                                    Invoice Start Date:
-                                    @Html.TextBoxFor(c => c.AppointmentDateFrom, new { @class = "form-control SearchPanelControl", @Id = "InvoiceDateFrom" })
-                                </div>
-                            </div>
+            <div class="form-group">
+                Invoice Start Date:
+                @Html.TextBoxFor(c => c.AppointmentDateFrom, new { @class = "form-control SearchPanelControl", @Id = "InvoiceDateFrom" })
+            </div>
+        </div>
 
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    Invoice End Date:
-                                    @Html.TextBoxFor(c => c.AppointmentDateTo, new { @class = "form-control SearchPanelControl", @Id = "InvoiceDateTo" })
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    Arrival Start Date:
-                                    @Html.TextBoxFor(c => c.ArrivalStartDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalStartDate" })
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    Arrival End Date:
-                                    @Html.TextBoxFor(c => c.ArrivalEndDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalEndDate" })
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    Completion Start Date:
-                                    @Html.TextBoxFor(c => c.CompletionStartDate, new { @class = "form-control SearchPanelControl", @Id = "CompletionStartDate" })
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    Completion End Date:
-                                    @Html.TextBoxFor(c => c.CompletionEndDate, new { @class = "form-control SearchPanelControl", @Id = "CompletionEndDate" })
-                                </div>
-                            </div>
-                            @*<div class="col-md-2">
-                                <div class="form-group">
-                                    Call Type:
-                                    @Html.TextBoxFor(c => c.WOTypes, new { @class = "form-control SearchPanelControl WorkorderTypeDropDownList" })
-                                </div>
-                            </div>*@
+        <div class="col-md-2">
+            <div class="form-group">
+                Invoice End Date:
+                @Html.TextBoxFor(c => c.AppointmentDateTo, new { @class = "form-control SearchPanelControl", @Id = "InvoiceDateTo" })
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                Arrival Start Date:
+                @Html.TextBoxFor(c => c.ArrivalStartDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalStartDate" })
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                Arrival End Date:
+                @Html.TextBoxFor(c => c.ArrivalEndDate, new { @class = "form-control SearchPanelControl", @Id = "ArrivalEndDate" })
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                Completion Start Date:
+                @Html.TextBoxFor(c => c.CompletionStartDate, new { @class = "form-control SearchPanelControl", @Id = "CompletionStartDate" })
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                Completion End Date:
+                @Html.TextBoxFor(c => c.CompletionEndDate, new { @class = "form-control SearchPanelControl", @Id = "CompletionEndDate" })
+            </div>
+        </div>
+        @*<div class="col-md-2">
+            <div class="form-group">
+                Call Type:
+                @Html.TextBoxFor(c => c.WOTypes, new { @class = "form-control SearchPanelControl WorkorderTypeDropDownList" })
+            </div>
+        </div>*@
 
                         <div class="col-md-2" style="margin-top: 20px;">
                             <div class=" form-group">
@@ -474,13 +486,14 @@
                 .Columns(col =>
                 {
                     col.Field("WorkorderID").HeaderText("Work Order ID").Width(100).Add();
-                    col.Field("ERFNO").HeaderText("ERFNO").Width(100).Add(); 
+                    col.Field("ERFNO").HeaderText("ERFNO").Width(100).Add();
                     col.Field("OriginatorName").HeaderText("Originator Name").Width(100).Add();
                     col.Field("ModifiedUser").HeaderText("ERF Modified UserName").Width(100).Add();
                     col.Field("ModifiedDate").HeaderText("ERF Modified Date").Width(100).Add();
                     col.Field("WOClosedDate").HeaderText("Workorder completion date").Width(100).Add();
                     col.Field("WOStatus").HeaderText("Workorder status").Width(100).Add();
                     col.Field("WorkorderCallstatus").HeaderText("ERF Status").Width(100).Add();
+                    col.Field("CaseSaleStatus").HeaderText("CaseSaleStatus").Width(100).Add();
                     col.Field("CustomerID").HeaderText("Customer ID").Width(100).Add();
 
                     col.Field("CustomerName").HeaderText("CompanyName").Width(100).Add();
@@ -510,9 +523,9 @@
                     col.Field("OrderType").HeaderText("Order Type").Width(100).Add();
                     col.Field("ShipToBranch").HeaderText("Shipto Branch If Different").Width(100).Add();
 
-                    col.Field("SiteReady").HeaderText("Site Ready").Width(100).Add();                    
+                    col.Field("SiteReady").HeaderText("Site Ready").Width(100).Add();
                     col.Field("EqpQty").HeaderText("Equipment Quantity").Width(100).Add();
-                    col.Field("EqpTotal").HeaderText("Equipment Total").Format("{0:C}").Width(100).Add();                    
+                    col.Field("EqpTotal").HeaderText("Equipment Total").Format("{0:C}").Width(100).Add();
                     col.Field("ExpQty").HeaderText("Expendable Quantity").Width(100).Add();
                     col.Field("ExpTotal").HeaderText("Expendable Total").Format("{0:C}").Width(100).Add();
                     col.Field("Total").HeaderText("Total").Width(100).Format("{0:C}").Add();
@@ -530,6 +543,13 @@
                     col.Field("EqpVendorOrderType").HeaderText("Equipment OT #").Width(100).Add();
                     col.Field("ExpInternalOrderType").HeaderText("Expendable ST/ON #").Width(100).Add();
                     col.Field("ExpVendorOrderType").HeaderText("Expendable OT #").Width(100).Add();
+
+                    col.Field("EqpSerialNumber").HeaderText("Serial Number(S) (csv)").Width(100).Add();
+                    col.Field("EqpOrderType").HeaderText("Eqp Order Type").Width(100).Add();
+                    col.Field("EqpDepositInvoiceNumber").HeaderText("Deposit Invoice Number").Width(100).Add();
+                    col.Field("EqpDepositAmount").HeaderText("Deposit Amount").Format("{0:C2}").Width(100).Add();
+                    col.Field("EqpFinalInvoiceNumber").HeaderText("Final Invoice Number").Width(100).Add();
+                    col.Field("EqpInvoiceTotal").HeaderText("Invoice Total").Format("{0:C2}").Width(100).Add();
                 }))
                         </td>
                     </tr>

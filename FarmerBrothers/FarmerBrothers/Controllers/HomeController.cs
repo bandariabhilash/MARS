@@ -25,6 +25,7 @@ namespace FarmerBrothers.Controllers
         {
             Session["UserRoles"] = null;
             Session["Username"] = null;
+
             return View();
         }
         [HttpPost]
@@ -66,6 +67,10 @@ namespace FarmerBrothers.Controllers
                         if (userPrivilege["Customer"] != "No-Permission" || userPrivilege["ERFNew"] == "Full")
                         {
                             return RedirectToAction("CustomerSearch", "CustomerSearch");
+                        }
+                        else if (userPrivilege["CustomerDashboard"] != "No-Permission")
+                        {
+                            return RedirectToAction("CustomerDashboard", "Customer");
                         }
                         else if (userPrivilege["Work Order"] != "No-Permission")
                         {

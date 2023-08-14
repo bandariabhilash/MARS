@@ -90,6 +90,19 @@ namespace FarmerBrothers.Models
     {
         public int StatusId { get; set; }
         public string StatusName { get; set; }
+
+        public static List<ERFStatusModel> GetERFStatusList()
+        {
+            return new List<ERFStatusModel>(){
+                 new ERFStatusModel() {StatusId=0, StatusName="" },
+                new ERFStatusModel() {StatusId=1, StatusName="Processed" },
+                new ERFStatusModel() {StatusId=2, StatusName="Shipped" },
+                new ERFStatusModel() {StatusId=3, StatusName="Pending" },
+                new ERFStatusModel() {StatusId=4, StatusName="Complete" },
+                new ERFStatusModel() {StatusId=5, StatusName="Cancel"},
+                new ERFStatusModel() {StatusId=6, StatusName="Sourcing 3rd Party"}};
+        }
+
     }
 
     public class ERFBulkUploadDataModel
@@ -118,6 +131,14 @@ namespace FarmerBrothers.Models
         public string ExpTransType { get; set; }
         public string ExpType { get; set; }
 
+        public string HoursofOperation { get; set; }
+        public string InstallLocation { get; set; }
+        public string SiteReady { get; set; }
+
+        public DateTime FormDate { get; set; }
+        public DateTime ERFReceivedDate { get; set; }
+        public DateTime ERFProcessedDate { get; set; }
+
         public ERFBulkUploadDataModel(string row)
         {
             string[] dataRow = Regex.Split(row, "[,]{1}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
@@ -133,48 +154,66 @@ namespace FarmerBrothers.Models
                 if (dataRow[2] != null)
                     MainContactNum= dataRow[2].ToString();
                 if (dataRow[3] != null)
-                    ErfNotes = dataRow[3].ToString();
+                    HoursofOperation = dataRow[3].ToString();
                 if (dataRow[4] != null)
-                    OrderType = dataRow[4].ToString();
+                    InstallLocation = dataRow[4].ToString();
                 if (dataRow[5] != null)
-                    ShipToBranch = dataRow[5].ToString();
+                    SiteReady = dataRow[5].ToString();
                 if (dataRow[6] != null)
-                    InstallDate = dataRow[6].ToString();
-                if (dataRow[7] != null && !string.IsNullOrEmpty(dataRow[7]))
-                    AdditionalNSV = Convert.ToDecimal(dataRow[7].ToString());
+                    ErfNotes = dataRow[6].ToString();
+                if (dataRow[7] != null)
+                    OrderType = dataRow[7].ToString();
                 if (dataRow[8] != null)
-                    EqpCategory = dataRow[8].ToString();
+                    ShipToBranch = dataRow[8].ToString();
                 if (dataRow[9] != null)
-                    EqpBrand = dataRow[9].ToString();
+                    InstallDate = dataRow[9].ToString();
                 if (dataRow[10] != null && !string.IsNullOrEmpty(dataRow[10]))
-                    EqpQuantity = Convert.ToInt32(dataRow[10]);
-                if (dataRow[11] != null)
-                    EqpUsingBranch = dataRow[11].ToString();
-                if (dataRow[12] != null)
-                    EqpSubstitutionPossible = dataRow[12].ToString();
-                if (dataRow[13] != null)
-                    EqpTransType = dataRow[13].ToString();
+                    AdditionalNSV = Convert.ToDecimal(dataRow[10].ToString());
+                if (dataRow[11] != null && !string.IsNullOrEmpty(dataRow[11]))
+                    FormDate = Convert.ToDateTime(dataRow[11].ToString());
+                if (dataRow[12] != null && !string.IsNullOrEmpty(dataRow[12]))
+                    ERFReceivedDate = Convert.ToDateTime(dataRow[12].ToString());
+                if (dataRow[13] != null && !string.IsNullOrEmpty(dataRow[13]))
+                    ERFProcessedDate = Convert.ToDateTime(dataRow[13].ToString());
                 if (dataRow[14] != null)
-                    EqpType = dataRow[14].ToString();
+                    EqpCategory = dataRow[14].ToString();
                 if (dataRow[15] != null)
-                    ExpCategory = dataRow[15].ToString();
-                if (dataRow[16] != null)
-                    ExpBrand = dataRow[16].ToString();
-                if (dataRow[17] != null && !string.IsNullOrEmpty(dataRow[17]))
-                    ExpQuantity = Convert.ToInt32(dataRow[17]);
+                    EqpBrand = dataRow[15].ToString();
+                if (dataRow[16] != null && !string.IsNullOrEmpty(dataRow[16]))
+                    EqpQuantity = Convert.ToInt32(dataRow[16]);
+                if (dataRow[17] != null)
+                    EqpUsingBranch = dataRow[17].ToString();
                 if (dataRow[18] != null)
-                    ExpUsingBranch = dataRow[18].ToString();
+                    EqpSubstitutionPossible = dataRow[18].ToString();
                 if (dataRow[19] != null)
-                    ExpSubstitutionPossible = dataRow[19].ToString();
+                    EqpTransType = dataRow[19].ToString();
                 if (dataRow[20] != null)
-                    ExpTransType = dataRow[20].ToString();
+                    EqpType = dataRow[20].ToString();
                 if (dataRow[21] != null)
-                    ExpType = dataRow[21].ToString();
+                    ExpCategory = dataRow[21].ToString();
+                if (dataRow[22] != null)
+                    ExpBrand = dataRow[22].ToString();
+                if (dataRow[23] != null && !string.IsNullOrEmpty(dataRow[23]))
+                    ExpQuantity = Convert.ToInt32(dataRow[23]);
+                if (dataRow[24] != null)
+                    ExpUsingBranch = dataRow[24].ToString();
+                if (dataRow[25] != null)
+                    ExpSubstitutionPossible = dataRow[25].ToString();
+                if (dataRow[26] != null)
+                    ExpTransType = dataRow[26].ToString();
+                if (dataRow[27] != null)
+                    ExpType = dataRow[27].ToString();
 
             }
         }
 
 
+    }
+
+    public class CashSaleModel
+    {
+        public string StatusCode { get; set; }
+        public string StatusName { get; set; }
     }
 
 }

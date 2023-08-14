@@ -43,6 +43,7 @@ namespace FarmerBrothers.Business
                         }
 
                         List<BranchRegion> branches = WorkOrderLookup.GetTechBranches(FarmerBrothersEntitites);
+                        List<BranchRegion> branchesForSave = WorkOrderLookup.GetTechBranchesForTechUpdateGrid(FarmerBrothersEntitites);
                         List<BranchRegion> regions = WorkOrderLookup.GetTechRegions(FarmerBrothersEntitites);                        
                         DateTime currentTime = Utility.GetCurrentTime(techModel.Zip, FarmerBrothersEntitites);
                         if (tech.DealerId == 0)
@@ -74,7 +75,7 @@ namespace FarmerBrothers.Business
                         tech.ModifiedDate = currentTime;
                         tech.ModifiedUserID = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234;
                         tech.BranchNumber = techModel.BranchName;
-                        tech.BranchName = (from b in branches where b.Number == techModel.BranchName select b.Name).FirstOrDefault();
+                        tech.BranchName = (from b in branchesForSave where b.Number == techModel.BranchName select b.Name).FirstOrDefault();
                         tech.RegionNumber = techModel.RegionName;
                         tech.RegionName = (from r in regions where r.Number == techModel.RegionName select r.Name).FirstOrDefault();
                         tech.AutoDispatch = techModel.AutoDispatch;
@@ -139,7 +140,7 @@ namespace FarmerBrothers.Business
                 {
                     TechnicianUpdateModel tModel = new TechnicianUpdateModel(tech, entity);
                     techModel.BranchNumber = tModel.BranchNumber;
-                    techModel.BranchName = tModel.BranchName +" - "+ tModel.BranchNumber;
+                    techModel.BranchName = tModel.BranchName;
 
                     SearchResults.Add(tModel);
                 }
@@ -172,13 +173,14 @@ namespace FarmerBrothers.Business
                             tech.RimEmail = techModel.RimEmail;
                             tech.PostalCode = techModel.Zip;
                             tech.City = zipcode.City;
-                            tech.BranchNumber = (from b in branches where b.Name == techModel.BranchName select b.Number).FirstOrDefault();
+                            //tech.BranchNumber = (from b in branches where b.Name == techModel.BranchName select b.Number).FirstOrDefault();
+                            tech.BranchNumber = (from b in FarmerBrothersEntitites.BranchESMs where b.BranchName == techModel.BranchName select b.BranchNo).FirstOrDefault();
                             tech.BranchName = techModel.BranchName;
                             tech.Longitude = zipcode.Longitude;
                             tech.Latitude = zipcode.Latitude;
                             tech.State = zipcode.State;
                             string tmpParentTechnicianId = WorkOrderLookup.GetPrimaryTechnicians(FarmerBrothersEntitites).Where(t => t.Name == techModel.ParentTechnicianName).Select(tt => tt.Number).FirstOrDefault();
-                            tech.PrimaryTechId = Convert.ToInt32(tmpParentTechnicianId);//techModel.ParentTechnicianId == 0 ? techModel.TechId : techModel.ParentTechnicianId;
+                            tech.PrimaryTechId = string.IsNullOrEmpty(tmpParentTechnicianId) ? techModel.TechId : Convert.ToInt32(tmpParentTechnicianId);
                             tech.CompanyName = techModel.TechName;
                             tech.FieldServiceManager = techModel.FieldServiceManager;
                             tech.ModifiedDate = DateTime.Now;

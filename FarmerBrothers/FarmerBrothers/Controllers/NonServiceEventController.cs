@@ -182,8 +182,11 @@ namespace FarmerBrothers.Controllers
             }
 
             nse.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
-            int? custId = Convert.ToInt32(nse.Customer.CustomerId);
-            var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            //int? custId = Convert.ToInt32(nse.Customer.CustomerId);
+            //var custNotes = FarmerBrothersEntitites.FBCustomerNotes.Where(c => c.CustomerId == custId && c.IsActive == true).ToList();
+            int custId = Convert.ToInt32(nse.Customer.CustomerId);
+            int parentId = string.IsNullOrEmpty(nse.Customer.ParentNumber) ? 0 : Convert.ToInt32(nse.Customer.ParentNumber);
+            var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
             foreach (var dbCustNotes in custNotes)
             {
                 nse.Notes.CustomerNotesResults.Add(new CustomerNotesModel(dbCustNotes));
@@ -877,7 +880,7 @@ namespace FarmerBrothers.Controllers
             NonServiceworkorder nswo = FarmerBrothersEntitites.NonServiceworkorders.Where(nwo => nwo.WorkOrderID == WorkOrderID).FirstOrDefault();
             DateTime currentTime = Utility.GetCurrentTime(nswo.CustomerZipCode, FarmerBrothersEntitites);
 
-            string fromAddress = ConfigurationManager.AppSettings["CustomerUpdateMailFromAddress"];
+            string fromAddress = "reviveservice@mktalt.com"; //ConfigurationManager.AppSettings["CustomerUpdateMailFromAddress"];
             FBCallReason callReason = FarmerBrothersEntitites.FBCallReasons.Where(c => c.SourceCode == nswo.CallReason).FirstOrDefault();
 
             int cid = Convert.ToInt32(nswo.CustomerID);
@@ -966,7 +969,8 @@ namespace FarmerBrothers.Controllers
                 }
             }
 
-            if (callReason != null && callReason.Description.ToLower() == "dropped call")
+            /*Updated this block on March 28, 2023 for email subject "FB acct 9268923 and non-service 5172877 - ngatton@mktalt.com"
+             * if (callReason != null && callReason.Description.ToLower() == "dropped call")
             {
                 mailTo = "thelms@mktalt.onmicrosoft.com";
                 mailToName = "Tim - " + "thelms@mktalt.onmicrosoft.com";
@@ -979,10 +983,36 @@ namespace FarmerBrothers.Controllers
 
             if (string.IsNullOrEmpty(mailTo))
             {
-                mailTo += "thelms@mktalt.onmicrosoft.com";
+                mailTo += "thelms@mktalt.onmicrosoft.com;";
                 mailToName += "Tim - " + "thelms@mktalt.onmicrosoft.com";
-                mailTo += "ssheedy@mktalt.com";
+                mailTo += "ssheedy@mktalt.com;";
                 mailToName += "Shannon - " + "ssheedy@mktalt.com";
+
+                NotesMsg += "Customer Service Escalation Mail sent to " + mailToName;
+            }*/
+
+            if (callReason != null && callReason.Description.ToLower() == "dropped call")
+            {
+                mailTo = ConfigurationManager.AppSettings["MikeEmailId"].ToString();
+                mailToName = "Mike - " + ConfigurationManager.AppSettings["MikeEmailId"].ToString() + ";    ";
+
+                mailTo += ConfigurationManager.AppSettings["DONKite"].ToString();
+                mailToName += "Don Kite - " + ConfigurationManager.AppSettings["DONKite"].ToString() + ";    ";
+
+                mailTo += ConfigurationManager.AppSettings["Support"].ToString();
+                mailToName += "Support - " + ConfigurationManager.AppSettings["Support"].ToString() + ";    ";
+
+                NotesMsg = "Customer Service Escalation Mail sent to " + mailToName;
+            }
+
+            if (string.IsNullOrEmpty(mailTo))
+            {
+                mailTo += ConfigurationManager.AppSettings["MikeEmailId"].ToString();
+                mailToName += "Mike - " + ConfigurationManager.AppSettings["MikeEmailId"].ToString() + ";    ";
+                mailTo += ConfigurationManager.AppSettings["DONKite"].ToString();
+                mailToName += "Don Kite - " + ConfigurationManager.AppSettings["DONKite"].ToString() + ";    ";
+                mailTo += ConfigurationManager.AppSettings["Support"].ToString();
+                mailToName += "Support - " + ConfigurationManager.AppSettings["Support"].ToString() + ";    ";
 
                 NotesMsg += "Customer Service Escalation Mail sent to " + mailToName;
             }
@@ -1066,7 +1096,7 @@ namespace FarmerBrothers.Controllers
 
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", completeUrl, new Encrypt_Decrypt().Encrypt("workOrderId=" + WorkOrderID)) + "\">COMPLETE</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", createServiceEventUrl, new Encrypt_Decrypt().Encrypt("workOrderId=" + WorkOrderID + "&techId=0&response=0&isResponsible=false&isBillable=" + mailToUserName)) + "\">CREATE SERVICE EVENT</a>");
+                            //salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", createServiceEventUrl, new Encrypt_Decrypt().Encrypt("workOrderId=" + WorkOrderID + "&techId=0&response=0&isResponsible=false&isBillable=" + mailToUserName)) + "\">CREATE SERVICE EVENT</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
                             salesEmailBody.Append("<BR>");
@@ -1242,7 +1272,7 @@ namespace FarmerBrothers.Controllers
 
                             salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", completeUrl, new Encrypt_Decrypt().Encrypt("workOrderId=" + WorkOrderID)) + "\">COMPLETE</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                            salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", createServiceEventUrl, new Encrypt_Decrypt().Encrypt("workOrderId=" + WorkOrderID + "&techId=0&response=0&isResponsible=false&isBillable=" + mailToUserName)) + "\">CREATE SERVICE EVENT</a>");
+                            //salesEmailBody.Append("<a href=\"" + string.Format("{0}{1}&encrypt=yes", createServiceEventUrl, new Encrypt_Decrypt().Encrypt("workOrderId=" + WorkOrderID + "&techId=0&response=0&isResponsible=false&isBillable=" + mailToUserName)) + "\">CREATE SERVICE EVENT</a>");
                             salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
                             salesEmailBody.Append("<BR>");
