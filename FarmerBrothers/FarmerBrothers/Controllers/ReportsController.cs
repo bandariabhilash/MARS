@@ -347,7 +347,7 @@ namespace FarmerBrothers.Controllers
                                     inner join WorkorderSchedule WS on WS.WorkorderID = W.WorkorderID
                                     inner join WorkorderEquipment EQP on W.WorkorderID = EQP.WorkorderID
                                     left outer join WorkorderParts WP on W.Workorderid = WP.WorkorderID and WP.AssetID = EQP.Assetid
-                                    left outer join sku on sku.Sku = WP.Sku   
+                                    left outer join sku on sku.Sku = WP.Sku  and sku.SkuActive = 1 
                                     left outer join TMP_BlackBerry_SCFAssetInfo TBS on W.WorkorderID = TBS.WorkorderID and EQP.Assetid = TBS.AssetKey and W.WorkorderClosureConfirmationNo = TBS.ClosureConfirmationNo
                                     where (WS.AssignedStatus='Accepted' OR WS.AssignedStatus='Scheduled') AND 
                                     W.WorkorderCallstatus='Closed'";
@@ -781,54 +781,33 @@ namespace FarmerBrothers.Controllers
             //String FA = BillingRptModel.TechID.ToString();
             //String PPID = BillingRptModel.ParentACC == null ? "0" : BillingRptModel.ParentACC.ToString();
             //String AccountNo = BillingRptModel.AccountNo == null ? "0" : BillingRptModel.AccountNo.ToString();
+
             MarsViews mars = new MarsViews();
-            decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
-            string ssql = @"select c.PricingParentID, c.CompanyName, c.Address1, w.WorkorderCallstatus, 
-                                    w.NoServiceRequired, 'S.No for workorder rows', c.ContactID, 'Request Date as Blank',
-                                    wbd.BillingCode, wbd.Quantity, 'Blank Column', 'Quantity * Cost',
-                                    w.WorkorderID, w.WorkorderCloseDate, w.CustomerPO, ws.TechName, 
-                                    wp.ModelNo, 'Serial Number', 'Fixed Message'
-                                    from workorder w
-                                    inner join contact c on w.CustomerID = c.ContactID
-                                    inner join WorkorderSchedule ws on ws.workorderid = w.workorderid
-                                    left join WorkorderParts wp on wp.workorderid = w.workorderid
-                                    left join WorkorderBillingDetails wbd on wbd.workorderid = w.workorderid
-                                    where (c.BillingCode = 'S08') --and ws.AssignedStatus = 'Accepted' ";
+            DataTable dt = mars.fbBillingUpload("USP_BillingUpload_Report", DF, DT);
+            //decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
+            //string ssql = @"select c.PricingParentID, c.CompanyName, c.Address1, w.WorkorderCallstatus, 
+            //                        w.NoServiceRequired, ROW_NUMBER() Over(Partition by w.workorderid Order By w.WorkorderId) As SN, c.ContactID, 'Request Date as Blank',
+            //                        wbd.BillingCode, wbd.Quantity, 'Blank Column', 'Quantity * Cost',
+            //                        w.WorkorderID, w.WorkorderCloseDate, w.CustomerPO, ws.TechName, 
+            //                        wp.ModelNo, 'Serial Number', 'Fixed Message'
+            //                        from workorder w
+            //                        inner join contact c on w.CustomerID = c.ContactID
+            //                        inner join WorkorderSchedule ws on ws.workorderid = w.workorderid
+            //                        left join WorkorderParts wp on wp.workorderid = w.workorderid
+            //                        left join WorkorderBillingDetails wbd on wbd.workorderid = w.workorderid
+            //                        where (c.BillingCode = 'S08') --and ws.AssignedStatus = 'Accepted' ";
 
-            ssql = ssql + " --and W.WorkorderCloseDate >='" + DF + "'";
+            //ssql = ssql + " --and W.WorkorderCloseDate >='" + DF + "'";
 
-            ssql = ssql + "  --and  W.WorkorderCloseDate <'" + DT + "'";
+            //ssql = ssql + "  --and  W.WorkorderCloseDate <'" + DT + "'";
 
-            //if (!string.IsNullOrEmpty(AccountNo) && AccountNo != "0")
-            //{
-            //    ssql = ssql + " and C.ContactID =" + AccountNo;
-            //}
+           
 
-            //if (BillingRptModel.DealerId > 0)
-            //{
-            //    ssql = ssql + " and WS.Techid =" + TL;
-            //}
+            //ssql = ssql + " order by W.WorkorderID";
 
-            //if (FA == "SPD")
-            //{
-            //    ssql = ssql + " and FamilyAff != 'SPT'";
-            //}
-            //if (FA == "SPT")
-            //{
-            //    ssql = ssql + " and FamilyAff = 'SPT'";
-            //}
-
-            //if (!string.IsNullOrEmpty(PPID) && PPID != "0")
-            //{
-            //    ssql = ssql + " and W.CustomerID IN (Select ContactID from Contact where PricingParentID = " + PPID + ")"; //'cast(@" + PPID + "as varchar(10)) ')";
-            //}
-
-            ssql = ssql + " order by W.WorkorderID";
-
-            DataTable dt = mars.fnTpspVendors(ssql);
+            //DataTable dt = mars.fnTpspVendors(ssql);
 
 
-            //DataTable dt = mars.fbSuperInvoice("USP_SuperInvoice_Report", DF, DT, PPID, FA, TL);
             BillingUploadReportSearchResultModel FBBillingSearchResult;
             foreach (DataRow dr in dt.Rows)
             {
@@ -839,27 +818,29 @@ namespace FarmerBrothers.Controllers
                 FBBillingSearchResult.Address1 = dr["Address1"] == DBNull.Value ? "" : dr["Address1"].ToString();
                 FBBillingSearchResult.WorkorderCallstatus = dr["WorkorderCallstatus"] == DBNull.Value ? "" : dr["WorkorderCallstatus"].ToString();
                 FBBillingSearchResult.NoServiceRequired = dr["NoServiceRequired"] == DBNull.Value ? "" : dr["NoServiceRequired"].ToString();
-                FBBillingSearchResult.SequenceNumber = "S.No for workorder rows";
-                FBBillingSearchResult.CustomerID = dr["ContactID"] == DBNull.Value ? "" : dr["ContactID"].ToString();
-                FBBillingSearchResult.BillingCode = dr["BillingCode"] == DBNull.Value ? "" : dr["BillingCode"].ToString();
-                FBBillingSearchResult.RequestDate= "";
-                FBBillingSearchResult.DocTy = "";
+                FBBillingSearchResult.SequenceNumber = dr["SequenceNumber"] == DBNull.Value ? "" : dr["SequenceNumber"].ToString();
+                FBBillingSearchResult.CustomerID = dr["CustomerID"] == DBNull.Value ? "" : dr["CustomerID"].ToString();
+                FBBillingSearchResult.BillingCode = dr["ItemRef"] == DBNull.Value ? "" : dr["ItemRef"].ToString();
+                FBBillingSearchResult.RequestDate= dr["RequestDate"] == DBNull.Value ? "" : dr["RequestDate"].ToString();
+                FBBillingSearchResult.DocTy = dr["DocTy"] == DBNull.Value ? "" : dr["DocTy"].ToString();
                 int Quantity = dr["Quantity"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Quantity"]);
                 FBBillingSearchResult.Quantity = Quantity.ToString();
-                FBBillingSearchResult.SecondItemNumber = "";
-                FBBillingSearchResult.TotalInvoice = "Quantity * Cost";
+                FBBillingSearchResult.SecondItemNumber = dr["ItemRef"] == DBNull.Value ? "" : dr["ItemRef"].ToString();
+                FBBillingSearchResult.TravelLaborTime = dr["TravelLaborTime"] == DBNull.Value ? "" : dr["TravelLaborTime"].ToString();
+                FBBillingSearchResult.SKUCost = dr["Cost"] == DBNull.Value ? 0 : Convert.ToDecimal(dr["Cost"]);
+                FBBillingSearchResult.TotalInvoice = dr["TotalPrice"] == DBNull.Value ? "" : dr["TotalPrice"].ToString();
                 FBBillingSearchResult.WorkorderID = dr["WorkorderID"] == DBNull.Value ? "" : dr["WorkorderID"].ToString();
                 FBBillingSearchResult.WorkorderCloseDate = dr["WorkorderCloseDate"] == DBNull.Value ? "" : dr["WorkorderCloseDate"].ToString();
                 FBBillingSearchResult.CustomerPO = dr["CustomerPO"] == DBNull.Value ? "" : dr["CustomerPO"].ToString();
                 FBBillingSearchResult.TechName = dr["TechName"] == DBNull.Value ? "" : dr["TechName"].ToString();
-                FBBillingSearchResult.Model = dr["ModelNo"] == DBNull.Value ? "" : dr["ModelNo"].ToString();
-                FBBillingSearchResult.SerialNumber = "Serial Number";
-                FBBillingSearchResult.FixedMessage = "Fixed Message";
+                FBBillingSearchResult.Model = dr["ModelNumber"] == DBNull.Value ? "" : dr["ModelNumber"].ToString();
+                FBBillingSearchResult.SerialNumber = dr["SerialNumber"] == DBNull.Value ? "" : dr["SerialNumber"].ToString();
+                FBBillingSearchResult.FixedMessage = dr["Message"] == DBNull.Value ? "" : dr["Message"].ToString();
 
                 BillingData.Add(FBBillingSearchResult);
             }
             BillingRptModel.SearchResults = BillingData;
-
+            
             return BillingData;
         }
 
@@ -1958,7 +1939,7 @@ namespace FarmerBrothers.Controllers
         {
             if ((!pmSchedulesModel.DateFrom.HasValue)
                 && !pmSchedulesModel.DateTo.HasValue && string.IsNullOrEmpty(pmSchedulesModel.CustomerJDE))
-                //if (string.IsNullOrEmpty(pmSchedulesModel.CustomerJDE))
+            //if (string.IsNullOrEmpty(pmSchedulesModel.CustomerJDE))
             {
                 TempData["SearchCriteria"] = null;
                 return Json(new List<ZonePriority>(), JsonRequestBehavior.AllowGet);
@@ -1968,7 +1949,13 @@ namespace FarmerBrothers.Controllers
                 IList<PMSchedulesSearchResultModel> pMSchedules = GetPMSchedules(pmSchedulesModel);
                 pmSchedulesModel.SearchResults = pMSchedules;
                 TempData["SearchCriteria"] = pmSchedulesModel;
-                return Json(pmSchedulesModel.SearchResults, JsonRequestBehavior.AllowGet);
+                //return Json(pmSchedulesModel.SearchResults, JsonRequestBehavior.AllowGet);
+                return new JsonResult()
+                {
+                    Data = pmSchedulesModel.SearchResults,
+                    JsonRequestBehavior = JsonRequestBehavior.AllowGet,
+                    MaxJsonLength = Int32.MaxValue
+                };
             }
         }
 
@@ -5925,11 +5912,14 @@ namespace FarmerBrothers.Controllers
         public List<EscalationReportSearchResultModel> GetEscalationReport(EscalationReportModel searchMonthly)
         {
             List<EscalationReportSearchResultModel> EscalationRportList = new List<EscalationReportSearchResultModel>();
-            string sSql = @" select n.WorkorderId, w. WorkorderEntryDate, ISNULL(n.UserName, 'Sent From Email Link') as EscalatedBy, c.ESMName as EscalatedTo, n.EntryDate as EscalatedOn  from NotesHistory n
+            string sSql = @" select n.WorkorderId, w. WorkorderEntryDate, ISNULL(n.UserName, 'Sent From Email Link') as EscalatedBy, c.ESMName as EscalatedTo, n.EntryDate as EscalatedOn, 
+                                        ws.TechName as EventSentTo, ws.AssignedStatus as TechStatus
+                                        from NotesHistory n
                                         inner join workorder w on n.workorderid = w.workorderid
                                         inner join contact c on w.customerid = c.contactid
+                                        inner join Workorderschedule ws on w.WorkorderID = ws.WorkorderID
                                         where n.workorderid is not null and  n.notes like '%escalation%' 
-                                        and n.entrydate >= '"+ searchMonthly.DateFrom+ @"'
+                                        and n.entrydate >= '" + searchMonthly.DateFrom+ @"'
                                         and n.entrydate <= '"+ searchMonthly.DateTo+ @"'
                                         order by workorderid desc";
 
@@ -5944,6 +5934,8 @@ namespace FarmerBrothers.Controllers
                 rsltReport.EscalatedOn = dr["EscalatedOn"].ToString();
                 rsltReport.EscalatedTo = dr["EscalatedTo"].ToString();
                 rsltReport.WorkorderEntryDate = dr["WorkorderEntryDate"].ToString();
+                rsltReport.EventSentTo = dr["EventSentTo"].ToString();
+                rsltReport.TechStatus = dr["TechStatus"].ToString();
 
                 EscalationRportList.Add(rsltReport);
             }

@@ -43,6 +43,7 @@ namespace FarmerBrothers.Data
         public string HardnessRating { get; set; }
         public string TechnicianSignatureDetails { get; set; }
         public string CustomerSignatureBy { get; set; }
+        public Nullable<decimal> TotalDissolvedSolids { get; set; }
     
         public virtual WorkOrder WorkOrder { get; set; }
     }

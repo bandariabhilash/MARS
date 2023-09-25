@@ -76,6 +76,7 @@ namespace FarmerBrothers.Data
         public Nullable<int> GroupId { get; set; }
         public string BulkUploadResult { get; set; }
         public string UploadError { get; set; }
+        public string CashSaleStatus { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FBERFEquipment> FBERFEquipments { get; set; }

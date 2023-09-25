@@ -31,6 +31,8 @@ D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.xml
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\EntityFramework.SqlServer.xml
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Release\Newtonsoft.Json.xml
-D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csprojResolveAssemblyReference.cache
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.dll
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.pdb
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csproj.AssemblyReference.cache
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csproj.CoreCompileInputs.cache
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Release\FarmerBrothers.Data.csproj.CopyComplete

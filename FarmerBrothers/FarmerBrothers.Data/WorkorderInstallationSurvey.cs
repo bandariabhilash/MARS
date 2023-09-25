@@ -27,7 +27,7 @@ namespace FarmerBrothers.Data
         public Nullable<int> WorkorderID { get; set; }
         public Nullable<int> AssetID { get; set; }
     
-        public virtual WorkOrder WorkOrder { get; set; }
         public virtual WorkorderEquipment WorkorderEquipment { get; set; }
+        public virtual WorkOrder WorkOrder { get; set; }
     }
 }

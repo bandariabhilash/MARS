@@ -26,5 +26,9 @@ namespace FarmerBrothers.Data
         public string RegionalsName { get; set; }
         public string RegonalsPhone { get; set; }
         public string RegionalsEmail { get; set; }
+        public Nullable<int> ModifiedUserId { get; set; }
+        public Nullable<System.DateTime> ModifiedDate { get; set; }
+        public Nullable<int> CreatedUserId { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
     }
 }

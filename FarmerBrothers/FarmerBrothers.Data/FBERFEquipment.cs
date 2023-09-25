@@ -34,6 +34,12 @@ namespace FarmerBrothers.Data
         public Nullable<decimal> TotalCost { get; set; }
         public string InternalOrderType { get; set; }
         public string VendorOrderType { get; set; }
+        public string SerialNumber { get; set; }
+        public string OrderType { get; set; }
+        public string DepositInvoiceNumber { get; set; }
+        public Nullable<decimal> DepositAmount { get; set; }
+        public string FinalInvoiceNumber { get; set; }
+        public Nullable<decimal> InvoiceTotal { get; set; }
     
         public virtual Erf Erf { get; set; }
     }

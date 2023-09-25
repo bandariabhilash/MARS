@@ -39,6 +39,17 @@
     <Property Name="ApplicationName" Type="varchar" MaxLength="50" />
     <Property Name="OrderId" Type="int" />
   </EntityType>
+  <EntityType Name="BillingItems">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="BillingCode" Type="varchar" MaxLength="25" />
+    <Property Name="BillingName" Type="varchar" MaxLength="150" />
+    <Property Name="UnitPrice" Type="money" />
+    <Property Name="EntryDate" Type="smalldatetime" />
+    <Property Name="IsActive" Type="bit" />
+  </EntityType>
   <EntityType Name="BranchESM">
     <Key>
       <PropertyRef Name="UniqueId" />
@@ -126,14 +137,14 @@
     <Property Name="RCCMJDE" Type="int" />
     <Property Name="CategoryCode" Type="nvarchar" MaxLength="3" />
     <Property Name="OperatingUnit" Type="nvarchar" MaxLength="3" />
-    <Property Name="Route" Type="nvarchar" MaxLength="3" />
+    <Property Name="Route" Type="nvarchar" MaxLength="10" />
     <Property Name="Branch" Type="nvarchar" MaxLength="3" />
     <Property Name="1099Reporting" Type="nvarchar" MaxLength="3" />
     <Property Name="Chain" Type="nvarchar" MaxLength="3" />
     <Property Name="BrewmaticAgentCode" Type="nvarchar" MaxLength="3" />
     <Property Name="NTR" Type="nvarchar" MaxLength="3" />
     <Property Name="DelDayOrFOB" Type="nvarchar" MaxLength="3" />
-    <Property Name="RouteCode" Type="nvarchar" MaxLength="3" />
+    <Property Name="RouteCode" Type="nvarchar" MaxLength="10" />
     <Property Name="ZoneNumber" Type="nvarchar" MaxLength="3" />
     <Property Name="MailingName" Type="nvarchar" MaxLength="40" />
     <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
@@ -217,11 +228,20 @@
     </Key>
     <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ContingentID" Type="int" Nullable="false" />
-    <Property Name="Name" Type="varchar" MaxLength="250" />
+    <Property Name="Name" Type="nvarchar(max)" />
     <Property Name="LaidInCost" Type="money" />
     <Property Name="CashSale" Type="money" />
     <Property Name="Rental" Type="money" />
     <Property Name="IsActive" Type="bit" />
+  </EntityType>
+  <EntityType Name="CustomCriteria">
+    <Key>
+      <PropertyRef Name="UniqueId" />
+    </Key>
+    <Property Name="UniqueId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="CategoryName" Type="nvarchar" MaxLength="50" />
+    <Property Name="CategoryValue" Type="nvarchar" MaxLength="255" />
+    <Property Name="CategoryType" Type="nvarchar" MaxLength="25" />
   </EntityType>
   <EntityType Name="ElectricalPhaseList">
     <Key>
@@ -300,6 +320,7 @@
     <Property Name="GroupId" Type="int" />
     <Property Name="BulkUploadResult" Type="varchar" MaxLength="50" />
     <Property Name="UploadError" Type="ntext" />
+    <Property Name="CashSaleStatus" Type="varchar" MaxLength="150" />
   </EntityType>
   <EntityType Name="ERFBranchDetails">
     <Key>
@@ -471,6 +492,7 @@
     <Property Name="UserName" Type="varchar" MaxLength="75" />
     <Property Name="EntryDate" Type="smalldatetime" />
     <Property Name="IsActive" Type="bit" />
+    <Property Name="ParentId" Type="int" />
   </EntityType>
   <EntityType Name="FBCustomerServiceDistribution">
     <Key>
@@ -488,6 +510,10 @@
     <Property Name="RegionalsName" Type="nvarchar" MaxLength="255" />
     <Property Name="RegonalsPhone" Type="nvarchar" MaxLength="255" />
     <Property Name="RegionalsEmail" Type="nvarchar" MaxLength="255" />
+    <Property Name="ModifiedUserId" Type="int" />
+    <Property Name="ModifiedDate" Type="datetime" />
+    <Property Name="CreatedUserId" Type="int" />
+    <Property Name="CreatedDate" Type="datetime" />
   </EntityType>
   <EntityType Name="FBEquipment">
     <Key>
@@ -523,12 +549,43 @@
     <Property Name="TotalCost" Type="money" />
     <Property Name="InternalOrderType" Type="varchar" MaxLength="150" />
     <Property Name="VendorOrderType" Type="varchar" MaxLength="150" />
+    <Property Name="SerialNumber" Type="nvarchar" MaxLength="255" />
+    <Property Name="OrderType" Type="varchar" MaxLength="10" />
+    <Property Name="DepositInvoiceNumber" Type="varchar" MaxLength="150" />
+    <Property Name="DepositAmount" Type="money" />
+    <Property Name="FinalInvoiceNumber" Type="varchar" MaxLength="150" />
+    <Property Name="InvoiceTotal" Type="money" />
   </EntityType>
   <EntityType Name="FBERFExpendable">
     <Key>
       <PropertyRef Name="ERFExpendableId" />
     </Key>
     <Property Name="ERFExpendableId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ERFId" Type="nvarchar" MaxLength="50" />
+    <Property Name="WorkOrderId" Type="int" />
+    <Property Name="ModelNo" Type="varchar" MaxLength="50" />
+    <Property Name="Quantity" Type="int" />
+    <Property Name="ProdNo" Type="varchar" MaxLength="50" />
+    <Property Name="TransactionType" Type="varchar" MaxLength="30" />
+    <Property Name="UnitPrice" Type="money" />
+    <Property Name="Extra" Type="varchar" MaxLength="50" />
+    <Property Name="Description" Type="varchar" MaxLength="250" />
+    <Property Name="ContingentCategoryId" Type="int" />
+    <Property Name="ContingentCategoryTypeId" Type="int" />
+    <Property Name="UsingBranch" Type="varchar" MaxLength="5" />
+    <Property Name="LaidInCost" Type="money" />
+    <Property Name="RentalCost" Type="money" />
+    <Property Name="TotalCost" Type="money" />
+    <Property Name="InternalOrderType" Type="varchar" MaxLength="150" />
+    <Property Name="VendorOrderType" Type="varchar" MaxLength="150" />
+    <Property Name="EquipmentType" Type="varchar" MaxLength="30" />
+    <Property Name="Substitution" Type="varchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="FBERFPos">
+    <Key>
+      <PropertyRef Name="ERFPosId" />
+    </Key>
+    <Property Name="ERFPosId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="ERFId" Type="nvarchar" MaxLength="50" />
     <Property Name="WorkOrderId" Type="int" />
     <Property Name="ModelNo" Type="varchar" MaxLength="50" />
@@ -679,6 +736,9 @@
     <Property Name="IsTechnician" Type="int" />
     <Property Name="IsERFUser" Type="bit" />
     <Property Name="EmailId" Type="varchar(max)" />
+    <Property Name="CreatedUserId" Type="int" />
+    <Property Name="CreatedUserName" Type="varchar" MaxLength="150" />
+    <Property Name="CustomerParent" Type="nvarchar" MaxLength="150" />
   </EntityType>
   <EntityType Name="FBUserReports">
     <Key>
@@ -800,6 +860,14 @@
     </Key>
     <Property Name="ContractID" Type="int" Nullable="false" />
   </EntityType>
+  <EntityType Name="NonFBCustomers">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="NonFBCustomerId" Type="nvarchar" MaxLength="20" />
+    <Property Name="NonFBCustomerName" Type="varchar" MaxLength="200" />
+  </EntityType>
   <EntityType Name="NonSerialized">
     <Key>
       <PropertyRef Name="NSerialid" />
@@ -878,6 +946,30 @@
     <Property Name="TechId" Type="int" />
     <Property Name="AttemptedDate" Type="smalldatetime" Nullable="false" />
   </EntityType>
+  <EntityType Name="PricingDetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PricingEntityId" Type="varchar" MaxLength="20" />
+    <Property Name="PricingEntityName" Type="varchar" MaxLength="150" />
+    <Property Name="HourlyTravlRate" Type="money" />
+    <Property Name="HourlyLablrRate" Type="money" />
+    <Property Name="MilageRate" Type="money" />
+    <Property Name="AfterHoursTravelRate" Type="money" />
+    <Property Name="AfterHoursLaborRate" Type="money" />
+    <Property Name="PartsDiscount" Type="decimal" Precision="4" Scale="2" />
+    <Property Name="AfterHoursRatesApply" Type="bit" />
+    <Property Name="AdditionalFee" Type="money" />
+    <Property Name="PricingTypeId" Type="int" />
+  </EntityType>
+  <EntityType Name="PricingType">
+    <Key>
+      <PropertyRef Name="PricingTypeId" />
+    </Key>
+    <Property Name="PricingTypeId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PricingTypeName" Type="varchar" MaxLength="20" />
+  </EntityType>
   <EntityType Name="Privilege">
     <Key>
       <PropertyRef Name="PrivilegeId" />
@@ -932,6 +1024,20 @@
     <Property Name="StateCode" Type="nvarchar" MaxLength="255" Nullable="false" />
     <Property Name="StateName" Type="nvarchar" MaxLength="255" />
     <Property Name="TaxPercent" Type="decimal" Precision="18" Scale="0" />
+  </EntityType>
+  <EntityType Name="StateTax">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="State" Type="nvarchar" MaxLength="255" />
+    <Property Name="ZipCode" Type="nvarchar" MaxLength="50" />
+    <Property Name="TaxRegionName" Type="nvarchar" MaxLength="255" />
+    <Property Name="EstimatedCombinedRate" Type="float" />
+    <Property Name="StateRate" Type="float" />
+    <Property Name="EstimatedCountyRate" Type="float" />
+    <Property Name="EstimatedCityRate" Type="float" />
+    <Property Name="EstimatedSpecialRate" Type="float" />
   </EntityType>
   <EntityType Name="Symptom">
     <Key>
@@ -1337,6 +1443,20 @@ warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a pri
     <Property Name="ElectronicEmailSent" Type="bit" />
     <Property Name="CustomerPO" Type="varchar" MaxLength="150" />
     <Property Name="RescheduleReasonCode" Type="int" />
+    <Property Name="AuthTransactionId" Type="varchar" MaxLength="150" />
+    <Property Name="FinalTransactionId" Type="varchar" MaxLength="150" />
+    <Property Name="ShippingPriority" Type="varchar" MaxLength="25" />
+  </EntityType>
+  <EntityType Name="WorkorderBillingDetails">
+    <Key>
+      <PropertyRef Name="BillingId" />
+    </Key>
+    <Property Name="BillingId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkorderId" Type="int" />
+    <Property Name="BillingCode" Type="varchar" MaxLength="25" />
+    <Property Name="Quantity" Type="int" />
+    <Property Name="EntryDate" Type="smalldatetime" />
+    <Property Name="Duration" Type="nvarchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="WorkOrderBrands">
     <Key>
@@ -1379,6 +1499,7 @@ warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a pri
     <Property Name="HardnessRating" Type="varchar" MaxLength="10" />
     <Property Name="TechnicianSignatureDetails" Type="nvarchar(max)" />
     <Property Name="CustomerSignatureBy" Type="nvarchar" MaxLength="250" />
+    <Property Name="TotalDissolvedSolids" Type="decimal" Precision="18" Scale="2" />
   </EntityType>
   <EntityType Name="WorkorderEquipment">
     <Key>
@@ -1749,19 +1870,19 @@ warning 6002: The table/view 'FB_Dev.dbo.v_Contact' does not have a primary key 
     <Property Name="RCCMJDE" Type="int" />
     <Property Name="CategoryCode" Type="nvarchar" MaxLength="3" />
     <Property Name="OperatingUnit" Type="nvarchar" MaxLength="3" />
-    <Property Name="Route" Type="nvarchar" MaxLength="3" />
+    <Property Name="Route" Type="nvarchar" MaxLength="10" />
     <Property Name="Branch" Type="nvarchar" MaxLength="3" />
     <Property Name="1099Reporting" Type="nvarchar" MaxLength="3" />
     <Property Name="Chain" Type="nvarchar" MaxLength="3" />
     <Property Name="BrewmaticAgentCode" Type="nvarchar" MaxLength="3" />
     <Property Name="NTR" Type="nvarchar" MaxLength="3" />
     <Property Name="DelDayOrFOB" Type="nvarchar" MaxLength="3" />
-    <Property Name="RouteCode" Type="nvarchar" MaxLength="3" />
+    <Property Name="RouteCode" Type="nvarchar" MaxLength="10" />
     <Property Name="ZoneNumber" Type="nvarchar" MaxLength="3" />
     <Property Name="MailingName" Type="nvarchar" MaxLength="40" />
     <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
     <Property Name="MiddleName" Type="nvarchar" MaxLength="25" />
-    <Property Name="LastName" Type="nvarchar" MaxLength="25" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="50" />
     <Property Name="FBProviderID" Type="int" />
     <Property Name="NOFBPSPEmails" Type="int" />
     <Property Name="LastAutoEmail" Type="smalldatetime" />
@@ -1799,7 +1920,7 @@ warning 6002: The table/view 'FB_Dev.dbo.v_ContactServiceHistory' does not have 
     <Property Name="Category" Type="nvarchar" MaxLength="90" />
     <Property Name="Model" Type="nvarchar" MaxLength="90" />
     <Property Name="Manufacturer" Type="nvarchar" MaxLength="90" />
-    <Property Name="Location" Type="nvarchar" MaxLength="50" />
+    <Property Name="Location" Type="nvarchar" MaxLength="150" />
     <Property Name="SerialNumber" Type="nvarchar" MaxLength="50" />
     <Property Name="CallTypeDesc" Type="nvarchar" MaxLength="255" />
     <Property Name="SymptomDesc" Type="nvarchar" MaxLength="255" />
@@ -1991,7 +2112,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__NonSerial__Worko__6DCC4D03">
+  <Association Name="FK__NonSerial__Worko__2057CCD0">
     <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
     <End Role="NonSerialized" Type="Self.NonSerialized" Multiplicity="*" />
     <ReferentialConstraint>
@@ -2024,6 +2145,18 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
       </Principal>
       <Dependent Role="PhoneSolveLog">
         <PropertyRef Name="WorkorderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__PricingDe__Prici__5F141958">
+    <End Role="PricingType" Type="Self.PricingType" Multiplicity="0..1" />
+    <End Role="PricingDetails" Type="Self.PricingDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PricingType">
+        <PropertyRef Name="PricingTypeId" />
+      </Principal>
+      <Dependent Role="PricingDetails">
+        <PropertyRef Name="PricingTypeId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2072,6 +2205,18 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
       </Principal>
       <Dependent Role="WorkorderServiceClaim">
         <PropertyRef Name="Assetid" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__WorkOrder__Worko__27F8EE98">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkOrderBrands" Type="Self.WorkOrderBrands" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkOrderBrands">
+        <PropertyRef Name="WorkorderID" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2179,18 +2324,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
         <PropertyRef Name="WorkorderID" />
       </Principal>
       <Dependent Role="WorkorderSchedule">
-        <PropertyRef Name="WorkorderID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK__WorkOrder__Worko__756D6ECB">
-    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
-    <End Role="WorkOrderBrands" Type="Self.WorkOrderBrands" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="WorkOrder">
-        <PropertyRef Name="WorkorderID" />
-      </Principal>
-      <Dependent Role="WorkOrderBrands">
         <PropertyRef Name="WorkorderID" />
       </Dependent>
     </ReferentialConstraint>
@@ -2391,6 +2524,10 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <Parameter Name="CustomerZip" Type="varchar" Mode="In" />
     <Parameter Name="DealerLatLongFactor" Type="decimal" Mode="In" />
   </Function>
+  <Function Name="USP_BillingUpload_Report" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+    <Parameter Name="StartDate" Type="varchar" Mode="In" />
+    <Parameter Name="EndDate" Type="varchar" Mode="In" />
+  </Function>
   <Function Name="USP_ClosestOnCallTechDispatch_Details" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="CustomerZip" Type="varchar" Mode="In" />
   </Function>
@@ -2467,6 +2604,8 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <Parameter Name="TechID" Type="int" Mode="In" />
     <Parameter Name="ESM" Type="varchar" Mode="In" />
     <Parameter Name="Route" Type="varchar" Mode="In" />
+    <Parameter Name="Branch" Type="varchar" Mode="In" />
+    <Parameter Name="Region" Type="varchar" Mode="In" />
   </Function>
   <Function Name="USP_TechDispatch_And_DispatchCount_Details" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
     <Parameter Name="CustomerZip" Type="varchar" Mode="In" />
@@ -2481,6 +2620,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="AllFBStatus" EntityType="Self.AllFBStatus" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="AMPSList" EntityType="Self.AMPSList" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Application" EntityType="Self.Application" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BillingItems" EntityType="Self.BillingItems" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BranchESM" EntityType="Self.BranchESM" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BrandNames" EntityType="Self.BrandNames" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CallTypeSymptomSolutionMaster" EntityType="Self.CallTypeSymptomSolutionMaster" Schema="dbo" store:Type="Tables" />
@@ -2489,6 +2629,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="Contact_PMUploadsALL" EntityType="Self.Contact_PMUploadsALL" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Contingent" EntityType="Self.Contingent" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ContingentDetails" EntityType="Self.ContingentDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomCriteria" EntityType="Self.CustomCriteria" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ElectricalPhaseList" EntityType="Self.ElectricalPhaseList" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="EquipType" EntityType="Self.EquipType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Erf" EntityType="Self.Erf" Schema="dbo" store:Type="Tables" />
@@ -2509,6 +2650,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="FBEquipment" EntityType="Self.FBEquipment" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="FBERFEquipment" EntityType="Self.FBERFEquipment" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="FBERFExpendable" EntityType="Self.FBERFExpendable" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="FBERFPos" EntityType="Self.FBERFPos" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="FBERFTransactionType" EntityType="Self.FBERFTransactionType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="FBExpendable" EntityType="Self.FBExpendable" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="FBFunctionality" EntityType="Self.FBFunctionality" Schema="dbo" store:Type="Tables" />
@@ -2528,16 +2670,20 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="NEMANumberList" EntityType="Self.NEMANumberList" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NoAutoEmailZipCodes" EntityType="Self.NoAutoEmailZipCodes" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NoAutomaticEmailContracts" EntityType="Self.NoAutomaticEmailContracts" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="NonFBCustomers" EntityType="Self.NonFBCustomers" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NonSerialized" EntityType="Self.NonSerialized" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NonServiceworkorder" EntityType="Self.NonServiceworkorder" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NotesHistory" EntityType="Self.NotesHistory" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="OnCallGroup" EntityType="Self.OnCallGroup" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="PhoneSolveLog" EntityType="Self.PhoneSolveLog" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PricingDetails" EntityType="Self.PricingDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="PricingType" EntityType="Self.PricingType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Privilege" EntityType="Self.Privilege" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="RemovalSurvey" EntityType="Self.RemovalSurvey" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Sku" EntityType="Self.Sku" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Solution" EntityType="Self.Solution" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="State" EntityType="Self.State" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="StateTax" EntityType="Self.StateTax" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Symptom" EntityType="Self.Symptom" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="SystemInfo" EntityType="Self.SystemInfo" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TECH_HIERARCHY" EntityType="Self.TECH_HIERARCHY" Schema="dbo" store:Type="Tables" />
@@ -2556,6 +2702,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="VoltageList" EntityType="Self.VoltageList" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WaterLineList" EntityType="Self.WaterLineList" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkOrder" EntityType="Self.WorkOrder" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="WorkorderBillingDetails" EntityType="Self.WorkorderBillingDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkOrderBrands" EntityType="Self.WorkOrderBrands" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkorderDetails" EntityType="Self.WorkorderDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkorderEquipment" EntityType="Self.WorkorderEquipment" Schema="dbo" store:Type="Tables" />
@@ -2882,7 +3029,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
       <End Role="FbRoles" EntitySet="FbRoles" />
       <End Role="FbUserMaster" EntitySet="FbUserMaster" />
     </AssociationSet>
-    <AssociationSet Name="FK__NonSerial__Worko__6DCC4D03" Association="Self.FK__NonSerial__Worko__6DCC4D03">
+    <AssociationSet Name="FK__NonSerial__Worko__2057CCD0" Association="Self.FK__NonSerial__Worko__2057CCD0">
       <End Role="WorkOrder" EntitySet="WorkOrder" />
       <End Role="NonSerialized" EntitySet="NonSerialized" />
     </AssociationSet>
@@ -2893,6 +3040,10 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <AssociationSet Name="FK__PhoneSolv__Worko__3587F3E0" Association="Self.FK__PhoneSolv__Worko__3587F3E0">
       <End Role="WorkOrder" EntitySet="WorkOrder" />
       <End Role="PhoneSolveLog" EntitySet="PhoneSolveLog" />
+    </AssociationSet>
+    <AssociationSet Name="FK__PricingDe__Prici__5F141958" Association="Self.FK__PricingDe__Prici__5F141958">
+      <End Role="PricingType" EntitySet="PricingType" />
+      <End Role="PricingDetails" EntitySet="PricingDetails" />
     </AssociationSet>
     <AssociationSet Name="FK__TechSched__WorkO__57DD0BE4" Association="Self.FK__TechSched__WorkO__57DD0BE4">
       <End Role="WorkOrder" EntitySet="WorkOrder" />
@@ -2909,6 +3060,10 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <AssociationSet Name="FK__Workorder__Asset__671F4F74" Association="Self.FK__Workorder__Asset__671F4F74">
       <End Role="WorkorderEquipment" EntitySet="WorkorderEquipment" />
       <End Role="WorkorderServiceClaim" EntitySet="WorkorderServiceClaim" />
+    </AssociationSet>
+    <AssociationSet Name="FK__WorkOrder__Worko__27F8EE98" Association="Self.FK__WorkOrder__Worko__27F8EE98">
+      <End Role="WorkOrder" EntitySet="WorkOrder" />
+      <End Role="WorkOrderBrands" EntitySet="WorkOrderBrands" />
     </AssociationSet>
     <AssociationSet Name="FK__Workorder__Worko__4C6B5938" Association="Self.FK__Workorder__Worko__4C6B5938">
       <End Role="WorkOrder" EntitySet="WorkOrder" />
@@ -2945,10 +3100,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <AssociationSet Name="FK__Workorder__Worko__58D1301D" Association="Self.FK__Workorder__Worko__58D1301D">
       <End Role="WorkOrder" EntitySet="WorkOrder" />
       <End Role="WorkorderSchedule" EntitySet="WorkorderSchedule" />
-    </AssociationSet>
-    <AssociationSet Name="FK__WorkOrder__Worko__756D6ECB" Association="Self.FK__WorkOrder__Worko__756D6ECB">
-      <End Role="WorkOrder" EntitySet="WorkOrder" />
-      <End Role="WorkOrderBrands" EntitySet="WorkOrderBrands" />
     </AssociationSet>
     <AssociationSet Name="FK__Workorder__workorderstatuslog" Association="Self.FK__Workorder__workorderstatuslog">
       <End Role="WorkOrder" EntitySet="WorkOrder" />

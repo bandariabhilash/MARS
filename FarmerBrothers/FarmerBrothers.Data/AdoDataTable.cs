@@ -111,7 +111,7 @@ namespace FarmerBrothers.Data
             return dt;
         }
 
-        public DataTable fbSuperInvoiceByTech(string strSql, string StartDate, string EndDate, string ParentACC, string FamilyAffs, string Technicianlist,string ESM, string Route)
+        public DataTable fbSuperInvoiceByTech(string strSql, string StartDate, string EndDate, string ParentACC, string FamilyAffs, string Technicianlist,string ESM, string Route, string Branch, string Region)
         {
             SqlConnection sqlConnection = new SqlConnection(con);
             sqlConnection.Open();
@@ -128,12 +128,31 @@ namespace FarmerBrothers.Data
             cmnd.Parameters.AddWithValue("@TechID", Technicianlist);
             cmnd.Parameters.AddWithValue("@ESM", ESM);
             cmnd.Parameters.AddWithValue("@Route", Route);
+            cmnd.Parameters.AddWithValue("@Branch", Branch);
+            cmnd.Parameters.AddWithValue("@Region", Region);
             SqlDataAdapter da = new SqlDataAdapter(cmnd);
             DataTable dt = new DataTable();
             da.Fill(dt);
             return dt;
         }
 
+        public DataTable fbBillingUpload(string strSql, string StartDate, string EndDate)
+        {
+            SqlConnection sqlConnection = new SqlConnection(con);
+            sqlConnection.Open();
+            SqlCommand cmnd = new SqlCommand(strSql, sqlConnection);
+            cmnd.CommandType = CommandType.StoredProcedure;
+            DateTime SDate = Convert.ToDateTime(StartDate);
+            DateTime EDate = Convert.ToDateTime(EndDate);
+            String SD = SDate.ToString("MM/dd/yyyy");
+            String ED = EDate.ToString("MM/dd/yyyy");
+            cmnd.Parameters.AddWithValue("@StartDate", SD);
+            cmnd.Parameters.AddWithValue("@EndDate", ED);
+            SqlDataAdapter da = new SqlDataAdapter(cmnd);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            return dt;
+        }
 
     }
 

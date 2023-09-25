@@ -45,14 +45,14 @@ namespace FarmerBrothersMailResponse.Controllers
             return customer;
         }
 
-        private TECH_HIERARCHY GetCustomerByTechId(string techId)
+        public TECH_HIERARCHY GetCustomerByTechId(string techId)
         {
             int cusId = Convert.ToInt32(techId);
             TECH_HIERARCHY technician = FarmerBrothersEntitites.TECH_HIERARCHY.Where(x => x.DealerId == cusId).FirstOrDefault();
             return technician;
         }
 
-        private static decimal GetDistance(string fromAddress, string toAddress)
+        public static decimal GetDistance(string fromAddress, string toAddress)
         {
             double distance = 0;
             try
@@ -93,7 +93,7 @@ namespace FarmerBrothersMailResponse.Controllers
             return System.Convert.ToDecimal(distance);
         }
 
-        private static TechHierarchyView GetTechDataByResponsibleTechId(FarmerBrothersEntities FarmerBrothersEntitites, int responsibleTechId)
+        public static TechHierarchyView GetTechDataByResponsibleTechId(FarmerBrothersEntities FarmerBrothersEntitites, int responsibleTechId)
         {
             string query = @"SELECT * FROM vw_tech_hierarchy where TechId = " + responsibleTechId.ToString();
             return FarmerBrothersEntitites.Database.SqlQuery<TechHierarchyView>(query).FirstOrDefault();
@@ -131,7 +131,7 @@ namespace FarmerBrothersMailResponse.Controllers
             return timeZone;
         }
 
-        private void CopyWorkorderEquipments(WorkOrder workOrder)
+        public void CopyWorkorderEquipments(WorkOrder workOrder)
         {
             if (workOrder != null)
             {
@@ -172,7 +172,7 @@ namespace FarmerBrothersMailResponse.Controllers
             return isExist;
         }
 
-        private bool UpdateTechAssignedStatus(int techId, WorkOrder workOrder, string assignedStatus, bool IsFromApplicationAcceptButton)
+        public bool UpdateTechAssignedStatus(int techId, WorkOrder workOrder, string assignedStatus, bool IsFromApplicationAcceptButton)
         {
             bool result = false;
             WorkorderSchedule techWorkOrderSchedule = workOrder.WorkorderSchedules.Where(ws => ws.Techid == techId).FirstOrDefault();

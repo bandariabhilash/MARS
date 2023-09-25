@@ -11,6 +11,8 @@ namespace FarmerBrothers.Data
         REDIRECTED=5,
         STARTED = 6,
         CALLCLOSURE=7,
-        SCHEDULED=8
+        SCHEDULED=8,
+        ESMESCALATION = 9,
+        PROCESSCARD = 10
     }
 }

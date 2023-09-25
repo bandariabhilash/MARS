@@ -48,12 +48,12 @@ namespace FarmerBrothers.Data
         public string Weight { get; set; }
         public string Ratio { get; set; }
     
-        public virtual WorkOrder WorkOrder { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderInstallationSurvey> WorkorderInstallationSurveys { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderImage> WorkorderImages { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderServiceClaim> WorkorderServiceClaims { get; set; }
+        public virtual WorkOrder WorkOrder { get; set; }
     }
 }

@@ -21,6 +21,7 @@ namespace FarmerBrothers.Data
         public string UserName { get; set; }
         public Nullable<System.DateTime> EntryDate { get; set; }
         public Nullable<bool> IsActive { get; set; }
+        public Nullable<int> ParentId { get; set; }
     
         public virtual FbUserMaster FbUserMaster { get; set; }
     }

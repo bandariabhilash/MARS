@@ -22,6 +22,7 @@ namespace FarmerBrothers.Data
             this.NotesHistories = new HashSet<NotesHistory>();
             this.PhoneSolveLogs = new HashSet<PhoneSolveLog>();
             this.TechSchedules = new HashSet<TechSchedule>();
+            this.WorkOrderBrands = new HashSet<WorkOrderBrand>();
             this.WorkorderDetails = new HashSet<WorkorderDetail>();
             this.WorkorderEquipments = new HashSet<WorkorderEquipment>();
             this.WorkorderEquipmentRequesteds = new HashSet<WorkorderEquipmentRequested>();
@@ -31,7 +32,6 @@ namespace FarmerBrothers.Data
             this.WorkorderParts = new HashSet<WorkorderPart>();
             this.WorkorderReasonlogs = new HashSet<WorkorderReasonlog>();
             this.WorkorderSchedules = new HashSet<WorkorderSchedule>();
-            this.WorkOrderBrands = new HashSet<WorkOrderBrand>();
             this.WorkorderStatusLogs = new HashSet<WorkorderStatusLog>();
         }
     
@@ -140,6 +140,9 @@ namespace FarmerBrothers.Data
         public Nullable<bool> ElectronicEmailSent { get; set; }
         public string CustomerPO { get; set; }
         public Nullable<int> RescheduleReasonCode { get; set; }
+        public string AuthTransactionId { get; set; }
+        public string FinalTransactionId { get; set; }
+        public string ShippingPriority { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FBERFExpendable> FBERFExpendables { get; set; }
@@ -151,6 +154,8 @@ namespace FarmerBrothers.Data
         public virtual ICollection<PhoneSolveLog> PhoneSolveLogs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TechSchedule> TechSchedules { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkOrderBrand> WorkOrderBrands { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderDetail> WorkorderDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -169,8 +174,6 @@ namespace FarmerBrothers.Data
         public virtual ICollection<WorkorderReasonlog> WorkorderReasonlogs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderSchedule> WorkorderSchedules { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkOrderBrand> WorkOrderBrands { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderStatusLog> WorkorderStatusLogs { get; set; }
     }

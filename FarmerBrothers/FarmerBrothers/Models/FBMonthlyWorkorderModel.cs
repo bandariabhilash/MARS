@@ -41,6 +41,8 @@ namespace FarmerBrothers.Models
         public string EscalatedBy { get; set; }
         public string EscalatedTo { get; set; }
         public string EscalatedOn { get; set; }
+        public string EventSentTo { get; set; }
+        public string TechStatus { get; set; }
     }
 
 

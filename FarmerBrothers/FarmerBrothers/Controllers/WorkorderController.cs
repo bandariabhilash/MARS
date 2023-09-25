@@ -1109,14 +1109,27 @@ namespace FarmerBrothers.Controllers
                         workOrderManagementModel.Closure.SpecialClosure = workOrderDetail.SpecialClosure;
                         workOrderManagementModel.Closure.PhoneSolveid = workOrderDetail.PhoneSolveid;
 
-                        if (!string.IsNullOrWhiteSpace(workOrderDetail.TravelTime))
+                        if (workOrderDetail.ArrivalDateTime.HasValue && workOrderDetail.StartDateTime.HasValue)
                         {
-                            string[] times = workOrderDetail.TravelTime.Split(':');
+                            DateTime arrival = Convert.ToDateTime(workOrderDetail.ArrivalDateTime);
+                            DateTime strt = Convert.ToDateTime(workOrderDetail.StartDateTime);
+                            TimeSpan timeDiff = arrival.Subtract(strt);
 
-                            if (times.Count() >= 2)
+                            workOrderManagementModel.Closure.TravelHours = timeDiff.Hours.ToString();
+                            workOrderManagementModel.Closure.TravelMinutes = timeDiff.Minutes.ToString();
+                        }
+
+                        else
+                        {
+                            if (!string.IsNullOrWhiteSpace(workOrderDetail.TravelTime))
                             {
-                                workOrderManagementModel.Closure.TravelHours = times[0];
-                                workOrderManagementModel.Closure.TravelMinutes = times[1];
+                                string[] times = workOrderDetail.TravelTime.Split(':');
+
+                                if (times.Count() >= 2)
+                                {
+                                    workOrderManagementModel.Closure.TravelHours = times[0];
+                                    workOrderManagementModel.Closure.TravelMinutes = times[1];
+                                }
                             }
                         }
                     }
@@ -1527,6 +1540,10 @@ namespace FarmerBrothers.Controllers
                         workOrderManagementModel.PartsShipTo = 4;
                     }
 
+                    if (!string.IsNullOrEmpty(workOrderManagementModel.WorkOrder.ShippingPriority))
+                    {
+                        workOrderManagementModel.ShippingPriority = workOrderManagementModel.WorkOrder.ShippingPriority;
+                    }
 
                     RemovalSurvey survey = FarmerBrothersEntitites.RemovalSurveys.Where(r => r.WorkorderID == workOrderId.Value).FirstOrDefault();
                     if (survey != null)
@@ -1696,7 +1713,7 @@ namespace FarmerBrothers.Controllers
 
                 workOrderManagementModel.Notes.NotesHistory = new List<NotesHistoryModel>();
                 //IQueryable<NotesHistory> notesHistories = FarmerBrothersEntitites.NotesHistories.Where(nh => nh.WorkorderID == workOrderManagementModel.WorkOrder.WorkorderID && nh.isDispatchNotes == 0).OrderByDescending(nh => nh.EntryDate);
-                IQueryable<NotesHistory> notesHistories = FarmerBrothersEntitites.NotesHistories.Where(nh => nh.WorkorderID == workOrderManagementModel.WorkOrder.WorkorderID).OrderByDescending(nh => nh.EntryDate);
+                IQueryable<NotesHistory> notesHistories = FarmerBrothersEntitites.NotesHistories.Where(nh => nh.WorkorderID == workOrderManagementModel.WorkOrder.WorkorderID).OrderByDescending(nh => nh.NotesID);
 
                 foreach (NotesHistory notesHistory in notesHistories)
                 {
@@ -1704,7 +1721,7 @@ namespace FarmerBrothers.Controllers
                 }
 
                 workOrderManagementModel.Notes.DispatchNotesHistory = new List<NotesHistoryModel>();
-                IQueryable<NotesHistory> dispatchNotesHistories = FarmerBrothersEntitites.NotesHistories.Where(nh => nh.WorkorderID == workOrderManagementModel.WorkOrder.WorkorderID && nh.isDispatchNotes == 1).OrderByDescending(nh => nh.EntryDate);
+                IQueryable<NotesHistory> dispatchNotesHistories = FarmerBrothersEntitites.NotesHistories.Where(nh => nh.WorkorderID == workOrderManagementModel.WorkOrder.WorkorderID && nh.isDispatchNotes == 1).OrderByDescending(nh => nh.NotesID);
 
                 foreach (NotesHistory notesHistory in dispatchNotesHistories)
                 {
@@ -4942,6 +4959,11 @@ namespace FarmerBrothers.Controllers
                         {
                             SaveClosureAssets(workorderManagement, workOrder);
                         }
+                    }
+
+                    if (!string.IsNullOrEmpty(workorderManagement.ShippingPriority))
+                    {
+                        workOrder.ShippingPriority = workorderManagement.ShippingPriority;
                     }
 
                     SaveNotes(workorderManagement, workOrder);
@@ -14328,6 +14350,20 @@ namespace FarmerBrothers.Controllers
             salesEmailBody.Append("Customer Email:");
             salesEmailBody.Append(workOrder.CustomerMainEmail);
             salesEmailBody.Append("<BR>");
+
+            string shippingPriority = "";
+            if (!string.IsNullOrEmpty(workOrder.ShippingPriority))
+            {
+                int statusid = Convert.ToInt32(workOrder.ShippingPriority);
+                AllFBStatu fbstatus = FarmerBrothersEntitites.AllFBStatus.Where(f => f.FBStatusID == statusid).FirstOrDefault();
+                if (fbstatus != null)
+                {
+                    shippingPriority = fbstatus.FBStatus;
+                }
+            }
+            salesEmailBody.Append("Shipping Priority:");
+            salesEmailBody.Append(shippingPriority);
+            salesEmailBody.Append("<BR>");
             salesEmailBody.Append("<BR>");
 
             salesEmailBody.Append("<span style='color:#ff0000'><b>");
@@ -14424,7 +14460,7 @@ namespace FarmerBrothers.Controllers
 
             if (partsList != null)
             {
-                
+
                 foreach (var wp in partsList)
                 {
                     salesEmailBody.Append("<tr>");
@@ -14446,12 +14482,11 @@ namespace FarmerBrothers.Controllers
                     salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + totl + "</td>");
                     salesEmailBody.Append("</tr>");
                 }
-                
+
             }
 
             salesEmailBody.Append("<tbody>");
             salesEmailBody.Append("</table>");
-
 
             string contentId = Guid.NewGuid().ToString();
             string logoPath = string.Empty;
@@ -14494,7 +14529,7 @@ namespace FarmerBrothers.Controllers
             }
 
             string fromAddress = ConfigurationManager.AppSettings["DispatchMailFromAddress"];
-           
+
             string mailTo = toAddress;
             string mailCC = string.Empty;
             if (!string.IsNullOrWhiteSpace(mailTo))
@@ -14555,6 +14590,25 @@ namespace FarmerBrothers.Controllers
                 }
 
             }
+
+
+            //string fromAddress = ConfigurationManager.AppSettings["DispatchMailFromAddress"];
+            //string ToAddr = string.Empty;
+            //string CcAddr = string.Empty;
+            //if (Convert.ToBoolean(ConfigurationManager.AppSettings["UseTestMails"]))
+            //{
+            //    ToAddr = ConfigurationManager.AppSettings["TestEmail"];
+            //}
+            //else
+            //{
+            //    if (workOrder != null)
+            //    {
+            //        ToAddr = "Partsorders@farmerbros.com";
+            //    }
+            //}
+
+            //EmailUtility eu = new EmailUtility();
+            //eu.SendEmail(fromAddress, ToAddr, CcAddr, subject.ToString(), salesEmailBody.ToString());
 
             return result;
         }

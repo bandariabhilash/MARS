@@ -1,6 +1,7 @@
 ﻿using FarmerBrothers.Data;
 using FarmerBrothers.Models;
 using FarmerBrothers.Utilities;
+using FarmerBrothersMailResponse.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,14 @@ namespace FarmerBrothers.Controllers
                 string tmpUserName = string.Empty;
                 if (workOrder != null)
                 {
+                    if (workOrder.WorkorderCallstatus.ToLower() == "pending acceptance")
+                    {
+                        AcceptWorkOrder(workOrderId, techId, true);
+                    }
+
+                    System.Threading.Thread.Sleep(2000);
+
+                    string currentStatus = workOrder.WorkorderCallstatus;
                     if (workOrderSchedule != null)
                     {
                         if (techHierarchyView != null)
@@ -100,7 +109,7 @@ namespace FarmerBrothers.Controllers
                     workOrder.WorkorderCallstatus = "Scheduled";
                     workOrder.WorkorderModifiedDate = currentTime;
                     workOrder.RescheduleReasonCode = ReasonCode;
-                                        
+
                     AllFBStatu ReasonRec = ScheduleEventEntitites.AllFBStatus.Where(p => p.FBStatusID == ReasonCode).FirstOrDefault();
                     string ReasonDesc = "";
                     if (ReasonRec != null)
@@ -131,6 +140,9 @@ namespace FarmerBrothers.Controllers
 
                     workOrder.NotesHistories.Add(autoNotes);
 
+                    WorkorderStatusLog statusLog = new WorkorderStatusLog() { StatusFrom = currentStatus, StatusTo = workOrder.WorkorderCallstatus, StausChangeDate = currentTime, WorkorderID = workOrder.WorkorderID };
+                    workOrder.WorkorderStatusLogs.Add(statusLog);
+
                     ScheduleEventEntitites.SaveChanges();
 
                 }
@@ -150,5 +162,88 @@ namespace FarmerBrothers.Controllers
             return jsonResult;
         }
 
+        public bool AcceptWorkOrder(int workOrderId, int techId, bool isResponsible)
+        {
+            string message = string.Empty;
+            bool result = true;
+            TechHierarchyView techHierarchyView = DispatchResponseController.GetTechDataByResponsibleTechId(ScheduleEventEntitites, techId);
+            WorkOrder workOrder = ScheduleEventEntitites.WorkOrders.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+            FarmerBrothers.Data.DispatchResponseModel dispatchModel = new FarmerBrothers.Data.DispatchResponseModel();
+            dispatchModel.TechId = techId;
+            dispatchModel.WorkOrderId = workOrderId;
+            bool updatedStatus = false;
+
+            DispatchResponseController dc = new DispatchResponseController();
+
+            if (workOrder != null)
+            {
+                updatedStatus = dc.UpdateTechAssignedStatus(techId, workOrder, "Accepted", false);
+                if (updatedStatus == true)
+                {
+                    dc.CopyWorkorderEquipments(workOrder);
+                    workOrder.IsRejected = false;
+
+                    if (workOrder.WorkorderDetails != null && workOrder.WorkorderDetails.Count > 0)
+                    {
+                        WorkorderDetail details = workOrder.WorkorderDetails.ElementAt(0);
+                        if (details != null)
+                        {
+                            details.ResponsibleTechName = techHierarchyView.PreferredProvider;
+                            TECH_HIERARCHY technicianAddress = dc.GetCustomerByTechId(techId.ToString());
+                            string fromAddress = workOrder.CustomerAddress + " " + workOrder.CustomerCity + " " + workOrder.CustomerState + " " + workOrder.CustomerZipCode;
+                            string toAddress = string.Empty;
+                            if (!string.IsNullOrEmpty(technicianAddress.Address1))
+                            {
+                                toAddress += technicianAddress.Address1 + " ";
+                            }
+                            if (!string.IsNullOrEmpty(technicianAddress.Address2))
+                            {
+                                toAddress += technicianAddress.Address3 + " ";
+                            }
+                            if (!string.IsNullOrEmpty(technicianAddress.Address3))
+                            {
+                                toAddress += technicianAddress.Address3 + " ";
+                            }
+
+                            if (!string.IsNullOrEmpty(technicianAddress.City))
+                            {
+                                toAddress += technicianAddress.City + " ";
+                            }
+                            if (!string.IsNullOrEmpty(technicianAddress.State))
+                            {
+                                toAddress += technicianAddress.State + " ";
+                            }
+                            if (!string.IsNullOrEmpty(technicianAddress.PostalCode))
+                            {
+                                toAddress += technicianAddress.PostalCode + " ";
+                            }
+
+                            details.Mileage = DispatchResponseController.GetDistance(fromAddress, toAddress);
+                        }
+                    }
+
+                    if (ScheduleEventEntitites.SaveChanges() > 0)
+                    {
+                        result = true;
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+                }
+                else
+                {
+                    result = false;
+                }
+                
+            }
+            else
+            {                
+                result = false;
+            }
+          
+            
+            return result;
+        }
     }
 }

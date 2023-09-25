@@ -31,9 +31,12 @@ namespace FarmerBrothers.Data
         public virtual DbSet<AllFBStatu> AllFBStatus { get; set; }
         public virtual DbSet<AMPSList> AMPSLists { get; set; }
         public virtual DbSet<Application> Applications { get; set; }
+        public virtual DbSet<BillingItem> BillingItems { get; set; }
+        public virtual DbSet<BranchESM> BranchESMs { get; set; }
         public virtual DbSet<BrandName> BrandNames { get; set; }
         public virtual DbSet<CallTypeSymptomSolutionMaster> CallTypeSymptomSolutionMasters { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<Contact> Contacts { get; set; }
         public virtual DbSet<Contact_PMUploadsALL> Contact_PMUploadsALL { get; set; }
         public virtual DbSet<Contingent> Contingents { get; set; }
         public virtual DbSet<ContingentDetail> ContingentDetails { get; set; }
@@ -52,11 +55,10 @@ namespace FarmerBrothers.Data
         public virtual DbSet<FBCallReason> FBCallReasons { get; set; }
         public virtual DbSet<FBCBE> FBCBEs { get; set; }
         public virtual DbSet<FBClosurePart> FBClosureParts { get; set; }
-        public virtual DbSet<FBCustomerNote> FBCustomerNotes { get; set; }
-        public virtual DbSet<FBCustomerServiceDistribution> FBCustomerServiceDistributions { get; set; }
         public virtual DbSet<FBEquipment> FBEquipments { get; set; }
         public virtual DbSet<FBERFEquipment> FBERFEquipments { get; set; }
         public virtual DbSet<FBERFExpendable> FBERFExpendables { get; set; }
+        public virtual DbSet<FBERFPos> FBERFPos { get; set; }
         public virtual DbSet<FBERFTransactionType> FBERFTransactionTypes { get; set; }
         public virtual DbSet<FBExpendable> FBExpendables { get; set; }
         public virtual DbSet<FBFunctionality> FBFunctionalities { get; set; }
@@ -72,19 +74,23 @@ namespace FarmerBrothers.Data
         public virtual DbSet<HolidayList> HolidayLists { get; set; }
         public virtual DbSet<IndexCounter> IndexCounters { get; set; }
         public virtual DbSet<Invoice> Invoices { get; set; }
+        public virtual DbSet<JDEPaymentTerm> JDEPaymentTerms { get; set; }
         public virtual DbSet<NEMANumberList> NEMANumberLists { get; set; }
         public virtual DbSet<NoAutoEmailZipCode> NoAutoEmailZipCodes { get; set; }
         public virtual DbSet<NoAutomaticEmailContract> NoAutomaticEmailContracts { get; set; }
+        public virtual DbSet<NonFBCustomer> NonFBCustomers { get; set; }
         public virtual DbSet<NonSerialized> NonSerializeds { get; set; }
         public virtual DbSet<NonServiceworkorder> NonServiceworkorders { get; set; }
         public virtual DbSet<NotesHistory> NotesHistories { get; set; }
         public virtual DbSet<OnCallGroup> OnCallGroups { get; set; }
         public virtual DbSet<PhoneSolveLog> PhoneSolveLogs { get; set; }
+        public virtual DbSet<PricingType> PricingTypes { get; set; }
         public virtual DbSet<Privilege> Privileges { get; set; }
         public virtual DbSet<RemovalSurvey> RemovalSurveys { get; set; }
         public virtual DbSet<Sku> Skus { get; set; }
         public virtual DbSet<Solution> Solutions { get; set; }
         public virtual DbSet<State> States { get; set; }
+        public virtual DbSet<StateTax> StateTaxes { get; set; }
         public virtual DbSet<Symptom> Symptoms { get; set; }
         public virtual DbSet<SystemInfo> SystemInfoes { get; set; }
         public virtual DbSet<TECH_HIERARCHY> TECH_HIERARCHY { get; set; }
@@ -102,7 +108,7 @@ namespace FarmerBrothers.Data
         public virtual DbSet<Vendor> Vendors { get; set; }
         public virtual DbSet<VoltageList> VoltageLists { get; set; }
         public virtual DbSet<WaterLineList> WaterLineLists { get; set; }
-        public virtual DbSet<WorkOrder> WorkOrders { get; set; }
+        public virtual DbSet<WorkorderBillingDetail> WorkorderBillingDetails { get; set; }
         public virtual DbSet<WorkOrderBrand> WorkOrderBrands { get; set; }
         public virtual DbSet<WorkorderDetail> WorkorderDetails { get; set; }
         public virtual DbSet<WorkorderEquipment> WorkorderEquipments { get; set; }
@@ -131,9 +137,11 @@ namespace FarmerBrothers.Data
         public virtual DbSet<V_OriginalCallDetails> V_OriginalCallDetails { get; set; }
         public virtual DbSet<VW_FBRoleFunction> VW_FBRoleFunction { get; set; }
         public virtual DbSet<VW_tech_Hierarchy> VW_tech_Hierarchy { get; set; }
-        public virtual DbSet<JDEPaymentTerm> JDEPaymentTerms { get; set; }
-        public virtual DbSet<BranchESM> BranchESMs { get; set; }
-        public virtual DbSet<Contact> Contacts { get; set; }
+        public virtual DbSet<PricingDetail> PricingDetails { get; set; }
+        public virtual DbSet<CustomCriteria> CustomCriterias { get; set; }
+        public virtual DbSet<FBCustomerServiceDistribution> FBCustomerServiceDistributions { get; set; }
+        public virtual DbSet<FBCustomerNote> FBCustomerNotes { get; set; }
+        public virtual DbSet<WorkOrder> WorkOrders { get; set; }
     
         public virtual int USP_AfterHoursClosestTechDispatch_Details(string customerZip)
         {
@@ -456,7 +464,7 @@ namespace FarmerBrothers.Data
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_SuperInvoice_Report_FB", startDateParameter, endDateParameter, pricingParentIDParameter, familyAffParameter, techIDParameter);
         }
     
-        public virtual int USP_SuperInvoice_ReportDetails(string startDate, string endDate, Nullable<int> pricingParentID, string familyAff, Nullable<int> techID, string eSM, string route)
+        public virtual int USP_SuperInvoice_ReportDetails(string startDate, string endDate, Nullable<int> pricingParentID, string familyAff, Nullable<int> techID, string eSM, string route, string branch, string region)
         {
             var startDateParameter = startDate != null ?
                 new ObjectParameter("StartDate", startDate) :
@@ -486,7 +494,15 @@ namespace FarmerBrothers.Data
                 new ObjectParameter("Route", route) :
                 new ObjectParameter("Route", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_SuperInvoice_ReportDetails", startDateParameter, endDateParameter, pricingParentIDParameter, familyAffParameter, techIDParameter, eSMParameter, routeParameter);
+            var branchParameter = branch != null ?
+                new ObjectParameter("Branch", branch) :
+                new ObjectParameter("Branch", typeof(string));
+    
+            var regionParameter = region != null ?
+                new ObjectParameter("Region", region) :
+                new ObjectParameter("Region", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_SuperInvoice_ReportDetails", startDateParameter, endDateParameter, pricingParentIDParameter, familyAffParameter, techIDParameter, eSMParameter, routeParameter, branchParameter, regionParameter);
         }
     
         public virtual int USP_TechDispatch_And_DispatchCount_Details(string customerZip)
@@ -605,6 +621,19 @@ namespace FarmerBrothers.Data
                 new ObjectParameter("WorkorderID", typeof(int));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_WO_Search", serialNumberParameter, contactIDParameter, eRFIDParameter, workorderCallstatusParameter, wOEntryStartDateParameter, wOEntryEndDateParameter, appointmentFromDateParameter, appointmentToDateParameter, workorderCalltypeidParameter, originalWorkorderidParameter, customerCityParameter, customerStateParameter, customerZipParameter, priorityCodeParameter, followupCallIDParameter, workorderTimeZoneParameter, techidParameter, serviceCenterIdParameter, workorderIDParameter);
+        }
+    
+        public virtual int USP_BillingUpload_Report(string startDate, string endDate)
+        {
+            var startDateParameter = startDate != null ?
+                new ObjectParameter("StartDate", startDate) :
+                new ObjectParameter("StartDate", typeof(string));
+    
+            var endDateParameter = endDate != null ?
+                new ObjectParameter("EndDate", endDate) :
+                new ObjectParameter("EndDate", typeof(string));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("USP_BillingUpload_Report", startDateParameter, endDateParameter);
         }
     }
 }

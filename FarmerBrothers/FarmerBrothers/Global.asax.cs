@@ -47,6 +47,7 @@ namespace FarmerBrothers
             ModelBinders.Binders.Add(typeof(NewProfile), new NewProfileBinder());
             ModelBinders.Binders.Add(typeof(ErfModel), new ErfModelBinder());
             ModelBinders.Binders.Add(typeof(CallCloserModel), new CallCloserModelBinder());
+            ModelBinders.Binders.Add(typeof(ProcessCardModel), new ProcessCardModelBinder());
 
 
 

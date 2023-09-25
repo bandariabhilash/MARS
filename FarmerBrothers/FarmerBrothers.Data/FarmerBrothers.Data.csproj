@@ -81,6 +81,9 @@
     <Compile Include="Application.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
+    <Compile Include="BillingItem.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
     <Compile Include="BranchESM.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
@@ -103,6 +106,9 @@
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="ContingentDetail.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomCriteria.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="DispatchResponse.cs" />
@@ -182,6 +188,9 @@
     <Compile Include="FBERFExpendable.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
+    <Compile Include="FBERFPos.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
     <Compile Include="FBERFTransactionType.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
@@ -241,6 +250,9 @@
     <Compile Include="NoAutomaticEmailContract.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
+    <Compile Include="NonFBCustomer.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
     <Compile Include="NonSerialized.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
@@ -254,6 +266,12 @@
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="PhoneSolveLog.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PricingDetail.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PricingType.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="Privilege.cs">
@@ -273,6 +291,9 @@
     </Compile>
     <Compile Include="SqlHelper.cs" />
     <Compile Include="State.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StateTax.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="Symptom.cs">
@@ -366,6 +387,9 @@
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="WorkOrder.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WorkorderBillingDetail.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
     <Compile Include="WorkOrderBrand.cs">

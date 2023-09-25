@@ -180,5 +180,6 @@ namespace FarmerBrothers.Models
         public string FixedMessage { get; set; }
         public string SecondItemNumber { get; set; }
         public string TextLine { get; set; }
+        public string TravelLaborTime { get; set; }
     }
 }

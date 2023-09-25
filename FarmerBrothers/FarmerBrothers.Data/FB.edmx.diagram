@@ -4,128 +4,144 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="c4a82cdc87a442fda6c5a7400e10bc8e" Name="Diagram1" ZoomLevel="42">
-        <EntityTypeShape EntityType="FarmerBrothers.Data.AgentDispatchLog" Width="1.5" PointX="0.75" PointY="7" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.AllFBStatu" Width="1.5" PointX="12.75" PointY="10" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.AMPSList" Width="1.5" PointX="12.75" PointY="14" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Application" Width="1.5" PointX="8" PointY="14.125" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.BrandName" Width="1.5" PointX="0.75" PointY="10" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.CallTypeSymptomSolutionMaster" Width="1.5" PointX="13.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Category" Width="1.5" PointX="14.75" PointY="10" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Contact_PMUploadsALL" Width="1.5" PointX="15.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Contingent" Width="1.5" PointX="16.75" PointY="9" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ContingentDetail" Width="1.5" PointX="16.75" PointY="12" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ElectricalPhaseList" Width="1.5" PointX="10.75" PointY="18" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.EquipType" Width="1.5" PointX="16.75" PointY="16" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Erf" Width="1.5" PointX="0.75" PointY="17.75" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ERFBranchDetail" Width="1.5" PointX="17.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ERFOrderType" Width="1.5" PointX="17.75" PointY="6" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ErfWorkorderLog" Width="1.5" PointX="16.75" PointY="19" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ESMCCMRSMEscalation" Width="1.5" PointX="18.75" PointY="9" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ESMDSMRSM" Width="1.5" PointX="7.75" PointY="20" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.EstimateEscalation" Width="1.5" PointX="18.75" PointY="14" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBActivityLog" Width="1.5" PointX="10.25" PointY="5.5" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBBillableFeed" Width="1.5" PointX="18.75" PointY="17" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FbBillableSKU" Width="1.5" PointX="18.75" PointY="20" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCallReason" Width="1.5" PointX="19.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCBE" Width="1.5" PointX="9.75" PointY="21" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBClosurePart" Width="1.5" PointX="11.75" PointY="21" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCustomerNote" Width="1.5" PointX="10.25" PointY="14.125" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCustomerServiceDistribution" Width="1.5" PointX="20.75" PointY="7" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBEquipment" Width="1.5" PointX="20.75" PointY="12" />
+      <Diagram DiagramId="c4a82cdc87a442fda6c5a7400e10bc8e" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="FarmerBrothers.Data.AgentDispatchLog" Width="1.5" PointX="0.75" PointY="8.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.AllFBStatu" Width="1.5" PointX="0.75" PointY="11.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.AMPSList" Width="1.5" PointX="13.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Application" Width="1.5" PointX="11" PointY="20.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.BillingItem" Width="1.5" PointX="13.75" PointY="18.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.BranchESM" Width="1.5" PointX="15.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.BrandName" Width="1.5" PointX="15.75" PointY="7.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.CallTypeSymptomSolutionMaster" Width="1.5" PointX="15.75" PointY="10.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Category" Width="1.5" PointX="15.75" PointY="18.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Contact" Width="1.5" PointX="17.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Contact_PMUploadsALL" Width="1.5" PointX="7.75" PointY="21.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Contingent" Width="1.5" PointX="13.75" PointY="21.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ContingentDetail" Width="1.5" PointX="19.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ElectricalPhaseList" Width="1.5" PointX="19.75" PointY="8.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.EquipType" Width="1.5" PointX="19.75" PointY="11.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Erf" Width="1.5" PointX="0.75" PointY="18.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ERFBranchDetail" Width="1.5" PointX="19.75" PointY="14.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ERFOrderType" Width="1.5" PointX="19.75" PointY="18.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ErfWorkorderLog" Width="1.5" PointX="19.75" PointY="21.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ESMCCMRSMEscalation" Width="1.5" PointX="9.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ESMDSMRSM" Width="1.5" PointX="11.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.EstimateEscalation" Width="1.5" PointX="13.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBActivityLog" Width="1.5" PointX="10.25" PointY="17" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBBillableFeed" Width="1.5" PointX="15.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FbBillableSKU" Width="1.5" PointX="17.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCallReason" Width="1.5" PointX="19.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCBE" Width="1.5" PointX="21.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBClosurePart" Width="1.5" PointX="21.75" PointY="9.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBEquipment" Width="1.5" PointX="21.75" PointY="18.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.FBERFEquipment" Width="1.5" PointX="3" PointY="0.75" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBERFExpendable" Width="1.5" PointX="3" PointY="37.625" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBERFTransactionType" Width="1.5" PointX="20.75" PointY="15" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBExpendable" Width="1.5" PointX="20.75" PointY="18" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBFunctionality" Width="1.5" PointX="20.75" PointY="21" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FbPrimaryTechnician" Width="1.5" PointX="21.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBReport" Width="1.5" PointX="11" PointY="1.625" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBRoleFunction" Width="1.5" PointX="16.75" PointY="23" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FbRole" Width="1.5" PointX="5.75" PointY="7.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBSKU" Width="1.5" PointX="22.75" PointY="5" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FbUserMaster" Width="1.5" PointX="8" PointY="3.75" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FBUserReport" Width="1.5" PointX="13.25" PointY="7.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FbWorkOrderSKU" Width="1.5" PointX="22.75" PointY="10" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.FeastMovement" Width="1.5" PointX="22.75" PointY="13" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.HolidayList" Width="1.5" PointX="22.75" PointY="17" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.IndexCounter" Width="1.5" PointX="22.75" PointY="20" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Invoice" Width="1.5" PointX="18.75" PointY="24" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NEMANumberList" Width="1.5" PointX="20.75" PointY="24" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NoAutoEmailZipCode" Width="1.5" PointX="22.75" PointY="23" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NoAutomaticEmailContract" Width="1.5" PointX="23.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NonSerialized" Width="1.5" PointX="3" PointY="51" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NonServiceworkorder" Width="1.5" PointX="3.75" PointY="7.125" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NotesHistory" Width="1.5" PointX="6" PointY="40.5" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.OnCallGroup" Width="1.5" PointX="11.75" PointY="25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.PhoneSolveLog" Width="1.5" PointX="3" PointY="27.375" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Privilege" Width="1.5" PointX="8" PointY="16.625" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.RemovalSurvey" Width="1.5" PointX="24.75" PointY="4" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Sku" Width="1.5" PointX="5.75" PointY="26" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Solution" Width="1.5" PointX="24.75" PointY="8" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.State" Width="1.5" PointX="7.75" PointY="26" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Symptom" Width="1.5" PointX="24.75" PointY="11" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.SystemInfo" Width="1.5" PointX="24.75" PointY="14" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TECH_HIERARCHY" Width="1.5" PointX="24.75" PointY="17" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TechOnCall" Width="1.5" PointX="20.75" PointY="27" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TechSchedule" Width="1.5" PointX="3" PointY="15" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ThirdpartyConMaintenanceZonerate" Width="1.5" PointX="26.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ThirdPartyContractMaintenance" Width="1.5" PointX="26.75" PointY="5" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TmpInvTransfer" Width="1.5" PointX="26.75" PointY="11" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TmpinvTransferNonserialized" Width="1.5" PointX="9.75" PointY="28" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TmpinvTransferSerialized" Width="1.5" PointX="11.75" PointY="28" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.UnKnownCustomerLog" Width="1.5" PointX="26.75" PointY="14" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.UserApplication" Width="1.5" PointX="10.25" PointY="9" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.UserProfile" Width="1.5" PointX="26.75" PointY="17" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.UserType" Width="1.5" PointX="5.75" PointY="4.375" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Vendor" Width="1.5" PointX="26.75" PointY="22" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.VoltageList" Width="1.5" PointX="26.75" PointY="26" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WaterLineList" Width="1.5" PointX="26.75" PointY="29" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkOrder" Width="1.5" PointX="0.75" PointY="30.125" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkOrderBrand" Width="1.5" PointX="3" PointY="12.375" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderDetail" Width="1.5" PointX="3" PointY="76" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderEquipment" Width="1.5" PointX="3" PointY="20" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderEquipmentRequested" Width="1.5" PointX="3" PointY="44.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderImage" Width="1.5" PointX="8.25" PointY="32.875" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderInstallationSurvey" Width="1.5" PointX="5.25" PointY="35.375" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderNonAudit" Width="1.5" PointX="3" PointY="30.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderPart" Width="1.5" PointX="3" PointY="71.375" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderReasonlog" Width="1.5" PointX="3" PointY="56.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderSavedSearch" Width="1.5" PointX="28.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderSchedule" Width="1.5" PointX="3" PointY="63" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderServiceClaim" Width="1.5" PointX="5.25" PointY="22.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderStatusLog" Width="1.5" PointX="3" PointY="60.125" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderType" Width="1.5" PointX="28.75" PointY="10" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ZonePriority" Width="1.5" PointX="28.75" PointY="13" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.TMP_SerialNOReport" Width="1.5" PointX="28.75" PointY="20" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Zip" Width="1.5" PointX="22.75" PointY="30" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.ZoneZip" Width="1.5" PointX="28.75" PointY="25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.v_AllPMandServiceEventsWithUniqueSerial" Width="1.5" PointX="28.75" PointY="28" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.v_Contact" Width="1.5" PointX="30.75" PointY="2" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.v_ContactServiceHistory" Width="1.5" PointX="13.75" PointY="32" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.V_EquipmentCount" Width="1.5" PointX="15.75" PointY="32" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.V_LastOneyearDispatches" Width="1.5" PointX="30.75" PointY="19" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.V_LastOneyearInvoices" Width="1.5" PointX="30.75" PointY="24" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.V_OpenCallTime" Width="1.5" PointX="24.75" PointY="32" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.V_OriginalCallDetails" Width="1.5" PointX="30.75" PointY="28" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.VW_FBRoleFunction" Width="1.5" PointX="26.75" PointY="32" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.VW_tech_Hierarchy" Width="1.5" PointX="10.75" PointY="33" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBERFExpendable" Width="1.5" PointX="3" PointY="42.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBERFPos" Width="1.5" PointX="21.75" PointY="21.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBERFTransactionType" Width="1.5" PointX="23.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBExpendable" Width="1.5" PointX="23.75" PointY="7.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBFunctionality" Width="1.5" PointX="23.75" PointY="10.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FbPrimaryTechnician" Width="1.5" PointX="23.75" PointY="13.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBReport" Width="1.5" PointX="8" PointY="16.875" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBRoleFunction" Width="1.5" PointX="23.75" PointY="16.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FbRole" Width="1.5" PointX="5.75" PointY="5.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBSKU" Width="1.5" PointX="13.75" PointY="27.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FbUserMaster" Width="1.5" PointX="8" PointY="5.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBUserReport" Width="1.5" PointX="10.25" PointY="7.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FbWorkOrderSKU" Width="1.5" PointX="15.75" PointY="27.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FeastMovement" Width="1.5" PointX="23.75" PointY="20.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.HolidayList" Width="1.5" PointX="23.75" PointY="24.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.IndexCounter" Width="1.5" PointX="21.75" PointY="27.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Invoice" Width="1.5" PointX="23.75" PointY="27.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.JDEPaymentTerm" Width="1.5" PointX="5.75" PointY="28.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NEMANumberList" Width="1.5" PointX="25.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NoAutoEmailZipCode" Width="1.5" PointX="25.75" PointY="7.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NoAutomaticEmailContract" Width="1.5" PointX="12.75" PointY="7.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NonFBCustomer" Width="1.5" PointX="25.75" PointY="10.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NonSerialized" Width="1.5" PointX="3" PointY="77.875" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NonServiceworkorder" Width="1.5" PointX="3.75" PointY="8.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NotesHistory" Width="1.5" PointX="6" PointY="43.125" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.OnCallGroup" Width="1.5" PointX="7.75" PointY="29.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.PhoneSolveLog" Width="1.5" PointX="3" PointY="18.625" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.PricingType" Width="1.5" PointX="12.75" PointY="14.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Privilege" Width="1.5" PointX="11" PointY="4.375" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.RemovalSurvey" Width="1.5" PointX="25.75" PointY="13.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Sku" Width="1.5" PointX="25.75" PointY="17.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Solution" Width="1.5" PointX="17.75" PointY="29.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.State" Width="1.5" PointX="25.75" PointY="22.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.StateTax" Width="1.5" PointX="25.75" PointY="25.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Symptom" Width="1.5" PointX="25.75" PointY="29.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.SystemInfo" Width="1.5" PointX="9.75" PointY="30.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TECH_HIERARCHY" Width="1.5" PointX="19.75" PointY="30.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TechOnCall" Width="1.5" PointX="27.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TechSchedule" Width="1.5" PointX="3" PointY="28.875" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ThirdpartyConMaintenanceZonerate" Width="1.5" PointX="27.75" PointY="9.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ThirdPartyContractMaintenance" Width="1.5" PointX="27.75" PointY="12.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TmpInvTransfer" Width="1.5" PointX="27.75" PointY="18.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TmpinvTransferNonserialized" Width="1.5" PointX="27.75" PointY="21.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TmpinvTransferSerialized" Width="1.5" PointX="27.75" PointY="25.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.UnKnownCustomerLog" Width="1.5" PointX="27.75" PointY="30.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.UserApplication" Width="1.5" PointX="13.25" PointY="9.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.UserProfile" Width="1.5" PointX="11.75" PointY="32.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.UserType" Width="1.5" PointX="5.75" PointY="9.625" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Vendor" Width="1.5" PointX="13.75" PointY="32.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.VoltageList" Width="1.5" PointX="5.75" PointY="32.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WaterLineList" Width="1.5" PointX="15.75" PointY="32.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderBillingDetail" Width="1.5" PointX="29.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkOrderBrand" Width="1.5" PointX="3" PointY="71.625" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderDetail" Width="1.5" PointX="3" PointY="57.125" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderEquipment" Width="1.5" PointX="3" PointY="21.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderEquipmentRequested" Width="1.5" PointX="3" PointY="64.875" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderImage" Width="1.5" PointX="8.25" PointY="35.125" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderInstallationSurvey" Width="1.5" PointX="5.25" PointY="37.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderNonAudit" Width="1.5" PointX="3" PointY="74.125" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderPart" Width="1.5" PointX="3" PointY="52.5" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderReasonlog" Width="1.5" PointX="3" PointY="14.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderSavedSearch" Width="1.5" PointX="29.75" PointY="7.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderSchedule" Width="1.5" PointX="3" PointY="33.875" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderServiceClaim" Width="1.5" PointX="5.25" PointY="23.875" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderStatusLog" Width="1.5" PointX="3" PointY="83.125" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderType" Width="1.5" PointX="29.75" PointY="15.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ZonePriority" Width="1.5" PointX="29.75" PointY="18.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TMP_SerialNOReport" Width="1.5" PointX="29.75" PointY="25.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.Zip" Width="1.5" PointX="25.75" PointY="33.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.ZoneZip" Width="1.5" PointX="29.75" PointY="30.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.v_AllPMandServiceEventsWithUniqueSerial" Width="1.5" PointX="27.75" PointY="33.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.v_Contact" Width="1.5" PointX="29.75" PointY="33.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.v_ContactServiceHistory" Width="1.5" PointX="31.75" PointY="4.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.V_EquipmentCount" Width="1.5" PointX="31.75" PointY="10.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.V_LastOneyearDispatches" Width="1.5" PointX="31.75" PointY="14.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.V_LastOneyearInvoices" Width="1.5" PointX="31.75" PointY="19.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.V_OpenCallTime" Width="1.5" PointX="15.75" PointY="35.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.V_OriginalCallDetails" Width="1.5" PointX="31.75" PointY="23.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.VW_FBRoleFunction" Width="1.5" PointX="31.75" PointY="29.25" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.VW_tech_Hierarchy" Width="1.5" PointX="31.75" PointY="34.25" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_UserApplication_Application" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FBERFEquipment_Erf" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FBERFExpendable_FBERFExpendable" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FBActivityLog_FbUserMaster" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK_FBCustomerNotes_FbUserMaster" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK_FBERFExpendable_WorkOrder" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FBUserReports_FBReports" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__FbUserMas__RoleI__4589517F" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FBReports_FbUserMaster" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FbUserMaster_UserType" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_UserApplication_FbUserMaster" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK__NonSerial__Worko__6DCC4D03" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK_UserApplication_Privilege1" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__0E6E26BF" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__5F7E2DAC" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__671F4F74" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.PricingDetail" Width="1.5" PointX="15" PointY="13.5" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK__PricingDe__Prici__5F141958" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.CustomCriteria" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCustomerServiceDistribution" Width="1.5" PointX="34.375" PointY="0.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.FBCustomerNote" Width="1.5" PointX="10.25" PointY="11.125" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK_FBCustomerNotes_FbUserMaster" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.WorkOrder" Width="1.5" PointX="0.75" PointY="37.625" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK_FBERFExpendable_WorkOrder" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK__NonSerial__Worko__2057CCD0" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__NotesHist__Worko__3493CFA7" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__PhoneSolv__Worko__3587F3E0" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK_UserApplication_Privilege1" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__TechSched__WorkO__57DD0BE4" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK__WorkOrder__Worko__27F8EE98" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__4C6B5938" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__4D5F7D71" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__4D5F7D72" />
@@ -135,14 +151,7 @@
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__51300E55" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__5224328E" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__58D1301D" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK__WorkOrder__Worko__756D6ECB" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__workorderstatuslog" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__0E6E26BF" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__5F7E2DAC" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__671F4F74" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.JDEPaymentTerm" Width="1.5" PointX="7.375" PointY="0.75" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.BranchESM" Width="1.5" PointX="5.375" PointY="30.75" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.Contact" Width="1.5" PointX="33.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

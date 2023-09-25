@@ -105,6 +105,12 @@ namespace FarmerBrothers
                                         case (int)Data.DispatchResponse.SCHEDULED:
                                             filterContext.ActionParameters[paramArr[0]] = Data.DispatchResponse.SCHEDULED;
                                             break;
+                                        case (int)Data.DispatchResponse.ESMESCALATION:
+                                            filterContext.ActionParameters[paramArr[0]] = Data.DispatchResponse.ESMESCALATION;
+                                            break;
+                                        case (int)Data.DispatchResponse.PROCESSCARD:
+                                            filterContext.ActionParameters[paramArr[0]] = Data.DispatchResponse.PROCESSCARD;
+                                            break;
                                     }
                                 }
 

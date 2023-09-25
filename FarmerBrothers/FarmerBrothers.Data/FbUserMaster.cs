@@ -18,9 +18,9 @@ namespace FarmerBrothers.Data
         public FbUserMaster()
         {
             this.FBActivityLogs = new HashSet<FBActivityLog>();
-            this.FBCustomerNotes = new HashSet<FBCustomerNote>();
             this.FBUserReports = new HashSet<FBUserReport>();
             this.UserApplications = new HashSet<UserApplication>();
+            this.FBCustomerNotes = new HashSet<FBCustomerNote>();
         }
     
         public int UserId { get; set; }
@@ -58,16 +58,19 @@ namespace FarmerBrothers.Data
         public Nullable<int> IsTechnician { get; set; }
         public Nullable<bool> IsERFUser { get; set; }
         public string EmailId { get; set; }
+        public Nullable<int> CreatedUserId { get; set; }
+        public string CreatedUserName { get; set; }
+        public string CustomerParent { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FBActivityLog> FBActivityLogs { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FBCustomerNote> FBCustomerNotes { get; set; }
         public virtual FbRole FbRole { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FBUserReport> FBUserReports { get; set; }
         public virtual UserType UserType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserApplication> UserApplications { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<FBCustomerNote> FBCustomerNotes { get; set; }
     }
 }

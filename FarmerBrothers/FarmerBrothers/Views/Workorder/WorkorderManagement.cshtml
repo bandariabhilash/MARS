@@ -24,6 +24,13 @@
 <link href="//cdn.syncfusion.com/ej2/ej2-dropdowns/styles/material.css" rel="stylesheet" type="text/css" />
 
 <style>
+    #StartDateTime_wrapper, #ArrivalDateTime_wrapper, #CompletionDateTime_wrapper {
+        opacity: 1;
+    }
+
+    #StartDateTime, #ArrivalDateTime, #CompletionDateTime {
+        background-color: #eee;
+    }
     .e-grid .e-toolbar > .e-horizontal.e-ul {
         vertical-align: middle;
         float: right;
@@ -534,11 +541,22 @@
                     close: function (args) {
                         if (args.value != '' && args.value != null)
                         {
+                            var start_actual_time = new Date($("#StartDateTime").val());
+                            var end_actual_time = new Date($("#ArrivalDateTime").val());
+
+                            var diff = end_actual_time - start_actual_time;
+
+                            var diffSeconds = diff / 1000;
+                            var HH = Math.floor(diffSeconds / 3600);
+                            var MM = Math.floor(diffSeconds % 3600) / 60;
+
+                            $("#TravelTimeHours").val(HH);
+                            $("#TravelMinutes").val(MM);
+
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
 
-                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval : 15 });
-
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval: 15 });
                         }
                         else
                         {
@@ -548,6 +566,18 @@
                     focusOut: function (args) {
                         if (args.value != '' && args.value != null)
                         {
+                            var start_actual_time = new Date($("#StartDateTime").val());
+                            var end_actual_time = new Date($("#ArrivalDateTime").val());
+
+                            var diff = end_actual_time - start_actual_time;
+
+                            var diffSeconds = diff / 1000;
+                            var HH = Math.floor(diffSeconds / 3600);
+                            var MM = Math.floor(diffSeconds % 3600) / 60;
+
+                            $("#TravelTimeHours").val(HH);
+                            $("#TravelMinutes").val(MM);
+
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
 
@@ -571,6 +601,18 @@
                     close: function (args) {
                         if (args.value != '' && args.value != null)
                         {
+                            var start_actual_time = new Date($("#StartDateTime").val());
+                            var end_actual_time = new Date($("#ArrivalDateTime").val());
+
+                            var diff = end_actual_time - start_actual_time;
+
+                            var diffSeconds = diff / 1000;
+                            var HH = Math.floor(diffSeconds / 3600);
+                            var MM = Math.floor(diffSeconds % 3600) / 60;
+
+                            $("#TravelTimeHours").val(HH);
+                            $("#TravelMinutes").val(MM);
+
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
 

@@ -558,6 +558,8 @@ namespace FarmerBrothers.Models
             model.IsNewPartsOrder = Convert.ToBoolean(request.Unvalidated.Form.Get("IsNewPartsOrder"));
             model.OverTimeRequestDescription = request.Unvalidated.Form.Get("OverTimeRequestDescription");
 
+            model.ShippingPriority = request.Unvalidated.Form.Get("ShippingPriority");
+
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("RowIdHidden")))
             {
                 model.RowId = Convert.ToInt32(request.Unvalidated.Form.Get("RowIdHidden"));
