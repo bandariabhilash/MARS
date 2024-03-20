@@ -1,0 +1,15 @@
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\obj\Debug\FBVixxoService.csproj.AssemblyReference.cache
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\obj\Debug\FBVixxoService.csproj.CoreCompileInputs.cache
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\FBVixxoService.exe.config
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\FBVixxoService.exe
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\FBVixxoService.pdb
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\obj\Debug\FBVixxoService.exe
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\obj\Debug\FBVixxoService.pdb
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\Newtonsoft.Json.dll
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\Newtonsoft.Json.xml
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\obj\Debug\FBVixxoService.csproj.CopyComplete
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\EntityFramework.dll
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\EntityFramework.SqlServer.dll
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\EntityFramework.xml
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\EntityFramework.SqlServer.xml
+D:\Projects\GIT\MARS\VixxoService\FBVixxoService\FBVixxoService\bin\Debug\GoogleMaps.LocationServices.dll

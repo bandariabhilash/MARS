@@ -1,0 +1,453 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FB_DevModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="AllFBStatus">
+    <Key>
+      <PropertyRef Name="FBStatusID" />
+    </Key>
+    <Property Name="FBStatusID" Type="int" Nullable="false" />
+    <Property Name="FBStatus" Type="varchar" MaxLength="90" />
+    <Property Name="Active" Type="smallint" />
+    <Property Name="StatusSequence" Type="smallint" />
+    <Property Name="StatusFor" Type="varchar" MaxLength="45" />
+    <Property Name="SolutionID" Type="int" />
+    <Property Name="Email" Type="varchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="Contact">
+    <Key>
+      <PropertyRef Name="ContactID" />
+    </Key>
+    <Property Name="ContactID" Type="int" Nullable="false" />
+    <Property Name="CompanyName" Type="nvarchar" MaxLength="100" />
+    <Property Name="Address1" Type="nvarchar" MaxLength="150" />
+    <Property Name="Address2" Type="nvarchar" MaxLength="100" />
+    <Property Name="Address3" Type="nvarchar" MaxLength="40" />
+    <Property Name="City" Type="nvarchar" MaxLength="50" />
+    <Property Name="State" Type="nvarchar" MaxLength="3" />
+    <Property Name="PostalCode" Type="nvarchar" MaxLength="12" />
+    <Property Name="Phone" Type="nvarchar" MaxLength="25" />
+    <Property Name="Division" Type="nvarchar" MaxLength="3" />
+    <Property Name="DivisionDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="District" Type="nvarchar" MaxLength="3" />
+    <Property Name="DistrictDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="FamilyAff" Type="nvarchar" MaxLength="3" />
+    <Property Name="FamilyAffDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="PricingParent" Type="nvarchar" MaxLength="8" />
+    <Property Name="PricingParentName" Type="nvarchar" MaxLength="40" />
+    <Property Name="AcctRep" Type="nvarchar" MaxLength="3" />
+    <Property Name="AcctRepDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="RouteNumber" Type="int" />
+    <Property Name="Distributor" Type="int" />
+    <Property Name="DistributorName" Type="nvarchar" MaxLength="40" />
+    <Property Name="DeliveryMethod" Type="nvarchar" MaxLength="3" />
+    <Property Name="DeliveryDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="SearchType" Type="nvarchar" MaxLength="3" />
+    <Property Name="SearchDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="BusinessUnit" Type="nvarchar" MaxLength="12" />
+    <Property Name="DateCreated" Type="datetime" />
+    <Property Name="LastModified" Type="datetime" />
+    <Property Name="AreaCode" Type="nvarchar" MaxLength="6" />
+    <Property Name="ContactActive" Type="smallint" />
+    <Property Name="LongAddressNumber" Type="nvarchar" MaxLength="30" />
+    <Property Name="LastModifiedByFTP" Type="datetime" />
+    <Property Name="AuditFlow" Type="int" />
+    <Property Name="SendInvoiceTo" Type="int" />
+    <Property Name="FSMJDE" Type="int" />
+    <Property Name="FieldServiceManager" Type="nvarchar" MaxLength="50" />
+    <Property Name="ServiceLevelCode" Type="nvarchar" MaxLength="5" />
+    <Property Name="AnniversaryDate" Type="smalldatetime" />
+    <Property Name="TierDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="RemainingFreeCalls" Type="int" />
+    <Property Name="CCMJDE" Type="int" />
+    <Property Name="RCCMJDE" Type="int" />
+    <Property Name="CategoryCode" Type="nvarchar" MaxLength="3" />
+    <Property Name="OperatingUnit" Type="nvarchar" MaxLength="3" />
+    <Property Name="Route" Type="nvarchar" MaxLength="10" />
+    <Property Name="Branch" Type="nvarchar" MaxLength="3" />
+    <Property Name="1099Reporting" Type="nvarchar" MaxLength="3" />
+    <Property Name="Chain" Type="nvarchar" MaxLength="3" />
+    <Property Name="BrewmaticAgentCode" Type="nvarchar" MaxLength="3" />
+    <Property Name="NTR" Type="nvarchar" MaxLength="3" />
+    <Property Name="DelDayOrFOB" Type="nvarchar" MaxLength="3" />
+    <Property Name="RouteCode" Type="nvarchar" MaxLength="10" />
+    <Property Name="ZoneNumber" Type="nvarchar" MaxLength="3" />
+    <Property Name="MailingName" Type="nvarchar" MaxLength="40" />
+    <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
+    <Property Name="MiddleName" Type="nvarchar" MaxLength="25" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+    <Property Name="FBProviderID" Type="int" />
+    <Property Name="NOFBPSPEmails" Type="int" />
+    <Property Name="LastAutoEmail" Type="smalldatetime" />
+    <Property Name="CustomerRegion" Type="nvarchar" MaxLength="50" />
+    <Property Name="RegionNumber" Type="nvarchar" MaxLength="5" />
+    <Property Name="CustomerBranch" Type="nvarchar" MaxLength="50" />
+    <Property Name="PricingParentID" Type="nvarchar" MaxLength="20" />
+    <Property Name="PricingParentDesc" Type="nvarchar" MaxLength="255" />
+    <Property Name="LastSaleDate" Type="nvarchar" MaxLength="15" />
+    <Property Name="Email" Type="nvarchar" MaxLength="150" />
+    <Property Name="CustomerSpecialInstructions" Type="varchar(max)" />
+    <Property Name="PhoneWithAreaCode" Type="nvarchar" MaxLength="30" />
+    <Property Name="IsUnknownUser" Type="int" />
+    <Property Name="BillingCode" Type="varchar" MaxLength="5" />
+    <Property Name="FilterReplaced" Type="bit" />
+    <Property Name="FilterReplacedDate" Type="smalldatetime" />
+    <Property Name="NextFilterReplacementDate" Type="smalldatetime" />
+    <Property Name="SalesEmail" Type="nvarchar" MaxLength="150" />
+    <Property Name="ESMName" Type="varchar" MaxLength="255" />
+    <Property Name="ESMPhone" Type="varchar" MaxLength="50" />
+    <Property Name="ESMEmail" Type="varchar" MaxLength="100" />
+    <Property Name="RSMName" Type="varchar" MaxLength="255" />
+    <Property Name="RSMPhone" Type="varchar" MaxLength="50" />
+    <Property Name="RSMEmail" Type="varchar" MaxLength="100" />
+    <Property Name="CCMName" Type="varchar" MaxLength="255" />
+    <Property Name="CCMPhone" Type="varchar" MaxLength="50" />
+    <Property Name="CCMEmail" Type="varchar" MaxLength="100" />
+    <Property Name="DaysSinceLastSale" Type="varchar" MaxLength="10" />
+    <Property Name="ProfitabilityTier" Type="nvarchar" MaxLength="30" />
+    <Property Name="ContributionMargin" Type="nvarchar" MaxLength="50" />
+    <Property Name="NetSalesAmount" Type="decimal" Precision="18" Scale="0" />
+    <Property Name="PaymentTerm" Type="nvarchar" MaxLength="30" />
+    <Property Name="IsNonFbCustomer" Type="bit" />
+  </EntityType>
+  <EntityType Name="TECH_HIERARCHY">
+    <Key>
+      <PropertyRef Name="DealerId" />
+    </Key>
+    <Property Name="DealerId" Type="int" Nullable="false" />
+    <Property Name="CompanyName" Type="nvarchar" MaxLength="40" />
+    <Property Name="Address1" Type="nvarchar" MaxLength="40" />
+    <Property Name="Address2" Type="nvarchar" MaxLength="40" />
+    <Property Name="Address3" Type="nvarchar" MaxLength="40" />
+    <Property Name="Address4" Type="nvarchar" MaxLength="40" />
+    <Property Name="City" Type="nvarchar" MaxLength="25" />
+    <Property Name="State" Type="nvarchar" MaxLength="3" />
+    <Property Name="PostalCode" Type="nvarchar" MaxLength="12" />
+    <Property Name="Phone" Type="nvarchar" MaxLength="25" />
+    <Property Name="Contact" Type="nvarchar" MaxLength="40" />
+    <Property Name="SearchType" Type="nvarchar" MaxLength="3" />
+    <Property Name="SearchDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="DealerType" Type="nvarchar" MaxLength="2" />
+    <Property Name="AreaCode" Type="nvarchar" MaxLength="6" />
+    <Property Name="Latitude" Type="float" />
+    <Property Name="Longitude" Type="float" />
+    <Property Name="Fax" Type="nvarchar" MaxLength="50" />
+    <Property Name="NextelPhone" Type="nvarchar" MaxLength="150" />
+    <Property Name="SerialNoMan" Type="int" />
+    <Property Name="ServiceRegion" Type="nvarchar" MaxLength="5" />
+    <Property Name="EmailCC" Type="nvarchar" MaxLength="150" />
+    <Property Name="LongAddressNumber" Type="nvarchar" MaxLength="25" />
+    <Property Name="BusinessUnit" Type="nvarchar" MaxLength="15" />
+    <Property Name="RimEmail" Type="nvarchar" MaxLength="150" />
+    <Property Name="BranchAssociations" Type="int" />
+    <Property Name="LastModifiedByFTP" Type="datetime" />
+    <Property Name="SendFax" Type="int" />
+    <Property Name="SendNextel" Type="int" />
+    <Property Name="SendEmail" Type="int" />
+    <Property Name="FamilyAff" Type="nvarchar" MaxLength="10" />
+    <Property Name="FamilyAffDesc" Type="nvarchar" MaxLength="30" />
+    <Property Name="PricingParentId" Type="int" />
+    <Property Name="PricingParentName" Type="nvarchar" MaxLength="50" />
+    <Property Name="SendAutomaticEmail" Type="int" />
+    <Property Name="SendDispatchConf" Type="int" />
+    <Property Name="SendNSREmail" Type="int" />
+    <Property Name="AlternativePhone" Type="nvarchar" MaxLength="15" />
+    <Property Name="AfterHoursOnly" Type="int" />
+    <Property Name="PickFromZipRateTable" Type="int" />
+    <Property Name="CustomerOwnNumber" Type="nvarchar" MaxLength="10" />
+    <Property Name="ModifiedDate" Type="datetime" />
+    <Property Name="ModifiedUserID" Type="int" />
+    <Property Name="BranchType" Type="nvarchar" MaxLength="20" />
+    <Property Name="Unavailable" Type="smallint" />
+    <Property Name="UnavailableStartDate" Type="smalldatetime" />
+    <Property Name="UnavailableEnddate" Type="smalldatetime" />
+    <Property Name="ReplacementTech" Type="int" />
+    <Property Name="BranchNumber" Type="nvarchar" MaxLength="10" />
+    <Property Name="BranchName" Type="nvarchar" MaxLength="50" />
+    <Property Name="AutoDispatch" Type="int" Nullable="false" />
+    <Property Name="RegionName" Type="varchar" MaxLength="85" />
+    <Property Name="FieldServiceManager" Type="varchar" MaxLength="70" />
+    <Property Name="RegionNumber" Type="nvarchar" MaxLength="5" />
+    <Property Name="PrimaryTechId" Type="int" />
+    <Property Name="CustomerSpecificTech" Type="bit" />
+  </EntityType>
+  <EntityType Name="WorkOrder">
+    <Key>
+      <PropertyRef Name="WorkorderID" />
+    </Key>
+    <Property Name="WorkorderID" Type="int" Nullable="false" />
+    <Property Name="WorkorderCallstatus" Type="varchar" MaxLength="25" />
+    <Property Name="CustomerID" Type="int" />
+    <Property Name="CustomerName" Type="varchar" MaxLength="150" />
+    <Property Name="CustomerAddress" Type="varchar" MaxLength="150" />
+    <Property Name="CustomerCity" Type="varchar" MaxLength="70" />
+    <Property Name="CustomerState" Type="varchar" MaxLength="5" />
+    <Property Name="CustomerZipCode" Type="varchar" MaxLength="20" />
+    <Property Name="CustomerMainContactName" Type="varchar" MaxLength="75" />
+    <Property Name="CustomerPhone" Type="varchar" MaxLength="25" />
+    <Property Name="CustomerPhoneExtn" Type="varchar" MaxLength="6" />
+    <Property Name="CustomerMainEmail" Type="varchar" MaxLength="70" />
+    <Property Name="CustomerCustomerPreferences" Type="ntext" />
+    <Property Name="WorkorderEntryUserid" Type="int" />
+    <Property Name="WorkorderEntryDate" Type="datetime" />
+    <Property Name="WorkorderCloseUserid" Type="int" />
+    <Property Name="WorkorderCloseDate" Type="datetime" />
+    <Property Name="WorkorderModifiedUserid" Type="int" />
+    <Property Name="WorkorderModifiedDate" Type="datetime" />
+    <Property Name="WorkorderErfid" Type="nvarchar" MaxLength="50" />
+    <Property Name="WorkorderEquipCount" Type="smallint" />
+    <Property Name="WorkorderCalltypeid" Type="int" />
+    <Property Name="WorkorderCalltypeDesc" Type="varchar" MaxLength="75" />
+    <Property Name="WorkorderSpawnEvent" Type="int" />
+    <Property Name="WorkorderFsm" Type="int" />
+    <Property Name="WorkorderTimeZone" Type="int" />
+    <Property Name="WorkorderDaylightSaving" Type="varchar" MaxLength="5" />
+    <Property Name="WorkorderClosureConfirmationNo" Type="varchar" MaxLength="15" />
+    <Property Name="CoverageZone" Type="int" />
+    <Property Name="TechTeamLead" Type="varchar" MaxLength="150" />
+    <Property Name="ResponsibleTechid" Type="int" />
+    <Property Name="ResponsibleTechName" Type="varchar" MaxLength="150" />
+    <Property Name="ResponsibleTechPhone" Type="varchar" MaxLength="25" />
+    <Property Name="ResponsibleTechBranch" Type="int" />
+    <Property Name="SecondaryTechid" Type="int" />
+    <Property Name="SecondaryTechName" Type="varchar" MaxLength="150" />
+    <Property Name="SecondaryTechPhone" Type="varchar" MaxLength="25" />
+    <Property Name="SecondaryTechBranch" Type="int" />
+    <Property Name="Fsm" Type="varchar" MaxLength="55" />
+    <Property Name="Rsm" Type="varchar" MaxLength="55" />
+    <Property Name="Tsm" Type="varchar" MaxLength="55" />
+    <Property Name="MarketSegment" Type="varchar" MaxLength="55" />
+    <Property Name="ProgramName" Type="varchar" MaxLength="55" />
+    <Property Name="DistributorName" Type="varchar" MaxLength="150" />
+    <Property Name="ServiceTier" Type="varchar" MaxLength="55" />
+    <Property Name="OtherParts" Type="ntext" />
+    <Property Name="DateNeeded" Type="smalldatetime" />
+    <Property Name="PurchaseOrder" Type="nvarchar" MaxLength="40" />
+    <Property Name="PartsShipTo" Type="nvarchar" MaxLength="30" />
+    <Property Name="AppointmentDate" Type="datetime" />
+    <Property Name="OriginalWorkorderid" Type="int" />
+    <Property Name="CallerName" Type="varchar" MaxLength="60" />
+    <Property Name="OvertimeRequest" Type="varchar" MaxLength="3" />
+    <Property Name="PriorityCode" Type="int" />
+    <Property Name="ProjectID" Type="int" />
+    <Property Name="AutoDispatch" Type="varchar" MaxLength="3" />
+    <Property Name="FollowupCallID" Type="int" />
+    <Property Name="WorkorderContactPhone" Type="varchar" MaxLength="30" />
+    <Property Name="WorkorderContactName" Type="varchar" MaxLength="80" />
+    <Property Name="FSR" Type="int" />
+    <Property Name="PartsRushOrder" Type="bit" />
+    <Property Name="OtherPartsName" Type="varchar" MaxLength="90" />
+    <Property Name="OtherPartsContactName" Type="varchar" MaxLength="90" />
+    <Property Name="OtherPartsAddress1" Type="varchar" MaxLength="90" />
+    <Property Name="OtherPartsAddress2" Type="varchar" MaxLength="60" />
+    <Property Name="OtherPartsCity" Type="varchar" MaxLength="90" />
+    <Property Name="OtherPartsState" Type="varchar" MaxLength="30" />
+    <Property Name="OtherPartsZip" Type="varchar" MaxLength="10" />
+    <Property Name="TechTeamLeadID" Type="int" />
+    <Property Name="EntryUserName" Type="varchar" MaxLength="80" />
+    <Property Name="ClosedUserName" Type="varchar" MaxLength="80" />
+    <Property Name="ModifiedUserName" Type="varchar" MaxLength="80" />
+    <Property Name="TSMEmail" Type="varchar" MaxLength="90" />
+    <Property Name="TSMPhone" Type="varchar" MaxLength="30" />
+    <Property Name="FSMID" Type="int" />
+    <Property Name="ProjectFlatRate" Type="money" />
+    <Property Name="NoServiceRequired" Type="bit" />
+    <Property Name="FSRName" Type="varchar" MaxLength="70" />
+    <Property Name="HoldDateTime" Type="smalldatetime" />
+    <Property Name="EmailSent" Type="smallint" />
+    <Property Name="TechType" Type="varchar" MaxLength="55" />
+    <Property Name="IsRejected" Type="bit" />
+    <Property Name="OtherPartsPhone" Type="varchar" MaxLength="30" />
+    <Property Name="SpawnCounter" Type="int" />
+    <Property Name="ParentWorkorderid" Type="int" />
+    <Property Name="CurrentUserName" Type="varchar" MaxLength="50" />
+    <Property Name="WorkOrderOpenedDateTime" Type="datetime" />
+    <Property Name="IsAutoGenerated" Type="bit" />
+    <Property Name="IsSpecificTechnician" Type="bit" />
+    <Property Name="SpecificTechnician" Type="varchar" MaxLength="150" />
+    <Property Name="Estimate" Type="numeric" Precision="18" Scale="2" />
+    <Property Name="FinalEstimate" Type="numeric" Precision="18" Scale="2" />
+    <Property Name="IsEstimateApproved" Type="bit" />
+    <Property Name="ThirdPartyPO" Type="varchar" MaxLength="150" />
+    <Property Name="EstimateApprovedBy" Type="int" />
+    <Property Name="IsAutoDispatched" Type="bit" />
+    <Property Name="HoursOfOperation" Type="varchar" MaxLength="100" />
+    <Property Name="AutoEmailSent" Type="bit" />
+    <Property Name="OverrideAutoEmail" Type="int" />
+    <Property Name="HighlightDispatchBoard" Type="int" />
+    <Property Name="IsBillable" Type="bit" />
+    <Property Name="TotalUnitPrice" Type="varchar" MaxLength="50" />
+    <Property Name="ElectronicEmailSent" Type="bit" />
+    <Property Name="CustomerPO" Type="varchar" MaxLength="150" />
+    <Property Name="RescheduleReasonCode" Type="int" />
+    <Property Name="AuthTransactionId" Type="varchar" MaxLength="150" />
+    <Property Name="FinalTransactionId" Type="varchar" MaxLength="150" />
+    <Property Name="ShippingPriority" Type="varchar" MaxLength="25" />
+    <Property Name="NTE" Type="varchar" MaxLength="150" />
+    <Property Name="ETAUpdated" Type="int" />
+  </EntityType>
+  <EntityType Name="WorkorderDetails">
+    <Key>
+      <PropertyRef Name="WorkorderDetailid" />
+    </Key>
+    <Property Name="WorkorderID" Type="int" />
+    <Property Name="WorkorderDetailid" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="InvoiceNo" Type="nvarchar" MaxLength="50" />
+    <Property Name="InvoiceDate" Type="smalldatetime" />
+    <Property Name="StartDateTime" Type="smalldatetime" />
+    <Property Name="ArrivalDateTime" Type="smalldatetime" />
+    <Property Name="CompletionDateTime" Type="smalldatetime" />
+    <Property Name="ResponsibleTechid" Type="int" />
+    <Property Name="ResponsibleTechName" Type="nvarchar" MaxLength="90" />
+    <Property Name="Mileage" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="TravelTime" Type="nvarchar" MaxLength="50" />
+    <Property Name="PhoneSolveid" Type="int" />
+    <Property Name="OriginalWorkorder" Type="int" />
+    <Property Name="SpawnReason" Type="int" />
+    <Property Name="CustomerName" Type="nvarchar" MaxLength="90" />
+    <Property Name="CustomerEmail" Type="nvarchar" MaxLength="70" />
+    <Property Name="CustomerSignature" Type="image" />
+    <Property Name="EntryUserid" Type="int" />
+    <Property Name="EntryDate" Type="smalldatetime" />
+    <Property Name="ModifiedUserid" Type="int" />
+    <Property Name="ModifiedDate" Type="smalldatetime" />
+    <Property Name="SpecialClosure" Type="varchar" MaxLength="50" />
+    <Property Name="SolutionId" Type="int" />
+    <Property Name="CustomerSignatureDetails" Type="nvarchar(max)" />
+    <Property Name="NSRReason" Type="int" />
+    <Property Name="WaterTested" Type="bit" />
+    <Property Name="HardnessRating" Type="varchar" MaxLength="10" />
+    <Property Name="TechnicianSignatureDetails" Type="nvarchar(max)" />
+    <Property Name="CustomerSignatureBy" Type="nvarchar" MaxLength="250" />
+    <Property Name="TotalDissolvedSolids" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="StateofEquipment" Type="ntext" />
+    <Property Name="ServiceDelayReason" Type="ntext" />
+    <Property Name="TroubleshootSteps" Type="ntext" />
+    <Property Name="FollowupComments" Type="ntext" />
+    <Property Name="OperationalComments" Type="ntext" />
+    <Property Name="ReviewedBy" Type="nvarchar" MaxLength="150" />
+    <Property Name="IsUnderWarrenty" Type="nvarchar" MaxLength="10" />
+    <Property Name="WarrentyFor" Type="nvarchar" MaxLength="150" />
+    <Property Name="AdditionalFollowupReq" Type="nvarchar" MaxLength="10" />
+    <Property Name="IsOperational" Type="nvarchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="WorkorderSchedule">
+    <Key>
+      <PropertyRef Name="Scheduleid" />
+    </Key>
+    <Property Name="Scheduleid" Type="int" Nullable="false" />
+    <Property Name="WorkorderID" Type="int" />
+    <Property Name="Techid" Type="int" />
+    <Property Name="ScheduleDate" Type="datetime" />
+    <Property Name="ScheduleUserid" Type="int" />
+    <Property Name="ModifiedScheduleDate" Type="datetime" />
+    <Property Name="ModifiedScheduleUserid" Type="int" />
+    <Property Name="EntryDate" Type="datetime" />
+    <Property Name="ServiceCenterID" Type="int" />
+    <Property Name="PrimaryTech" Type="smallint" />
+    <Property Name="TechName" Type="varchar" MaxLength="120" />
+    <Property Name="TechPhone" Type="varchar" MaxLength="30" />
+    <Property Name="ServiceCenterName" Type="varchar" MaxLength="90" />
+    <Property Name="FSMID" Type="int" />
+    <Property Name="FSMName" Type="varchar" MaxLength="70" />
+    <Property Name="FSMPhone" Type="varchar" MaxLength="30" />
+    <Property Name="TSMID" Type="int" />
+    <Property Name="TSMName" Type="varchar" MaxLength="70" />
+    <Property Name="TSMEmail" Type="varchar" MaxLength="90" />
+    <Property Name="TSMPhone" Type="varchar" MaxLength="30" />
+    <Property Name="FSMEmail" Type="varchar" MaxLength="90" />
+    <Property Name="TeamLeadID" Type="int" />
+    <Property Name="TeamLeadName" Type="varchar" MaxLength="90" />
+    <Property Name="AssignedStatus" Type="varchar" MaxLength="55" />
+    <Property Name="AssistTech" Type="smallint" />
+    <Property Name="WS_ArrivalDateTime" Type="smalldatetime" />
+    <Property Name="WS_CompletionDateTime" Type="smalldatetime" />
+    <Property Name="WS_Mileage" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="WS_TravelTime" Type="nvarchar" MaxLength="50" />
+    <Property Name="WS_AppointmentDate" Type="datetime" />
+    <Property Name="IsTechClosed" Type="bit" />
+    <Property Name="EventScheduleDate" Type="datetime" />
+    <Property Name="ScheduleContactName" Type="varchar" MaxLength="90" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Zip">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="ZIP" Type="nvarchar" MaxLength="10" />
+    <Property Name="City" Type="nvarchar" MaxLength="50" />
+    <Property Name="State" Type="nvarchar" MaxLength="2" />
+    <Property Name="County" Type="nvarchar" MaxLength="25" />
+    <Property Name="Country" Type="nvarchar" MaxLength="20" />
+    <Property Name="AreaCode" Type="nvarchar" MaxLength="3" />
+    <Property Name="Latitude" Type="float" />
+    <Property Name="Longitude" Type="float" />
+    <Property Name="PreferredCity" Type="smallint" />
+    <Property Name="TimeZone" Type="int" />
+    <Property Name="DayLightSaving" Type="nvarchar" MaxLength="2" />
+    <Property Name="FIPSState" Type="nvarchar" MaxLength="2" />
+    <Property Name="FIPSCounty" Type="nvarchar" MaxLength="3" />
+    <Property Name="FIPSCity" Type="nvarchar" MaxLength="5" />
+    <Property Name="UniqueID" Type="int" Nullable="false" />
+    <Property Name="TimeZoneName" Type="varchar" MaxLength="100" />
+  </EntityType>
+  <Association Name="FK__Workorder__Worko__4C6B5938">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkorderDetails" Type="Self.WorkorderDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderDetails">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__58D1301D">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkorderSchedule" Type="Self.WorkorderSchedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderSchedule">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="FB_DevModelStoreContainer">
+    <EntitySet Name="AllFBStatus" EntityType="Self.AllFBStatus" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TECH_HIERARCHY" EntityType="Self.TECH_HIERARCHY" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="WorkOrder" EntityType="Self.WorkOrder" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="WorkorderDetails" EntityType="Self.WorkorderDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="WorkorderSchedule" EntityType="Self.WorkorderSchedule" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Zip" EntityType="Self.Zip" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Zip].[ZIP] AS [ZIP], 
+    [Zip].[City] AS [City], 
+    [Zip].[State] AS [State], 
+    [Zip].[County] AS [County], 
+    [Zip].[Country] AS [Country], 
+    [Zip].[AreaCode] AS [AreaCode], 
+    [Zip].[Latitude] AS [Latitude], 
+    [Zip].[Longitude] AS [Longitude], 
+    [Zip].[PreferredCity] AS [PreferredCity], 
+    [Zip].[TimeZone] AS [TimeZone], 
+    [Zip].[DayLightSaving] AS [DayLightSaving], 
+    [Zip].[FIPSState] AS [FIPSState], 
+    [Zip].[FIPSCounty] AS [FIPSCounty], 
+    [Zip].[FIPSCity] AS [FIPSCity], 
+    [Zip].[UniqueID] AS [UniqueID], 
+    [Zip].[TimeZoneName] AS [TimeZoneName]
+    FROM [dbo].[Zip] AS [Zip]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK__Workorder__Worko__4C6B5938" Association="Self.FK__Workorder__Worko__4C6B5938">
+      <End Role="WorkOrder" EntitySet="WorkOrder" />
+      <End Role="WorkorderDetails" EntitySet="WorkorderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__58D1301D" Association="Self.FK__Workorder__Worko__58D1301D">
+      <End Role="WorkOrder" EntitySet="WorkOrder" />
+      <End Role="WorkorderSchedule" EntitySet="WorkorderSchedule" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

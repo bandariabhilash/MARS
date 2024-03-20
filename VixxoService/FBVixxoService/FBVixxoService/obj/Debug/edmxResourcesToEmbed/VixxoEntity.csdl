@@ -1,0 +1,436 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="FB_DevModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="AllFBStatu">
+    <Key>
+      <PropertyRef Name="FBStatusID" />
+    </Key>
+    <Property Name="FBStatusID" Type="Int32" Nullable="false" />
+    <Property Name="FBStatus" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="Active" Type="Int16" />
+    <Property Name="StatusSequence" Type="Int16" />
+    <Property Name="StatusFor" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+    <Property Name="SolutionID" Type="Int32" />
+    <Property Name="Email" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="Contact">
+    <Key>
+      <PropertyRef Name="ContactID" />
+    </Key>
+    <Property Name="ContactID" Type="Int32" Nullable="false" />
+    <Property Name="CompanyName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Address1" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Address2" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+    <Property Name="Address3" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="PostalCode" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+    <Property Name="Phone" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Division" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="DivisionDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="District" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="DistrictDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="FamilyAff" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="FamilyAffDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="PricingParent" Type="String" MaxLength="8" FixedLength="false" Unicode="true" />
+    <Property Name="PricingParentName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="AcctRep" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="AcctRepDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="RouteNumber" Type="Int32" />
+    <Property Name="Distributor" Type="Int32" />
+    <Property Name="DistributorName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="DeliveryMethod" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="DeliveryDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="SearchType" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="SearchDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="BusinessUnit" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+    <Property Name="DateCreated" Type="DateTime" Precision="3" />
+    <Property Name="LastModified" Type="DateTime" Precision="3" />
+    <Property Name="AreaCode" Type="String" MaxLength="6" FixedLength="false" Unicode="true" />
+    <Property Name="ContactActive" Type="Int16" />
+    <Property Name="LongAddressNumber" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="LastModifiedByFTP" Type="DateTime" Precision="3" />
+    <Property Name="AuditFlow" Type="Int32" />
+    <Property Name="SendInvoiceTo" Type="Int32" />
+    <Property Name="FSMJDE" Type="Int32" />
+    <Property Name="FieldServiceManager" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceLevelCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="AnniversaryDate" Type="DateTime" Precision="0" />
+    <Property Name="TierDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="RemainingFreeCalls" Type="Int32" />
+    <Property Name="CCMJDE" Type="Int32" />
+    <Property Name="RCCMJDE" Type="Int32" />
+    <Property Name="CategoryCode" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="OperatingUnit" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="Route" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="Branch" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="C1099Reporting" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="Chain" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="BrewmaticAgentCode" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="NTR" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="DelDayOrFOB" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="RouteCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="ZoneNumber" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="MailingName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="MiddleName" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="FBProviderID" Type="Int32" />
+    <Property Name="NOFBPSPEmails" Type="Int32" />
+    <Property Name="LastAutoEmail" Type="DateTime" Precision="0" />
+    <Property Name="CustomerRegion" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="RegionNumber" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerBranch" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PricingParentID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="PricingParentDesc" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="LastSaleDate" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="Email" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerSpecialInstructions" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="PhoneWithAreaCode" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="IsUnknownUser" Type="Int32" />
+    <Property Name="BillingCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="FilterReplaced" Type="Boolean" />
+    <Property Name="FilterReplacedDate" Type="DateTime" Precision="0" />
+    <Property Name="NextFilterReplacementDate" Type="DateTime" Precision="0" />
+    <Property Name="SalesEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="ESMName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="ESMPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ESMEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="RSMName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="RSMPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="RSMEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CCMName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="CCMPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="CCMEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="DaysSinceLastSale" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ProfitabilityTier" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="ContributionMargin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="NetSalesAmount" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="PaymentTerm" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="IsNonFbCustomer" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="TECH_HIERARCHY">
+    <Key>
+      <PropertyRef Name="DealerId" />
+    </Key>
+    <Property Name="DealerId" Type="Int32" Nullable="false" />
+    <Property Name="CompanyName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Address1" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Address2" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Address3" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="Address4" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="PostalCode" Type="String" MaxLength="12" FixedLength="false" Unicode="true" />
+    <Property Name="Phone" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Contact" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="SearchType" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="SearchDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="DealerType" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="AreaCode" Type="String" MaxLength="6" FixedLength="false" Unicode="true" />
+    <Property Name="Latitude" Type="Double" />
+    <Property Name="Longitude" Type="Double" />
+    <Property Name="Fax" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="NextelPhone" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="SerialNoMan" Type="Int32" />
+    <Property Name="ServiceRegion" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="EmailCC" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="LongAddressNumber" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="BusinessUnit" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="RimEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="BranchAssociations" Type="Int32" />
+    <Property Name="LastModifiedByFTP" Type="DateTime" Precision="3" />
+    <Property Name="SendFax" Type="Int32" />
+    <Property Name="SendNextel" Type="Int32" />
+    <Property Name="SendEmail" Type="Int32" />
+    <Property Name="FamilyAff" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="FamilyAffDesc" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="PricingParentId" Type="Int32" />
+    <Property Name="PricingParentName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="SendAutomaticEmail" Type="Int32" />
+    <Property Name="SendDispatchConf" Type="Int32" />
+    <Property Name="SendNSREmail" Type="Int32" />
+    <Property Name="AlternativePhone" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+    <Property Name="AfterHoursOnly" Type="Int32" />
+    <Property Name="PickFromZipRateTable" Type="Int32" />
+    <Property Name="CustomerOwnNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="BranchType" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Unavailable" Type="Int16" />
+    <Property Name="UnavailableStartDate" Type="DateTime" Precision="0" />
+    <Property Name="UnavailableEnddate" Type="DateTime" Precision="0" />
+    <Property Name="ReplacementTech" Type="Int32" />
+    <Property Name="BranchNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="BranchName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="AutoDispatch" Type="Int32" Nullable="false" />
+    <Property Name="RegionName" Type="String" MaxLength="85" FixedLength="false" Unicode="false" />
+    <Property Name="FieldServiceManager" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="RegionNumber" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="PrimaryTechId" Type="Int32" />
+    <Property Name="CustomerSpecificTech" Type="Boolean" />
+  </EntityType>
+  <EntityType Name="WorkOrder">
+    <Key>
+      <PropertyRef Name="WorkorderID" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" Nullable="false" />
+    <Property Name="WorkorderCallstatus" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerZipCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainContactName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhoneExtn" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerCustomerPreferences" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderEntryUserid" Type="Int32" />
+    <Property Name="WorkorderEntryDate" Type="DateTime" Precision="3" />
+    <Property Name="WorkorderCloseUserid" Type="Int32" />
+    <Property Name="WorkorderCloseDate" Type="DateTime" Precision="3" />
+    <Property Name="WorkorderModifiedUserid" Type="Int32" />
+    <Property Name="WorkorderModifiedDate" Type="DateTime" Precision="3" />
+    <Property Name="WorkorderErfid" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderEquipCount" Type="Int16" />
+    <Property Name="WorkorderCalltypeid" Type="Int32" />
+    <Property Name="WorkorderCalltypeDesc" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="WorkorderSpawnEvent" Type="Int32" />
+    <Property Name="WorkorderFsm" Type="Int32" />
+    <Property Name="WorkorderTimeZone" Type="Int32" />
+    <Property Name="WorkorderDaylightSaving" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="WorkorderClosureConfirmationNo" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="CoverageZone" Type="Int32" />
+    <Property Name="TechTeamLead" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechid" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="ResponsibleTechBranch" Type="Int32" />
+    <Property Name="SecondaryTechid" Type="Int32" />
+    <Property Name="SecondaryTechName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechPhone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="SecondaryTechBranch" Type="Int32" />
+    <Property Name="Fsm" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="Rsm" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="Tsm" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="MarketSegment" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="ProgramName" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="DistributorName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ServiceTier" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="OtherParts" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="DateNeeded" Type="DateTime" Precision="0" />
+    <Property Name="PurchaseOrder" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
+    <Property Name="PartsShipTo" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="AppointmentDate" Type="DateTime" Precision="3" />
+    <Property Name="OriginalWorkorderid" Type="Int32" />
+    <Property Name="CallerName" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+    <Property Name="OvertimeRequest" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="PriorityCode" Type="Int32" />
+    <Property Name="ProjectID" Type="Int32" />
+    <Property Name="AutoDispatch" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+    <Property Name="FollowupCallID" Type="Int32" />
+    <Property Name="WorkorderContactPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="WorkorderContactName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="FSR" Type="Int32" />
+    <Property Name="PartsRushOrder" Type="Boolean" />
+    <Property Name="OtherPartsName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsContactName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsAddress1" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsAddress2" Type="String" MaxLength="60" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsCity" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsState" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="OtherPartsZip" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="TechTeamLeadID" Type="Int32" />
+    <Property Name="EntryUserName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="ClosedUserName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="ModifiedUserName" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="TSMEmail" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TSMPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="FSMID" Type="Int32" />
+    <Property Name="ProjectFlatRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="NoServiceRequired" Type="Boolean" />
+    <Property Name="FSRName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="HoldDateTime" Type="DateTime" Precision="0" />
+    <Property Name="EmailSent" Type="Int16" />
+    <Property Name="TechType" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="IsRejected" Type="Boolean" />
+    <Property Name="OtherPartsPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="SpawnCounter" Type="Int32" />
+    <Property Name="ParentWorkorderid" Type="Int32" />
+    <Property Name="CurrentUserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="WorkOrderOpenedDateTime" Type="DateTime" Precision="3" />
+    <Property Name="IsAutoGenerated" Type="Boolean" />
+    <Property Name="IsSpecificTechnician" Type="Boolean" />
+    <Property Name="SpecificTechnician" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Estimate" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="FinalEstimate" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="IsEstimateApproved" Type="Boolean" />
+    <Property Name="ThirdPartyPO" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="EstimateApprovedBy" Type="Int32" />
+    <Property Name="IsAutoDispatched" Type="Boolean" />
+    <Property Name="HoursOfOperation" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="AutoEmailSent" Type="Boolean" />
+    <Property Name="OverrideAutoEmail" Type="Int32" />
+    <Property Name="HighlightDispatchBoard" Type="Int32" />
+    <Property Name="IsBillable" Type="Boolean" />
+    <Property Name="TotalUnitPrice" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ElectronicEmailSent" Type="Boolean" />
+    <Property Name="CustomerPO" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="RescheduleReasonCode" Type="Int32" />
+    <Property Name="AuthTransactionId" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="FinalTransactionId" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ShippingPriority" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="NTE" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="ETAUpdated" Type="Int32" />
+    <NavigationProperty Name="WorkorderDetails" Relationship="Self.FK__Workorder__Worko__4C6B5938" FromRole="WorkOrder" ToRole="WorkorderDetails" />
+    <NavigationProperty Name="WorkorderSchedules" Relationship="Self.FK__Workorder__Worko__58D1301D" FromRole="WorkOrder" ToRole="WorkorderSchedule" />
+  </EntityType>
+  <EntityType Name="WorkorderDetail">
+    <Key>
+      <PropertyRef Name="WorkorderDetailid" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkorderDetailid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceDate" Type="DateTime" Precision="0" />
+    <Property Name="StartDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ArrivalDateTime" Type="DateTime" Precision="0" />
+    <Property Name="CompletionDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ResponsibleTechid" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Mileage" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="TravelTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PhoneSolveid" Type="Int32" />
+    <Property Name="OriginalWorkorder" Type="Int32" />
+    <Property Name="SpawnReason" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerSignature" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="EntryUserid" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="ModifiedUserid" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="0" />
+    <Property Name="SpecialClosure" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="SolutionId" Type="Int32" />
+    <Property Name="CustomerSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="NSRReason" Type="Int32" />
+    <Property Name="WaterTested" Type="Boolean" />
+    <Property Name="HardnessRating" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="TechnicianSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerSignatureBy" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="TotalDissolvedSolids" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="StateofEquipment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceDelayReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="TroubleshootSteps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="FollowupComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="OperationalComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ReviewedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IsUnderWarrenty" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="WarrentyFor" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="AdditionalFollowupReq" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="IsOperational" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="WorkOrder" Relationship="Self.FK__Workorder__Worko__4C6B5938" FromRole="WorkorderDetails" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="WorkorderSchedule">
+    <Key>
+      <PropertyRef Name="Scheduleid" />
+    </Key>
+    <Property Name="Scheduleid" Type="Int32" Nullable="false" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Techid" Type="Int32" />
+    <Property Name="ScheduleDate" Type="DateTime" Precision="3" />
+    <Property Name="ScheduleUserid" Type="Int32" />
+    <Property Name="ModifiedScheduleDate" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedScheduleUserid" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="3" />
+    <Property Name="ServiceCenterID" Type="Int32" />
+    <Property Name="PrimaryTech" Type="Int16" />
+    <Property Name="TechName" Type="String" MaxLength="120" FixedLength="false" Unicode="false" />
+    <Property Name="TechPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="ServiceCenterName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="FSMID" Type="Int32" />
+    <Property Name="FSMName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="FSMPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="TSMID" Type="Int32" />
+    <Property Name="TSMName" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="TSMEmail" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TSMPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="FSMEmail" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TeamLeadID" Type="Int32" />
+    <Property Name="TeamLeadName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="AssignedStatus" Type="String" MaxLength="55" FixedLength="false" Unicode="false" />
+    <Property Name="AssistTech" Type="Int16" />
+    <Property Name="WS_ArrivalDateTime" Type="DateTime" Precision="0" />
+    <Property Name="WS_CompletionDateTime" Type="DateTime" Precision="0" />
+    <Property Name="WS_Mileage" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="WS_TravelTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WS_AppointmentDate" Type="DateTime" Precision="3" />
+    <Property Name="IsTechClosed" Type="Boolean" />
+    <Property Name="EventScheduleDate" Type="DateTime" Precision="3" />
+    <Property Name="ScheduleContactName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="WorkOrder" Relationship="Self.FK__Workorder__Worko__58D1301D" FromRole="WorkorderSchedule" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="Zip">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="ZIP1" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="City" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="State" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="County" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+    <Property Name="Country" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="AreaCode" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="Latitude" Type="Double" />
+    <Property Name="Longitude" Type="Double" />
+    <Property Name="PreferredCity" Type="Int16" />
+    <Property Name="TimeZone" Type="Int32" />
+    <Property Name="DayLightSaving" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="FIPSState" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+    <Property Name="FIPSCounty" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+    <Property Name="FIPSCity" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="UniqueID" Type="Int32" Nullable="false" />
+    <Property Name="TimeZoneName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <Association Name="FK__Workorder__Worko__4C6B5938">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkorderDetails" Type="Self.WorkorderDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderDetails">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK__Workorder__Worko__58D1301D">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="WorkorderSchedule" Type="Self.WorkorderSchedule" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderSchedule">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="VixxoEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="AllFBStatus" EntityType="Self.AllFBStatu" />
+    <EntitySet Name="Contacts" EntityType="Self.Contact" />
+    <EntitySet Name="TECH_HIERARCHY" EntityType="Self.TECH_HIERARCHY" />
+    <EntitySet Name="WorkOrders" EntityType="Self.WorkOrder" />
+    <EntitySet Name="WorkorderDetails" EntityType="Self.WorkorderDetail" />
+    <EntitySet Name="WorkorderSchedules" EntityType="Self.WorkorderSchedule" />
+    <EntitySet Name="Zips" EntityType="Self.Zip" />
+    <AssociationSet Name="FK__Workorder__Worko__4C6B5938" Association="Self.FK__Workorder__Worko__4C6B5938">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderDetails" EntitySet="WorkorderDetails" />
+    </AssociationSet>
+    <AssociationSet Name="FK__Workorder__Worko__58D1301D" Association="Self.FK__Workorder__Worko__58D1301D">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderSchedule" EntitySet="WorkorderSchedules" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
