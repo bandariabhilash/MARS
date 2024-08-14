@@ -603,7 +603,7 @@ namespace FarmerBrothers.Controllers
                 FBBillingSearchResult.HardnessRating = dr["HardnessRating"] == DBNull.Value ? "" : dr["HardnessRating"].ToString();
 
                 TECH_HIERARCHY techHView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == techId).FirstOrDefault();
-                dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, WorkorderID);
+                dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, postalCode);
                 decimal distance = 0;
                 if (travelDetails != null)
                 {
@@ -3363,7 +3363,7 @@ namespace FarmerBrothers.Controllers
 
         #region NonServiceReport
 
-        public ActionResult NonServiceReport(int? isBack)
+        public ActionResult CustomerServiceReport(int? isBack)
         {
             NonServiceSearchModel nonservicerpt = new NonServiceSearchModel();
 
@@ -3378,7 +3378,7 @@ namespace FarmerBrothers.Controllers
                 TempData["SearchCriteria"] = null;
             }
             nonservicerpt.SearchResults = new List<NonServiceSearchResults>();
-            return View(nonservicerpt);
+            return View("NonServiceReport", nonservicerpt);
 
         }
 
@@ -4838,6 +4838,7 @@ namespace FarmerBrothers.Controllers
                     woresults.AcceptedDate = "";
                 }
                 woresults.DispatchTech = dr["DispatchTech"] != DBNull.Value ? dr["DispatchTech"].ToString() : "";
+                woresults.Tracking = dr["Tracking"] != DBNull.Value ? dr["Tracking"].ToString() : "";
 
                 decimal ? eqpTotal = erfId == "" ? 0 : FarmerBrothersEntitites.FBERFEquipments.Where(eqp => eqp.ERFId == erfId).Sum(x => x.TotalCost);
                 decimal? expTotal = erfId == "" ? 0 : FarmerBrothersEntitites.FBERFExpendables.Where(eqp => eqp.ERFId == erfId).Sum(x => x.TotalCost);
@@ -4950,7 +4951,8 @@ namespace FarmerBrothers.Controllers
                                         fbexp.InternalOrderType as ExpInternalType, fbexp.VendorOrderType as ExpVendorType,
                                         Workorderschedule.EntryDate as DispatchDate, Workorderschedule.ModifiedScheduleDate as AcceptedDate, DispatchTech.CompanyName As DispatchTech,
                                         fbeqp.SerialNumber As EqpSerialNumber, fbeqp.OrderType As EqpOrderType, fbeqp.DepositInvoiceNumber As EqpDepositInvoiceNumber , 
-                                        fbeqp.DepositAmount As EqpDepositAmount, fbeqp.FinalInvoiceNumber As EqpFinalInvoiceNumber, fbeqp.InvoiceTotal As EqpInvoiceTotal                                        
+                                        fbeqp.DepositAmount As EqpDepositAmount, fbeqp.FinalInvoiceNumber As EqpFinalInvoiceNumber, fbeqp.InvoiceTotal As EqpInvoiceTotal,
+										ERF.Tracking                                        
                                         from ERF (nolock)
                                         INNER JOIN Contact (nolock) ON ERF.CustomerID = Contact.ContactID
                                         LEFT JOIN FBERFEquipment as fbeqp (nolock) ON fbeqp.ERFId = Erf.ErfID
@@ -5155,6 +5157,7 @@ namespace FarmerBrothers.Controllers
                 DataColumn dc53 = new DataColumn("EqpDepositAmount", typeof(String));
                 DataColumn dc54 = new DataColumn("EqpFinalInvoiceNumber", typeof(String));
                 DataColumn dc55 = new DataColumn("EqpInvoiceTotal", typeof(String));
+                DataColumn dc56 = new DataColumn("Tracking", typeof(String));
 
                 dt.Columns.Add(dc1);
                 dt.Columns.Add(dc2);
@@ -5211,6 +5214,7 @@ namespace FarmerBrothers.Controllers
                 dt.Columns.Add(dc53);
                 dt.Columns.Add(dc54);
                 dt.Columns.Add(dc55);
+                dt.Columns.Add(dc56);
             }
 
             TempData["WorkOrderSearchCriteria"] = workOrderSearchModel;
@@ -5218,7 +5222,7 @@ namespace FarmerBrothers.Controllers
             string[] columns = {"WorkorderID","CustomerID","OriginatorName","ERFLastUpdatedUser","ERFLastUpdatedDate","CompanyName","Address1","City","State","PostalCode","WorkorderCallstatus","AppointmentDate","ERFEntryDate","DispatchDate","AcceptedDate","DispatchTech","WorkorderCalltypeid",
                                 "WorkorderCalltypeDesc","ERFID","ERFStatus","CashSaleStatus","FSMJDE","CustomerRegion","RegionNumber","CustomerBranch","Branch","FSMJDE","OrderType","ShipToBranch","SiteReady","EqpQty",
                                 "EquipmentTotal","ExpQty","ExpandableTotal","Total", "TotalNSV", "ApprovalStatus", "CompanyName", "WorkorderCloseDate", "WorkorderCallstatus", "EqpType","EqpName","EqpCategoryName", "ExpType","ExpName","ExpCategoryName",
-                                "OriginatorName","EqpInternalType", "EqpVendorType","ExpInternalType", "ExpVendorType", "EqpSerialNumber", "EqpOrderType", "EqpDepositInvoiceNumber", "EqpDepositAmount", "EqpFinalInvoiceNumber", "EqpInvoiceTotal"};
+                                "OriginatorName","EqpInternalType", "EqpVendorType","ExpInternalType", "ExpVendorType", "EqpSerialNumber", "EqpOrderType", "EqpDepositInvoiceNumber", "EqpDepositAmount", "EqpFinalInvoiceNumber", "EqpInvoiceTotal", "Tracking"};
                       
             byte[] filecontent = ExcelExportHelper.ExportExcel(dt, "", false, columns);
             var fileStream = new MemoryStream(filecontent);
@@ -5565,7 +5569,117 @@ namespace FarmerBrothers.Controllers
             }
         }
 
+
         private IList<BillingReportSearchResultModel> GetPrepaidBillingreport(BillingReportModel BillingRptModel)
+        {
+            List<BillingReportSearchResultModel> BillingData = new List<BillingReportSearchResultModel>();
+            String DF = BillingRptModel.BillingFromDate.ToString();
+            String DT = Convert.ToDateTime(BillingRptModel.BillingToDate).AddDays(1).ToString();
+            String TL = BillingRptModel.DealerId.ToString();
+            String FA = BillingRptModel.TechID.ToString();
+            String PPID = BillingRptModel.ParentACC == null ? "0" : BillingRptModel.ParentACC.ToString();
+            String AccountNo = BillingRptModel.AccountNo == null ? "0" : BillingRptModel.AccountNo.ToString();
+            MarsViews mars = new MarsViews();
+
+            string ssql = @"select W.FinalTransactionId, W.WorkorderID,W.WorkorderEntryDate,W.CustomerID,
+                                    W.CustomerName As CompanyName,WS.Techid,WS.TechName,
+                                    W.WorkorderCallstatus, WD.StartDateTime,WD.ArrivalDateTime,WD.CompletionDateTime,
+                                    W.OriginalWorkorderid,W.WorkorderCalltypeid as WorkorderCalltypeid,WS.Techid as DispatchTechID,WS.TechName as DispatchTechName,C.PricingParentID,
+                                    W.CustomerPO, WD.HardnessRating,
+                                    Inv.TravelCost, Inv.LaborCost, Inv.PartsCost, inv.PartsDiscount, Inv.SalesTax, (Inv.TravelCost+Inv.LaborCost+Inv.SalesTax+(Inv.PartsCost-inv.PartsDiscount)) as Total
+                                    from workorder W 
+                                    inner join Contact C on C.ContactID = W.CustomerID
+                                    inner join WorkorderDetails WD on WD.WorkorderID = W.WorkorderID
+                                    left join WorkorderSchedule WS on WS.WorkorderID = W.WorkorderID and ws.AssignedStatus = 'Accepted'
+                                    inner join CCInvoiceDetails Inv on Inv.WorkorderId = W.WorkorderID
+                                    where  (len(FinalTransactionId) > 0)";
+
+           
+            ssql = ssql + " and W.WorkorderEntryDate >='" + DF + "'";
+
+            ssql = ssql + "  and  W.WorkorderEntryDate <'" + DT + "'";
+
+            if (!string.IsNullOrEmpty(AccountNo) && AccountNo != "0")
+            {
+                ssql = ssql + " and C.ContactID =" + AccountNo;
+            }
+
+            if (BillingRptModel.DealerId > 0)
+            {
+                ssql = ssql + " and WS.Techid =" + TL;
+            }
+
+            if (FA == "SPD")
+            {
+                ssql = ssql + " and FamilyAff != 'SPT'";
+            }
+            if (FA == "SPT")
+            {
+                ssql = ssql + " and FamilyAff = 'SPT'";
+            }
+
+            if (!string.IsNullOrEmpty(PPID) && PPID != "0")
+            {
+                ssql = ssql + " and W.CustomerID IN (Select ContactID from Contact where PricingParentID = " + PPID + ")"; //'cast(@" + PPID + "as varchar(10)) ')";
+            }
+
+            ssql = ssql + " order by W.WorkorderID";
+
+            DataTable dt = mars.fnTpspVendors(ssql);
+
+
+            BillingReportSearchResultModel FBBillingSearchResult;
+            foreach (DataRow dr in dt.Rows)
+            {
+                FBBillingSearchResult = new BillingReportSearchResultModel();
+                string WorkorderID = dr["WorkorderID"] == DBNull.Value ? "" : dr["WorkorderID"].ToString();
+                FBBillingSearchResult.WorkorderID = WorkorderID;
+                FBBillingSearchResult.WorkorderEntryDate = dr["WorkorderEntryDate"] == DBNull.Value ? "" : dr["WorkorderEntryDate"].ToString();
+                string customertId = dr["CustomerID"] == DBNull.Value ? "" : dr["CustomerID"].ToString();
+                FBBillingSearchResult.CustomerID = customertId;
+                FBBillingSearchResult.CompanyName = dr["CompanyName"] == DBNull.Value ? "" : dr["CompanyName"].ToString();
+                FBBillingSearchResult.FinalTransactionId = dr["FinalTransactionId"] == DBNull.Value ? "" : dr["FinalTransactionId"].ToString();
+
+                int techId = dr["Techid"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Techid"]);
+                FBBillingSearchResult.Techid = techId == 0 ? "" : techId.ToString();
+                FBBillingSearchResult.TechName = dr["TechName"] == DBNull.Value ? "" : dr["TechName"].ToString();
+                FBBillingSearchResult.WorkorderCallstatus = dr["WorkorderCallstatus"] == DBNull.Value ? "" : dr["WorkorderCallstatus"].ToString();
+
+                string arrivalDateTime, startDateTime, completionDateTime = "";
+                startDateTime = dr["StartDateTime"] == DBNull.Value ? "" : dr["StartDateTime"].ToString();
+                arrivalDateTime = dr["ArrivalDateTime"] == DBNull.Value ? "" : dr["ArrivalDateTime"].ToString();
+                completionDateTime = dr["CompletionDateTime"] == DBNull.Value ? "" : dr["CompletionDateTime"].ToString();
+
+                FBBillingSearchResult.StartDateTime = startDateTime;
+                FBBillingSearchResult.ArrivalDateTime = arrivalDateTime;
+                FBBillingSearchResult.CompletionDateTime = completionDateTime;
+
+                
+                FBBillingSearchResult.OriginalWorkorderid = dr["OriginalWorkorderid"] == DBNull.Value ? "" : dr["OriginalWorkorderid"].ToString();
+                FBBillingSearchResult.WorkorderCalltypeid = dr["WorkorderCalltypeid"] == DBNull.Value ? "" : dr["WorkorderCalltypeid"].ToString();
+                
+                FBBillingSearchResult.DispatchTechID = dr["DispatchTechID"] == DBNull.Value ? "" : dr["DispatchTechID"].ToString();
+                FBBillingSearchResult.DispatchTechName = dr["DispatchTechName"] == DBNull.Value ? "" : dr["DispatchTechName"].ToString();
+                string parentId = dr["PricingParentID"] == DBNull.Value ? "" : dr["PricingParentID"].ToString();
+                FBBillingSearchResult.PricingParentID = parentId;
+                
+                FBBillingSearchResult.CustomerPO = dr["CustomerPO"] == DBNull.Value ? "" : dr["CustomerPO"].ToString();
+                FBBillingSearchResult.LaborTotal = dr["LaborCost"] == DBNull.Value ? "" : dr["LaborCost"].ToString();
+                FBBillingSearchResult.TravelTotal = dr["TravelCost"] == DBNull.Value ? "" : dr["TravelCost"].ToString();
+                FBBillingSearchResult.PartsTotal = dr["PartsCost"] == DBNull.Value ? "" : dr["PartsCost"].ToString();
+                FBBillingSearchResult.PartsDiscount = dr["PartsDiscount"] == DBNull.Value ? "" : dr["PartsDiscount"].ToString();
+                FBBillingSearchResult.SalesTaxTotal = dr["SalesTax"] == DBNull.Value ? "" : dr["SalesTax"].ToString();
+                FBBillingSearchResult.TotalInvoice = dr["Total"] == DBNull.Value ? "" : dr["Total"].ToString();
+
+                BillingData.Add(FBBillingSearchResult);
+            }
+
+            BillingRptModel.SearchResults = BillingData;
+
+            return BillingData;
+        }
+
+        private IList<BillingReportSearchResultModel> GetPrepaidBillingreport_old(BillingReportModel BillingRptModel)
         {
             List<BillingReportSearchResultModel> BillingData = new List<BillingReportSearchResultModel>();
             String DF = BillingRptModel.BillingFromDate.ToString();

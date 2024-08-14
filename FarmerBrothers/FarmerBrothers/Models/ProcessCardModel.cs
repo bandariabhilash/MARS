@@ -36,11 +36,16 @@ namespace FarmerBrothers.Models
         public string FinalTransactionId;
 
         public int WorkorderId;
+        public int CustomerId;
 
         public DateTime? StartDateTime;
         public DateTime? ArrivalDateTime;
         public DateTime? CompletionDateTime;
         public DateTime? WorkorderEntryDate;
+
+        public string FromView;
+        public bool IsManualFeed;
+        public string ReceiptEmail;
     }
 
     public class ProcessCardModelBinder : IModelBinder
@@ -78,9 +83,14 @@ namespace FarmerBrothers.Models
                 model.PartsCost = Convert.ToDecimal(request.Unvalidated.Form.Get("partsTxtHidden").ToString());
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("partsDiscountTxtHidden")))
+            {
+                model.PartsDiscountCost = Convert.ToDecimal(request.Unvalidated.Form.Get("partsDiscountTxtHidden").ToString().Replace("$", ""));
+            }
+
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("salesTxtHidden")))
             {
-                model.SalesCost = Convert.ToDecimal(request.Unvalidated.Form.Get("salesTxtHidden").ToString());
+                model.SalesCost = Convert.ToDecimal(request.Unvalidated.Form.Get("salesTxtHidden").ToString().Replace("$", ""));
             }
 
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("BillingTotalLblHidden")))
@@ -111,6 +121,11 @@ namespace FarmerBrothers.Models
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("CompletionDateTimeHidden")))
             {
                 model.CompletionDateTime = Convert.ToDateTime(request.Unvalidated.Form.Get("CompletionDateTimeHidden"));
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("manualOverrideChkHidden")))
+            {
+                model.IsManualFeed = Convert.ToBoolean(request.Unvalidated.Form.Get("manualOverrideChkHidden"));
             }
 
             return model;

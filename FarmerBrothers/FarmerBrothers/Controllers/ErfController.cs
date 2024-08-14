@@ -29,7 +29,7 @@ namespace FarmerBrothers.Controllers
                 && string.IsNullOrWhiteSpace(erfSearchModel.ERFID)
                 && string.IsNullOrWhiteSpace(erfSearchModel.FeastMovement)
                 && string.IsNullOrWhiteSpace(erfSearchModel.Phone)
-                && string.IsNullOrWhiteSpace(erfSearchModel.Reason)
+                && string.IsNullOrWhiteSpace(erfSearchModel.OrderType)
                 && string.IsNullOrWhiteSpace(erfSearchModel.WorkOrderID)
                 && string.IsNullOrWhiteSpace(erfSearchModel.ZipCode)
                 && string.Compare(erfSearchModel.State, "n/a", true) == 0
@@ -66,9 +66,13 @@ namespace FarmerBrothers.Controllers
                 TempData["ErfSearchCriteria"] = null;
             }
 
-            erfSearchModel.Reasons = FarmerBrothersEntitites.AllFBStatus.Where(p => p.StatusFor == "ERF Reasons" && p.Active == 1).OrderBy(p => p.StatusSequence).ToList();
-            AllFBStatu smuckersStatus = new AllFBStatu() { FBStatus = "Please Select", FBStatusID = -1 };
-            erfSearchModel.Reasons.Insert(0, smuckersStatus);
+            //erfSearchModel.Reasons = FarmerBrothersEntitites.AllFBStatus.Where(p => p.StatusFor == "ERF Reasons" && p.Active == 1).OrderBy(p => p.StatusSequence).ToList();
+            //AllFBStatu smuckersStatus = new AllFBStatu() { FBStatus = "Please Select", FBStatusID = -1 };
+            //erfSearchModel.Reasons.Insert(0, smuckersStatus);
+
+            erfSearchModel.OrderTypeList = FarmerBrothersEntitites.ERFOrderTypes.Where(o => o.IsActive == true && o.OrderType.Length > 0).ToList();
+            ERFOrderType ordTyp = new ERFOrderType() {OrderType= "Please Select", OrderTypeId = -1};
+            erfSearchModel.OrderTypeList.Insert(0, ordTyp);
 
             erfSearchModel.CashSalesList = Utility.GetCashSaleStatusList(FarmerBrothersEntitites);
             erfSearchModel.ERFStatusList = ERFStatusModel.GetERFStatusList();
@@ -257,9 +261,9 @@ namespace FarmerBrothers.Controllers
                 erfSearchSelectQuery.Append(@" and e.WorkorderID like  '%" + erfSearchModel.WorkOrderID + "%'");
             }
 
-            if (!string.IsNullOrWhiteSpace(erfSearchModel.Reason) && string.Compare(erfSearchModel.Reason, "-1", true) != 0)
+            if (!string.IsNullOrWhiteSpace(erfSearchModel.OrderType) && string.Compare(erfSearchModel.OrderType, "-1", true) != 0)
             {
-                erfSearchSelectQuery.Append(@" and e.ReasonID in ("+ erfSearchModel.Reason + ")");
+                erfSearchSelectQuery.Append(@" and e.OrderType in (Select OrderType from ERFOrderType where OrderTypeId in (" + erfSearchModel.OrderType + "))");
             }
 
             if (!string.IsNullOrWhiteSpace(erfSearchModel.ZipCode))
@@ -428,6 +432,7 @@ namespace FarmerBrothers.Controllers
             foreach (FBERFEquipment equpItem in equipmentItems)
             {
                 ERFManagementEquipmentModel eqmodle = new ERFManagementEquipmentModel(equpItem);
+                eqmodle.Tracking = erfModel.ErfAssetsModel.Erf.Tracking;
                 erfModel.ErfAssetsModel.EquipmentList.Add(eqmodle);
             }
             TempData["Equipment"] = erfModel.ErfAssetsModel.EquipmentList;
@@ -436,6 +441,7 @@ namespace FarmerBrothers.Controllers
             foreach (FBERFExpendable expItems in expendableItems)
             {
                 ERFManagementExpendableModel exmodle = new ERFManagementExpendableModel(expItems);
+                exmodle.Tracking = erfModel.ErfAssetsModel.Erf.Tracking;
                 erfModel.ErfAssetsModel.ExpendableList.Add(exmodle);
             }
             TempData["Expendable"] = erfModel.ErfAssetsModel.ExpendableList;
@@ -902,7 +908,7 @@ namespace FarmerBrothers.Controllers
 
                 int returnValue = FarmerBrothersEntitites.SaveChanges();
 
-                if (Status == "Cancel")
+                if (Status.ToLower() == "cancel")
                 {
                     ERFNewController enc = new ERFNewController();
                     enc.ERFEmail(erf.ErfID, erf.WorkorderID, false, erf.ApprovalStatus, true);
@@ -1120,6 +1126,9 @@ namespace FarmerBrothers.Controllers
                                 isValid = false;
                             }
                         }
+
+                        //ERFNewController ef = new ERFNewController();
+                        //ef.ERFEmail(erfModel.ErfAssetsModel.Erf.ErfID, 0, false, "approved for processing");
 
                         if (isValid)
                         {

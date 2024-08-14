@@ -29,8 +29,13 @@
         $( "#ServiceHistory" ).ejGrid( {
             recordClick: function ( args )
             {
+                var isPartsOrd = false;
+                if (args.data["WorkOrderType"] == " " || args.data["WorkOrderType"] == "" || args.data["WorkOrderType"] == 'undefined' || args.data["WorkOrderType"] == null) {
+                    isPartsOrd = true;
+                }
+
                 //window.open( '@Url.Action("WorkorderManagement", "Workorder")/' + @Model.CustomerId + '/' + args.data["WorkOrderID"] );
-                window.location.href = "@Url.Action("WorkorderManagement", "Workorder")"+'/' + @Model.CustomerId + '/' + args.data["WorkOrderID"]+"/false/false";
+                window.location.href = "@Url.Action("WorkorderManagement", "Workorder")" + '/' + @Model.CustomerId + '/' + args.data["WorkOrderID"] + '/' + isPartsOrd + "/false";
             }
         } );
 

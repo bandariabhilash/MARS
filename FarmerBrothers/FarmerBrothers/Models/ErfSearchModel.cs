@@ -20,6 +20,7 @@ namespace FarmerBrothers.Models
             FeastMovement = string.Empty;
             Reason = string.Empty;
             ZipCode = string.Empty;
+            OrderType = string.Empty;
 
             CreatedFrom = new Nullable<DateTime>();
             CreatedTo = new Nullable<DateTime>();
@@ -35,6 +36,7 @@ namespace FarmerBrothers.Models
         public IList<AllFBStatu> Reasons;
         public IList<CashSaleModel> CashSalesList;
         public IList<ERFStatusModel> ERFStatusList;
+        public IList<ERFOrderType> OrderTypeList;
 
         public string CustomerId { get; set; }
         public string CustomerName { get; set; }
@@ -56,5 +58,7 @@ namespace FarmerBrothers.Models
 
         public List<ESMCCMRSMEscalation> EsmList { get; set; }
         public List<string> Esm { get; set; }
+        
+        public string OrderType { get; set; }
     }
 }

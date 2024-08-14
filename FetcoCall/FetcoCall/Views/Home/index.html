@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    
+    <!-- Custom styles for this template -->
+    <link href="css/form-validation.css" rel="stylesheet">
+  </head>
+  <body>
+    
+<div class="container">
+  <main>
+    <div class="py-5 text-center">
+      <!--<h2>Service Request Form</h2>
+      <p class="lead">Our technical support team is here to help Monday-Friday 8am - 5pm Central Time. For immediate assistance, please call +1 847.719.3000</p>
+  -->  </div>
+
+    <div class="row g-5">
+      <div class="col-md-12 col-lg-12">
+        <form class="needs-validation" novalidate>
+          <div class="row g-3">
+
+            <div class="col-md-12">
+              <label for="FETCOcustomer" class="form-label">Are you an existing FETCO customer?</label>
+              <div class="row">
+                <div class="col-md-auto">
+                    <div class="form-check">
+                        <input id="credit" name="Yes" type="radio" class="form-check-input" >
+                        <label class="form-check-label" for="credit">Yes</label>
+                    </div>
+                </div>
+                <div class="col-md-auto">
+                    <div class="form-check">
+                        <input id="debit" name="No" type="radio" class="form-check-input" checked >
+                        <label class="form-check-label" for="debit">No</label>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">FETCO Account Number</label>
+              <input type="text" class="form-control" id="firstName" placeholder="" value="" >
+              <div class="invalid-feedback">
+                Valid first name is .
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <button class="btn btn-dark" type="submit" style="margin-top:30px;">Get Customer</button>
+            </div>
+            <hr class="my-4">
+
+            <h4>Service Location Details</h4>
+
+            <div class="col-12">
+              <label for="BusinessName" class="form-label">Business Name</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="BusinessName" placeholder="Business Name" >
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="Address1" class="form-label">Address1</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="Address1" placeholder="Address1" >
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label for="Address2" class="form-label">Address2</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="Address2" placeholder="Address2" >
+              </div>
+            </div>
+
+            <div class="col-md-5">
+              <label for="country" class="form-label">City</label>
+              <input type="text" class="form-control" id="City" placeholder="City" >
+            </div>
+
+            <div class="col-md-4">
+              <label for="state" class="form-label">State</label>
+              <select class="form-select" id="state" >
+                <option value="">Choose...</option>
+                <option>California</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label for="ZipCode" class="form-label">Zip Code</label>
+              <input type="text" class="form-control" id="ZipCode" placeholder="Zip Code" >
+            </div>
+
+            <div class="col-12">
+              <label for="ContactName" class="form-label">Onsite Contact Name</label>
+              <input type="text" class="form-control" id="ContactName" placeholder="Onsite Contact Name">
+            </div>
+
+            <div class="col-12">
+              <label for="PhoneNumber" class="form-label">Phone Number</label>
+              <input type="text" class="form-control" id="PhoneNumber" placeholder="Phone Number" >
+            </div>
+
+            <div class="col-12">
+              <label for="email" class="form-label">Email Address <span class="text-muted">(Optional)</span></label>
+              <input type="text" class="form-control" id="Email Address" placeholder="Email Address">
+            </div>
+
+            <div class="col-12">
+              <label for="ServiceType" class="form-label">Service Type</label>
+              <select class="form-select" id="ServiceType" >
+                <option value="">Choose...</option>
+                <option>California</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label for="servicereq" class="form-label">Description of Service Request </label>
+              <textarea class="form-control" id="servicereq"></textarea>
+            </div>
+          </div>
+          <hr class="my-4">
+          <div class="row my-3">
+          <div class="col-md-6">
+            <button class="w-100 btn btn-warning btn-lg" type="submit">Clear</button>
+          </div>
+            <div class="col-md-6">
+              <button class="w-100 btn btn-dark btn-lg" type="submit">Submit</button>
+          </div>
+        </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+    <script src="js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

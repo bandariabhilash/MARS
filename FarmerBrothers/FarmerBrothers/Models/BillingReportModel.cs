@@ -80,6 +80,7 @@ namespace FarmerBrothers.Models
         public string TravelTotal { get; set; }
         public string LaborTotal { get; set; }
         public string PartsTotal { get; set; }
+        public string PartsDiscount { get; set; }
         public string TotalInvoice { get; set; }
         public string HardnessRating { get; set; }
         public string CustomerPO { get; set; }

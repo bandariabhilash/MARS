@@ -133,7 +133,7 @@
     {
         //alert($('#txtcustomerid').val() +"|==="+  $('#txtcustomerPhone').val()+"|==="+  $('#txtcustomername').val() +"|==="+  $('#entryDate').val() +"|==="+  $('#closeDate').val()
         //    +"|==="+  $('#txtERFID').val() +"|==="+  $('#txtAddressid').val()+"|==="+  $('#txtworkorderID').val() +"|==="+  $('#txtAddressid').val()
-        //    +"|==="+  $('#StatesDropDown').val() +"|==="+  $('#txtzipcode').val() +"|==="+  $('#ReasonsDropDown').val())
+        //    +"|==="+  $('#StatesDropDown').val() +"|==="+  $('#txtzipcode').val() +"|==="+  $('#OrderTypeDropDown').val())
         var valid = true;
         if ($('#txtcustomerid').val() == ""
             //&& $('#txtcustomerPhone').val() == ""
@@ -147,7 +147,7 @@
             && $('#txtCityid').val() == ""
             && $('#StatesDropDown').val() =="n/a"
             && $('#txtzipcode').val() == ""
-            && $('#ReasonsDropDown').val() == "-1"
+            && $('#OrderTypeDropDown').val() == "-1"
             && $('#CashSaleStatusDropDown').val() == "-1"
             && $('#Esm').val() == "")
         {
@@ -161,7 +161,7 @@
         $('.form-control').val('');
         var obj = $("#ERFResults").ejGrid("instance");
         obj.dataSource('');
-        $('#ReasonsDropDown').val(-1);
+        $('#OrderTypeDropDown').val(-1);
         $('#StatesDropDown').val("n/a");
         $('#CashSaleStatusDropDown').val(-1);
         //$('.EsmDropDownList').val("");
@@ -259,10 +259,16 @@
                                     @Html.DropDownListFor(c => c.State, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control" })
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            @*<div class="col-md-3">
                                 <div class="form-group">
                                     Placement Reason:
                                     @Html.DropDownListFor(a => a.Reason, new SelectList(Model.Reasons, "FBStatusID", "FBStatus"), new { @Id = "ReasonsDropDown", @class = "form-control" })
+                                </div>
+                            </div>*@
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    Order Type:
+                                    @Html.DropDownListFor(a => a.OrderType, new SelectList(Model.OrderTypeList, "OrderTypeId", "OrderType"), new { @Id = "OrderTypeDropDown", @class = "form-control" })
                                 </div>
                             </div>
                             <div class="col-md-3">

@@ -424,6 +424,7 @@
     <Compile Include="Controllers\ErfController.cs" />
     <Compile Include="Controllers\ERFNewController.cs" />
     <Compile Include="Controllers\ESMCCMRSMController.cs" />
+    <Compile Include="Controllers\EventsUploadController.cs" />
     <Compile Include="Controllers\HolidayController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MultipleButtonAttribute.cs" />
@@ -567,6 +568,7 @@
     <Compile Include="Startup.cs" />
     <Compile Include="Type\WorkOrderLookup.cs" />
     <Compile Include="Utilities\CryptographyUtil.cs" />
+    <Compile Include="Utilities\DataImage.cs" />
     <Compile Include="Utilities\EmailUtility.cs" />
     <Compile Include="Utilities\ErrorCode.cs" />
     <Compile Include="Utilities\ExcelExportHelper.cs" />
@@ -2220,6 +2222,9 @@
     <Content Include="Views\Shared\_DocumentUpload.cshtml" />
     <Content Include="Views\Reports\EscalationReport.cshtml" />
     <Content Include="Views\Reports\BillingUploadReport.cshtml" />
+    <Content Include="Views\Shared\_CreditCardProcessing.cshtml" />
+    <Content Include="Views\EventsUpload\EventsUpload.cshtml" />
+    <Content Include="Views\DispatchResponse\ConfirmationWindow.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\QtBinaries\.svn\tmp\" />

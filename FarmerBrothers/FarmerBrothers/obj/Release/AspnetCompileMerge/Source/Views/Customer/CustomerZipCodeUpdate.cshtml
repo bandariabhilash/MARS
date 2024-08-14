@@ -29,29 +29,27 @@
                     type: 'GET',
                     url: "@Url.Action("GetCustomerZipCode", "Customer")",
                     data: { "CustomerId": $("#AccountNumber").val() }
-                        } ).done( function ( response )
-                        {
-                            if ( response != null && response.success == true )
-                            {
-                                if (response.message !="") {
-                                    AlertPopup(response.message);
-                                }
-                                else {
-                                    $("#ZipCode").val(response.data.ZipCode);
-                                    $("#SalesEmail").val(response.data.SalesEmail);
-                                    //$("#ZipCode").show();
-                                    //$("#btnUpdateZipcode").show();
-                                    //$("#btnClearZipcode").show();
-                                    //$("#lblZipcode").show();
-                                    $(".updateField").show();
-                                }
-                            }
-                            else
-                            {
-                                AlertPopup('|There is a problem to get Invoice Details! Please contact support!');
+                }).done(function (response) {
+                    if (response != null && response.success == true) {
+                        if (response.message != "") {
+                            AlertPopup(response.message);
+                        }
+                        else {
+                            $("#ZipCode").val(response.data.ZipCode);
+                            $("#SalesEmail").val(response.data.SalesEmail);
+                            $("#ParentId").val(response.data.ParentId);
+                            //$("#ZipCode").show();
+                            //$("#btnUpdateZipcode").show();
+                            //$("#btnClearZipcode").show();
+                            //$("#lblZipcode").show();
+                            $(".updateField").show();
+                        }
+                    }
+                    else {
+                        AlertPopup('|There is a problem to get Invoice Details! Please contact support!');
 
-                            }
-                        } );
+                    }
+                });
             }
             else {
                 AlertPopup("|Please Enter Account Number")
@@ -63,29 +61,25 @@
         $("#btnUpdateZipcode").click(function (e) {
             if ($('#AccountNumber').val() != "" && $('#ZipCode').val() != "") {
 
-                        $.ajax( {
-                            type: 'POST',
-                            url: "@Url.Action("UpdateCustomerZipCode", "Customer")",
-                            data: { "CustomerId": $("#AccountNumber").val(), "ZipCode": $("#ZipCode").val() }
-                        } ).done( function ( response )
-                        {
-                            if ( response != null && response.success == true )
-                            {
-                                if (response.message == "") {
-                                    AlertPopup("|Successfully Updated Zipcode for the Customer!");
-                                    updateUrl = "@Url.Action("CustomerZipCodeUpdate", "Customer")"
-                                }
-                                else
-                                {
-                                    AlertPopup(response.message);
-                                }
-                            }
-                            else
-                            {
-                                AlertPopup('|There is a problem Updating Customer Zipcode! Please contact support!');
+                $.ajax({
+                    type: 'POST',
+                    url: "@Url.Action("UpdateCustomerZipCode", "Customer")",
+                    data: { "CustomerId": $("#AccountNumber").val(), "ZipCode": $("#ZipCode").val() }
+                }).done(function (response) {
+                    if (response != null && response.success == true) {
+                        if (response.message == "") {
+                            AlertPopup("|Successfully Updated Zipcode for the Customer!");
+                            updateUrl = "@Url.Action("CustomerZipCodeUpdate", "Customer")"
+                        }
+                        else {
+                            AlertPopup(response.message);
+                        }
+                    }
+                    else {
+                        AlertPopup('|There is a problem Updating Customer Zipcode! Please contact support!');
 
-                            }
-                        } );
+                    }
+                });
             }
             else {
                 AlertPopup("|Please enter CustomerId and Zipcode")
@@ -126,6 +120,42 @@
         });
 
 
+        $("#btnUpdateCustomerDetails").click(function (e) {
+
+            if ($('#AccountNumber').val() == "") {
+                AlertPopup("|Please enter CustomerId!")
+                e.preventDefault();
+                return false;
+            }
+            if ($('#ZipCode').val() == "") {
+                AlertPopup("|Zip Code cannot be Empty!")
+                e.preventDefault();
+                return false;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "@Url.Action("UpdateCustomerDetails", "Customer")",
+                data: { "CustomerId": $("#AccountNumber").val(), "ZipCode": $("#ZipCode").val(), "SalesEmail": $("#SalesEmail").val(), "ParentId": $("#ParentId").val() }
+            }).done(function (response) {
+                if (response != null && response.success == true) {
+                    if (response.message == "") {
+                        AlertPopup("|Customer Details Update Successfully !");
+                        updateUrl = "@Url.Action("CustomerZipCodeUpdate", "Customer")"
+                    }
+                    else {
+                        AlertPopup(response.message);
+                    }
+                }
+                else {
+                    AlertPopup('|There is a problem Updating Customer Zipcode! Please contact support!');
+
+                }
+            });
+
+            e.preventDefault();
+        });
+
         $("[data-popup-close='popupalert']").click(function () {
             if (updateUrl != null) {
                 window.location.href = updateUrl;
@@ -153,7 +183,7 @@
     }
     function salesEmailSearchClear()
     {
-        $('#SalesEmail').val('');        
+        $('#SalesEmail').val('');
     }
 </script>
 @using (Html.BeginForm("NewCustomerUploadFile", "Customer", FormMethod.Post, new { enctype = "multipart/form-data" }))
@@ -177,22 +207,22 @@
 
                         @if (ViewBag.isSuccess != null && !(ViewBag.isSuccess))
                         {
-                        <div class="row customer clear-input">
-                            <div class="col-md-12  sm-pad-reset">
-                                <b>Error: </b>
-                                @Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))
+                            <div class="row customer clear-input">
+                                <div class="col-md-12  sm-pad-reset">
+                                    <b>Error: </b>
+                                    @Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))
+                                </div>
                             </div>
-                        </div>
                         }
                         else if (ViewBag.isSuccess != null && (ViewBag.isSuccess))
                         {
-                        <div class="row customer clear-input">
-                            <div class="col-md-12  sm-pad-reset">
-                                <b>Success: </b>                               
-                                <div class="row customer clear-input">
-                                    <div class="col-md-12  sm-pad-reset">
+                            <div class="row customer clear-input">
+                                <div class="col-md-12  sm-pad-reset">
+                                    <b>Success: </b>
+                                    <div class="row customer clear-input">
+                                        <div class="col-md-12  sm-pad-reset">
 
-                                        @(Html.EJ().Grid<object>("CustomerFileUploadResults")
+                                            @(Html.EJ().Grid<object>("CustomerFileUploadResults")
                                     .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
                                      .Adaptor(AdaptorType.RemoteSaveAdaptor))
                                     .AllowPaging()
@@ -218,11 +248,11 @@
                                      .ClientSideEvents(eve =>
                                         {
                                             eve.QueryCellInfo("queryCellInfo");
-                                        }))                                        
+                                        }))
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                         }
                     </div>
                 </div>
@@ -230,76 +260,79 @@
         </div>
     </section>
 }
-    @using (Html.BeginForm())
-    {
-        <section class="block margin-top">
-            <div class="container-fluid">
-                <h2 class="customer-head arrow-down tabheader">Update Customer Details</h2>
-                <div class="customer-content margin-top">
-                    <div class="row customer clear-input">
-                        <div class="col-md-12  sm-pad-reset">
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <span class="required">Account Number:</span>
-                                        @Html.TextBoxFor(c => c.AccountNumber, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
-                                    </div>
-                                </div>
-                            </div>
+@using (Html.BeginForm())
+{
+   
 
-                            <div class="col-sm-2">
-                                <div class="col-sm-6-o">
-                                    <div class="col-md-12" style="margin-top: 19px;">
-                                        <button id="btnGetCustomer" type="submit" class="btn btn-primary">Get Customer</button>
-                                        <a id="btnCustomerClear" onclick="CustomerSearchClear()" class="btn btn-orange">Clear</a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-
-                        <div class="col-md-12  sm-pad-reset updateField">
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <span id="lblZipcode" class="required">ZipCode:</span>
-                                        @Html.TextBoxFor(c => c.ZipCode, new { Value = "", @class = "form-control" })
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="col-sm-6-o">
-                                    <div class="col-md-12" style="margin-top: 19px;">
-                                        <button id="btnUpdateZipcode" type="submit" class="btn btn-primary">Update ZipCode</button>
-                                        <a id="btnClearZipcode" onclick="zipCodeSearchClear()" class="btn btn-orange">Clear</a>
-                                    </div>
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customer-head arrow-down tabheader">Update Customer Details</h2>
+            <div class="customer-content margin-top">
+                <div class="row customer clear-input">
+                    <div class="col-md-12  sm-pad-reset">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span class="required">Account Number:</span>
+                                    @Html.TextBoxFor(c => c.AccountNumber, new { Value = "", @class = "form-control", @type = "number", @onkeydown = "javascript: return event.keyCode == 69 ? false : true" })
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12  sm-pad-reset updateField">
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <span id="lblSalesEmail" class="required">SalesEmail:</span>
-                                        @Html.TextBoxFor(c => c.SalesEmail, new { Value = "", @class = "form-control" })
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="col-sm-6-o">
-                                    <div class="col-md-12" style="margin-top: 19px;">
-                                        <button id="btnUpdateSalesEmail" type="submit" class="btn btn-primary">Update SalesEmail</button>
-                                        <a id="btnClearSalesEmail" onclick="salesEmailSearchClear()" class="btn btn-orange">Clear</a>
-                                    </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button id="btnGetCustomer" type="submit" class="btn btn-primary">Get Customer</button>
+                                    <a id="btnCustomerClear" onclick="CustomerSearchClear()" class="btn btn-orange">Clear</a>
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
+                    <div class="col-md-12  sm-pad-reset updateField">
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span id="lblZipcode" class="required">ZipCode:</span>
+                                    @Html.TextBoxFor(c => c.ZipCode, new { Value = "", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span id="lblSalesEmail" class="required">SalesEmail:</span>
+                                    @Html.TextBoxFor(c => c.SalesEmail, new { Value = "", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <span id="lblParentId" class="required">ParentId:</span>
+                                    @Html.TextBoxFor(c => c.ParentId, new { Value = "", @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12  sm-pad-reset updateField">
+                        <div class="col-sm-6">
+                            <div class="col-sm-6-o">
+                                <div class="col-md-12" style="margin-top: 19px;">
+                                    <button id="btnUpdateCustomerDetails" type="submit" class="btn btn-primary">Update Customer Details</button>
+                                    <a id="btnClearCustomerDetails" onclick="CustomerDetailsSearchClear()" class="btn btn-orange">Clear</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
-        </section>
+        </div>
+    </section>
 
 }
 

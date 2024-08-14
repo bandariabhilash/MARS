@@ -404,7 +404,7 @@
                                                         <table border='0' align='left' cellpadding='0' cellspacing='0'>
                                                             <tr style="width:100%">
                                                                 <td align='left' style="width:50%;"><a href='#' style='display: block;'><img width="150" src="~/img/logo_header.png" class="img-responisve" /></a></td>
-                                                                <td align="center"><div style="color:#fff; font-size: 2.5em; text-align:center; word-spacing: 0px !important;font-family:Arial;">Work Performed Summary</div></td>
+                                                                <td align="center"><div style="color: #fff; font-size: 2.5em; text-align: center; word-spacing: 0px !important; font-family: Arial;">Work Performed Summary</div></td>
                                                             </tr>
                                                         </table>
                                                     </td>
@@ -830,11 +830,11 @@
                 <tr>
                     <td>
                         <div class="timeDetailsBlock" style="padding: 25px; margin-top:25px">
-                            <table width="100%">
+                            <table width="100%"  border="0" cellspacing="0" cellpadding="0" class="table">
                                 <tr>
                                     <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
                                         Start Time:&nbsp;
-                                        <span style='text-align:left;'>@Model.StartTime</span>
+                                        <span style='font-weight: normal;text-align: left;'>@Model.StartTime</span>
                                     </td>
                                     <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
                                         Arrival Time:&nbsp;
@@ -846,11 +846,62 @@
                                         Completion Time:&nbsp;
                                         <span style='font-weight:normal;text-align:left;'>@Model.CompletionTime</span>
                                     </td>
-                                    <td style='ont-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
                                         Travel Time:&nbsp;
                                         <span style='font-weight:normal;text-align:left;'>@Model.TravelTime</span>
                                     </td>
                                 </tr>
+
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        State of Equipment upon Arrival:&nbsp;
+                                        <span style='font-weight: normal; text-align: left; display: block; word-break: break-all; width:35%;'>@Model.StateOfEquipment</span>
+                                    </td>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Was Service Delayed:&nbsp;
+                                        <span style='font-weight: normal; text-align: left; display: block; word-break: break-all; width: 35%;'>@Model.serviceDelayed</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Steps to Troubleshoot and Resolve:&nbsp;
+                                        <span style='font-weight: normal; text-align: left; display: block; word-break: break-all; width: 35%;'>@Model.troubleshootSteps</span>
+                                    </td>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Is Operational:&nbsp;
+                                        <span style='font-weight: normal; text-align: left;'>@Model.Operational</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Is Under Warrenty:&nbsp;
+                                        <span style='font-weight: normal; text-align: left;'>@Model.IsUnderWarrenty</span>
+                                    </td>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Warrenty For:&nbsp;
+                                        <span style='font-weight: normal; text-align: left;'>@Model.WarrentyFor</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Is Additional Followup Needed:&nbsp;
+                                        <span style='font-weight: normal; text-align: left;'>@Model.AdditionalFollowup</span>
+                                    </td>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Additional Followup Comments:&nbsp;
+                                        <span style='font-weight: normal; text-align: left; display: block; word-break: break-all; width: 35%;'>@Model.followupComments</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
+                                        Full Name of the person reviewed  the work:&nbsp;
+                                        <span style='font-weight: normal; text-align: left;'>@Model.ReviewedBy</span>
+                                    </td>
+                                </tr>
+
+
                                 <tr>
                                     <td colspan='3' style='font-size:13px;font-weight:bold;font-family:Helvetica, Arial, sans-serif;'>
                                         Machine Notes:&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-weight:normal;'><pre style="white-space: break-spaces; font-size:14px; border: black solid 0.1em; padding: 0.5em;">@Model.MachineNotes</pre></span>

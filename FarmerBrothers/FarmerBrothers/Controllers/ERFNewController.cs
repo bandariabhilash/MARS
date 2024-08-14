@@ -505,7 +505,7 @@ namespace FarmerBrothers.Controllers
             if (TempData["ERFExpendableId"] != null)
             {
                 int assetId = Convert.ToInt32(TempData["ERFExpendableId"]);
-                //value.ERFExpendableId = assetId + 1;
+                value.ERFExpendableId = assetId + 1;
                 TempData["ERFExpendableId"] = assetId + 1;
             }
             else
@@ -702,15 +702,15 @@ namespace FarmerBrothers.Controllers
                     workorderModel.WorkOrder.WorkorderCalltypeid = 1300;
                     workorderModel.WorkOrder.WorkorderCalltypeDesc = "Installation";
                     workorderModel.WorkOrder.WorkorderErfid = erfModel.ErfAssetsModel.Erf.ErfID;
-                    workorderModel.WorkOrder.PriorityCode = 5;
+                    workorderModel.WorkOrder.PriorityCode = 54;
                     workorderModel.WorkOrder.WorkOrderBrands = new List<WorkOrderBrand>();
                     WorkOrderBrand brand = new WorkOrderBrand();
                     brand.BrandID = 997;
                     workorderModel.WorkOrder.WorkOrderBrands.Add(brand);
                     workorderModel.PriorityList = new List<AllFBStatu>();
                     AllFBStatu priority = new AllFBStatu();
-                    priority.FBStatusID = 5;
-                    priority.FBStatus = "Next Day Service";
+                    priority.FBStatusID = 54;
+                    priority.FBStatus = "P3  - PLANNED";
                     workorderModel.PriorityList.Add(priority);
                     workorderModel.NewNotes = new List<NewNotesModel>();
                     workorderModel.NewNotes = erfModel.NewNotes;
@@ -873,7 +873,7 @@ namespace FarmerBrothers.Controllers
 
             NotesHistory eqpNotesHistory = new NotesHistory()
             {
-                AutomaticNotes = 1,
+                AutomaticNotes = 0,
                 EntryDate = CurrentTime,
                 Notes = "Equipments: " + EqpNotes + "Expendables: " + ExpNotes,
                 Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
@@ -1343,8 +1343,8 @@ namespace FarmerBrothers.Controllers
                 salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                 salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Complete \">COMPLETE</a>");
                 salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Cancel \">CANCEL</a>");
-                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                //salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Cancel \">CANCEL</a>");
+                //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
 
                     salesEmailBody.Append("<BR>");
@@ -1452,7 +1452,11 @@ namespace FarmerBrothers.Controllers
                     salesEmailBody.Append(erfData.CustomerZipCode);
                     salesEmailBody.Append("<BR>");
 
-                    salesEmailBody.Append("PHONE: ");
+                    salesEmailBody.Append("Customer Contact: ");
+                    salesEmailBody.Append(erfData.CustomerMainContactName);
+                    salesEmailBody.Append("<BR>");
+
+                    salesEmailBody.Append("Customer PHONE: ");
                     salesEmailBody.Append(erfData.CustomerPhone);
                     salesEmailBody.Append("<BR>");
 
@@ -1460,7 +1464,8 @@ namespace FarmerBrothers.Controllers
                     salesEmailBody.Append(customerBranch);
                     salesEmailBody.Append("<BR>");
 
-                    string route = ""; string lastSalesDate = "";
+
+                string route = ""; string lastSalesDate = "";
                     if (customer != null)
                     {
                         route = customer.Route;
@@ -1647,13 +1652,13 @@ namespace FarmerBrothers.Controllers
                 salesEmailBody.Append("<BR>");
                 salesEmailBody.Append("<BR>");
 
-                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Processed \">PROCESSED</a>");                
-                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Shipped \">SHIPPED</a>");
-                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Complete \">COMPLETE</a>");
-                salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                //salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Processed \">PROCESSED</a>");                
+                //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                //salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Shipped \">SHIPPED</a>");
+                //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+                //salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Complete \">COMPLETE</a>");
+                //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                 salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Cancel \">CANCEL</a>");
                 salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
@@ -2002,15 +2007,15 @@ namespace FarmerBrothers.Controllers
             workorderModel.WorkOrder.WorkorderCalltypeid = 1300;
             workorderModel.WorkOrder.WorkorderCalltypeDesc = "Installation";
             workorderModel.WorkOrder.WorkorderErfid = erfModel.ErfAssetsModel.Erf.ErfID;
-            workorderModel.WorkOrder.PriorityCode = 5;
+            workorderModel.WorkOrder.PriorityCode = 54;
             workorderModel.WorkOrder.WorkOrderBrands = new List<WorkOrderBrand>();
             WorkOrderBrand brand = new WorkOrderBrand();
             brand.BrandID = 997;
             workorderModel.WorkOrder.WorkOrderBrands.Add(brand);
             workorderModel.PriorityList = new List<AllFBStatu>();
             AllFBStatu priority = new AllFBStatu();
-            priority.FBStatusID = 5;
-            priority.FBStatus = "Next Day Service";
+            priority.FBStatusID = 54;
+            priority.FBStatus = "P3  - PLANNED";
             workorderModel.PriorityList.Add(priority);
             workorderModel.NewNotes = new List<NewNotesModel>();
             workorderModel.NewNotes = erfModel.NewNotes;

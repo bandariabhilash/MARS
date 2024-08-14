@@ -57,12 +57,12 @@ namespace FarmerBrothers.Controllers
         #region load workorder view
 
         [HttpGet]
-        public ActionResult WorkorderManagement(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false, bool isCustomerDashboard = false)
+        public ActionResult WorkorderManagement(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false, bool isCustomerDashboard = false, bool isFromProcessCardScreen= false)
         {
             WorkorderManagementModel workOrderManagementModel = null;
             try
             {
-                workOrderManagementModel = ConstructWorkorderManagementModel(customerId, workOrderId, isNewPartsOrder, showAllTechs, isCustomerDashboard);
+                workOrderManagementModel = ConstructWorkorderManagementModel(customerId, workOrderId, isNewPartsOrder, showAllTechs, isCustomerDashboard, isFromProcessCardScreen);
 
             }
             catch (Exception ex)
@@ -368,6 +368,16 @@ namespace FarmerBrothers.Controllers
             objDisplayPdf.ArrivalTime = ArrivalTime;
             objDisplayPdf.CompletionTime = CompletionTime;
             objDisplayPdf.TravelTime = TravelTime;
+
+            objDisplayPdf.WarrentyFor = string.IsNullOrEmpty(workOrderDetail.WarrentyFor) ? "" : workOrderDetail.WarrentyFor;
+            objDisplayPdf.StateOfEquipment = string.IsNullOrEmpty(workOrderDetail.StateofEquipment) ? "" : workOrderDetail.StateofEquipment;
+            objDisplayPdf.serviceDelayed = string.IsNullOrEmpty(workOrderDetail.ServiceDelayReason) ? "" : workOrderDetail.ServiceDelayReason;
+            objDisplayPdf.troubleshootSteps = string.IsNullOrEmpty(workOrderDetail.TroubleshootSteps) ? "" : workOrderDetail.TroubleshootSteps;
+            objDisplayPdf.followupComments = string.IsNullOrEmpty(workOrderDetail.FollowupComments) ? "" : workOrderDetail.FollowupComments;
+            objDisplayPdf.ReviewedBy = string.IsNullOrEmpty(workOrderDetail.ReviewedBy) ? "" : workOrderDetail.ReviewedBy;
+            objDisplayPdf.IsUnderWarrenty = string.IsNullOrEmpty(workOrderDetail.IsUnderWarrenty) ? "" : workOrderDetail.IsUnderWarrenty;
+            objDisplayPdf.AdditionalFollowup = string.IsNullOrEmpty(workOrderDetail.AdditionalFollowupReq) ? "" : workOrderDetail.AdditionalFollowupReq;
+            objDisplayPdf.Operational = string.IsNullOrEmpty(workOrderDetail.IsOperational) ? "" : workOrderDetail.IsOperational;
 
 
             decimal partsTotal = 0; string machineNotes = "";
@@ -681,7 +691,7 @@ namespace FarmerBrothers.Controllers
             return jsonResult;
         }
 
-        public WorkorderManagementModel ConstructWorkorderManagementModel(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false, bool isCustomerDashboard = false)
+        public WorkorderManagementModel ConstructWorkorderManagementModel(int? customerId, int? workOrderId, bool isNewPartsOrder = false, bool showAllTechs = false, bool isCustomerDashboard = false, bool isFromProcessCardScreen = false)
         {
             #region construct wo
             WorkorderManagementModel workOrderManagementModel = new WorkorderManagementModel();
@@ -779,6 +789,26 @@ namespace FarmerBrothers.Controllers
                 }
                 workOrderManagementModel.Closure.HardnessRating = FarmerBrothersEntitites.WorkorderDetails.Where(wr => wr.WorkorderID == workOrderId).Select(w => w.HardnessRating).FirstOrDefault();
                 workOrderManagementModel.Closure.TDS = Convert.ToDecimal(FarmerBrothersEntitites.WorkorderDetails.Where(wr => wr.WorkorderID == workOrderId).Select(w => w.TotalDissolvedSolids).FirstOrDefault());
+
+                workOrderManagementModel.Closure.WarrentyList = new List<string>();
+                workOrderManagementModel.Closure.WarrentyList.Add("");
+                workOrderManagementModel.Closure.WarrentyList.Add("YES");
+                workOrderManagementModel.Closure.WarrentyList.Add("NO");
+
+                workOrderManagementModel.Closure.WarrentyForList = new List<string>();
+                workOrderManagementModel.Closure.WarrentyForList.Add("");
+                workOrderManagementModel.Closure.WarrentyForList.Add("Just Parts");
+                workOrderManagementModel.Closure.WarrentyForList.Add("Parts and Labor");
+
+                workOrderManagementModel.Closure.AdditionalFollowupList = new List<string>();
+                workOrderManagementModel.Closure.AdditionalFollowupList.Add("");
+                workOrderManagementModel.Closure.AdditionalFollowupList.Add("YES");
+                workOrderManagementModel.Closure.AdditionalFollowupList.Add("NO");
+
+                workOrderManagementModel.Closure.OperationalList = new List<string>();
+                workOrderManagementModel.Closure.OperationalList.Add("");
+                workOrderManagementModel.Closure.OperationalList.Add("YES");
+                workOrderManagementModel.Closure.OperationalList.Add("NO");
 
                 workOrderManagementModel.BranchIds = new List<int>();
                 workOrderManagementModel.AssistTechIds = new List<int>();
@@ -1084,6 +1114,17 @@ namespace FarmerBrothers.Controllers
                         workOrderManagementModel.Closure.Mileage = workOrderDetail.Mileage;
                         workOrderManagementModel.Closure.CustomerSignedBy = workOrderDetail.CustomerSignatureBy;
 
+                        workOrderManagementModel.Closure.WarrentyFor = workOrderDetail.WarrentyFor;
+                        workOrderManagementModel.Closure.StateOfEquipment = workOrderDetail.StateofEquipment;
+                        workOrderManagementModel.Closure.serviceDelayed = workOrderDetail.ServiceDelayReason;
+                        workOrderManagementModel.Closure.troubleshootSteps = workOrderDetail.TroubleshootSteps;
+                        workOrderManagementModel.Closure.followupComments = workOrderDetail.FollowupComments;
+                        //workOrderManagementModel.Closure.operationalComments = workOrderDetail.OperationalComments;
+                        workOrderManagementModel.Closure.ReviewedBy = workOrderDetail.ReviewedBy;
+                        workOrderManagementModel.Closure.IsUnderWarrenty = workOrderDetail.IsUnderWarrenty;
+                        workOrderManagementModel.Closure.AdditionalFollowup = workOrderDetail.AdditionalFollowupReq;
+                        workOrderManagementModel.Closure.Operational = workOrderDetail.IsOperational;
+
                         workOrderManagementModel.RescheduleReasonCodesList = FarmerBrothersEntitites.AllFBStatus.Where(p => p.StatusFor == "ReScheduleReasonCode" && p.Active == 1).OrderBy(p => p.StatusSequence).ToList();
                         workOrderManagementModel.RescheduleReasonCodesList.Insert(0, new AllFBStatu()
                         {
@@ -1313,7 +1354,7 @@ namespace FarmerBrothers.Controllers
                         }
                     }
 
-                    workOrderManagementModel.SerialNumberList = FarmerBrothersEntitites.FBCBEs.Where(s => s.CurrentCustomerId.ToString() == workOrderManagementModel.WorkOrder.CustomerID.ToString()).ToList();
+                    workOrderManagementModel.SerialNumberList = FarmerBrothersEntitites.FBCBEs.Where(s => s.CurrentCustomerId == workOrderManagementModel.WorkOrder.CustomerID).ToList();
 
                     //foreach (WorkOrderManagementEquipmentModel epm in workOrderManagementModel.WorkOrderEquipments)
                     //{
@@ -1608,6 +1649,8 @@ namespace FarmerBrothers.Controllers
                 if (workOrderManagementModel.WorkOrder != null)
                 {
                     workOrderManagementModel.Closure.PopulateSpecialClosureList(workOrderManagementModel.WorkOrder, FarmerBrothersEntitites);
+                    workOrderManagementModel.ServiceQuoteDetails = new ServiceQuoteModel();
+
 
                     WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == workOrderManagementModel.WorkOrder.WorkorderID 
                                                                 && (w.AssignedStatus == "Sent" || w.AssignedStatus == "Accepted" || w.AssignedStatus == "Scheduled")).FirstOrDefault();
@@ -1628,17 +1671,18 @@ namespace FarmerBrothers.Controllers
                                 workOrderManagementModel.Solutions.Remove(item);
                             }
                         }
+                        
+                        if (techHView != null)
+                        {
+                            workOrderManagementModel.ServiceQuoteDetails = CalculateServiceQuote(workOrderManagementModel.WorkOrder.WorkorderID);
 
-                        if(techHView != null)
-                        { 
-                            //CalculateServiceQuote(workOrderManagementModel.WorkOrder.CustomerZipCode, techHView.PostalCode);
-
+                            /*
                             dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, workOrderManagementModel.WorkOrder.CustomerZipCode);
                             if (travelDetails != null)
                             {
                                 var element = travelDetails.rows[0].elements[0];
                                 decimal distance = element == null ? 0 : (element.distance == null ? 0 : element.distance.value * (decimal)0.000621371192);
-                                distance = Math.Round(distance, 0);
+                                distance = Math.Round(distance, 2);
                                 decimal travelTime = element == null ? Convert.ToDecimal(1800.00 / 3600.00) : (element.duration == null ? Convert.ToDecimal(1800.00 / 3600.00) : element.duration.value / 3600.00);
                                 decimal duration = Math.Round(travelTime, 2);
 
@@ -1646,15 +1690,29 @@ namespace FarmerBrothers.Controllers
                                 decimal TravelMinutes = (Convert.ToDecimal(travelTime) - (TravelHour)) * Convert.ToDecimal(60.00);
 
                                 workOrderManagementModel.TravelDistance = distance + " Miles";
+                                workOrderManagementModel.Distance = distance.ToString();
                                 workOrderManagementModel.TravelTime = "Hr " + Math.Abs(TravelHour) + ":" + Math.Round(TravelMinutes) + " Minutes";
 
                                 decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
                                 workOrderManagementModel.Labor = LaborCost;
 
-                                decimal total = (duration * LaborCost) + LaborCost;
+                                List<FbWorkorderBillableSKUModel> partsList = new List<FbWorkorderBillableSKUModel>();
+                                
+                                FarmerBrothersEntitites.FBClosureParts.Where(s => s.SkuActive == true).Select(s => s.ItemNo).Distinct();
+                                decimal? pTotal = (from closureParts in FarmerBrothersEntitites.WorkorderParts
+                                                      join sk in FarmerBrothersEntitites.Skus on closureParts.Sku equals sk.Sku1
+                                                      where closureParts.WorkorderID == workOrderId
+                                                      select sk.SKUCost).Sum();
+
+                                decimal partsTotal = pTotal == null ? 0 : Convert.ToDecimal(pTotal);
+
+                                workOrderManagementModel.PartsTotal = partsTotal;
+
+                                decimal total = (duration * LaborCost) + LaborCost + partsTotal;
                                 //workOrderManagementModel.TotalServiceQuote = duration + " * 85 " + " + " + " $85 Labor Cost = " + string.Format("{0:c2}", total);
                                 workOrderManagementModel.TotalServiceQuote = string.Format("{0:c2}", total);
                             }
+                            */
                         }
                     }
 
@@ -1799,6 +1857,8 @@ namespace FarmerBrothers.Controllers
                 {
                     workOrderManagementModel.Documents.isNewEvent = true;
                 }
+
+                workOrderManagementModel.RedirectFromCardProcess = isFromProcessCardScreen;
             }
             catch (Exception ex)
             {
@@ -1810,9 +1870,102 @@ namespace FarmerBrothers.Controllers
             return workOrderManagementModel;
         }
 
-        private void CalculateServiceQuote(string CustomerZip, string TechZip)
+        [HttpPost]
+        public JsonResult GetServiceQuoteDetailsWithParts(UpdateServiceQuoteModel serviceQuoteObj)
         {
-            
+            JsonResult jsonResult = new JsonResult();
+            try
+            {
+                 ServiceQuoteModel quote = new ServiceQuoteModel();
+
+                decimal? SkuTotal = serviceQuoteObj.SkuList.Where(w => w.PartReplenish == false).Select(s => s.Quantity * s.StandardCost).Sum();
+                quote.PartsTotal = Convert.ToDecimal(SkuTotal);
+
+                quote.TotalServiceQuote = Convert.ToDecimal(serviceQuoteObj.PreviousQuote) + Convert.ToDecimal(SkuTotal);
+
+
+                jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = quote };
+            }
+            catch (Exception ex)
+            {
+                jsonResult.Data = new { success = false, serverError = ErrorCode.ERROR };
+            }
+
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        [HttpGet]
+        public JsonResult GetServiceQuoteDetails(int Workorderid)
+        {
+            JsonResult jsonResult = new JsonResult();
+            try
+            {
+                ServiceQuoteModel quote = CalculateServiceQuote(Workorderid);
+                jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = quote };
+            }
+            catch(Exception ex)
+            {
+                jsonResult.Data = new { success = false, serverError = ErrorCode.ERROR };
+            }            
+          
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+        public ServiceQuoteModel CalculateServiceQuote(int Workorderid)
+        {
+            WorkOrder workorder = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == Workorderid).FirstOrDefault();
+            WorkorderSchedule ws = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == Workorderid
+                                                                && (w.AssignedStatus == "Sent" || w.AssignedStatus == "Accepted" || w.AssignedStatus == "Scheduled")).FirstOrDefault();
+
+            ServiceQuoteModel quote = new ServiceQuoteModel();
+            if (ws != null)
+            {
+                TECH_HIERARCHY techHView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == ws.Techid).FirstOrDefault();
+                
+                dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, workorder.CustomerZipCode);
+                if (travelDetails != null)
+                {
+                    var element = travelDetails.rows[0].elements[0];
+                    decimal distance = element == null ? 0 : (element.distance == null ? 0 : element.distance.value * (decimal)0.000621371192);
+                    distance = Math.Round(distance, 2);
+                    decimal travelTime = element == null ? Convert.ToDecimal(1800.00 / 3600.00) : (element.duration == null ? Convert.ToDecimal(1800.00 / 3600.00) : element.duration.value / 3600.00);
+                    decimal duration = Math.Round(travelTime, 2);
+
+                    decimal TravelHour = Convert.ToDecimal(Math.Truncate(duration));
+                    decimal TravelMinutes = (Convert.ToDecimal(travelTime) - (TravelHour)) * Convert.ToDecimal(60.00);
+
+                    quote.TravelDistance = distance + " Miles";
+                    quote.Distance = distance.ToString();
+                    quote.TravelTime = "Hr " + Math.Abs(TravelHour) + ":" + Math.Round(TravelMinutes) + " Minutes";
+
+                    PricingDetail priceDtls = Utility.GetPricingDetails(workorder.CustomerID, ws.Techid, workorder.CustomerState, FarmerBrothersEntitites);
+
+
+                    decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
+                    quote.Labor = priceDtls == null ? 0 : (priceDtls.HourlyLablrRate == null ? 0 : Convert.ToDecimal(priceDtls.HourlyLablrRate)); // LaborCost;
+
+                    decimal TravelCost = priceDtls == null ? 0 : (priceDtls.HourlyTravlRate == null ? 0 : Convert.ToDecimal(priceDtls.HourlyTravlRate));
+
+                    List<FbWorkorderBillableSKUModel> partsList = new List<FbWorkorderBillableSKUModel>();
+
+                    FarmerBrothersEntitites.FBClosureParts.Where(s => s.SkuActive == true).Select(s => s.ItemNo).Distinct();
+                    decimal? pTotal = (from closureParts in FarmerBrothersEntitites.WorkorderParts
+                                       join sk in FarmerBrothersEntitites.Skus on closureParts.Sku equals sk.Sku1
+                                       where closureParts.WorkorderID == Workorderid
+                                       select (sk.SKUCost * closureParts.Quantity)).Sum();
+
+                    decimal partsTotal = pTotal == null ? 0 : Convert.ToDecimal(pTotal);
+
+                    quote.PartsTotal = partsTotal;
+
+                    decimal total = (duration * TravelCost) + LaborCost;
+                    quote.TotalServiceQuote = total;
+                }
+            }
+
+            return quote;
         }
 
         [HttpGet]
@@ -2280,7 +2433,7 @@ namespace FarmerBrothers.Controllers
             #region Generate WO Search Query
             woSearchSelectQuery.Append(@"select w.WorkorderID ,wt.description, w.WorkorderCallstatus, st.fbstatus, c.ServiceLevelCode,w.WorkorderEntryDate,w.AppointmentDate,
                                  w.CustomerName, w.CustomerCity, w.CustomerState, w.CustomerZipCode ,w.CustomerID, ws.TechName,ws.TechPhone,ws.ServiceCenterName,ws.AssignedStatus,
-                                 ws.ScheduleDate,ws.ModifiedScheduleDate,ws.ServiceCenterID,w.CustomerPO ");
+                                 ws.ScheduleDate,ws.ModifiedScheduleDate,ws.ServiceCenterID,w.CustomerPO,w.NTE ");
             
                 woSearchJoinQuery.Append(@" from workorder w WITH (NOLOCK)
                                         inner join dbo.Contact c WITH (NOLOCK) ON w.CustomerID = c.ContactID
@@ -3426,6 +3579,21 @@ namespace FarmerBrothers.Controllers
             return jsonResult;
         }
 
+        public JsonResult GetSkuCost(string skuValue)
+        {
+            decimal skuCost = 0;
+            Sku sku = FarmerBrothersEntitites.Skus.Where(s => s.Sku1 == skuValue).FirstOrDefault();
+            if (sku != null)
+            {
+                skuCost = sku.SKUCost != null ? Convert.ToDecimal(sku.SKUCost) : 0 ;
+            }
+
+            JsonResult jsonResult = new JsonResult();
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = skuCost };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
 
         public JsonResult GetNonTaggedManufacturer(string skuValue)
         {
@@ -3529,6 +3697,7 @@ namespace FarmerBrothers.Controllers
             DateTime currentTime = Utility.GetCurrentTime(workorderManagement.Customer.ZipCode, FarmerBrothersEntitites);
             switch (workorderManagement.Operation)
             {
+                case WorkOrderManagementSubmitType.SAVEANDPAY:
                 case WorkOrderManagementSubmitType.SAVE:
                     {
                         returnValue = -1;
@@ -3740,7 +3909,59 @@ namespace FarmerBrothers.Controllers
                              }
                          }*/
 
+                        if(workorderManagement.IsNewPartsOrder)
+                        {
+                            if(workorderManagement.WorkOrderParts.Count() == 0)
+                            {
+                                message += @"|At least one part is required for Parts order save!";
+                                isValid = false;
+                            }
+                            if (!workorderManagement.WorkOrder.DateNeeded.HasValue)
+                            {
+                                message += @"|Date Needed field is required!";
+                                isValid = false;
+                            }
+                            if (string.IsNullOrEmpty(workorderManagement.ShippingPriority) || workorderManagement.ShippingPriority == "0")
+                            {
+                                message += @"|Shipping Priority field is required!";
+                                isValid = false;
+                            }
 
+                            if(workorderManagement.IsCustomerAlternateAddress)
+                            {
+                                if(string.IsNullOrEmpty(workorderManagement.CustomerOtherPartsName))
+                                {
+                                    message += @"|Alternate Name field is required!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrEmpty(workorderManagement.CustomerOtherPartsContactName))
+                                {
+                                    message += @"|Alternate Contact Name field is required!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrEmpty(workorderManagement.CustomerOtherPartsAddress1))
+                                {
+                                    message += @"|Alternate Address field is required!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrEmpty(workorderManagement.CustomerOtherPartsCity))
+                                {
+                                    message += @"|Alternate City field is required!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrEmpty(workorderManagement.CustomerOtherPartsState) || workorderManagement.CustomerOtherPartsState.ToLower() == "n/a")
+                                {
+                                    message += @"|Alternate State field is required!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrEmpty(workorderManagement.CustomerOtherPartsZip))
+                                {
+                                    message += @"|Alternate Zip field is required!";
+                                    isValid = false;
+                                }
+                            }
+
+                        }
 
                         if (isValid == true)
                         {
@@ -3961,6 +4182,64 @@ namespace FarmerBrothers.Controllers
                                     isValid = false;
                                 }
 
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.StateofEquipment))
+                                {
+                                    message += @"|State of Equipment is not updated!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.ServiceDelayReason))
+                                {
+                                    message += @"|Service Reason is not updated!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.TroubleshootSteps))
+                                {
+                                    message += @"|Troubleshoot steps not updated!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.ReviewedBy))
+                                {
+                                    message += @"|Reviewed by not updated!";
+                                    isValid = false;
+                                }
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.IsUnderWarrenty))
+                                {
+                                    message += @"|Under Warrenty not updated!";
+                                    isValid = false;
+                                }
+                                if (!string.IsNullOrWhiteSpace(workOrderDetail.IsUnderWarrenty) && workOrderDetail.IsUnderWarrenty.ToLower() == "yes")
+                                {
+                                    if (string.IsNullOrWhiteSpace(workOrderDetail.WarrentyFor))
+                                    {
+                                        message += @"|Under WarrentyFor not updated!";
+                                        isValid = false;
+                                    }
+                                }
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.AdditionalFollowupReq))
+                                {
+                                    message += @"|Additional Followup not updated!";
+                                    isValid = false;
+                                }
+                                if (!string.IsNullOrWhiteSpace(workOrderDetail.AdditionalFollowupReq) && workOrderDetail.AdditionalFollowupReq.ToLower() == "yes")
+                                {
+                                    if (string.IsNullOrWhiteSpace(workOrderDetail.FollowupComments))
+                                    {
+                                        message += @"|Under Followup Comments not updated!";
+                                        isValid = false;
+                                    }
+                                }
+                                if (string.IsNullOrWhiteSpace(workOrderDetail.IsOperational))
+                                {
+                                    message += @"|Operational Field not updated!";
+                                    isValid = false;
+                                }
+                                //if (string.IsNullOrWhiteSpace(workOrderDetail.OperationalComments))
+                                //{
+                                //    message += @"|Operational Comments not updated!";
+                                //    isValid = false;
+                                //}
+
+
                                 if (string.IsNullOrWhiteSpace(workOrderDetail.ResponsibleTechName))
                                 {
                                     message += @"|Responsible Tech Name is not updated!";
@@ -3984,7 +4263,6 @@ namespace FarmerBrothers.Controllers
                                     message += @"|SignatureBy Required!";
                                     isValid = false;
                                 }
-
 
                                 if (workOrder.WorkorderEquipments.Count <= 0)
                                 {
@@ -4085,6 +4363,17 @@ namespace FarmerBrothers.Controllers
                                     if (!string.IsNullOrEmpty(wo.AuthTransactionId) && string.IsNullOrEmpty(wo.FinalTransactionId))
                                     {
                                         message = @"Please process the Credit Card from Email Link, before Closing the Event!";
+                                        isValid = false;
+                                    }
+                                }
+
+                                if (workorderManagement.IsServiceBillable == true)
+                                {
+                                    WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workorderManagement.WorkOrder.WorkorderID).FirstOrDefault();
+
+                                    if (string.IsNullOrEmpty(wo.FinalTransactionId))
+                                    {
+                                        message += @"Please process the Payment, before Closing the Event!";
                                         isValid = false;
                                     }
                                 }
@@ -4328,7 +4617,8 @@ namespace FarmerBrothers.Controllers
 
                     if(workorderManagement.IsNewPartsOrder == true)
                     {
-                        SendPartsOrderMail(workOrder.WorkorderID);
+                        //Commented this, as the Parts email is sent from AutoDispatch process
+                        //SendPartsOrderMail(workOrder.WorkorderID);
                     }
 
                     if (workorderManagement.WorkOrder.WorkorderID == 0 || FromERF)
@@ -4367,7 +4657,7 @@ namespace FarmerBrothers.Controllers
             int returnValue = 0;
             message = string.Empty;
             workOrder = null;
-
+            //FarmerBrothersEntitites = new FarmerBrothersEntities();
             if (operation == WorkOrderManagementSubmitType.CREATEWORKORDER)
             {
                 DateTime currentTime = Utility.GetCurrentTime(workorderManagement.Customer.ZipCode, FarmerBrothersEntitites);
@@ -4694,7 +4984,7 @@ namespace FarmerBrothers.Controllers
                             workOrder.WorkorderEquipCount = Convert.ToInt16(workorderManagement.WorkOrderEquipmentsRequested.Count());
 
 
-                            if (workorderManagement.WorkOrderEquipmentsRequested != null)
+                            if (workorderManagement.IsNewPartsOrder == false && workorderManagement.WorkOrderEquipmentsRequested != null)
                             {
                                 WorkOrderManagementEquipmentModel equipment = workorderManagement.WorkOrderEquipmentsRequested.Where(e => e.CallTypeID == 1200).FirstOrDefault();
                                 if (equipment != null)
@@ -6900,7 +7190,7 @@ namespace FarmerBrothers.Controllers
             }
         }
 
-        private void CreateSpawnWorkOrder(WorkorderManagementModel workorderManagement, List<WorkorderEquipment> equipment, out string message)
+        public void CreateSpawnWorkOrder(WorkorderManagementModel workorderManagement, List<WorkorderEquipment> equipment, out string message)
         {
             List<int?> uniqueSolutionIds = workorderManagement.WorkOrder.WorkorderEquipments.Select(x => x.Solutionid).Distinct().ToList();
 
@@ -7504,6 +7794,19 @@ namespace FarmerBrothers.Controllers
                     workOrderDetail.HardnessRating = workorderManagement.Closure.HardnessRating;
                     workOrderDetail.TotalDissolvedSolids = workorderManagement.Closure.TDS;
 
+                    workOrderDetail.StateofEquipment = workorderManagement.Closure.StateOfEquipment;
+                    workOrderDetail.ServiceDelayReason = workorderManagement.Closure.serviceDelayed;
+                    workOrderDetail.TroubleshootSteps = workorderManagement.Closure.troubleshootSteps;
+                    workOrderDetail.FollowupComments = workorderManagement.Closure.followupComments;
+                    //workOrderDetail.OperationalComments = workorderManagement.Closure.operationalComments;
+                    workOrderDetail.ReviewedBy = workorderManagement.Closure.ReviewedBy;
+
+                    workOrderDetail.IsUnderWarrenty = workorderManagement.Closure.IsUnderWarrenty;
+                    workOrderDetail.WarrentyFor = workorderManagement.Closure.WarrentyFor;
+                    workOrderDetail.AdditionalFollowupReq = workorderManagement.Closure.AdditionalFollowup;
+                    workOrderDetail.IsOperational = workorderManagement.Closure.Operational;
+
+
                     if (schedule != null)
                     {
                         workOrderDetail.ResponsibleTechid = schedule.Techid;
@@ -8021,6 +8324,7 @@ namespace FarmerBrothers.Controllers
                 WorkOrderPartModel partModel = equipmentFromModel.Parts.Where(wp => wp.PartsIssueid == workOrderPart.PartsIssueid).FirstOrDefault();
                 if (partModel != null)
                 {
+                    workOrderPart.PartReplenish = partModel.PartReplenish;
                     workOrderPart.Quantity = partModel.Quantity;
                     workOrderPart.Manufacturer = partModel.Manufacturer;
                     workOrderPart.Sku = partModel.Sku;
@@ -8042,6 +8346,7 @@ namespace FarmerBrothers.Controllers
                     WorkorderPart part = new WorkorderPart()
                     {
                         AssetID = equipment.Assetid,
+                        PartReplenish = newPart.PartReplenish,
                         Quantity = newPart.Quantity,
                         Manufacturer = newPart.Manufacturer,
                         Sku = newPart.Sku,
@@ -9974,17 +10279,17 @@ namespace FarmerBrothers.Controllers
             int parentId = string.IsNullOrEmpty(customer.PricingParentID) ? 0 : Convert.ToInt32(customer.PricingParentID);
             var custNotes = Utility.GetCustomreNotes(custId, parentId, FarmerBrothersEntitites);
 
-
+            //Removed Temporarily on Mike's say
             string BccEmailAddress = fromAddress;
-            ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
-            if (esmEscalation != null)
+            /* ESMCCMRSMEscalation esmEscalation = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == workOrder.CustomerZipCode).FirstOrDefault();
+           if (esmEscalation != null)
             {
                 fromAddress = esmEscalation.ESMEmail != null ? esmEscalation.ESMEmail : BccEmailAddress;
             }
             else
             {
                 fromAddress = BccEmailAddress;
-            }
+            }*/
 
             StringBuilder salesEmailBodywithLinks = GetEmailBodyWithLinks(workOrder, subject, toAddress, fromAddress, techId, mailType, isResponsible, additionalMessage, mailFrom, isFromEmailCloserLink, SalesEmailAddress, esmEmailAddress);
             StringBuilder salesEmailBodywithOutLinks = GetEmailBodyWithOutLinks(workOrder, subject, toAddress, fromAddress, techId, mailType, isResponsible, additionalMessage, mailFrom, isFromEmailCloserLink, SalesEmailAddress, esmEmailAddress);
@@ -10336,13 +10641,94 @@ namespace FarmerBrothers.Controllers
                     ToAddr = toAddress;
                 }
 
-                
+
 
 
                 EmailUtility eu = new EmailUtility();
                 eu.SendEmail(fromAddress, ToAddr, CcAddr, subject, salesEmailBody.ToString());
 
-                
+                //#region Comment out this sectiona nd uncomment the above when Needed
+
+                //string contentId = Guid.NewGuid().ToString();
+                //string logoPath = System.AppDomain.CurrentDomain.BaseDirectory.ToString() + "img\\mainlogo.jpg";
+
+
+
+                //salesEmailBody = salesEmailBody.Replace("cid:logo", "cid:" + contentId);
+
+                //AlternateView avHtml = AlternateView.CreateAlternateViewFromString
+                //   (salesEmailBody.ToString(), null, MediaTypeNames.Text.Html);
+
+                //LinkedResource inline = new LinkedResource(logoPath, MediaTypeNames.Image.Jpeg);
+                //inline.ContentId = contentId;
+                //avHtml.LinkedResources.Add(inline);
+
+                //var message = new MailMessage();
+
+                //message.AlternateViews.Add(avHtml);
+
+
+                //message.Body = salesEmailBody.ToString();
+
+                //if (tchView != null && tchView.FamilyAff != "SP")
+                //{
+                //    message.Priority = MailPriority.High;
+                //}
+
+                //string mailTo = ToAddr;
+                //string mailCC = string.Empty;
+                //if (!string.IsNullOrWhiteSpace(mailTo))
+                //{
+                //    if (mailTo.Contains("#"))
+                //    {
+                //        string[] mailCCAddress = mailTo.Split('#');
+                //        if (mailCCAddress.Count() > 0)
+                //        {
+                //            string[] addresses = mailCCAddress[0].Split(';');
+                //            foreach (string address in addresses)
+                //            {
+                //                if (!string.IsNullOrWhiteSpace(address))
+                //                {
+                //                    message.To.Add(new MailAddress(address));
+                //                }
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        string[] addresses = mailTo.Split(';');
+                //        foreach (string address in addresses)
+                //        {
+                //            if (!string.IsNullOrWhiteSpace(address))
+                //            {
+                //                message.To.Add(new MailAddress(address));
+                //            }
+                //        }
+                //    }
+
+                //    message.From = new MailAddress(fromAddress);
+                //    message.Subject = subject.ToString();
+                //    message.IsBodyHtml = true;
+
+                //    using (var smtp = new SmtpClient())
+                //    {
+                //        smtp.Host = ConfigurationManager.AppSettings["MailServer"];
+                //        smtp.Port = 25;
+
+                //        try
+                //        {
+                //            smtp.Send(message);
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            result = false;
+                //        }
+                //    }
+
+                //}
+                //#endregion
+
+
             }
             return result;
         }
@@ -10378,13 +10764,92 @@ namespace FarmerBrothers.Controllers
                     CcAddr = ccMailAddress;
                 }
 
-                
-
+                if (!string.IsNullOrEmpty(SalesEmailAddress))
+                {
+                    CcAddr += ";" + SalesEmailAddress;                    
+                }
 
                 EmailUtility eu = new EmailUtility();
                 eu.SendEmail(fromAddress, ToAddr, CcAddr, subject, salesEmailBody.ToString());
 
+                //#region Comment out this sectiona nd uncomment the above when Needed
+                //string contentId = Guid.NewGuid().ToString();
+                //string logoPath = System.AppDomain.CurrentDomain.BaseDirectory.ToString() + "img\\mainlogo.jpg";
 
+
+
+                //salesEmailBody = salesEmailBody.Replace("cid:logo", "cid:" + contentId);
+
+                //AlternateView avHtml = AlternateView.CreateAlternateViewFromString
+                //   (salesEmailBody.ToString(), null, MediaTypeNames.Text.Html);
+
+                //LinkedResource inline = new LinkedResource(logoPath, MediaTypeNames.Image.Jpeg);
+                //inline.ContentId = contentId;
+                //avHtml.LinkedResources.Add(inline);
+
+                //var message = new MailMessage();
+
+                //message.AlternateViews.Add(avHtml);
+                //message.Body = salesEmailBody.ToString();
+
+                //if (tchView != null && tchView.FamilyAff != "SP")
+                //{
+                //    message.Priority = MailPriority.High;
+                //}
+
+
+                //string mailCC = CcAddr;
+                //if (!string.IsNullOrWhiteSpace(mailCC))
+                //{
+                //    if (mailCC.Contains("#"))
+                //    {
+                //        string[] mailCCAddress = mailCC.Split('#');
+                //        if (mailCCAddress.Count() > 0)
+                //        {
+                //            string[] addresses = mailCCAddress[1].Split(';');
+                //            foreach (string address in addresses)
+                //            {
+                //                if (!string.IsNullOrWhiteSpace(address))
+                //                {
+                //                    message.CC.Add(new MailAddress(address));
+                //                }
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        string[] addresses = mailCC.Split(';');
+                //        foreach (string address in addresses)
+                //        {
+                //            if (!string.IsNullOrWhiteSpace(address))
+                //            {
+                //                message.CC.Add(new MailAddress(address));
+                //            }
+                //        }
+                //    }
+
+
+                //    message.From = new MailAddress(fromAddress);
+                //    message.Subject = subject.ToString();
+                //    message.IsBodyHtml = true;
+
+                //    using (var smtp = new SmtpClient())
+                //    {
+                //        smtp.Host = ConfigurationManager.AppSettings["MailServer"];
+                //        smtp.Port = 25;
+
+                //        try
+                //        {
+                //            smtp.Send(message);
+                //        }
+                //        catch (Exception ex)
+                //        {
+                //            result = false;
+                //        }
+                //    }
+
+                //}
+                //#endregion
             }
             return result;
         }
@@ -11944,6 +12409,82 @@ namespace FarmerBrothers.Controllers
             return Json(value, JsonRequestBehavior.AllowGet);
         }
 
+        [HttpPost]
+        public JsonResult UpdateWorkorderPartsGridData(UpdateWorkorderPartsModel PartsItems)
+        {
+            JsonResult jsonResult = new JsonResult();
+            List<WorkOrderPartModel> ResultSet = new List<WorkOrderPartModel>();
+
+            //foreach (BillingModel item in BillingItems.BillingList)
+            {
+
+                WorkOrderPartModel tmpData = PartsItems.PartsList.Where(b => b.PartsIssueid == PartsItems.PartsIssueid).FirstOrDefault();
+                if (PartsItems.UpdateType.ToLower() == "save")
+                {                   
+                    if (tmpData == null)
+                    {
+                        int rowId = 0;
+                        if (TempData["PartsIssueid"] != null)
+                        {
+                            rowId = Convert.ToInt32(TempData["PartsIssueid"]);
+                            rowId = rowId + 1;
+                        }
+                        else
+                        {
+                            rowId = 1;
+                        }
+                        TempData["PartsIssueid"] = rowId;
+
+                        WorkOrderPartModel newItem = new WorkOrderPartModel();
+                        newItem.PartsIssueid = rowId;
+                        newItem.PartReplenish = PartsItems.PartReplenish;
+                        newItem.Sku = PartsItems.Sku;
+                        newItem.skuCost = PartsItems.skuCost;
+                        newItem.Description = PartsItems.Description;
+                        newItem.Manufacturer = PartsItems.Manufacturer;
+                        newItem.partsTotal = PartsItems.partsTotal;
+                        newItem.Quantity = PartsItems.Quantity;
+
+                        PartsItems.PartsList.Add(newItem);
+                    }
+                    else
+                    {
+                        if (tmpData.PartsIssueid == 0 || tmpData.PartsIssueid == null)
+                        {
+                            int rowId = 0;
+                            if (TempData["PartsIssueid"] != null)
+                            {
+                                rowId = Convert.ToInt32(TempData["PartsIssueid"]);
+                                rowId = rowId + 1;
+                            }
+                            else
+                            {
+                                rowId = 1;
+                            }
+                            TempData["PartsIssueid"] = rowId;
+                            tmpData.PartsIssueid = rowId;
+                        }
+                        tmpData.PartReplenish = PartsItems.PartReplenish;
+                        tmpData.Sku = PartsItems.Sku;
+                        tmpData.skuCost = PartsItems.skuCost;
+                        tmpData.Description = PartsItems.Description;
+                        tmpData.Manufacturer = PartsItems.Manufacturer;
+                        tmpData.partsTotal = PartsItems.partsTotal;
+                        tmpData.Quantity = PartsItems.Quantity;
+                    }
+                }
+                else if (PartsItems.UpdateType.ToLower() == "delete")
+                {
+                    //WorkOrderPartModel tmpDelData = PartsItems.PartsList.Where(b => b.Sku == PartsItems.Sku && b.Quantity == PartsItems.Quantity && b.Description == PartsItems.Description && b.Manufacturer == PartsItems.Manufacturer).FirstOrDefault();
+                    PartsItems.PartsList.Remove(tmpData);
+                }
+            }           
+
+            jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = PartsItems.PartsList };
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
         public ActionResult WorkorderPartsInsert(WorkOrderPartModel value)
         {
             IList<WorkOrderPartModel> workOrderParts = TempData["WorkOrderParts"] as IList<WorkOrderPartModel>;
@@ -12056,7 +12597,10 @@ namespace FarmerBrothers.Controllers
                     }
 
                     StringBuilder subject = new StringBuilder();
-                    if (workOrder.PriorityCode == 1 || workOrder.PriorityCode == 2 || workOrder.PriorityCode == 3 || workOrder.PriorityCode == 4)
+                    AllFBStatu priority = FarmerBrothersEntitites.AllFBStatus.Where(p => p.FBStatusID == workOrder.PriorityCode).First();
+
+                    if (priority.FBStatus.Contains("critical"))
+                    //if (workOrder.PriorityCode == 1 || workOrder.PriorityCode == 2 || workOrder.PriorityCode == 3 || workOrder.PriorityCode == 4)
                     {
                         subject.Append("CRITICAL WO: ");
                     }
@@ -12211,7 +12755,14 @@ namespace FarmerBrothers.Controllers
             {
                 foreach (WorkorderPart workOrderPart in workorderParts)
                 {
-                    data.Add(new WorkorderPart() { Quantity = workOrderPart.Quantity, Manufacturer = workOrderPart.Manufacturer != null ? workOrderPart.Manufacturer.Trim() : "", Sku = workOrderPart.Sku, Description = workOrderPart.Description, PartsIssueid = workOrderPart.PartsIssueid });
+                    Sku skuItem = FarmerBrothersEntitites.Skus.Where(s => s.Sku1 == workOrderPart.Sku).FirstOrDefault();
+                    decimal skuCost = 0;
+                    if(skuItem != null)
+                    {
+                        skuCost = skuItem.SKUCost == null ? 0 : Convert.ToDecimal(skuItem.SKUCost);
+                    }
+
+                    data.Add(new WorkorderPart() { Quantity = workOrderPart.Quantity, Manufacturer = workOrderPart.Manufacturer != null ? workOrderPart.Manufacturer.Trim() : "", Sku = workOrderPart.Sku, Description = workOrderPart.Description, PartsIssueid = workOrderPart.PartsIssueid, StandardCost = skuCost, PartReplenish = workOrderPart.PartReplenish });
                 }
             }
 
@@ -14244,7 +14795,10 @@ namespace FarmerBrothers.Controllers
             if (workOrder != null)
             {
                 StringBuilder subject = new StringBuilder();
-                if (workOrder.PriorityCode == 1 || workOrder.PriorityCode == 2 || workOrder.PriorityCode == 3 || workOrder.PriorityCode == 4)
+                AllFBStatu priority = FarmerBrothersEntitites.AllFBStatus.Where(p => p.FBStatusID == workOrder.PriorityCode).First();
+
+                if(priority.FBStatus.Contains("critical"))
+                //if (workOrder.PriorityCode == 1 || workOrder.PriorityCode == 2 || workOrder.PriorityCode == 3 || workOrder.PriorityCode == 4)
                 {
                     subject.Append("CRITICAL WO: ");
                 }
@@ -14424,8 +14978,8 @@ namespace FarmerBrothers.Controllers
             salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Quantity</th>");
             salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Vendor#</th>");
             salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Description</th>");
-            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Unit Cost </th>");
-            salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Total </th>");
+           // salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Unit Cost </th>");
+            //salesEmailBody.Append("<th style='border: solid 1px;padding: 0.5em;background: #d9d5d5;'>Total </th>");
             salesEmailBody.Append("</tr>");
 
             /*var partsList = (from wp in FarmerBrothersEntitites.WorkorderParts
@@ -14467,19 +15021,21 @@ namespace FarmerBrothers.Controllers
                     salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + wp.Manufacturer + "</td>");
                     salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + wp.Quantity + "</td>");
 
-                    Sku sk = FarmerBrothersEntitites.Skus.Where(s => s.Sku1 == wp.Sku).FirstOrDefault();
+                    FBClosurePart prt = FarmerBrothersEntitites.FBClosureParts.Where(s => s.ItemNo == wp.Sku).FirstOrDefault();
 
                     decimal totl = 0;
 
-                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + (sk == null ? "" : sk.VEND_ITEM_NUMBER) + "</td>");
-                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + (sk == null ? "" : sk.Description) + "</td>");
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + (prt == null ? "" : prt.VendorNo) + "</td>");
+                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + (prt == null ? "" : prt.Description) + "</td>");
+
+                    Sku sk = FarmerBrothersEntitites.Skus.Where(s => s.Sku1 == wp.Sku).FirstOrDefault();
 
                     decimal? unitCost = sk == null ? 0 : sk.SKUCost;
-                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + unitCost + "</td>");
+                    //salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + unitCost + "</td>");
 
                     totl = Convert.ToDecimal(wp.Quantity * unitCost);
 
-                    salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + totl + "</td>");
+                    //salesEmailBody.Append("<td style='border: solid 1px;padding: 0.5em;'>" + totl + "</td>");
                     salesEmailBody.Append("</tr>");
                 }
 
@@ -15053,9 +15609,6 @@ namespace FarmerBrothers.Controllers
             return Json("Success", JsonRequestBehavior.AllowGet);
         }
 
-
-
-
         private static string GetEmailString(int? WorkorderID)
         {
             FarmerBrothersEntities fbEntities = new FarmerBrothersEntities();
@@ -15614,6 +16167,229 @@ ENTIRE AGREEMENT; ASSIGNMENT:&nbsp;<span style='font-weight:normal;text-align:ju
 </html>";
             return htmlString;
         }
+
+        //public ActionResult ProcessCard(int workOrderId, int techId)
+        //{
+        //    WorkOrder wo = FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+
+        //    WorkorderSchedule techWorkOrderSchedule = FarmerBrothersEntitites.WorkorderSchedules.Where(w => w.WorkorderID == workOrderId && w.Techid == techId).FirstOrDefault();           
+
+        //    ProcessCardModel cardModel = new ProcessCardModel();
+        //    List<FbWorkorderBillableSKUModel> partsList = new List<FbWorkorderBillableSKUModel>();
+
+        //    var evtPrtList = (from closureSku in FarmerBrothersEntitites.WorkorderParts
+        //                      where closureSku.WorkorderID == workOrderId && (closureSku.AssetID == null || closureSku.AssetID == 0)
+        //                      select new
+        //                      {
+        //                          sku = closureSku.Sku,
+        //                          des = closureSku.Description,
+        //                          qty = closureSku.Quantity,
+        //                          evtId = closureSku.WorkorderID,
+        //                          unitcost = closureSku.Total / closureSku.Quantity,
+        //                          Mnftr = closureSku.Manufacturer
+        //                      }).ToList();
+
+
+        //    cardModel.PartsList = new List<FbWorkorderBillableSKUModel>();
+        //    foreach (var wp in evtPrtList)
+        //    {
+        //        FbWorkorderBillableSKUModel fbsm = new FbWorkorderBillableSKUModel();
+        //        fbsm.SKU = wp.sku;
+        //        fbsm.WorkorderID = Convert.ToInt32(wp.evtId);
+        //        fbsm.UnitPrice = wp.unitcost;
+        //        fbsm.Qty = wp.qty;
+        //        fbsm.Description = wp.des;
+
+        //        cardModel.PartsList.Add(fbsm);
+        //    }
+
+        //    cardModel.SKUList = DispatchResponseController.CloserSKU(FarmerBrothersEntitites);
+
+        //    List<BillingItem> blngItmsList = FarmerBrothersEntitites.BillingItems.Where(b => b.IsActive == true).ToList();
+        //    List<CategoryModel> billingItms = new List<CategoryModel>();
+        //    foreach (BillingItem item in blngItmsList)
+        //    {
+        //        billingItms.Add(new CategoryModel(item.BillingName));
+        //    }
+        //    cardModel.BillingItems = billingItms;
+
+        //    List<BillingModel> bmList = new List<BillingModel>();
+        //    WorkorderDetail wd = FarmerBrothersEntitites.WorkorderDetails.Where(w => w.WorkorderID == workOrderId).FirstOrDefault();
+        //    TimeSpan servicetimeDiff = TimeSpan.Zero, trvlTimeDiff = TimeSpan.Zero;
+        //    if (wd != null)
+        //    {
+        //        if (wd.StartDateTime != null && wd.ArrivalDateTime != null)
+        //        {
+        //            DateTime arrival = Convert.ToDateTime(wd.ArrivalDateTime);
+        //            DateTime strt = Convert.ToDateTime(wd.StartDateTime);
+        //            trvlTimeDiff = arrival.Subtract(strt);
+        //        }
+
+        //        if (wd.ArrivalDateTime != null && wd.CompletionDateTime != null)
+        //        {
+        //            DateTime arrival = Convert.ToDateTime(wd.ArrivalDateTime);
+        //            DateTime cmplt = Convert.ToDateTime(wd.CompletionDateTime);
+        //            servicetimeDiff = cmplt.Subtract(arrival);
+        //        }
+        //    }
+
+        //    Contact contact = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == wo.CustomerID).FirstOrDefault();
+
+        //    var ws = (from sc in FarmerBrothersEntitites.WorkorderSchedules
+        //              join t in FarmerBrothersEntitites.TECH_HIERARCHY on sc.Techid equals t.DealerId
+        //              where sc.WorkorderID == workOrderId && (sc.AssignedStatus.ToLower() == "sent" || sc.AssignedStatus.ToLower() == "accepted")
+        //              //&& t.FamilyAff == "SPT"
+        //              select new
+        //              {
+        //                  Techid = sc.Techid,
+        //                  AssignedStatus = sc.AssignedStatus,
+        //                  WorkorderID = sc.WorkorderID,
+        //                  familyAff = t.FamilyAff
+        //              }).FirstOrDefault();
+
+
+        //    PricingDetail priceDtls = Utility.GetPricingDetails(wo.CustomerID, ws.Techid, wo.CustomerState, FarmerBrothersEntitites);
+            
+        //    List<WorkorderBillingDetail> wbdList = FarmerBrothersEntitites.WorkorderBillingDetails.Where(w => w.WorkorderId == workOrderId).ToList();
+        //    foreach (WorkorderBillingDetail bitem in wbdList)
+        //    {
+        //        BillingItem blngItm = FarmerBrothersEntitites.BillingItems.Where(b => b.BillingCode == bitem.BillingCode).FirstOrDefault();
+
+        //        if (blngItm != null)
+        //        {
+        //            decimal tot = 0;
+
+        //            BillingModel bmItem = new BillingModel();
+        //            bmItem.BillingType = blngItm.BillingName;
+        //            bmItem.BillingCode = bitem.BillingCode;
+        //            bmItem.Quantity = Convert.ToInt32(bitem.Quantity);
+
+        //            if (blngItm.BillingName.ToLower() == "travel time")
+        //            {
+        //                decimal? travelAmt = priceDtls == null ? 0 : priceDtls.HourlyTravlRate;
+
+        //                bmItem.Duration = new DateTime(trvlTimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+        //                bmItem.Cost = Convert.ToDecimal(travelAmt);
+        //                tot = Convert.ToDecimal(travelAmt * Convert.ToDecimal(trvlTimeDiff.TotalHours));
+        //                bmItem.Total = tot;
+        //            }
+        //            else if (blngItm.BillingName.ToLower() == "labor")
+        //            {
+        //                decimal? laborAmt = priceDtls == null ? 0 : priceDtls.HourlyLablrRate;
+
+        //                bmItem.Duration = new DateTime(servicetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+        //                bmItem.Cost = Convert.ToDecimal(laborAmt);
+        //                tot = Convert.ToDecimal(laborAmt * Convert.ToDecimal(servicetimeDiff.TotalHours));
+        //                bmItem.Total = tot;
+        //            }
+        //            else
+        //            {
+        //                bmItem.Duration = new DateTime(36000000000).ToString("HH:mm") + " Hrs";
+        //                bmItem.Cost = Convert.ToDecimal(blngItm.UnitPrice);
+        //                tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+        //                bmItem.Total = tot;
+        //            }
+
+
+        //            cardModel.BillingTotal += tot;
+        //            bmList.Add(bmItem);
+        //        }
+        //    }
+
+
+        //    if (string.IsNullOrEmpty(wo.FinalTransactionId))
+        //    {
+        //        string StartTime = null, ArrivalTime = null, CompletionTime = null;
+        //        if (wd != null)
+        //        {
+        //            StartTime = wd.StartDateTime.ToString().Trim();
+        //            ArrivalTime = wd.ArrivalDateTime.ToString().Trim();
+        //            CompletionTime = wd.CompletionDateTime.ToString().Trim();
+        //        }
+
+        //        decimal travelCost = 0, laborCost = 0;
+        //        if (!string.IsNullOrEmpty(StartTime) && !string.IsNullOrEmpty(ArrivalTime))
+        //        {
+        //            DateTime arrival = Convert.ToDateTime(ArrivalTime);
+        //            DateTime strt = Convert.ToDateTime(StartTime);
+        //            TimeSpan timeDiff = arrival.Subtract(strt);
+
+        //            BillingItem TravelItem = blngItmsList.Where(a => a.BillingName.ToLower() == "travel time").FirstOrDefault();
+        //            decimal? travelAmt = priceDtls == null ? 0 : priceDtls.HourlyTravlRate;
+        //            travelCost = Convert.ToDecimal(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+        //            if (travelCost >= 0)
+        //            {
+        //                BillingModel bmItem = new BillingModel();
+        //                bmItem.BillingType = TravelItem.BillingName;
+        //                bmItem.BillingCode = TravelItem.BillingCode;
+        //                bmItem.Quantity = 1;
+        //                bmItem.Duration = new DateTime(timeDiff.Ticks).ToString("HH:mm") + " Hrs";
+        //                bmItem.Cost = Convert.ToDecimal(travelAmt);
+        //                //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+        //                //bmItem.Total = tot;
+        //                bmItem.Total = travelCost;
+
+        //                //cardModel.BillingTotal += tot;
+        //                cardModel.BillingTotal += travelCost;
+        //                bmList.Add(bmItem);
+        //            }
+        //        }
+
+        //        if (!string.IsNullOrEmpty(CompletionTime) && !string.IsNullOrEmpty(ArrivalTime))
+        //        {
+        //            DateTime arrival = Convert.ToDateTime(ArrivalTime);
+        //            DateTime cmplt = Convert.ToDateTime(CompletionTime);
+        //            TimeSpan srvcetimeDiff = cmplt.Subtract(arrival);
+
+        //            BillingItem laborItem = blngItmsList.Where(a => a.BillingName.ToLower() == "labor").FirstOrDefault();
+        //            decimal? laborAmt = priceDtls == null ? 0 : priceDtls.HourlyLablrRate;
+        //            laborCost = Convert.ToDecimal(laborAmt * Convert.ToDecimal(srvcetimeDiff.TotalHours));
+
+        //            if (laborCost >= 0)
+        //            {
+        //                BillingModel bmItem = new BillingModel();
+        //                bmItem.BillingType = laborItem.BillingName;
+        //                bmItem.BillingCode = laborItem.BillingCode;
+        //                bmItem.Quantity = 1;
+        //                bmItem.Duration = new DateTime(srvcetimeDiff.Ticks).ToString("HH:mm") + " Hrs";
+        //                bmItem.Cost = Convert.ToDecimal(laborAmt);
+        //                //decimal tot = Convert.ToDecimal(bmItem.Quantity * bmItem.Cost);
+        //                //bmItem.Total = tot;
+        //                bmItem.Total = laborCost;
+
+        //                //cardModel.BillingTotal += tot;
+        //                cardModel.BillingTotal += laborCost;
+        //                bmList.Add(bmItem);
+        //            }
+
+        //        }
+
+        //    }
+
+
+        //    StateTax st = FarmerBrothersEntitites.StateTaxes.Where(s => s.ZipCode == wo.CustomerZipCode).FirstOrDefault();
+        //    if (st != null)
+        //    {
+        //        cardModel.SaleTax = Convert.ToDecimal(st.StateRate);
+        //    }
+
+        //    cardModel.PartsDiscount = priceDtls == null ? 0 : Convert.ToDecimal(priceDtls.PartsDiscount);
+        //    cardModel.BillingDetails = bmList;
+        //    cardModel.WorkorderId = workOrderId;
+        //    cardModel.FinalTransactionId = wo.FinalTransactionId;
+        //    cardModel.WorkorderEntryDate = wo.WorkorderEntryDate;
+        //    cardModel.StartDateTime = wd.StartDateTime;
+        //    cardModel.ArrivalDateTime = wd.ArrivalDateTime;
+        //    cardModel.CompletionDateTime = wd.CompletionDateTime;
+
+        //    BillingItem prePaymentTravle = blngItmsList.Where(a => a.BillingName.ToLower() == "pre-payment travel").FirstOrDefault();
+        //    cardModel.PreTravelCost = prePaymentTravle == null ? 0 : Convert.ToDecimal(prePaymentTravle.UnitPrice);
+
+
+        //    return View(cardModel);
+        //}
+
 
     }
 }

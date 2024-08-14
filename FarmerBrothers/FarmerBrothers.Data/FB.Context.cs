@@ -42,7 +42,6 @@ namespace FarmerBrothers.Data
         public virtual DbSet<ContingentDetail> ContingentDetails { get; set; }
         public virtual DbSet<ElectricalPhaseList> ElectricalPhaseLists { get; set; }
         public virtual DbSet<EquipType> EquipTypes { get; set; }
-        public virtual DbSet<Erf> Erfs { get; set; }
         public virtual DbSet<ERFBranchDetail> ERFBranchDetails { get; set; }
         public virtual DbSet<ERFOrderType> ERFOrderTypes { get; set; }
         public virtual DbSet<ErfWorkorderLog> ErfWorkorderLogs { get; set; }
@@ -110,13 +109,11 @@ namespace FarmerBrothers.Data
         public virtual DbSet<WaterLineList> WaterLineLists { get; set; }
         public virtual DbSet<WorkorderBillingDetail> WorkorderBillingDetails { get; set; }
         public virtual DbSet<WorkOrderBrand> WorkOrderBrands { get; set; }
-        public virtual DbSet<WorkorderDetail> WorkorderDetails { get; set; }
         public virtual DbSet<WorkorderEquipment> WorkorderEquipments { get; set; }
         public virtual DbSet<WorkorderEquipmentRequested> WorkorderEquipmentRequesteds { get; set; }
         public virtual DbSet<WorkorderImage> WorkorderImages { get; set; }
         public virtual DbSet<WorkorderInstallationSurvey> WorkorderInstallationSurveys { get; set; }
         public virtual DbSet<WorkorderNonAudit> WorkorderNonAudits { get; set; }
-        public virtual DbSet<WorkorderPart> WorkorderParts { get; set; }
         public virtual DbSet<WorkorderReasonlog> WorkorderReasonlogs { get; set; }
         public virtual DbSet<WorkorderSavedSearch> WorkorderSavedSearches { get; set; }
         public virtual DbSet<WorkorderSchedule> WorkorderSchedules { get; set; }
@@ -137,11 +134,15 @@ namespace FarmerBrothers.Data
         public virtual DbSet<V_OriginalCallDetails> V_OriginalCallDetails { get; set; }
         public virtual DbSet<VW_FBRoleFunction> VW_FBRoleFunction { get; set; }
         public virtual DbSet<VW_tech_Hierarchy> VW_tech_Hierarchy { get; set; }
-        public virtual DbSet<PricingDetail> PricingDetails { get; set; }
         public virtual DbSet<CustomCriteria> CustomCriterias { get; set; }
         public virtual DbSet<FBCustomerServiceDistribution> FBCustomerServiceDistributions { get; set; }
         public virtual DbSet<FBCustomerNote> FBCustomerNotes { get; set; }
+        public virtual DbSet<WorkorderDetail> WorkorderDetails { get; set; }
+        public virtual DbSet<PricingDetail> PricingDetails { get; set; }
+        public virtual DbSet<Erf> Erfs { get; set; }
         public virtual DbSet<WorkOrder> WorkOrders { get; set; }
+        public virtual DbSet<CCInvoiceDetail> CCInvoiceDetails { get; set; }
+        public virtual DbSet<WorkorderPart> WorkorderParts { get; set; }
     
         public virtual int USP_AfterHoursClosestTechDispatch_Details(string customerZip)
         {

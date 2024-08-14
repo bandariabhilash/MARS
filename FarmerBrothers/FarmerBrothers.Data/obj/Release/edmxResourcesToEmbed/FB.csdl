@@ -154,7 +154,6 @@
     <EntitySet Name="ContingentDetails" EntityType="FarmerBrothers.Data.ContingentDetail" />
     <EntitySet Name="ElectricalPhaseLists" EntityType="FarmerBrothers.Data.ElectricalPhaseList" />
     <EntitySet Name="EquipTypes" EntityType="FarmerBrothers.Data.EquipType" />
-    <EntitySet Name="Erfs" EntityType="FarmerBrothers.Data.Erf" />
     <EntitySet Name="ERFBranchDetails" EntityType="FarmerBrothers.Data.ERFBranchDetail" />
     <EntitySet Name="ERFOrderTypes" EntityType="FarmerBrothers.Data.ERFOrderType" />
     <EntitySet Name="ErfWorkorderLogs" EntityType="FarmerBrothers.Data.ErfWorkorderLog" />
@@ -222,13 +221,11 @@
     <EntitySet Name="WaterLineLists" EntityType="FarmerBrothers.Data.WaterLineList" />
     <EntitySet Name="WorkorderBillingDetails" EntityType="FarmerBrothers.Data.WorkorderBillingDetail" />
     <EntitySet Name="WorkOrderBrands" EntityType="FarmerBrothers.Data.WorkOrderBrand" />
-    <EntitySet Name="WorkorderDetails" EntityType="FarmerBrothers.Data.WorkorderDetail" />
     <EntitySet Name="WorkorderEquipments" EntityType="FarmerBrothers.Data.WorkorderEquipment" />
     <EntitySet Name="WorkorderEquipmentRequesteds" EntityType="FarmerBrothers.Data.WorkorderEquipmentRequested" />
     <EntitySet Name="WorkorderImages" EntityType="FarmerBrothers.Data.WorkorderImage" />
     <EntitySet Name="WorkorderInstallationSurveys" EntityType="FarmerBrothers.Data.WorkorderInstallationSurvey" />
     <EntitySet Name="WorkorderNonAudits" EntityType="FarmerBrothers.Data.WorkorderNonAudit" />
-    <EntitySet Name="WorkorderParts" EntityType="FarmerBrothers.Data.WorkorderPart" />
     <EntitySet Name="WorkorderReasonlogs" EntityType="FarmerBrothers.Data.WorkorderReasonlog" />
     <EntitySet Name="WorkorderSavedSearches" EntityType="FarmerBrothers.Data.WorkorderSavedSearch" />
     <EntitySet Name="WorkorderSchedules" EntityType="FarmerBrothers.Data.WorkorderSchedule" />
@@ -252,14 +249,6 @@
     <AssociationSet Name="FK_UserApplication_Application" Association="FarmerBrothers.Data.FK_UserApplication_Application">
       <End Role="Application" EntitySet="Applications" />
       <End Role="UserApplication" EntitySet="UserApplications" />
-    </AssociationSet>
-    <AssociationSet Name="FK_FBERFEquipment_Erf" Association="FarmerBrothers.Data.FK_FBERFEquipment_Erf">
-      <End Role="Erf" EntitySet="Erfs" />
-      <End Role="FBERFEquipment" EntitySet="FBERFEquipments" />
-    </AssociationSet>
-    <AssociationSet Name="FK_FBERFExpendable_FBERFExpendable" Association="FarmerBrothers.Data.FK_FBERFExpendable_FBERFExpendable">
-      <End Role="Erf" EntitySet="Erfs" />
-      <End Role="FBERFExpendable" EntitySet="FBERFExpendables" />
     </AssociationSet>
     <AssociationSet Name="FK_FBActivityLog_FbUserMaster" Association="FarmerBrothers.Data.FK_FBActivityLog_FbUserMaster">
       <End Role="FbUserMaster" EntitySet="FbUserMasters" />
@@ -305,11 +294,6 @@
       <End Role="WorkorderEquipment" EntitySet="WorkorderEquipments" />
       <End Role="WorkorderServiceClaim" EntitySet="WorkorderServiceClaims" />
     </AssociationSet>
-    <EntitySet Name="PricingDetails" EntityType="FarmerBrothers.Data.PricingDetail" />
-    <AssociationSet Name="FK__PricingDe__Prici__5F141958" Association="FarmerBrothers.Data.FK__PricingDe__Prici__5F141958">
-      <End Role="PricingType" EntitySet="PricingTypes" />
-      <End Role="PricingDetail" EntitySet="PricingDetails" />
-    </AssociationSet>
     <EntitySet Name="CustomCriterias" EntityType="FarmerBrothers.Data.CustomCriteria" />
     <EntitySet Name="FBCustomerServiceDistributions" EntityType="FarmerBrothers.Data.FBCustomerServiceDistribution" />
     <EntitySet Name="FBCustomerNotes" EntityType="FarmerBrothers.Data.FBCustomerNote" />
@@ -321,6 +305,21 @@
       <Parameter Name="StartDate" Mode="In" Type="String" />
       <Parameter Name="EndDate" Mode="In" Type="String" />
     </FunctionImport>
+    <EntitySet Name="WorkorderDetails" EntityType="FarmerBrothers.Data.WorkorderDetail" />
+    <EntitySet Name="PricingDetails" EntityType="FarmerBrothers.Data.PricingDetail" />
+    <AssociationSet Name="FK__PricingDe__Prici__5F141958" Association="FarmerBrothers.Data.FK__PricingDe__Prici__5F141958">
+      <End Role="PricingType" EntitySet="PricingTypes" />
+      <End Role="PricingDetail" EntitySet="PricingDetails" />
+    </AssociationSet>
+    <EntitySet Name="Erfs" EntityType="FarmerBrothers.Data.Erf" />
+    <AssociationSet Name="FK_FBERFEquipment_Erf" Association="FarmerBrothers.Data.FK_FBERFEquipment_Erf">
+      <End Role="Erf" EntitySet="Erfs" />
+      <End Role="FBERFEquipment" EntitySet="FBERFEquipments" />
+    </AssociationSet>
+    <AssociationSet Name="FK_FBERFExpendable_FBERFExpendable" Association="FarmerBrothers.Data.FK_FBERFExpendable_FBERFExpendable">
+      <End Role="Erf" EntitySet="Erfs" />
+      <End Role="FBERFExpendable" EntitySet="FBERFExpendables" />
+    </AssociationSet>
     <EntitySet Name="WorkOrders" EntityType="FarmerBrothers.Data.WorkOrder" />
     <AssociationSet Name="FK_FBERFExpendable_WorkOrder" Association="FarmerBrothers.Data.FK_FBERFExpendable_WorkOrder">
       <End Role="WorkOrder" EntitySet="WorkOrders" />
@@ -370,10 +369,6 @@
       <End Role="WorkOrder" EntitySet="WorkOrders" />
       <End Role="WorkorderNonAudit" EntitySet="WorkorderNonAudits" />
     </AssociationSet>
-    <AssociationSet Name="FK__Workorder__Worko__51300E55" Association="FarmerBrothers.Data.FK__Workorder__Worko__51300E55">
-      <End Role="WorkOrder" EntitySet="WorkOrders" />
-      <End Role="WorkorderPart" EntitySet="WorkorderParts" />
-    </AssociationSet>
     <AssociationSet Name="FK__Workorder__Worko__5224328E" Association="FarmerBrothers.Data.FK__Workorder__Worko__5224328E">
       <End Role="WorkOrder" EntitySet="WorkOrders" />
       <End Role="WorkorderReasonlog" EntitySet="WorkorderReasonlogs" />
@@ -385,6 +380,16 @@
     <AssociationSet Name="FK__Workorder__workorderstatuslog" Association="FarmerBrothers.Data.FK__Workorder__workorderstatuslog">
       <End Role="WorkOrder" EntitySet="WorkOrders" />
       <End Role="WorkorderStatusLog" EntitySet="WorkorderStatusLogs" />
+    </AssociationSet>
+    <EntitySet Name="CCInvoiceDetails" EntityType="FarmerBrothers.Data.CCInvoiceDetail" />
+    <AssociationSet Name="FK__CCInvoice__Worko__52793849" Association="FarmerBrothers.Data.FK__CCInvoice__Worko__52793849">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="CCInvoiceDetail" EntitySet="CCInvoiceDetails" />
+    </AssociationSet>
+    <EntitySet Name="WorkorderParts" EntityType="FarmerBrothers.Data.WorkorderPart" />
+    <AssociationSet Name="FK__Workorder__Worko__51300E55" Association="FarmerBrothers.Data.FK__Workorder__Worko__51300E55">
+      <End Role="WorkOrder" EntitySet="WorkOrders" />
+      <End Role="WorkorderPart" EntitySet="WorkorderParts" />
     </AssociationSet>
   </EntityContainer>
   <ComplexType Name="USP_GetTechDataByServiceCenterId_Result">
@@ -645,69 +650,6 @@
     <Property Name="Description" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
     <Property Name="EquipTypeId" Type="Int32" Nullable="false" />
     <Property Name="Sequence" Type="Int32" />
-  </EntityType>
-  <EntityType Name="Erf">
-    <Key>
-      <PropertyRef Name="ErfID" />
-    </Key>
-    <Property Name="ErfID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="WorkorderID" Type="Int32" />
-    <Property Name="CustomerID" Type="Int32" />
-    <Property Name="CustomerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerMainContactName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerPhone" Type="String" MaxLength="35" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerPhoneExtn" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerMainEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
-    <Property Name="FeastMovementID" Type="Int32" />
-    <Property Name="ChannelID" Type="Int16" />
-    <Property Name="SalesPerson" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
-    <Property Name="EntryUserID" Type="Int32" />
-    <Property Name="EntryDate" Type="DateTime" Precision="3" />
-    <Property Name="ModifiedUserID" Type="Int32" />
-    <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
-    <Property Name="ReasonID" Type="Int16" />
-    <Property Name="DateOnERF" Type="DateTime" Precision="3" />
-    <Property Name="DateERFReceived" Type="DateTime" Precision="3" />
-    <Property Name="DateERFProcessed" Type="DateTime" Precision="3" />
-    <Property Name="TimeERFProcessed" Type="DateTime" Precision="3" />
-    <Property Name="OriginalRequestedDate" Type="DateTime" Precision="3" />
-    <Property Name="InstallLocation" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
-    <Property Name="TimeZone" Type="Int32" />
-    <Property Name="DayLightSaving" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="EquipETADate" Type="DateTime" Precision="3" />
-    <Property Name="ShipToJDE" Type="Int32" />
-    <Property Name="SiteReady" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
-    <Property Name="JdeProcessDate" Type="DateTime" Precision="3" />
-    <Property Name="ShipfromJDE" Type="Int32" />
-    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="TransType" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerPO" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
-    <Property Name="CmUser" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
-    <Property Name="CmReceviedDate" Type="DateTime" Precision="3" />
-    <Property Name="DateReceived" Type="DateTime" Precision="3" />
-    <Property Name="LoanSale" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="HoursofOperation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="Phone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
-    <Property Name="IsSiteReady" Type="Boolean" />
-    <Property Name="OrderType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="ShipToBranch" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="ERFStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="TotalNSV" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="CurrentEqp" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="AdditionalEqp" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="ApprovalStatus" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-    <Property Name="CurrentNSV" Type="Decimal" Precision="18" Scale="0" />
-    <Property Name="ContributionMargin" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="GroupId" Type="Int32" />
-    <Property Name="BulkUploadResult" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="UploadError" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="CashSaleStatus" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="FBERFEquipments" Relationship="FarmerBrothers.Data.FK_FBERFEquipment_Erf" FromRole="Erf" ToRole="FBERFEquipment" />
-    <NavigationProperty Name="FBERFExpendables" Relationship="FarmerBrothers.Data.FK_FBERFExpendable_FBERFExpendable" FromRole="Erf" ToRole="FBERFExpendable" />
   </EntityType>
   <EntityType Name="ERFBranchDetail">
     <Key>
@@ -1692,42 +1634,6 @@
     <Property Name="BrandID" Type="Int32" />
     <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__WorkOrder__Worko__27F8EE98" FromRole="WorkOrderBrand" ToRole="WorkOrder" />
   </EntityType>
-  <EntityType Name="WorkorderDetail">
-    <Key>
-      <PropertyRef Name="WorkorderDetailid" />
-    </Key>
-    <Property Name="WorkorderID" Type="Int32" />
-    <Property Name="WorkorderDetailid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="InvoiceDate" Type="DateTime" Precision="0" />
-    <Property Name="StartDateTime" Type="DateTime" Precision="0" />
-    <Property Name="ArrivalDateTime" Type="DateTime" Precision="0" />
-    <Property Name="CompletionDateTime" Type="DateTime" Precision="0" />
-    <Property Name="ResponsibleTechid" Type="Int32" />
-    <Property Name="ResponsibleTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
-    <Property Name="Mileage" Type="Decimal" Precision="18" Scale="2" />
-    <Property Name="TravelTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="PhoneSolveid" Type="Int32" />
-    <Property Name="OriginalWorkorder" Type="Int32" />
-    <Property Name="SpawnReason" Type="Int32" />
-    <Property Name="CustomerName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
-    <Property Name="CustomerEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
-    <Property Name="CustomerSignature" Type="Binary" MaxLength="Max" FixedLength="false" />
-    <Property Name="EntryUserid" Type="Int32" />
-    <Property Name="EntryDate" Type="DateTime" Precision="0" />
-    <Property Name="ModifiedUserid" Type="Int32" />
-    <Property Name="ModifiedDate" Type="DateTime" Precision="0" />
-    <Property Name="SpecialClosure" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="SolutionId" Type="Int32" />
-    <Property Name="CustomerSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="NSRReason" Type="Int32" />
-    <Property Name="WaterTested" Type="Boolean" />
-    <Property Name="HardnessRating" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-    <Property Name="TechnicianSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="CustomerSignatureBy" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-    <Property Name="TotalDissolvedSolids" Type="Decimal" Precision="18" Scale="2" />
-    <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__4C6B5938" FromRole="WorkorderDetail" ToRole="WorkOrder" />
-  </EntityType>
   <EntityType Name="WorkorderEquipment">
     <Key>
       <PropertyRef Name="Assetid" />
@@ -1839,26 +1745,6 @@
     <Property Name="Location" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <Property Name="SerialNumber" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
     <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__503BEA1C" FromRole="WorkorderNonAudit" ToRole="WorkOrder" />
-  </EntityType>
-  <EntityType Name="WorkorderPart">
-    <Key>
-      <PropertyRef Name="PartsIssueid" />
-    </Key>
-    <Property Name="PartsIssueid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="WorkorderID" Type="Int32" />
-    <Property Name="Quantity" Type="Int32" />
-    <Property Name="Manufacturer" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
-    <Property Name="Sku" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="Description" Type="String" MaxLength="120" FixedLength="false" Unicode="true" />
-    <Property Name="Erfid" Type="Int32" />
-    <Property Name="ProdNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="ModelNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-    <Property Name="StandardCost" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="TPSPCost" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="Total" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="AssetID" Type="Int32" />
-    <Property Name="NonSerializedIssue" Type="Boolean" />
-    <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__51300E55" FromRole="WorkorderPart" ToRole="WorkOrder" />
   </EntityType>
   <EntityType Name="WorkorderReasonlog">
     <Key>
@@ -2352,30 +2238,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_FBERFEquipment_Erf">
-    <End Type="FarmerBrothers.Data.Erf" Role="Erf" Multiplicity="0..1" />
-    <End Type="FarmerBrothers.Data.FBERFEquipment" Role="FBERFEquipment" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Erf">
-        <PropertyRef Name="ErfID" />
-      </Principal>
-      <Dependent Role="FBERFEquipment">
-        <PropertyRef Name="ERFId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_FBERFExpendable_FBERFExpendable">
-    <End Type="FarmerBrothers.Data.Erf" Role="Erf" Multiplicity="0..1" />
-    <End Type="FarmerBrothers.Data.FBERFExpendable" Role="FBERFExpendable" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Erf">
-        <PropertyRef Name="ErfID" />
-      </Principal>
-      <Dependent Role="FBERFExpendable">
-        <PropertyRef Name="ERFId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_FBActivityLog_FbUserMaster">
     <End Type="FarmerBrothers.Data.FbUserMaster" Role="FbUserMaster" Multiplicity="0..1" />
     <End Type="FarmerBrothers.Data.FBActivityLog" Role="FBActivityLog" Multiplicity="*" />
@@ -2508,36 +2370,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <EntityType Name="PricingDetail">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="PricingEntityId" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="PricingEntityName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-    <Property Name="HourlyTravlRate" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="HourlyLablrRate" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="MilageRate" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="AfterHoursTravelRate" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="AfterHoursLaborRate" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="PartsDiscount" Type="Decimal" Precision="4" Scale="2" />
-    <Property Name="AfterHoursRatesApply" Type="Boolean" />
-    <Property Name="AdditionalFee" Type="Decimal" Precision="19" Scale="4" />
-    <Property Name="PricingTypeId" Type="Int32" />
-    <NavigationProperty Name="PricingType" Relationship="FarmerBrothers.Data.FK__PricingDe__Prici__5F141958" FromRole="PricingDetail" ToRole="PricingType" />
-  </EntityType>
-  <Association Name="FK__PricingDe__Prici__5F141958">
-    <End Type="FarmerBrothers.Data.PricingType" Role="PricingType" Multiplicity="0..1" />
-    <End Type="FarmerBrothers.Data.PricingDetail" Role="PricingDetail" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="PricingType">
-        <PropertyRef Name="PricingTypeId" />
-      </Principal>
-      <Dependent Role="PricingDetail">
-        <PropertyRef Name="PricingTypeId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <EntityType Name="CustomCriteria">
     <Key>
       <PropertyRef Name="UniqueId" />
@@ -2591,6 +2423,171 @@
       </Principal>
       <Dependent Role="FBCustomerNote">
         <PropertyRef Name="UserId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="WorkorderDetail">
+    <Key>
+      <PropertyRef Name="WorkorderDetailid" />
+    </Key>
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="WorkorderDetailid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceDate" Type="DateTime" Precision="0" />
+    <Property Name="StartDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ArrivalDateTime" Type="DateTime" Precision="0" />
+    <Property Name="CompletionDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ResponsibleTechid" Type="Int32" />
+    <Property Name="ResponsibleTechName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Mileage" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="TravelTime" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="PhoneSolveid" Type="Int32" />
+    <Property Name="OriginalWorkorder" Type="Int32" />
+    <Property Name="SpawnReason" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerSignature" Type="Binary" MaxLength="Max" FixedLength="false" />
+    <Property Name="EntryUserid" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="ModifiedUserid" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="0" />
+    <Property Name="SpecialClosure" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="SolutionId" Type="Int32" />
+    <Property Name="CustomerSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="NSRReason" Type="Int32" />
+    <Property Name="WaterTested" Type="Boolean" />
+    <Property Name="HardnessRating" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="TechnicianSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerSignatureBy" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="TotalDissolvedSolids" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="StateofEquipment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceDelayReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="TroubleshootSteps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="FollowupComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="OperationalComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ReviewedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IsUnderWarrenty" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="WarrentyFor" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="AdditionalFollowupReq" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="IsOperational" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__4C6B5938" FromRole="WorkorderDetail" ToRole="WorkOrder" />
+  </EntityType>
+  <EntityType Name="PricingDetail">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PricingEntityId" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="PricingEntityName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="HourlyTravlRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="HourlyLablrRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="MilageRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="AfterHoursTravelRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="AfterHoursLaborRate" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PartsDiscount" Type="Decimal" Precision="4" Scale="2" />
+    <Property Name="AfterHoursRatesApply" Type="Boolean" />
+    <Property Name="AdditionalFee" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PricingTypeId" Type="Int32" />
+    <Property Name="Approved3rdPartyUse" Type="Boolean" />
+    <NavigationProperty Name="PricingType" Relationship="FarmerBrothers.Data.FK__PricingDe__Prici__5F141958" FromRole="PricingDetail" ToRole="PricingType" />
+  </EntityType>
+  <Association Name="FK__PricingDe__Prici__5F141958">
+    <End Type="FarmerBrothers.Data.PricingType" Role="PricingType" Multiplicity="0..1" />
+    <End Type="FarmerBrothers.Data.PricingDetail" Role="PricingDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PricingType">
+        <PropertyRef Name="PricingTypeId" />
+      </Principal>
+      <Dependent Role="PricingDetail">
+        <PropertyRef Name="PricingTypeId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="Erf">
+    <Key>
+      <PropertyRef Name="ErfID" />
+    </Key>
+    <Property Name="ErfID" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="CustomerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainContactName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhone" Type="String" MaxLength="35" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPhoneExtn" Type="String" MaxLength="6" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerMainEmail" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="FeastMovementID" Type="Int32" />
+    <Property Name="ChannelID" Type="Int16" />
+    <Property Name="SalesPerson" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="EntryUserID" Type="Int32" />
+    <Property Name="EntryDate" Type="DateTime" Precision="3" />
+    <Property Name="ModifiedUserID" Type="Int32" />
+    <Property Name="ModifiedDate" Type="DateTime" Precision="3" />
+    <Property Name="ReasonID" Type="Int16" />
+    <Property Name="DateOnERF" Type="DateTime" Precision="3" />
+    <Property Name="DateERFReceived" Type="DateTime" Precision="3" />
+    <Property Name="DateERFProcessed" Type="DateTime" Precision="3" />
+    <Property Name="TimeERFProcessed" Type="DateTime" Precision="3" />
+    <Property Name="OriginalRequestedDate" Type="DateTime" Precision="3" />
+    <Property Name="InstallLocation" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="TimeZone" Type="Int32" />
+    <Property Name="DayLightSaving" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EquipETADate" Type="DateTime" Precision="3" />
+    <Property Name="ShipToJDE" Type="Int32" />
+    <Property Name="SiteReady" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="JdeProcessDate" Type="DateTime" Precision="3" />
+    <Property Name="ShipfromJDE" Type="Int32" />
+    <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="TransType" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerPO" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="CmUser" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="CmReceviedDate" Type="DateTime" Precision="3" />
+    <Property Name="DateReceived" Type="DateTime" Precision="3" />
+    <Property Name="LoanSale" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="HoursofOperation" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Phone" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="IsSiteReady" Type="Boolean" />
+    <Property Name="OrderType" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ShipToBranch" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ERFStatus" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="TotalNSV" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="CurrentEqp" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="AdditionalEqp" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="ApprovalStatus" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="CurrentNSV" Type="Decimal" Precision="18" Scale="0" />
+    <Property Name="ContributionMargin" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="GroupId" Type="Int32" />
+    <Property Name="BulkUploadResult" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="UploadError" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CashSaleStatus" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <Property Name="Tracking" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="FBERFEquipments" Relationship="FarmerBrothers.Data.FK_FBERFEquipment_Erf" FromRole="Erf" ToRole="FBERFEquipment" />
+    <NavigationProperty Name="FBERFExpendables" Relationship="FarmerBrothers.Data.FK_FBERFExpendable_FBERFExpendable" FromRole="Erf" ToRole="FBERFExpendable" />
+  </EntityType>
+  <Association Name="FK_FBERFEquipment_Erf">
+    <End Type="FarmerBrothers.Data.Erf" Role="Erf" Multiplicity="0..1" />
+    <End Type="FarmerBrothers.Data.FBERFEquipment" Role="FBERFEquipment" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Erf">
+        <PropertyRef Name="ErfID" />
+      </Principal>
+      <Dependent Role="FBERFEquipment">
+        <PropertyRef Name="ERFId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_FBERFExpendable_FBERFExpendable">
+    <End Type="FarmerBrothers.Data.Erf" Role="Erf" Multiplicity="0..1" />
+    <End Type="FarmerBrothers.Data.FBERFExpendable" Role="FBERFExpendable" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Erf">
+        <PropertyRef Name="ErfID" />
+      </Principal>
+      <Dependent Role="FBERFExpendable">
+        <PropertyRef Name="ERFId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -2706,6 +2703,7 @@
     <Property Name="AuthTransactionId" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
     <Property Name="FinalTransactionId" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
     <Property Name="ShippingPriority" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="NTE" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="FBERFExpendables" Relationship="FarmerBrothers.Data.FK_FBERFExpendable_WorkOrder" FromRole="WorkOrder" ToRole="FBERFExpendable" />
     <NavigationProperty Name="NonSerializeds" Relationship="FarmerBrothers.Data.FK__NonSerial__Worko__2057CCD0" FromRole="WorkOrder" ToRole="NonSerialized" />
     <NavigationProperty Name="NotesHistories" Relationship="FarmerBrothers.Data.FK__NotesHist__Worko__3493CFA7" FromRole="WorkOrder" ToRole="NotesHistory" />
@@ -2718,10 +2716,16 @@
     <NavigationProperty Name="WorkorderImages" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__4E53A1AA" FromRole="WorkOrder" ToRole="WorkorderImage" />
     <NavigationProperty Name="WorkorderInstallationSurveys" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__4F47C5E3" FromRole="WorkOrder" ToRole="WorkorderInstallationSurvey" />
     <NavigationProperty Name="WorkorderNonAudits" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__503BEA1C" FromRole="WorkOrder" ToRole="WorkorderNonAudit" />
-    <NavigationProperty Name="WorkorderParts" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__51300E55" FromRole="WorkOrder" ToRole="WorkorderPart" />
     <NavigationProperty Name="WorkorderReasonlogs" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__5224328E" FromRole="WorkOrder" ToRole="WorkorderReasonlog" />
     <NavigationProperty Name="WorkorderSchedules" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__58D1301D" FromRole="WorkOrder" ToRole="WorkorderSchedule" />
     <NavigationProperty Name="WorkorderStatusLogs" Relationship="FarmerBrothers.Data.FK__Workorder__workorderstatuslog" FromRole="WorkOrder" ToRole="WorkorderStatusLog" />
+    <Property Name="ETAUpdated" Type="Int32" />
+    <NavigationProperty Name="CCInvoiceDetails" Relationship="FarmerBrothers.Data.FK__CCInvoice__Worko__52793849" FromRole="WorkOrder" ToRole="CCInvoiceDetail" />
+    <Property Name="CallerPhone" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+    <Property Name="EquipmentBrand" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="EquipmentModel" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="PaymentTerm" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="WorkorderParts" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__51300E55" FromRole="WorkOrder" ToRole="WorkorderPart" />
   </EntityType>
   <Association Name="FK_FBERFExpendable_WorkOrder">
     <End Type="FarmerBrothers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
@@ -2867,18 +2871,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK__Workorder__Worko__51300E55">
-    <End Type="FarmerBrothers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
-    <End Type="FarmerBrothers.Data.WorkorderPart" Role="WorkorderPart" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="WorkOrder">
-        <PropertyRef Name="WorkorderID" />
-      </Principal>
-      <Dependent Role="WorkorderPart">
-        <PropertyRef Name="WorkorderID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK__Workorder__Worko__5224328E">
     <End Type="FarmerBrothers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
     <End Type="FarmerBrothers.Data.WorkorderReasonlog" Role="WorkorderReasonlog" Multiplicity="*" />
@@ -2911,6 +2903,66 @@
         <PropertyRef Name="WorkorderID" />
       </Principal>
       <Dependent Role="WorkorderStatusLog">
+        <PropertyRef Name="WorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="CCInvoiceDetail">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderId" Type="Int32" />
+    <Property Name="TravelCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="LaborCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PartsCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="PartsDiscount" Type="Decimal" Precision="4" Scale="2" />
+    <Property Name="SalesTax" Type="Double" />
+    <Property Name="TransactionId" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="ManualCosts" Type="Boolean" />
+    <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__CCInvoice__Worko__52793849" FromRole="CCInvoiceDetail" ToRole="WorkOrder" />
+  </EntityType>
+  <Association Name="FK__CCInvoice__Worko__52793849">
+    <End Type="FarmerBrothers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="FarmerBrothers.Data.CCInvoiceDetail" Role="CCInvoiceDetail" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="CCInvoiceDetail">
+        <PropertyRef Name="WorkorderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="WorkorderPart">
+    <Key>
+      <PropertyRef Name="PartsIssueid" />
+    </Key>
+    <Property Name="PartsIssueid" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="Quantity" Type="Int32" />
+    <Property Name="Manufacturer" Type="String" MaxLength="90" FixedLength="false" Unicode="true" />
+    <Property Name="Sku" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Description" Type="String" MaxLength="120" FixedLength="false" Unicode="true" />
+    <Property Name="Erfid" Type="Int32" />
+    <Property Name="ProdNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="ModelNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="StandardCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="TPSPCost" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="Total" Type="Decimal" Precision="19" Scale="4" />
+    <Property Name="AssetID" Type="Int32" />
+    <Property Name="NonSerializedIssue" Type="Boolean" />
+    <Property Name="PartReplenish" Type="Boolean" />
+    <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__Workorder__Worko__51300E55" FromRole="WorkorderPart" ToRole="WorkOrder" />
+  </EntityType>
+  <Association Name="FK__Workorder__Worko__51300E55">
+    <End Type="FarmerBrothers.Data.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+    <End Type="FarmerBrothers.Data.WorkorderPart" Role="WorkorderPart" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="WorkorderPart">
         <PropertyRef Name="WorkorderID" />
       </Dependent>
     </ReferentialConstraint>

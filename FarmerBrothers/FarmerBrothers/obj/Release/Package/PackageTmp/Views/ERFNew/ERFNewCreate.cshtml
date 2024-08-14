@@ -422,33 +422,35 @@
             success: function (jsonResult) {
                 if (jsonResult.success == true) {
 
-                    LaidInCost = jsonResult.data.LaidInCost
-                    RentalCost = jsonResult.data.Rental;
-                    CashSale = jsonResult.data.CashSale;
+                    if (jsonResult.data != null) {
+                        LaidInCost = jsonResult.data.LaidInCost
+                        RentalCost = jsonResult.data.Rental;
+                        CashSale = jsonResult.data.CashSale;
 
-                    $("#FBERFEquipmentDetailsBrand_input").val(jsonResult.data.ID);
-                    //$("#FBERFEquipmentDetailsEditForm > table > tbody > tr > td:nth-child(4)").html(jsonResult.data.Name);
+                        $("#FBERFEquipmentDetailsBrand_input").val(jsonResult.data.ID);
+                        //$("#FBERFEquipmentDetailsEditForm > table > tbody > tr > td:nth-child(4)").html(jsonResult.data.Name);
 
-                    $("#FBERFEquipmentDetailsLaidInCost").val("$" + LaidInCost.toFixed(2));
+                        $("#FBERFEquipmentDetailsLaidInCost").val("$" + LaidInCost.toFixed(2));
 
-                    var quantity = $("#FBERFEquipmentDetailsQuantity").val();
-                    var total = 0;
-                    if ((quantity != null || quantity != "") && LaidInCost != null) {
-                        total = quantity * LaidInCost;
+                        var quantity = $("#FBERFEquipmentDetailsQuantity").val();
+                        var total = 0;
+                        if ((quantity != null || quantity != "") && LaidInCost != null) {
+                            total = quantity * LaidInCost;
+                        }
+
+                        //$("#FBERFEquipmentDetailsBrand").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data.Name);
+
+                        if ($("#FBERFEquipmentDetailsTransactionType").val() == "Rental") {
+                            $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));
+                        }
+                        else if ($("#FBERFEquipmentDetailsTransactionType").val() == "Cash Sale") {
+                            $("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
+                        }
+                        else
+                            $("#FBERFEquipmentDetailsRentalCost").val(0);
+
+                        $("#FBERFEquipmentDetailsTotalCost").val("$" + total.toFixed(2));
                     }
-
-                    //$("#FBERFEquipmentDetailsBrand").ejDropDownList().data("ejDropDownList").selectItemByText(jsonResult.data.Name);
-
-                    if ($("#FBERFEquipmentDetailsTransactionType").val() == "Rental") {
-                        $("#FBERFEquipmentDetailsRentalCost").val("$" + RentalCost.toFixed(2));
-                    }
-                    else if ($("#FBERFEquipmentDetailsTransactionType").val() == "Cash Sale") {
-                        $("#FBERFEquipmentDetailsRentalCost").val("$" + CashSale.toFixed(2));
-                    }
-                    else
-                        $("#FBERFEquipmentDetailsRentalCost").val(0);
-
-                    $("#FBERFEquipmentDetailsTotalCost").val("$" + total.toFixed(2));
 
                 }
                 else {
@@ -750,32 +752,34 @@
             success: function (jsonResult) {
                 if (jsonResult.success == true) {
 
-                    ExpLaidInCost = jsonResult.data.LaidInCost == null ? 0 : jsonResult.data.LaidInCost;
-                    ExpRentalCost = jsonResult.data.Rental == null ? 0 : jsonResult.data.Rental;
-                    ExpCashSale = jsonResult.data.CashSale == null ? 0 : jsonResult.data.CashSale;
+                    if (jsonResult.data != null) {
+                        ExpLaidInCost = jsonResult.data.LaidInCost == null ? 0 : jsonResult.data.LaidInCost;
+                        ExpRentalCost = jsonResult.data.Rental == null ? 0 : jsonResult.data.Rental;
+                        ExpCashSale = jsonResult.data.CashSale == null ? 0 : jsonResult.data.CashSale;
 
-                    $("#FBERFExpendableDetailsBrand_input").val(jsonResult.data.ID);
+                        $("#FBERFExpendableDetailsBrand_input").val(jsonResult.data.ID);
 
-                    $("#FBERFExpendableDetailsLaidInCost").val("$" + ExpLaidInCost.toFixed(2));
+                        $("#FBERFExpendableDetailsLaidInCost").val("$" + ExpLaidInCost.toFixed(2));
 
-                    var quantity = $("#FBERFExpendableDetailsQuantity").val();
-                    var total = 0;
-                    if ((quantity != null || quantity != "") && ExpLaidInCost != null) {
-                        total = quantity * ExpLaidInCost;
+                        var quantity = $("#FBERFExpendableDetailsQuantity").val();
+                        var total = 0;
+                        if ((quantity != null || quantity != "") && ExpLaidInCost != null) {
+                            total = quantity * ExpLaidInCost;
+                        }
+
+
+
+                        if ($("#FBERFExpandableDetailsTransactionType").val() == "Rental") {
+                            $("#FBERFExpendableDetailsRentalCost").val("$" + ExpRentalCost.toFixed(2));
+                        }
+                        else if ($("#FBERFExpandableDetailsTransactionType").val() == "Cash Sale") {
+                            $("#FBERFExpendableDetailsRentalCost").val("$" + ExpCashSale.toFixed(2));
+                        }
+                        else
+                            $("#FBERFExpendableDetailsRentalCost").val(0);
+
+                        $("#FBERFExpendableDetailsTotalCost").val("$" + total.toFixed(2));
                     }
-
-
-
-                    if ($("#FBERFExpandableDetailsTransactionType").val() == "Rental") {
-                        $("#FBERFExpendableDetailsRentalCost").val("$" + ExpRentalCost.toFixed(2));
-                    }
-                    else if ($("#FBERFExpandableDetailsTransactionType").val() == "Cash Sale") {
-                        $("#FBERFExpendableDetailsRentalCost").val("$" + ExpCashSale.toFixed(2));
-                    }
-                    else
-                        $("#FBERFExpendableDetailsRentalCost").val(0);
-
-                    $("#FBERFExpendableDetailsTotalCost").val("$" + total.toFixed(2));
 
                 }
                 else {
@@ -1630,9 +1634,9 @@
                                             col.Field("ERFEquipmentId").HeaderText("Equipment ID").IsPrimaryKey(true).Visible(false).Add();
                                             col.Field("Quantity").HeaderText("Qty").Width("5%").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
                                             col.Field("Category").HeaderText("Equipment Category").Width("15%").ForeignKeyField("ModelId").ForeignKeyValue("ModelName").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfEqpCategory))
-                                                .ValidationRules(r => r.AddRule("required", true)).Add();
+                                                .ValidationRules(r => r.AddRule("required", true).AddRule("min", 1)).Add();
                                             col.Field("Brand").HeaderText("Brand - Equipment Model Number - Description").Width("20%").ForeignKeyField("ModelId").ForeignKeyValue("ModelName").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfEqpModels))
-                                                .ValidationRules(r => r.AddRule("required", true)).Add();
+                                                .ValidationRules(r => r.AddRule("required", true).AddRule("min", 1)).Add();
                                             col.Field("Branch").HeaderText("Using Branch Stock").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.UsingBranch)).ValidationRules(r => r.AddRule("required", true)).Add();
                                             col.Field("Substitution").HeaderText("Substitution possible ? ").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfSubstituion)).ValidationRules(r => r.AddRule("required", true)).Add();
                                             col.Field("TransactionType").HeaderText("Trans Type").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();
@@ -1712,9 +1716,9 @@
                                                                                     col.Field("ERFExpendableId").HeaderText("Equipment ID").IsPrimaryKey(true).Visible(false).Add();
                                                                                     col.Field("Quantity").HeaderText("Qty").Width("5%").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
                                                                                     col.Field("Category").HeaderText("Equipment Category").Width("15%").ForeignKeyField("ModelId").ForeignKeyValue("ModelName").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpCategory))
-                                                                                        .ValidationRules(r => r.AddRule("required", true)).Add();
+                                                                                        .ValidationRules(r => r.AddRule("required", true).AddRule("min", 1)).Add();
                                                                                     col.Field("Brand").HeaderText("Brand - Equipment Model Number - Description").Width("20%").ForeignKeyField("ModelId").ForeignKeyValue("ModelName").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfExpModels))
-                                                                                        .ValidationRules(r => r.AddRule("required", true)).HeaderTextAlign(TextAlign.Justify).Add();
+                                                                                        .ValidationRules(r => r.AddRule("required", true).AddRule("min", 1)).HeaderTextAlign(TextAlign.Justify).Add();
                                                                                     col.Field("Branch").HeaderText("Using Branch Stock").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.UsingBranch)).ValidationRules(r => r.AddRule("required", true)).Add();
                                                                                     col.Field("Substitution").HeaderText("Substitution possible ? ").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfSubstituion)).ValidationRules(r => r.AddRule("required", true)).Add();
                                                                                     col.Field("TransactionType").HeaderText("Trans Type").Width("10%").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.ErfAssetsModel.ErfTransactionTypes)).ValidationRules(r => r.AddRule("required", true)).Add();

@@ -299,68 +299,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Erfs">
-      <EntityTypeMapping TypeName="FarmerBrothers.Data.Erf">
-        <MappingFragment StoreEntitySet="Erf">
-          <ScalarProperty Name="CashSaleStatus" ColumnName="CashSaleStatus" />
-          <ScalarProperty Name="UploadError" ColumnName="UploadError" />
-          <ScalarProperty Name="BulkUploadResult" ColumnName="BulkUploadResult" />
-          <ScalarProperty Name="GroupId" ColumnName="GroupId" />
-          <ScalarProperty Name="ContributionMargin" ColumnName="ContributionMargin" />
-          <ScalarProperty Name="CurrentNSV" ColumnName="CurrentNSV" />
-          <ScalarProperty Name="ApprovalStatus" ColumnName="ApprovalStatus" />
-          <ScalarProperty Name="AdditionalEqp" ColumnName="AdditionalEqp" />
-          <ScalarProperty Name="CurrentEqp" ColumnName="CurrentEqp" />
-          <ScalarProperty Name="TotalNSV" ColumnName="TotalNSV" />
-          <ScalarProperty Name="ERFStatus" ColumnName="ERFStatus" />
-          <ScalarProperty Name="ShipToBranch" ColumnName="ShipToBranch" />
-          <ScalarProperty Name="OrderType" ColumnName="OrderType" />
-          <ScalarProperty Name="IsSiteReady" ColumnName="IsSiteReady" />
-          <ScalarProperty Name="Phone" ColumnName="Phone" />
-          <ScalarProperty Name="HoursofOperation" ColumnName="HoursofOperation" />
-          <ScalarProperty Name="LoanSale" ColumnName="LoanSale" />
-          <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
-          <ScalarProperty Name="CmReceviedDate" ColumnName="CmReceviedDate" />
-          <ScalarProperty Name="CmUser" ColumnName="CmUser" />
-          <ScalarProperty Name="CustomerPO" ColumnName="CustomerPO" />
-          <ScalarProperty Name="TransType" ColumnName="TransType" />
-          <ScalarProperty Name="UserName" ColumnName="UserName" />
-          <ScalarProperty Name="ShipfromJDE" ColumnName="ShipfromJDE" />
-          <ScalarProperty Name="JdeProcessDate" ColumnName="JdeProcessDate" />
-          <ScalarProperty Name="SiteReady" ColumnName="SiteReady" />
-          <ScalarProperty Name="ShipToJDE" ColumnName="ShipToJDE" />
-          <ScalarProperty Name="EquipETADate" ColumnName="EquipETADate" />
-          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
-          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
-          <ScalarProperty Name="InstallLocation" ColumnName="InstallLocation" />
-          <ScalarProperty Name="OriginalRequestedDate" ColumnName="OriginalRequestedDate" />
-          <ScalarProperty Name="TimeERFProcessed" ColumnName="TimeERFProcessed" />
-          <ScalarProperty Name="DateERFProcessed" ColumnName="DateERFProcessed" />
-          <ScalarProperty Name="DateERFReceived" ColumnName="DateERFReceived" />
-          <ScalarProperty Name="DateOnERF" ColumnName="DateOnERF" />
-          <ScalarProperty Name="ReasonID" ColumnName="ReasonID" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
-          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
-          <ScalarProperty Name="EntryUserID" ColumnName="EntryUserID" />
-          <ScalarProperty Name="SalesPerson" ColumnName="SalesPerson" />
-          <ScalarProperty Name="ChannelID" ColumnName="ChannelID" />
-          <ScalarProperty Name="FeastMovementID" ColumnName="FeastMovementID" />
-          <ScalarProperty Name="CustomerMainEmail" ColumnName="CustomerMainEmail" />
-          <ScalarProperty Name="CustomerPhoneExtn" ColumnName="CustomerPhoneExtn" />
-          <ScalarProperty Name="CustomerPhone" ColumnName="CustomerPhone" />
-          <ScalarProperty Name="CustomerMainContactName" ColumnName="CustomerMainContactName" />
-          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
-          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
-          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
-          <ScalarProperty Name="CustomerAddress" ColumnName="CustomerAddress" />
-          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
-          <ScalarProperty Name="ErfID" ColumnName="ErfID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="ERFBranchDetails">
       <EntityTypeMapping TypeName="FarmerBrothers.Data.ERFBranchDetail">
         <MappingFragment StoreEntitySet="ERFBranchDetails">
@@ -1381,42 +1319,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="WorkorderDetails">
-      <EntityTypeMapping TypeName="FarmerBrothers.Data.WorkorderDetail">
-        <MappingFragment StoreEntitySet="WorkorderDetails">
-          <ScalarProperty Name="TotalDissolvedSolids" ColumnName="TotalDissolvedSolids" />
-          <ScalarProperty Name="CustomerSignatureBy" ColumnName="CustomerSignatureBy" />
-          <ScalarProperty Name="TechnicianSignatureDetails" ColumnName="TechnicianSignatureDetails" />
-          <ScalarProperty Name="HardnessRating" ColumnName="HardnessRating" />
-          <ScalarProperty Name="WaterTested" ColumnName="WaterTested" />
-          <ScalarProperty Name="NSRReason" ColumnName="NSRReason" />
-          <ScalarProperty Name="CustomerSignatureDetails" ColumnName="CustomerSignatureDetails" />
-          <ScalarProperty Name="SolutionId" ColumnName="SolutionId" />
-          <ScalarProperty Name="SpecialClosure" ColumnName="SpecialClosure" />
-          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
-          <ScalarProperty Name="ModifiedUserid" ColumnName="ModifiedUserid" />
-          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
-          <ScalarProperty Name="EntryUserid" ColumnName="EntryUserid" />
-          <ScalarProperty Name="CustomerSignature" ColumnName="CustomerSignature" />
-          <ScalarProperty Name="CustomerEmail" ColumnName="CustomerEmail" />
-          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-          <ScalarProperty Name="SpawnReason" ColumnName="SpawnReason" />
-          <ScalarProperty Name="OriginalWorkorder" ColumnName="OriginalWorkorder" />
-          <ScalarProperty Name="PhoneSolveid" ColumnName="PhoneSolveid" />
-          <ScalarProperty Name="TravelTime" ColumnName="TravelTime" />
-          <ScalarProperty Name="Mileage" ColumnName="Mileage" />
-          <ScalarProperty Name="ResponsibleTechName" ColumnName="ResponsibleTechName" />
-          <ScalarProperty Name="ResponsibleTechid" ColumnName="ResponsibleTechid" />
-          <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
-          <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
-          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
-          <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
-          <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
-          <ScalarProperty Name="WorkorderDetailid" ColumnName="WorkorderDetailid" />
-          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="WorkorderEquipments">
       <EntityTypeMapping TypeName="FarmerBrothers.Data.WorkorderEquipment">
         <MappingFragment StoreEntitySet="WorkorderEquipment">
@@ -1521,26 +1423,6 @@
           <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
           <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
           <ScalarProperty Name="NonAuditid" ColumnName="NonAuditid" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="WorkorderParts">
-      <EntityTypeMapping TypeName="FarmerBrothers.Data.WorkorderPart">
-        <MappingFragment StoreEntitySet="WorkorderParts">
-          <ScalarProperty Name="NonSerializedIssue" ColumnName="NonSerializedIssue" />
-          <ScalarProperty Name="AssetID" ColumnName="AssetID" />
-          <ScalarProperty Name="Total" ColumnName="Total" />
-          <ScalarProperty Name="TPSPCost" ColumnName="TPSPCost" />
-          <ScalarProperty Name="StandardCost" ColumnName="StandardCost" />
-          <ScalarProperty Name="ModelNo" ColumnName="ModelNo" />
-          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
-          <ScalarProperty Name="Erfid" ColumnName="Erfid" />
-          <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="Sku" ColumnName="Sku" />
-          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
-          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
-          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
-          <ScalarProperty Name="PartsIssueid" ColumnName="PartsIssueid" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2030,24 +1912,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="PricingDetails">
-      <EntityTypeMapping TypeName="FarmerBrothers.Data.PricingDetail">
-        <MappingFragment StoreEntitySet="PricingDetails">
-          <ScalarProperty Name="PricingTypeId" ColumnName="PricingTypeId" />
-          <ScalarProperty Name="AdditionalFee" ColumnName="AdditionalFee" />
-          <ScalarProperty Name="AfterHoursRatesApply" ColumnName="AfterHoursRatesApply" />
-          <ScalarProperty Name="PartsDiscount" ColumnName="PartsDiscount" />
-          <ScalarProperty Name="AfterHoursLaborRate" ColumnName="AfterHoursLaborRate" />
-          <ScalarProperty Name="AfterHoursTravelRate" ColumnName="AfterHoursTravelRate" />
-          <ScalarProperty Name="MilageRate" ColumnName="MilageRate" />
-          <ScalarProperty Name="HourlyLablrRate" ColumnName="HourlyLablrRate" />
-          <ScalarProperty Name="HourlyTravlRate" ColumnName="HourlyTravlRate" />
-          <ScalarProperty Name="PricingEntityName" ColumnName="PricingEntityName" />
-          <ScalarProperty Name="PricingEntityId" ColumnName="PricingEntityId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="CustomCriterias">
       <EntityTypeMapping TypeName="FarmerBrothers.Data.CustomCriteria">
         <MappingFragment StoreEntitySet="CustomCriteria">
@@ -2095,9 +1959,143 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="USP_BillingUpload_Report" FunctionName="FarmerBrothers.Data.Store.USP_BillingUpload_Report" />
+    <EntitySetMapping Name="WorkorderDetails">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.WorkorderDetail">
+        <MappingFragment StoreEntitySet="WorkorderDetails">
+          <ScalarProperty Name="IsOperational" ColumnName="IsOperational" />
+          <ScalarProperty Name="AdditionalFollowupReq" ColumnName="AdditionalFollowupReq" />
+          <ScalarProperty Name="WarrentyFor" ColumnName="WarrentyFor" />
+          <ScalarProperty Name="IsUnderWarrenty" ColumnName="IsUnderWarrenty" />
+          <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
+          <ScalarProperty Name="OperationalComments" ColumnName="OperationalComments" />
+          <ScalarProperty Name="FollowupComments" ColumnName="FollowupComments" />
+          <ScalarProperty Name="TroubleshootSteps" ColumnName="TroubleshootSteps" />
+          <ScalarProperty Name="ServiceDelayReason" ColumnName="ServiceDelayReason" />
+          <ScalarProperty Name="StateofEquipment" ColumnName="StateofEquipment" />
+          <ScalarProperty Name="TotalDissolvedSolids" ColumnName="TotalDissolvedSolids" />
+          <ScalarProperty Name="CustomerSignatureBy" ColumnName="CustomerSignatureBy" />
+          <ScalarProperty Name="TechnicianSignatureDetails" ColumnName="TechnicianSignatureDetails" />
+          <ScalarProperty Name="HardnessRating" ColumnName="HardnessRating" />
+          <ScalarProperty Name="WaterTested" ColumnName="WaterTested" />
+          <ScalarProperty Name="NSRReason" ColumnName="NSRReason" />
+          <ScalarProperty Name="CustomerSignatureDetails" ColumnName="CustomerSignatureDetails" />
+          <ScalarProperty Name="SolutionId" ColumnName="SolutionId" />
+          <ScalarProperty Name="SpecialClosure" ColumnName="SpecialClosure" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ModifiedUserid" ColumnName="ModifiedUserid" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="EntryUserid" ColumnName="EntryUserid" />
+          <ScalarProperty Name="CustomerSignature" ColumnName="CustomerSignature" />
+          <ScalarProperty Name="CustomerEmail" ColumnName="CustomerEmail" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="SpawnReason" ColumnName="SpawnReason" />
+          <ScalarProperty Name="OriginalWorkorder" ColumnName="OriginalWorkorder" />
+          <ScalarProperty Name="PhoneSolveid" ColumnName="PhoneSolveid" />
+          <ScalarProperty Name="TravelTime" ColumnName="TravelTime" />
+          <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+          <ScalarProperty Name="ResponsibleTechName" ColumnName="ResponsibleTechName" />
+          <ScalarProperty Name="ResponsibleTechid" ColumnName="ResponsibleTechid" />
+          <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
+          <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
+          <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+          <ScalarProperty Name="WorkorderDetailid" ColumnName="WorkorderDetailid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PricingDetails">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.PricingDetail">
+        <MappingFragment StoreEntitySet="PricingDetails">
+          <ScalarProperty Name="Approved3rdPartyUse" ColumnName="Approved3rdPartyUse" />
+          <ScalarProperty Name="PricingTypeId" ColumnName="PricingTypeId" />
+          <ScalarProperty Name="AdditionalFee" ColumnName="AdditionalFee" />
+          <ScalarProperty Name="AfterHoursRatesApply" ColumnName="AfterHoursRatesApply" />
+          <ScalarProperty Name="PartsDiscount" ColumnName="PartsDiscount" />
+          <ScalarProperty Name="AfterHoursLaborRate" ColumnName="AfterHoursLaborRate" />
+          <ScalarProperty Name="AfterHoursTravelRate" ColumnName="AfterHoursTravelRate" />
+          <ScalarProperty Name="MilageRate" ColumnName="MilageRate" />
+          <ScalarProperty Name="HourlyLablrRate" ColumnName="HourlyLablrRate" />
+          <ScalarProperty Name="HourlyTravlRate" ColumnName="HourlyTravlRate" />
+          <ScalarProperty Name="PricingEntityName" ColumnName="PricingEntityName" />
+          <ScalarProperty Name="PricingEntityId" ColumnName="PricingEntityId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Erfs">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.Erf">
+        <MappingFragment StoreEntitySet="Erf">
+          <ScalarProperty Name="Tracking" ColumnName="Tracking" />
+          <ScalarProperty Name="CashSaleStatus" ColumnName="CashSaleStatus" />
+          <ScalarProperty Name="UploadError" ColumnName="UploadError" />
+          <ScalarProperty Name="BulkUploadResult" ColumnName="BulkUploadResult" />
+          <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+          <ScalarProperty Name="ContributionMargin" ColumnName="ContributionMargin" />
+          <ScalarProperty Name="CurrentNSV" ColumnName="CurrentNSV" />
+          <ScalarProperty Name="ApprovalStatus" ColumnName="ApprovalStatus" />
+          <ScalarProperty Name="AdditionalEqp" ColumnName="AdditionalEqp" />
+          <ScalarProperty Name="CurrentEqp" ColumnName="CurrentEqp" />
+          <ScalarProperty Name="TotalNSV" ColumnName="TotalNSV" />
+          <ScalarProperty Name="ERFStatus" ColumnName="ERFStatus" />
+          <ScalarProperty Name="ShipToBranch" ColumnName="ShipToBranch" />
+          <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+          <ScalarProperty Name="IsSiteReady" ColumnName="IsSiteReady" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="HoursofOperation" ColumnName="HoursofOperation" />
+          <ScalarProperty Name="LoanSale" ColumnName="LoanSale" />
+          <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
+          <ScalarProperty Name="CmReceviedDate" ColumnName="CmReceviedDate" />
+          <ScalarProperty Name="CmUser" ColumnName="CmUser" />
+          <ScalarProperty Name="CustomerPO" ColumnName="CustomerPO" />
+          <ScalarProperty Name="TransType" ColumnName="TransType" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="ShipfromJDE" ColumnName="ShipfromJDE" />
+          <ScalarProperty Name="JdeProcessDate" ColumnName="JdeProcessDate" />
+          <ScalarProperty Name="SiteReady" ColumnName="SiteReady" />
+          <ScalarProperty Name="ShipToJDE" ColumnName="ShipToJDE" />
+          <ScalarProperty Name="EquipETADate" ColumnName="EquipETADate" />
+          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="InstallLocation" ColumnName="InstallLocation" />
+          <ScalarProperty Name="OriginalRequestedDate" ColumnName="OriginalRequestedDate" />
+          <ScalarProperty Name="TimeERFProcessed" ColumnName="TimeERFProcessed" />
+          <ScalarProperty Name="DateERFProcessed" ColumnName="DateERFProcessed" />
+          <ScalarProperty Name="DateERFReceived" ColumnName="DateERFReceived" />
+          <ScalarProperty Name="DateOnERF" ColumnName="DateOnERF" />
+          <ScalarProperty Name="ReasonID" ColumnName="ReasonID" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="EntryUserID" ColumnName="EntryUserID" />
+          <ScalarProperty Name="SalesPerson" ColumnName="SalesPerson" />
+          <ScalarProperty Name="ChannelID" ColumnName="ChannelID" />
+          <ScalarProperty Name="FeastMovementID" ColumnName="FeastMovementID" />
+          <ScalarProperty Name="CustomerMainEmail" ColumnName="CustomerMainEmail" />
+          <ScalarProperty Name="CustomerPhoneExtn" ColumnName="CustomerPhoneExtn" />
+          <ScalarProperty Name="CustomerPhone" ColumnName="CustomerPhone" />
+          <ScalarProperty Name="CustomerMainContactName" ColumnName="CustomerMainContactName" />
+          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
+          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
+          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
+          <ScalarProperty Name="CustomerAddress" ColumnName="CustomerAddress" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="ErfID" ColumnName="ErfID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="WorkOrders">
       <EntityTypeMapping TypeName="FarmerBrothers.Data.WorkOrder">
         <MappingFragment StoreEntitySet="WorkOrder">
+          <ScalarProperty Name="PaymentTerm" ColumnName="PaymentTerm" />
+          <ScalarProperty Name="EquipmentModel" ColumnName="EquipmentModel" />
+          <ScalarProperty Name="EquipmentBrand" ColumnName="EquipmentBrand" />
+          <ScalarProperty Name="CallerPhone" ColumnName="CallerPhone" />
+          <ScalarProperty Name="ETAUpdated" ColumnName="ETAUpdated" />
+          <ScalarProperty Name="NTE" ColumnName="NTE" />
           <ScalarProperty Name="ShippingPriority" ColumnName="ShippingPriority" />
           <ScalarProperty Name="FinalTransactionId" ColumnName="FinalTransactionId" />
           <ScalarProperty Name="AuthTransactionId" ColumnName="AuthTransactionId" />
@@ -2206,6 +2204,42 @@
           <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
           <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
           <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CCInvoiceDetails">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.CCInvoiceDetail">
+        <MappingFragment StoreEntitySet="CCInvoiceDetails">
+          <ScalarProperty Name="ManualCosts" ColumnName="ManualCosts" />
+          <ScalarProperty Name="TransactionId" ColumnName="TransactionId" />
+          <ScalarProperty Name="SalesTax" ColumnName="SalesTax" />
+          <ScalarProperty Name="PartsDiscount" ColumnName="PartsDiscount" />
+          <ScalarProperty Name="PartsCost" ColumnName="PartsCost" />
+          <ScalarProperty Name="LaborCost" ColumnName="LaborCost" />
+          <ScalarProperty Name="TravelCost" ColumnName="TravelCost" />
+          <ScalarProperty Name="WorkorderId" ColumnName="WorkorderId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderParts">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.WorkorderPart">
+        <MappingFragment StoreEntitySet="WorkorderParts">
+          <ScalarProperty Name="PartReplenish" ColumnName="PartReplenish" />
+          <ScalarProperty Name="NonSerializedIssue" ColumnName="NonSerializedIssue" />
+          <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="TPSPCost" ColumnName="TPSPCost" />
+          <ScalarProperty Name="StandardCost" ColumnName="StandardCost" />
+          <ScalarProperty Name="ModelNo" ColumnName="ModelNo" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="Erfid" ColumnName="Erfid" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Sku" ColumnName="Sku" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="PartsIssueid" ColumnName="PartsIssueid" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

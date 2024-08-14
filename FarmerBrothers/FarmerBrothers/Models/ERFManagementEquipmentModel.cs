@@ -75,6 +75,7 @@ namespace FarmerBrothers.Models
 
         public string InternalOrderNumber { get; set; }
         public string VendorOrderNumber { get; set; }
+        public string Tracking { get; set; }
 
         public string SerialNumber { get; set; }
         public string OrderType { get; set; }

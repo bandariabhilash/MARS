@@ -268,8 +268,8 @@ namespace FBVixxoService
 
                     int type = 0;
                     string SRN = evt.CustomerPO;
-                    //double? latitude = evt.Latitude;
-                    //double? longitude = evt.Longitude;
+                    double? latitude = evt.Latitude;
+                    double? longitude = evt.Longitude;
                     string etaDatetime = "";
                     bool isjobComplete = false;
                     string address = "";
@@ -296,8 +296,8 @@ namespace FBVixxoService
 
                     var locationService = new GoogleLocationService();
                     var point = locationService.GetLatLongFromAddress(address);
-                    var latitude = point.Latitude;
-                    var longitude = point.Longitude;
+                    //var latitude = point.Latitude;
+                    //var longitude = point.Longitude;
 
 
                     //var content = new StringContent("\"timeRequest\":{\r\n    \"description\": \"Time Request\",\r\n    \"type\": 2,\r\n    \"ServiceRequestNumber\": ,\r\n    \"isJobComplete\": false,\r\n    \"numberOfTechniciansOnSite\": 1,\r\n    \"time\":\r\n}", null, "application/json");

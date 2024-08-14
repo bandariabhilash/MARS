@@ -36,12 +36,14 @@ namespace FarmerBrothers.Models
             using (FarmerBrothersEntities entity = new FarmerBrothersEntities())
             {
                 this.EquipmentCount = entity.WorkorderEquipments.Where(wr => wr.WorkorderID == this.WorkOrderId).Count();
+                this.TechName = entity.TECH_HIERARCHY.Where(t => t.DealerId == workOrderSchedule.Techid).Select(s => s.CompanyName).FirstOrDefault();
             }
             
         }
 
         public int? WorkOrderId { get; set; }
         public int? TechId { get; set; }
+        public string TechName { get; set; }
         public int? WorkorderCalltypeid { get; set; }
         public string WorkorderCalltypeDesc { get; set; }
         public string WorkOrderCallStatus { get; set; }    

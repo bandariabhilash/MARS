@@ -16,7 +16,8 @@ namespace FarmerBrothers.Models
         UPDATEAPPOINTMENT = 5,
         COMPLETE = 6,
         CREATEWORKORDER = 7,
-        CREATEFEASTMOVEMENT = 8
+        CREATEFEASTMOVEMENT = 8,
+        SAVEANDPAY = 10
     }
 
     public class YesNoItem
@@ -46,6 +47,7 @@ namespace FarmerBrothers.Models
         public bool IsBillable { get; set; }
         public bool IsBillableFeed { get; set; }
 
+        public bool IsServiceBillable { get; set; }
 
         //used to disable future dates
         public Nullable<System.DateTime> CurrentDateTime { get; set; }
@@ -193,13 +195,20 @@ namespace FarmerBrothers.Models
         public Nullable<int> ReasonCode { get; set; }
 
         public string TravelDistance { get; set; }
+        public string Distance { get; set; }
         public string TravelTime { get; set; }
         public decimal Labor { get; set; }
+        public decimal PartsTotal { get; set; }
         public string TotalServiceQuote { get; set; }
+
+        public ServiceQuoteModel ServiceQuoteDetails { get; set; }
 
         public string ShippingPriority { get; set; }
 
         public bool IsCCProcessComplete { get; set; }
+        public ProcessCardModel ProcessCardDetails { get; set; }
+        public bool RedirectFromCardProcess { get; set; }
+        public string Message { get; set; }
 
         public WorkOrder FillCustomerData(WorkOrder entityWorkOrder, bool cleanDependentLists, FarmerBrothersEntities FarmerBrothersEntities, Contact sCustomer = null)
         {
@@ -374,4 +383,28 @@ namespace FarmerBrothers.Models
 
     }
 
+    public class ServiceQuoteModel
+    {
+        public string TravelDistance { get; set; }
+        public string Distance { get; set; }
+        public string TravelTime { get; set; }
+        public decimal Labor { get; set; }
+        public decimal PartsTotal { get; set; }
+        public decimal TotalServiceQuote { get; set; }
+    }
+
+    public class UpdateServiceQuoteModel
+    {
+        public int WorkorderId { get; set; }
+        public decimal PreviousQuote { get; set; }
+        public List<WorkorderPart> SkuList { get; set; }
+    }
+
+    //public class EventsUploadModel
+    //{
+    //    public int CustomerId { get; set; }
+    //    public string CustomerName { get; set; }
+    //    public string Address1 { get; set; }
+    //    public string Address2 { get; set; }
+    //}
 }

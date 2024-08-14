@@ -207,6 +207,7 @@
                                             col.Field("TotalCost").HeaderText("Total").Width("10%").Type(ColumnType.Number).Format("{0:C}").ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).AllowEditing(false).Add();
                                             col.Field("InternalOrderNumber").HeaderText("ST/ON #").Width("10%").Type(ColumnType.String).Add();
                                             col.Field("VendorOrderNumber").HeaderText("OT #").Width("10%").Type(ColumnType.String).Add();
+                                            col.Field("Tracking").HeaderText("Tracking").Width("20%").Type(ColumnType.String).Add();
 
 
                                             col.Field("SerialNumber").HeaderText("Serial Number(2) (csv)").Width("10%").Type(ColumnType.String).Add();
@@ -322,6 +323,7 @@
                                                                                     col.Field("TotalCost").HeaderText("Total").Width("10%").Type(ColumnType.Number).Format("{0:C}").ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).AllowEditing(false).Add();
                                                                                     col.Field("InternalOrderNumber").HeaderText("ST/ON #").Width("10%").Type(ColumnType.String).Add();
                                                                                     col.Field("VendorOrderNumber").HeaderText("OT #").Width("10%").Type(ColumnType.String).Add();
+                                                                                    col.Field("Tracking").HeaderText("Tracking").Width("20%").Type(ColumnType.String).Add();
 
 
                                                                                 })

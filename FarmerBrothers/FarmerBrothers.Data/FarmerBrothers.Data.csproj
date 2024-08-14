@@ -96,6 +96,9 @@
     <Compile Include="Category.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
+    <Compile Include="CCInvoiceDetail.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
     <Compile Include="Contact.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>

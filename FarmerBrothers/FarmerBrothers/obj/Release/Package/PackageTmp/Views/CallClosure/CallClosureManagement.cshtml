@@ -2,6 +2,10 @@
 @{
     ViewBag.Title = "CallCloserManagement";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var jsonClosurePartsModel = serializer.Serialize(Model.CloserPartsOrSKUs);
 }
 
 @using FarmerBrothers.Data;
@@ -16,7 +20,10 @@
 <script src="~/Content/jquery.validate.min.js"></script>
 <script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
 
-
+@* Clover Iframe *@
+<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
+<script src="https://checkout.sandbox.dev.clover.com/sdk.js"></script>
+@*<script src="https://checkout.clover.com/sdk.js"></script>*@
 
 <style>
     .e-grid .e-toolbar > .e-horizontal.e-ul {
@@ -42,7 +49,7 @@
 </style>
 
 <script type="text/javascript">
-    var gridData = @Html.Raw(Json.Encode(Model.CloserPartsOrSKUs));
+    var gridData = @Html.Raw(jsonClosurePartsModel);
     var workOrderOperation = 0;
     var updateUrl = null;
     var SelectedBranches = "";
@@ -67,6 +74,9 @@
     $(document).ready(function () {
 
         $("#hideDetails").hide();
+
+        WarrentyRequiredDropdownChange();
+        FollowupRequiredChange();
 
         workOrderStatus = "@Model.WorkOrder.WorkorderCallstatus";
 
@@ -125,11 +135,11 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
 
-                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d,  interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d,  interval : 15 });
                         }
                         else
                         {
-                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 });
                         }
                     },
                     focusOut: function (args) {
@@ -138,14 +148,14 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
 
-                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d,  interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d,  interval : 15 });
                         }
                         else
                         {
-                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 });
                         }
                     }
-                }).attr('readonly', 'true');
+                });
         }
         else
         {
@@ -161,11 +171,11 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
 
-                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d, interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d, interval : 15 });
                         }
                         else
                         {
-                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value:'', interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value:'', interval : 15 });
                         }
                     },
                     focusOut: function (args) {
@@ -174,14 +184,14 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 4, d.getMinutes(), d.getSeconds());
 
-                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d, interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime:d, interval : 15 });
                         }
                         else
                         {
-                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                            $("#ArrivalDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 });
                         }
                     }
-                }).attr('readonly', 'true');
+                });
         }
 
         var arrivalDate = new Date($("#ArrivalDateTime").val());
@@ -206,11 +216,11 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
 
-                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/,interval : 15 }).attr('readonly', 'true');
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/,interval : 15 });
                         }
                         else
                         {
-                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 });
                         }
                     },
                     focusOut: function (args) {
@@ -219,14 +229,14 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
 
-                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d /*new Date($("#CurrentDateTime").val())*/, interval : 15 }).attr('readonly', 'true');
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d /*new Date($("#CurrentDateTime").val())*/, interval : 15 });
                         }
                         else
                         {
-                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value: '', interval : 15 }).attr('readonly', 'true');
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
                         }
                     }
-                }).attr('readonly', 'true');
+                });
         }
         else
         {
@@ -242,11 +252,11 @@
                             var d = new Date(args.value);
                             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
 
-                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval : 15 }).attr('readonly', 'true');
+                            $("#CompletionDateTime").ejDateTimePicker({ enabled: true, minDateTime: args.value, maxDateTime: d/*new Date($("#CurrentDateTime").val())*/, interval : 15 });
                         }
                         else
                         {
-                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value:'', interval : 15 }).attr('readonly', 'true');
+                            $("#CompletionDateTime").ejDateTimePicker({  enabled: false, value:'', interval : 15 });
                         }
                     },
                     focusOut: function (args) {
@@ -273,7 +283,7 @@
                             $("#CompletionDateTime").ejDateTimePicker({ enabled: false, value: '', interval: 15 });
                         }
                     }
-                }).attr('readonly', 'true');
+                });
         }
 
         if ($("#CompletionDateTime").val() != null && $("#CompletionDateTime").val() != "")
@@ -281,14 +291,14 @@
             var d = new Date($("#ArrivalDateTime").val());
             d.setHours(d.getHours() + 12, d.getMinutes(), d.getSeconds());
             //$("#CompletionDateTime").ejDateTimePicker({ value: new Date($("#CompletionDateTime").val()), enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()),interval : 15 }).attr('readonly', 'true');
-            $("#CompletionDateTime").ejDateTimePicker({ value: new Date($("#CompletionDateTime").val()), minDateTime: new Date($("#ArrivalDateTime").val()), maxDateTime: d /*new Date($("#CurrentDateTime").val())*/, enabled: true, interval: 15 }).attr('readonly', 'true');
+            $("#CompletionDateTime").ejDateTimePicker({ value: new Date($("#CompletionDateTime").val()), minDateTime: new Date($("#ArrivalDateTime").val()), maxDateTime: d /*new Date($("#CurrentDateTime").val())*/, enabled: true, interval: 15 });
         }
         else
         {
             if ($("#StartDateTime").val() != '' && $("#StartDateTime").val() != null)
             {
                 //alert("2.1");
-                $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()), interval : 15 }).attr('readonly', 'true');
+                $("#ArrivalDateTime").ejDateTimePicker({ enabled: true, maxDateTime: new Date($("#CurrentDateTime").val()), interval : 15 });
 
                 if ($("#ArrivalDateTime").val() != '' && $("#ArrivalDateTime").val() != null)
                 {
@@ -1267,32 +1277,34 @@
                     $(this).append($(input43));
                 }
 
-                if ($("#CustomerSignatureDetailsHidden").length)
-                {
+                if ($("#CustomerSignatureDetailsHidden").length) {
                     var sign = $("#CustomerSignatureArea").ejSignature("instance");
                     if (sign._canvas === undefined) {
 
                     }
-                    else
-                    {
+                    else if ((sign.points === undefined || (sign.points && sign.points.length == 0)) && $('#CustomerSignatureImage').is(":hidden")) {
+
+                    }
+                    else {
                         image = sign._canvas[0].toDataURL();
                         $("#CustomerSignatureDetailsHidden").val(image);
                     }
                 }
-                else
-                {
+                else {
 
                     var sign = $("#CustomerSignatureArea").ejSignature("instance");
 
                     if (sign._canvas === undefined) {
 
                     }
-                    else
-                    {
+                    else if ((sign.points === undefined || (sign.points && sign.points.length == 0)) && $('#CustomerSignatureImage').is(":hidden")) {
+
+                    }
+                    else {
                         image = sign._canvas[0].toDataURL();
                         var input44 = $("<input id='CustomerSignatureDetailsHidden'>")
-                          .attr("type", "hidden")
-                          .attr("name", "CustomerSignatureDetailsHidden").val(image);
+                            .attr("type", "hidden")
+                            .attr("name", "CustomerSignatureDetailsHidden").val(image);
                         $(this).append($(input44));
                     }
                 }
@@ -1429,6 +1441,82 @@
                     }
                 }
 
+                //Start of New Closure Fields
+                if ($("#stateofEquipmentHidden").length) {
+                    $("#stateofEquipmentHidden").val($('.stateofEquipment').val());
+                }
+                else {
+                    var input52 = $("<input id='stateofEquipmentHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "stateofEquipmentHidden").val($('.stateofEquipment').val());
+                    $(this).append($(input52));
+                }
+
+
+                if ($("#serviceDelayedHidden").length) {
+                    $("#serviceDelayedHidden").val($('.serviceDelayed').val());
+                }
+                else {
+                    var input53 = $("<input id='serviceDelayedHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "serviceDelayedHidden").val($('.serviceDelayed').val());
+                    $(this).append($(input53));
+                }
+
+                if ($("#troubleshootStepsHidden").length) {
+                    $("#troubleshootStepsHidden").val($('.troubleshootSteps').val());
+                }
+                else {
+                    var input54 = $("<input id='troubleshootStepsHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "troubleshootStepsHidden").val($('.troubleshootSteps').val());
+                    $(this).append($(input54));
+                }
+
+                if ($("#ReviewedByHidden").length) {
+                    $("#ReviewedByHidden").val($('#ReviewedBy').val());
+                }
+                else {
+                    var input55 = $("<input id='ReviewedByHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "ReviewedByHidden").val($('#ReviewedBy').val());
+                    $(this).append($(input55));
+                }
+
+                if ($("#followupCommentsHidden").length) {
+                    $("#followupCommentsHidden").val($('.followupComments').val());
+                }
+                else {
+                    var input56 = $("<input id='followupCommentsHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "followupCommentsHidden").val($('.followupComments').val());
+                    $(this).append($(input56));
+                }
+
+                if ($("#IsServiceBillableFeedHidden").length) {
+                    $("#IsServiceBillableFeedHidden").val(JSON.stringify($(".IsServiceBillableFeed").is(':checked')));
+                }
+                else {
+                    var input57 = $("<input id='IsServiceBillableFeedHidden'>")
+                        .attr("type", "hidden")
+                        .attr("name", "IsServiceBillableFeedHidden").val(JSON.stringify($(".IsServiceBillableFeed").is(':checked')));
+                    $(this).append($(input57));
+                }
+                //if ($("#operationalCommentsHidden").length) {
+                //    $("#operationalCommentsHidden").val($('.operationalComments').val());
+                //}
+                //else {
+                //    var input57 = $("<input id='operationalCommentsHidden'>")
+                //        .attr("type", "hidden")
+                //        .attr("name", "operationalCommentsHidden").val($('.operationalComments').val());
+                //    $(this).append($(input57));
+                //}
+
+
+
+
+                    //END of New Closure Fields
+
                 if (ValidateCloserWorkorderModel()) {
                      var $this = $(this);
                 var frmValues = $this.serialize();
@@ -1459,7 +1547,13 @@
                                     AlertPopup(response.message + " \r  |Work Order Confirmation Code#: " + response.WOConfirmationCode);
                                 }
 
-                                if (response.Url!='') {
+                                if (response.message == "Please process the Payment, before Closing the Event!") {
+                                    @*window.open("/DispatchResponse/ProcessCardRedirect?workOrderId=" + @Model.WorkOrder.WorkorderID + "&techId=" + @Model.ResponsibleTechId);
+                                    return false;*@
+                                    //updateUrl = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + @Model.WorkOrder.WorkorderID + "&techId=" + @Model.ResponsibleTechId + "&FromView=callclosuremanagement";
+                                    updateUrl = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + @Model.WorkOrder.WorkorderID + "&FromView=callclosuremanagement";
+                                }
+                                else if (response.Url != '') {
                                     updateUrl = response.Url;
                                 }
 
@@ -1692,7 +1786,82 @@
                 }
             });
         });
+
+        if ($("#WorkOrder_FinalTransactionId").val()) {
+            $(".IsServiceBillableFeed").prop("checked", true);
+            $(".IsServiceBillableFeed").attr("disabled", true);
+        }
+
+
+        $(".IsServiceBillableFeed").on('click', function(){
+            if ($(".IsServiceBillableFeed").is(':checked') == true) {
+                $("#completeEventBtn").text("Pay & Complete Work Order");
+                //SetSubmitOperation(6);
+                //$("form").trigger("submit");
+
+
+
+                @*$.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetCardDetails", "CallClosure")",
+                    data: { workOrderId: $("#WorkOrder_WorkorderID").val(), techId: "@Model.ResponsibleTechId" }
+                }).done(function (jsonResult) {
+
+                    var obj = $("#BillingDetails").ejGrid("instance");
+                    obj.dataSource(jsonResult.data.BillingDetails);
+
+                    $("#BillingTotalLbl").html(jsonResult.data.BillingTotal.toFixed(2));
+
+                    $("#processCardBlock").show();
+                });*@
+
+            }
+            else {
+                //$("#processCardBlock").hide();
+                $("#completeEventBtn").text("Complete Work Order");
+            }
+        });
+
+        if ("@Model.RedirectFromCardProcess" == "True" && $(".IsServiceBillableFeed").is(':checked') == true) {
+            $("#successAlertTxt").html(response.message + "\n Do you want to Complete the Workorder !");
+            ShowSuccessPopup();
+        }
+
     });
+
+    function ShowSuccessPopup() {
+        $('[data-popup="popup-coremark-successBlock"]').fadeIn(350);
+    }
+    function HideSuccessPopup() {
+        $('[data-popup="popup-coremark-successBlock"]').fadeOut(350);
+    }
+
+    function CompleteEventTrigger() {
+        SetSubmitOperation(6);
+        $("form").trigger("submit");
+    }
+
+
+
+    function WarrentyRequiredDropdownChange() {
+        var warrentyForValue = $("#WarrentyDropDownList").val();
+        if (warrentyForValue && warrentyForValue.toUpperCase() == 'YES') {
+            $("#WarrentyForSection").show();
+        }
+        else {
+            $("#WarrentyForSection").hide();
+        }
+    }
+
+    function FollowupRequiredChange() {
+        var followupValue = $("#AdditionalFollowupDropDownList").val();
+        if (followupValue && followupValue.toUpperCase() == 'YES') {
+            $("#FollowupCommentsSection").show();
+        }
+        else {
+            $("#FollowupCommentsSection").hide();
+        }
+    }
 
     function CustomerAlternateAddressChange()
     {
@@ -2665,6 +2834,116 @@
         return result;
     }
 
+
+
+    // CC Process Start
+
+ function CompleteBillingModel(args) {
+        if (args.requestType == "beginedit" || args.requestType == "add") {
+            if (args.requestType == "beginedit") {
+                $("#BillingDetailsBillingType").ejDropDownList().data("ejDropDownList").selectItemByText(BillingType);
+                $("#BillingDetailsBillingCode").val(BillingCode)
+                $("#BillingDetailsQty").val(BillingQty)
+                $("#BillingDetailsUnitPrice").val(BillingUnitPrice)
+                $("#BillingDetailsTotal").val(BillingTotal)
+            }
+
+            $("#BillingDetailsBillingType").ejDropDownList({ change: "BillingTypeChange", enableFilterSearch: true });
+            $("#BillingDetailsQuantity").on("keyup", BillingQuantityChange);
+        }
+    }
+
+    function BillingQuantityChange(e) {
+        var price = $("#BillingDetailsCost").val();
+
+        if (price) {
+            const priceArray = price.split("$");
+
+            var total = parseInt(e.key) * priceArray[1];
+            $("#BillingDetailsTotal").val("$" + total.toFixed(2));
+        }
+    }
+
+    function BillingTypeChange(e) {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetBillingItem", "DispatchResponse")",
+            data: { "ItemName": e.selectedValue},
+        }).done(function (jsonResult) {
+            if (jsonResult.success == true) {
+                var result = jsonResult.data;
+                $("#BillingDetailsBillingCode").val(result.BillingCode);
+                $("#BillingDetailsCost").val("$" + result.UnitPrice.toFixed(2));
+            }
+            else {
+                AlertPopup("|Problem fetching the Billing Item!");
+            }
+        });
+
+    }
+
+    var BillingType;
+    var BillingCode;
+    var BillingQty;
+    var BillingUnitPrice;
+    var BillingTotal;
+
+    var TotalCost = 0;
+    function BillingDetailsBeginEdit(args) {
+        var children = args.row.children();
+
+        BillingType = $(children[1]).text();
+        BillingCode = $(children[2]).text();
+        BillingQty = $(children[3]).text();
+        BillingUnitPrice = $(children[4]).text();
+        BillingTotal = $(children[5]).text();
+
+    }
+
+    function BillingDetailsBegin()
+    {
+        $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function BillingDetailsEndEdit()
+    {
+        $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function BillingDetailsEndAdd(args)
+    {
+        TotalCost += args.data.Total;
+
+        $("#BillingTotalLbl").html(Number(TotalCost).toFixed(2));
+
+        $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
+    }
+    function onBillingToolBarClick(args) {
+
+        if ((args.itemName == "Edit" || args.itemName == "Delete") & this.getSelectedRecords().length == 0) {
+
+            //prevent the default alert popup
+            alert = function () { };
+
+            //here you can call your own customize alert method
+            AlertPopup("|No records selected for " + args.itemName + " operation");
+
+        }
+        if (args.itemName == "Add") {
+
+        }
+
+    }
+
+     function CCProcessBtnClick() {
+
+
+            $('[data-popup="popup-clover"]').fadeIn(350);
+
+        }
+
+
+
+//CC Process End
+
 </script>
 @using (Html.BeginForm())
 {
@@ -2818,11 +3097,23 @@
         <div class="container-fluid">
             <h2 class="billable-head arrow-down tabheader">Billable</h2>
             <div class="billable-content margin-top" style="display:block !important;">
+
+                <div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
+                    <div class="col-sm-6-o">
+                        <div class="col-md-6">
+                            <span style="font-size: 2em; ">
+                                Service Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsServiceBillableFeed" })
+                                @Html.Hidden("IsServiceBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsServiceBillableFeed}}", new { @class = "IsServiceBillableFeedHidden" })
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">
                     <div class="col-sm-6-o">
                         <div class="col-md-6">
                             @*@Html.CheckBoxFor(m => m.IsBillable, new { @class = "WorkOrderFields" }) Is Billable*@
-                            Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsBillableFeed" })
+                            Parts Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsBillableFeed" })
                             @Html.Hidden("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsBillableFeed}}", new { @class = "IsBillableFeedHidden" })
                         </div>
                     </div>
@@ -2880,6 +3171,172 @@
             <h2 class="closure-head arrow-down tabheader">Closure</h2>
             <div class="closure-content margin-top" style="display:block !important;">
                 <div class="row customer">
+
+                    <div class="col-md-12 customer-col2">
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*<span class="col-md-3">State of Equipment:</span>*@
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                State of Equipment upon arrival:
+                                            </span><br />
+                                            @Html.TextArea("stateofEquipment", Model.Closure.StateOfEquipment, new { @class = "form-control WorkOrderFields stateofEquipment NonSurveyPanel", @style = "width:300px;height:150px" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*<span class="col-md-3">Service Delayed (explain):</span>*@
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                Was Service Delayed (explain):
+                                            </span><br />
+                                            @Html.TextArea("serviceDelayed", Model.Closure.serviceDelayed, new { @class = "form-control WorkOrderFields serviceDelayed NonSurveyPanel", @style = "width:300px;height:150px" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*<span class="col-md-3">Steps to Troubleshoot and Resolve:</span>*@
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                Steps to Troubleshoot and Resolve:
+                                            </span><br />
+                                            @Html.TextArea("troubleshootSteps", Model.Closure.troubleshootSteps, new { @class = "form-control WorkOrderFields troubleshootSteps NonSurveyPanel", @style = "width:300px;height:150px" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*<span class="col-md-3">Is Under Warranty:</span>*@
+                                    <div class="col-md-4" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                Is Under Warranty:
+                                            </span><br />
+                                            @Html.DropDownListFor(w => w.Closure.IsUnderWarrenty, new SelectList(Model.Closure.WarrentyList, Model.Closure.IsUnderWarrenty), new
+                                            {
+                                                @class = "form-control SearchPanelControl",
+                                                @Id = "WarrentyDropDownList",
+                                                onchange = "WarrentyRequiredDropdownChange()"
+})
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*<span class="col-md-3">Warranty For:</span>*@
+                                    <div class="col-md-4" style="margin-left:10px;">
+                                        <div class="form-group" id="WarrentyForSection">
+                                            <span class="required1">
+                                                Warranty For:
+                                            </span><br />
+                                            @Html.DropDownListFor(w => w.Closure.WarrentyFor, new SelectList(Model.Closure.WarrentyForList, Model.Closure.WarrentyFor), new
+                                            {
+                                                @class = "form-control SearchPanelControl",
+                                                @Id = "WarrentyForDropDownList"@*, onchange = "TechTypeChange(this)"*@
+})
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    @*<span class="col-md-3">Steps to Troubleshoot and Resolve:</span>*@
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                Full name of person you review the work with:
+                                            </span><br />
+                                            @Html.TextBoxFor(c => c.Closure.ReviewedBy, new { @class = "form-control SearchPanelControl", @id = "ReviewedBy" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                Is Additional Followup Needed:
+                                            </span><br />
+                                            @Html.DropDownListFor(w => w.Closure.AdditionalFollowup, new SelectList(Model.Closure.AdditionalFollowupList, Model.Closure.AdditionalFollowup), new
+                                            {
+                                                @class = "form-control SearchPanelControl",
+                                                @Id = "AdditionalFollowupDropDownList",
+                                                onchange = "FollowupRequiredChange()"
+})
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group" id="FollowupCommentsSection">
+                                            <span class="required1">
+                                                Additional Followup Comments:
+                                            </span><br />
+                                            @Html.TextArea("FollowupComments", Model.Closure.followupComments, new { @class = "form-control WorkOrderFields followupComments NonSurveyPanel", @style = "width:300px;height:150px" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 customer-col1 sm-pad-reset">
+                            <div class="col-sm-6-o">
+                                <div class="form-group">
+                                    <div class="col-md-8" style="margin-left:10px;">
+                                        <div class="form-group">
+                                            <span class="required1">
+                                                Is Operational:
+                                            </span><br />
+                                            @Html.DropDownListFor(w => w.Closure.Operational, new SelectList(Model.Closure.OperationalList, Model.Closure.Operational), new
+                                            {
+                                                @class = "form-control SearchPanelControl",
+                                                @Id = "OperationalDropDownList"
+})
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            @*<div class="col-sm-6-o">
+                    <div class="form-group">
+                        <div class="col-md-8" style="margin-left:10px;">
+                            <div class="form-group">
+                                Operational Comments:<br />
+                                @Html.TextArea("OperationalComments", Model.Closure.operationalComments, new { @class = "form-control WorkOrderFields operationalComments NonSurveyPanel", @style = "width:300px;height:150px" })
+                            </div>
+                        </div>
+                    </div>
+                </div>*@
+                        </div>
+
+
+                    </div>
+
+
                     <div class="col-md-12 customer-col2">
                         <h4 class="customer-head">Call Details</h4>
                     </div>
@@ -2887,9 +3344,11 @@
                         <div class="col-md-3 customer-col1 sm-pad-reset">
                             <div class="col-sm-6-o">
                                 <div class="form-group">
-                                    Start Date/Time:<br />
+                                    <span class="required1">
+                                        Start Date/Time:
+                                    </span><br />
 
-                                    @Html.TextBoxFor(w => w.Closure.StartDateTime, new { @class = "form-control WorkOrderFields", @Id = "StartDateTime", @readOnly = Model.IsCCProcessComplete })
+                                    @Html.TextBoxFor(w => w.Closure.StartDateTime, new { @class = "form-control WorkOrderFields", @Id = "StartDateTime"@*, @readOnly = Model.IsCCProcessComplete*@ })
                                 </div>
                             </div>
                             <div class="col-sm-6-o">
@@ -2914,7 +3373,7 @@
                                 <div class="form-group">
                                     @*Billable: @Html.CheckBox("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), false, new { onchange = "BillableFeedOnChange(this)", @class = "IsBillableFeed" })*@
                                     @*Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsBillableFeed", onchange = "BillableFeedOnChange(this)" })
-                                        @Html.Hidden("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsBillableFeed}}", new { @class = "IsBillableFeedHidden" })*@
+                        @Html.Hidden("IsBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsBillableFeed}}", new { @class = "IsBillableFeedHidden" })*@
                                 </div>
                             </div>
 
@@ -2935,8 +3394,10 @@
                         <div class="col-md-3 customer-col1 sm-pad-reset">
                             <div class="col-sm-6-o">
                                 <div class="form-group">
-                                    Arrival Date/Time:<br />
-                                    @Html.TextBoxFor(w => w.Closure.ArrivalDateTime, new { @class = "form-control WorkOrderFields", @Id = "ArrivalDateTime", @readOnly = Model.IsCCProcessComplete })
+                                    <span class="required1">
+                                        Arrival Date/Time:
+                                    </span><br />
+                                    @Html.TextBoxFor(w => w.Closure.ArrivalDateTime, new { @class = "form-control WorkOrderFields", @Id = "ArrivalDateTime"@*, @readOnly = Model.IsCCProcessComplete*@ })
                                 </div>
                             </div>
                             <div class="col-sm-6-o">
@@ -2968,8 +3429,10 @@
 
                             <div class="col-sm-6-o">
                                 <div class="form-group">
-                                    Completion Date/Time:<br />
-                                    @Html.TextBoxFor(w => w.Closure.CompletionDateTime, new { @class = "form-control WorkOrderFields", @Id = "CompletionDateTime", @readOnly = Model.IsCCProcessComplete })
+                                    <span class="required1">
+                                        Completion Date/Time:
+                                    </span><br />
+                                    @Html.TextBoxFor(w => w.Closure.CompletionDateTime, new { @class = "form-control WorkOrderFields", @Id = "CompletionDateTime"@*, @readOnly = Model.IsCCProcessComplete*@ })
                                 </div>
                             </div>
                             <div class="col-sm-6-o">
@@ -2996,30 +3459,34 @@
                         </div>
                         @*<div class="col-md-3 customer-col1 sm-pad-reset">
 
-                                <div class="col-sm-6-o">
-                                    Customer Signature:<br />
-                                    <div class="form-group">
-                                        <img id="CustomerSignatureImage" height="100" width="250" onerror='ImageNotFound()' alt="Customer Signature" src=@Html.DisplayFor(w => w.Closure.CustomerSignatureDetails) />
-                                    </div>
-                                    <div class="form-group">
-                                        @Html.EJ().Signature("CustomerSignatureArea").Height("100px").Width("250px").StrokeWidth(3).IsResponsive(true)
-                                    </div>
+                <div class="col-sm-6-o">
+                    Customer Signature:<br />
+                    <div class="form-group">
+                        <img id="CustomerSignatureImage" height="100" width="250" onerror='ImageNotFound()' alt="Customer Signature" src=@Html.DisplayFor(w => w.Closure.CustomerSignatureDetails) />
+                    </div>
+                    <div class="form-group">
+                        @Html.EJ().Signature("CustomerSignatureArea").Height("100px").Width("250px").StrokeWidth(3).IsResponsive(true)
+                    </div>
 
-                                    <button class="btn btn-primary" onclick="onclear()">Clear</button>
-                                </div>
-                            </div>*@
+                    <button class="btn btn-primary" onclick="onclear()">Clear</button>
+                </div>
+            </div>*@
                         <div class="col-md-3 customer-col1 sm-pad-reset" style="background: #b5b4b440;  width: auto;">
                             <div class="col-sm-6-o">
                                 <br />
-                                Signature By: <br />
+                                <span class="required1">
+                                    Signature By:
+                                </span> <br />
                                 <div class="form-group">
                                     @Html.TextBoxFor(w => w.Closure.CustomerSignedBy, new { @class = "form-control WorkOrderFields" })
                                 </div>
                                 <br />
                                 @*<div class="col-md-5">*@
-                                Customer Signature:
+                                <span class="required1">
+                                    Customer Signature:
+                                </span>
                                 @*</div>
-                                    <div class="col-md-7">*@
+                    <div class="col-md-7">*@
                                 <div class="form-group">
                                     <img id="CustomerSignatureImage" height="100" width="250" onerror='ImageNotFound()' alt="Customer Signature" src=@Html.DisplayFor(w => w.Closure.CustomerSignatureDetails) />
                                 </div>
@@ -3037,7 +3504,7 @@
                                 <br />
                                 Technician Signature:
                                 @*</div>
-                                    <div class="col-md-7">*@
+                    <div class="col-md-7">*@
                                 <div class="form-group">
                                     <img id="TechnicianSignatureImage" height="100" width="250" onerror='TechSignatureImageNotFound()' alt="Technician Signature" src=@Html.DisplayFor(w => w.Closure.TechnicianSignatureDetails) />
                                 </div>
@@ -3056,11 +3523,11 @@
                             <h4 class="customer-head required">Asset Details</h4>
                         </div>
                         @*<div class="col-md-12 customer-col2">
-                                <div class="col-md-6">
-                                    <h4 class="customer-head required">Asset Details</h4>
-                                </div>
+            <div class="col-md-6">
+                <h4 class="customer-head required">Asset Details</h4>
+            </div>
 
-                            </div>*@
+        </div>*@
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 @if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
@@ -3181,17 +3648,282 @@
 
                             //if (UserPrivilege["Work Order"] == "Edit-Only" || UserPrivilege["Work Order"] == "Full")
                             {
-                                <div class="col-md-12 customer-col2">
-                                    @if (Model.IsOpen == false)
-                                    {
-                                        <button type="submit" style="float:right;margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
-                                    }
+                                                <div class="col-md-12 customer-col2" style="justify-content: flex-end; display: flex;">
+                                                    <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
+                                                        @*Service Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsServiceBillableFeed" })
+                                                        @Html.Hidden("IsServiceBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsServiceBillableFeed}}", new { @class = "IsServiceBillableFeedHidden" })*@                                                        
+                                                    </span>
+                                                    @if (Model.IsOpen == false)
+                                                    {
+                                                        <button id="completeEventBtn" type="submit" style="margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
+                                                    }
 
-                                </div>
+                                                </div>
                             }
                         }
 
                     </div>
+
+
+                    <div class="col-md-12 customer-col2" style="padding-bottom: 1vw; display:none;" id="processCardBlock">
+
+
+                        <section class="block">
+                            <div class="container-fluid">
+                                <h2 class="billing-head arrow-down tabheader">Billing Items</h2>
+                                <div class="billing-content margin-top" style="display:block !important;">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+
+                                            @(Html.EJ().Grid<FarmerBrothers.Models.BillingModel>
+("BillingDetails")
+.Datasource(ds => ds.Json((IEnumerable<object>)Model.ProcessCardDetails.BillingDetails)
+.UpdateURL(Url.Action("BillingDataUpdate", "DispatchResponse"))
+.InsertURL(Url.Action("BillingDataInsert", "DispatchResponse"))
+.RemoveURL(Url.Action("BillingDataDelete", "DispatchResponse"))
+.Adaptor(AdaptorType.RemoteSaveAdaptor))
+.EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+.AllowPaging()
+.ToolbarSettings(toolbar =>
+{
+    toolbar.ShowToolbar().ToolbarItems(items =>
+    {
+        items.AddTool(ToolBarItems.Add);
+        items.AddTool(ToolBarItems.Edit);
+        items.AddTool(ToolBarItems.Delete);
+        items.AddTool(ToolBarItems.Update);
+        items.AddTool(ToolBarItems.Cancel);
+    });
+})
+.Columns(col =>
+{
+    col.Field("Id").HeaderText("Id").IsPrimaryKey(true).Visible(false).Add();
+    col.Field("BillingType").HeaderText("Billable Type").ForeignKeyField("Category").ForeignKeyValue("Category").DataSource(((IEnumerable<object>)Model.ProcessCardDetails.BillingItems))
+        .ValidationRules(r => r.AddRule("required", true)).Add();
+    col.Field("BillingCode").HeaderText("Billable Code").AllowEditing(false).Add();
+    col.Field("Duration").HeaderText("Duration").Type(ColumnType.Number).AllowEditing(false).Add();
+    col.Field("Cost").HeaderTextAlign(TextAlign.Right).HeaderText("Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:c2}").Add();
+    col.Field("Total").HeaderTextAlign(TextAlign.Right).HeaderText("Total Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:c2}").Add();
+
+})
+.ClientSideEvents(eve =>
+{
+    eve.ActionComplete("CompleteBillingModel")
+        .BeginEdit("BillingDetailsBeginEdit")
+        .ActionBegin("BillingDetailsBegin")
+        .EndEdit("BillingDetailsEndEdit")
+        .EndAdd("BillingDetailsEndAdd")
+    .ToolbarClick("onBillingToolbarClick");
+}))
+
+
+
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                                <div class="col-md-2 customer-col1 sm-pad-reset margin-top"></div>
+                                <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
+
+                                    @******Clover Iframe Block********@
+
+                                    <input name="cloverTransaction" id="cloverTransactionId" type="hidden" />
+
+                                    @******End of Clover Iframe Block********@
+                                </div>
+                                <div class="col-md-6 customer-col1 sm-pad-reset margin-top">
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-5"><h1>Total Cost:</h1></span>
+                                        <div class="col-md-7">
+                                            <div class="form-group">
+                                                <span class="col-md-7" style="color:#ff0000"><h3><b>$ <label id="BillingTotalLbl"></label></b></h3></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br />
+
+                                    <div class="col-sm-6-o">
+                                        <span class="col-md-8" style="text-align:center;">
+                                            <img id="cardProcessBtn" onclick="CCProcessBtnClick()" src="~/img/CardProcessingImg.png" style="width:50%;cursor:pointer;" />
+                                        </span>
+                                    </div>
+
+                                </div>
+
+
+
+                            </div>
+                        </section>
+
+
+                        <div class="popup" data-popup="popup-cloverpayment">
+
+                            <div class="popup-inner" style="width: 100%; border-radius: 1em; padding: 1.5em; ">
+                                <h2>Credit Card Processing</h2>
+                                <hr style="border-color: #b89898;" />
+
+                                <script>
+    var accessKey = '@System.Configuration.ConfigurationManager.AppSettings["CloverAccessKey"].ToString()';
+    const clover = new Clover(accessKey);
+    const elements = clover.elements();
+    const form = document.getElementById('clover-form');
+
+    const styles = {
+        'card-number input': {
+            'width': '100%',
+            'height': '100%',
+            'font-size': '20px',
+            'padding': '3px',
+            'font-weight': 'bold'
+        }
+    };
+
+                    $(document).ready(function () {
+                        const cardNumber = elements.create('CARD_NUMBER', styles);
+                        const cardDate = elements.create('CARD_DATE', styles);
+                        const cardCvv = elements.create('CARD_CVV', styles);
+                        const cardPostalCode = elements.create('CARD_POSTAL_CODE', styles);
+
+                        cardNumber.mount('#card-number');
+                        cardDate.mount('#card-date');
+                        cardCvv.mount('#card-cvv');
+                        cardPostalCode.mount('#card-postal-code');
+
+                        const cardResponse = document.getElementById('card-response');
+                        const displayCardNumberError = document.getElementById('card-number-errors');
+                        const displayCardDateError = document.getElementById('card-date-errors');
+                        const displayCardCvvError = document.getElementById('card-cvv-errors');
+                        const displayCardPostalCodeError = document.getElementById('card-postal-code-errors');
+
+                        // Handle real-time validation errors from the card element
+                        cardNumber.addEventListener('change', function (event) {
+                            console.log(`cardNumber changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardNumber.addEventListener('blur', function (event) {
+                            console.log(`cardNumber blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardDate.addEventListener('change', function (event) {
+                            console.log(`cardDate changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardDate.addEventListener('blur', function (event) {
+                            console.log(`cardDate blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardCvv.addEventListener('change', function (event) {
+                            console.log(`cardCvv changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardCvv.addEventListener('blur', function (event) {
+                            console.log(`cardCvv blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardPostalCode.addEventListener('change', function (event) {
+                            console.log(`cardPostalCode changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardPostalCode.addEventListener('blur', function (event) {
+                            console.log(`cardPostalCode blur ${JSON.stringify(event)}`);
+                        });
+
+                        $('#clover-form').submit(function (event) {
+                            event.preventDefault();
+                            // Use the iframe's tokenization method with the user-entered card details
+                            clover.createToken()
+                                .then(function (result) {
+                                    if (result.errors) {
+                                        Object.values(result.errors).forEach(function (value) {
+                                            displayCardNumberError.textContent = value;
+                                        });
+                                    } else {
+                                        //VoidOldPayment(result.token);
+                                        ProcessPayment(result.token)
+                                    }
+                                });
+                        });
+                    });
+
+            function ProcessPayment(token) {
+                var Amount = Number($("#PayableTotalLbl").html());
+                        $.ajax({
+                            url: '@Url.Action("ProcessBillPayment", "DispatchResponse")',
+                            type: 'POST',
+                            data: { "sourceToken": token, "Amount": Amount, "Capture": true },
+                            success: function (jsonResult) {
+                                if (jsonResult.success == true) {
+                                    $("#cloverTransactionId").val(jsonResult.data);
+                                }
+                                $('[data-popup="popup-cloverpayment"]').fadeOut(350);
+                                AlertPopup("Transaction Success, Proceed to Save");
+                            },
+                            error: function (er) {
+                                AlertPopup("Problem in Processing the Payment, Please contact Support !");
+                            }
+                        });
+                    }
+
+                    function VoidOldPayment(token) {
+                        $.ajax({
+                            url: '@Url.Action("VoidPayment", "DispatchResponse")',
+                            type: 'POST',
+                            data: { "WorkorderId": $("#WorkorderId").val()},
+                            success: function (jsonResult) {
+                                if (jsonResult.success == true) {
+                                    ProcessPayment(token);
+                                }
+                            },
+                            error: function (er) {
+                                AlertPopup("Problem in Refund, Please contact Support !");
+                            }
+                        });
+                    }
+
+
+                                </script>
+
+
+                                <form id="clover-form">
+                                    <div class="form-control" style="margin: 1em 0em; height: 50px; ">
+                                        <div id="card-number" style="height:100%;"></div>
+                                        <div class="input-errors" id="card-number-errors" role="alert"></div>
+                                    </div>
+
+                                    <div style="display: grid; grid-template-columns: 220px 20px auto; grid-template-rows: auto;">
+                                        <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start:1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 3;">
+                                            <div id="card-date" style="height:100%;"></div>
+                                            <div class="input-errors" id="card-date-errors" role="alert"></div>
+                                        </div>
+
+                                        <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start: 3; grid-column-end: 4; grid-row-start: 1; grid-row-end: 1;">
+                                            <div id="card-cvv" style="height:100%;"></div>
+                                            <div class="input-errors" id="card-cvv-errors" role="alert"></div>
+                                        </div>
+
+                                        <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start: 5; grid-column-end: 6; grid-row-start: 1; grid-row-end: 1;">
+                                            <div id="card-postal-code" style="height:100%;"></div>
+                                            <div class="input-errors" id="card-postal-code-errors" role="alert"></div>
+                                        </div>
+                                    </div>
+                                    <div id="card-response" role="alert"></div>
+
+                                    <div class="button-container">
+                                        <input type="submit" value="Submit Payment">
+                                    </div>
+                                </form>
+                                <a class="popup-close" data-popup-close="popup-cloverpayment" href="#">x</a>
+                            </div>
+                        </div>
+
+                        <div class="popup" data-popup="popup-successBlock" style="background: rgb(179 166 166 / 45%);">
+                        </div>
+
+
+                    </div>
+
                 </div>
             </div>
     </section>
@@ -3453,7 +4185,9 @@
         if (args.requestType == "beginedit" || args.requestType == "add") {
             //alert("1.1");
             //$("#" + this._id + "Manufacturer").ejDropDownList({ change: "DetailGridManufacturerChange", enableFilterSearch: true });
-            $("#" + this._id + "Sku").ejAutocomplete({change : "DetailGridSkuChange", enableFilterSearch: true });
+            $("#" + this._id + "Sku").ejAutocomplete({ change: "DetailGridSkuChange", enableFilterSearch: true });
+
+            $("#" + this._id + "PartReplenish").prop("checked", true);//Defaulting Parts replenish to true
 
             @*if (args.requestType == "beginedit") {
                 var manufacturerObj = $("#" + this._id + "Manufacturer").data("ejDropDownList");
@@ -3537,7 +4271,8 @@
                     },
                     dataSource : dataResults,
                     columns: [
-                        { field: "Issue",headerText: "Issue",template: true, width: 80, templateID: "#checkboxTemplate", visible: false, textAlign:ej.TextAlign.Center,allowEditing: false,isPrimaryKey:true },//The checkbox column is bound to the grid using template property and headerTemplateID property
+                        { field: "Issue", headerText: "Issue", template: true, width: 80, templateID: "#checkboxTemplate", visible: false, textAlign: ej.TextAlign.Center, allowEditing: false, isPrimaryKey: true },//The checkbox column is bound to the grid using template property and headerTemplateID property
+                        { field: "PartReplenish", headerText: "Part Replenish", width: 80, textAlign: ej.TextAlign.Center, type: 'boolean', displayAsCheckBox: true, editType: 'booleanedit' },
                         { field: "Quantity", headerText: 'Quantity', width: 80, textAlign: ej.TextAlign.Left },
                         {
                             field: "Sku", headerText: 'Part#/SKU', validationRules: { required: true},
@@ -3748,3 +4483,21 @@
 
 
 }
+
+<div class="popup" data-popup="popup-coremark-successBlock">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                <td id="successAlertTxt"></td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="CompleteEventTrigger()">Yes</button>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideSuccessPopup()">No</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup-coremark-successBlock" href="#">x</a>
+    </div>
+</div>

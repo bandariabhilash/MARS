@@ -43,6 +43,11 @@ namespace FarmerBrothers.Models
             //    }
             //}
 
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("IsServiceBillableFeedHidden")))
+            {
+                model.IsServiceBillable = Convert.ToBoolean(request.Unvalidated.Form.Get("IsServiceBillableFeedHidden"));
+            }
+
             if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("IsBillableFeedHidden")))
             {
                 model.IsBillableFeed = Convert.ToBoolean(request.Unvalidated.Form.Get("IsBillableFeedHidden"));
@@ -725,6 +730,39 @@ namespace FarmerBrothers.Models
             //model = wc.ConstructWorkorderManagementModel(customerId, workorderId);
             //model.Closure = wrcloser;
             //model.WorkOrderEquipments = woEqp;
+
+
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("stateofEquipmentHidden")))
+            {
+                model.Closure.StateOfEquipment = request.Unvalidated.Form.Get("stateofEquipmentHidden");
+            }
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("serviceDelayedHidden")))
+            {
+                model.Closure.serviceDelayed = request.Unvalidated.Form.Get("serviceDelayedHidden");
+            }
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("troubleshootStepsHidden")))
+            {
+                model.Closure.troubleshootSteps = request.Unvalidated.Form.Get("troubleshootStepsHidden");
+            }
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("ReviewedByHidden")))
+            {
+                model.Closure.ReviewedBy = request.Unvalidated.Form.Get("ReviewedByHidden");
+            }
+            if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("followupCommentsHidden")))
+            {
+                model.Closure.followupComments = request.Unvalidated.Form.Get("followupCommentsHidden");
+            }
+            //if (!string.IsNullOrWhiteSpace(request.Unvalidated.Form.Get("operationalCommentsHidden")))
+            //{
+            //    model.Closure.operationalComments = request.Unvalidated.Form.Get("operationalCommentsHidden");
+            //}
+
+            model.Closure.IsUnderWarrenty = request.Unvalidated.Form.Get("Closure.IsUnderWarrenty");
+            model.Closure.WarrentyFor = request.Unvalidated.Form.Get("Closure.WarrentyFor");
+            model.Closure.AdditionalFollowup = request.Unvalidated.Form.Get("Closure.AdditionalFollowup");
+            model.Closure.Operational = request.Unvalidated.Form.Get("Closure.Operational");
+
+
             return model;
         }
     }

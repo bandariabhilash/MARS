@@ -92,8 +92,8 @@
                     { field: "PricingParentDesc", headerText: "Parent Name" },
                     { field: "LastSaleDate", headerText: "Last Sale Date" },
                     { field: "DaysSinceLastSale", headerText: "Days Since Last Sale" },
-                    { field: "LongAddressNumber", headerText: "Long Address Number" }
-
+                    { field: "LongAddressNumber", headerText: "Long Address Number" },
+                    //{ field: "Branch", headerText: "Branch" }
                 ]
             });
         }
@@ -121,8 +121,8 @@
                     { field: "PricingParentDesc", headerText: "Parent Name" },
                     { field: "LastSaleDate", headerText: "Last Sale Date" },
                     { field: "DaysSinceLastSale", headerText: "Days Since Last Sale" },
-                    { field: "LongAddressNumber", headerText: "Long Address Number" }
-
+                    { field: "LongAddressNumber", headerText: "Long Address Number" },
+                    //{ field: "Branch", headerText: "Branch" }
                 ]
             });
         }
@@ -226,6 +226,7 @@
             && $('#ParentId').val() == ""
             && $('#ZipCode').val() == ""
             && $('#LongAddressNumber').val() == "")
+            //&& $('#Branch').val() == "")
         {
             AlertPopup("|Please Select at least one Search Criteria!");
             valid = false;
@@ -407,6 +408,14 @@
                                 </div>
                             </div>
                         </div>
+                        @*<div class="col-sm-2">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    Branch:
+                                    @Html.TextBoxFor(c => c.Branch, new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>*@
 
                         <div class="col-sm-2">
                             <div class="col-sm-6-o">

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="0095efde644749a9b20f6ad19f46f275" Name="Diagram1" ZoomLevel="55">
+        <EntityTypeShape EntityType="FB_DevModel.AgentDispatchLog" Width="1.5" PointX="0.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.AllFBStatu" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.AMPSList" Width="1.5" PointX="0.75" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Application" Width="1.5" PointX="11" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.BillingItem" Width="1.5" PointX="0.75" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.BranchESM" Width="1.5" PointX="0.75" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.BrandName" Width="1.5" PointX="2.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.CallTypeSymptomSolutionMaster" Width="1.5" PointX="15.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Category" Width="1.5" PointX="15.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Contact" Width="1.5" PointX="18.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Contact_PMUploadsALL" Width="1.5" PointX="8.75" PointY="19.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Contingent" Width="1.5" PointX="15.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ContingentDetail" Width="1.5" PointX="10.75" PointY="19.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.CustomCriteria" Width="1.5" PointX="15.75" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ElectricalPhaseList" Width="1.5" PointX="20.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.EquipType" Width="1.5" PointX="20.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Erf" Width="1.5" PointX="3.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ERFBranchDetail" Width="1.5" PointX="5.75" PointY="21.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ERFOrderType" Width="1.5" PointX="20.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ErfWorkorderLog" Width="1.5" PointX="20.75" PointY="10.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ESMCCMRSMEscalation" Width="1.5" PointX="20.75" PointY="13.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ESMDSMRSM" Width="1.5" PointX="20.75" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.EstimateEscalation" Width="1.5" PointX="15.75" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBActivityLog" Width="1.5" PointX="10.25" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBBillableFeed" Width="1.5" PointX="17.75" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FbBillableSKU" Width="1.5" PointX="22.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBCallReason" Width="1.5" PointX="22.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBCBE" Width="1.5" PointX="22.75" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBClosurePart" Width="1.5" PointX="0.75" PointY="23.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBCustomerNote" Width="1.5" PointX="10.25" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBCustomerServiceDistribution" Width="1.5" PointX="10.75" PointY="23.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBEquipment" Width="1.5" PointX="2.75" PointY="23.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBERFEquipment" Width="1.5" PointX="6" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBERFExpendable" Width="1.5" PointX="6" PointY="40.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBERFPos" Width="1.5" PointX="22.75" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBERFTransactionType" Width="1.5" PointX="22.75" PointY="20.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBExpendable" Width="1.5" PointX="22.75" PointY="23.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBFunctionality" Width="1.5" PointX="19.75" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FbPrimaryTechnician" Width="1.5" PointX="24.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBReport" Width="1.5" PointX="11" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBRoleFunction" Width="1.5" PointX="24.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FbRole" Width="1.5" PointX="5.75" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBSKU" Width="1.5" PointX="5.75" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FbUserMaster" Width="1.5" PointX="8" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FBUserReport" Width="1.5" PointX="13.25" PointY="6.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FbWorkOrderSKU" Width="1.5" PointX="24.75" PointY="8.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FeastMovement" Width="1.5" PointX="24.75" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.HolidayList" Width="1.5" PointX="12.75" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.IndexCounter" Width="1.5" PointX="24.75" PointY="15.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Invoice" Width="1.5" PointX="14.75" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.JDEPaymentTerm" Width="1.5" PointX="16.75" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NARF_NewAccount" Width="1.5" PointX="13.75" PointY="15.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NARF_TradeReference" Width="1.5" PointX="16" PointY="18.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NEMANumberList" Width="1.5" PointX="24.75" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NoAutoEmailZipCode" Width="1.5" PointX="24.75" PointY="21.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NoAutomaticEmailContract" Width="1.5" PointX="24.75" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NonFBCustomer" Width="1.5" PointX="7.75" PointY="26.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NonSerialized" Width="1.5" PointX="3" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NonServiceworkorder" Width="1.5" PointX="6.75" PointY="49.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.NotesHistory" Width="1.5" PointX="9" PointY="41.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.OnCallGroup" Width="1.5" PointX="21.75" PointY="26.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.PhoneSolveLog" Width="1.5" PointX="3" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.PricingDetail" Width="1.5" PointX="16" PointY="10.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.PricingType" Width="1.5" PointX="13.75" PointY="11.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Privilege" Width="1.5" PointX="11" PointY="12" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.RemovalSurvey" Width="1.5" PointX="23.75" PointY="26.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Sku" Width="1.5" PointX="25.75" PointY="26.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Solution" Width="1.5" PointX="26.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.State" Width="1.5" PointX="26.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.StateTax" Width="1.5" PointX="26.75" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Symptom" Width="1.5" PointX="26.75" PointY="11.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.SystemInfo" Width="1.5" PointX="26.75" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TECH_HIERARCHY" Width="1.5" PointX="18.75" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TechOnCall" Width="1.5" PointX="26.75" PointY="17.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TechSchedule" Width="1.5" PointX="3" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ThirdpartyConMaintenanceZonerate" Width="1.5" PointX="26.75" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ThirdPartyContractMaintenance" Width="1.5" PointX="9.75" PointY="28.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TmpInvTransfer" Width="1.5" PointX="11.75" PointY="28.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TmpinvTransferNonserialized" Width="1.5" PointX="27.75" PointY="25.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TmpinvTransferSerialized" Width="1.5" PointX="28.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.UnKnownCustomerLog" Width="1.5" PointX="28.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.UserApplication" Width="1.5" PointX="13.25" PointY="3.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.UserProfile" Width="1.5" PointX="28.75" PointY="9.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.UserType" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Vendor" Width="1.5" PointX="28.75" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.VoltageList" Width="1.5" PointX="28.75" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WaterLineList" Width="1.5" PointX="28.75" PointY="21.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderBillingDetail" Width="1.5" PointX="20.75" PointY="29.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkOrderBrand" Width="1.5" PointX="3" PointY="35.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderDetail" Width="1.5" PointX="3" PointY="37.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderEquipment" Width="1.5" PointX="3" PointY="47.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderEquipmentRequested" Width="1.5" PointX="3" PointY="54.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderImage" Width="1.5" PointX="8.25" PointY="45.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderInstallationSurvey" Width="1.5" PointX="8.25" PointY="36" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderNonAudit" Width="1.5" PointX="3" PointY="61.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderPart" Width="1.5" PointX="3" PointY="65.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderReasonlog" Width="1.5" PointX="3" PointY="69.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderSavedSearch" Width="1.5" PointX="27.75" PointY="29.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderSchedule" Width="1.5" PointX="3" PointY="73.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderServiceClaim" Width="1.5" PointX="5.25" PointY="57.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderStatusLog" Width="1.5" PointX="3" PointY="82.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkorderType" Width="1.5" PointX="5.75" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ZonePriority" Width="1.5" PointX="22.75" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.FbPrimaryTechnicians1" Width="1.5" PointX="29.75" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TECH_HIERARCHY_BACKUP" Width="1.5" PointX="29.75" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.TMP_SerialNOReport" Width="1.5" PointX="30.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHCompassSurvey" Width="1.5" PointX="30.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHContact" Width="1.5" PointX="11.75" PointY="31.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHContact_PMUploadsALL" Width="1.5" PointX="30.75" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHERFEquipment" Width="1.5" PointX="30.75" PointY="19.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHERFExpendable" Width="1.5" PointX="24.75" PointY="31.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHEventBrand" Width="1.5" PointX="31.75" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHEventNote" Width="1.5" PointX="31.75" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHSMEvent" Width="1.5" PointX="31.75" PointY="31.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHSMEventInvoice" Width="1.5" PointX="32.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHSMEventSymcall" Width="1.5" PointX="32.75" PointY="6.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.YHSMSchedule" Width="1.5" PointX="32.75" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.Zip" Width="1.5" PointX="32.75" PointY="16.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.ZoneZip" Width="1.5" PointX="5.75" PointY="33.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.v_AllPMandServiceEventsWithUniqueSerial" Width="1.5" PointX="13.75" PointY="34.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.v_Contact" Width="1.5" PointX="15.75" PointY="34.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.v_ContactServiceHistory" Width="1.5" PointX="33.75" PointY="21.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_EquipmentCount" Width="1.5" PointX="33.75" PointY="27.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_LastOneyearDispatches" Width="1.5" PointX="33.75" PointY="31.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_LastOneyearInvoices" Width="1.5" PointX="34.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_OpenCallTime" Width="1.5" PointX="34.75" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_OriginalCallDetails" Width="1.5" PointX="34.75" PointY="12.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_RepeatedPMandServiceEventDetails" Width="1.5" PointX="24.75" PointY="35.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_RepeatedPMandServiceEvents" Width="1.5" PointX="35.75" PointY="18.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_RepeatServiceRepair" Width="1.5" PointX="35.75" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.V_RepeatServiceRepairDetails" Width="1.5" PointX="35.75" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.VW_FBRoleFunction" Width="1.5" PointX="36.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="FB_DevModel.VW_tech_Hierarchy" Width="1.5" PointX="36.75" PointY="6.25" IsExpanded="true" />
+        <AssociationConnector Association="FB_DevModel.FK_UserApplication_Application" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FBERFEquipment_Erf" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FBERFExpendable_FBERFExpendable" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FBActivityLog_FbUserMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FBCustomerNotes_FbUserMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FBUserReports_FBReports" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK__FbUserMas__RoleI__4589517F" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FBReports_FbUserMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_FbUserMaster_UserType" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_UserApplication_FbUserMaster" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK__NARF_Trad__Appli__1F63A897" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_NotesHistory_NonServiceworkorder" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK__PricingDe__Prici__5F141958" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK_UserApplication_Privilege1" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Asset__0E6E26BF" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Asset__5F7E2DAC" ManuallyRouted="false" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Asset__671F4F74" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="FB_DevModel.FetcoCustomer" Width="1.5" PointX="5.375" PointY="36.75" />
+        <EntityTypeShape EntityType="FB_DevModel.WorkOrder" Width="1.5" PointX="0.75" PointY="38" />
+        <AssociationConnector Association="FB_DevModel.FK_FBERFExpendable_WorkOrder" />
+        <AssociationConnector Association="FB_DevModel.FK__NonSerial__Worko__2057CCD0" />
+        <AssociationConnector Association="FB_DevModel.FK__NotesHist__Worko__3493CFA7" />
+        <AssociationConnector Association="FB_DevModel.FK__PhoneSolv__Worko__3587F3E0" />
+        <AssociationConnector Association="FB_DevModel.FK__TechSched__WorkO__57DD0BE4" />
+        <AssociationConnector Association="FB_DevModel.FK__WorkOrder__Worko__27F8EE98" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__4C6B5938" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__4D5F7D71" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__4D5F7D72" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__4E53A1AA" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__4F47C5E3" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__503BEA1C" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__51300E55" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__5224328E" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__58D1301D" />
+        <AssociationConnector Association="FB_DevModel.FK__Workorder__workorderstatuslog" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

@@ -344,8 +344,8 @@
 
                 @if (/*Model.WorkOrder.WorkorderCalltypeid != 1800
     && Model.WorkOrder.WorkorderCalltypeid != 1810
-    &&*/ Model.WorkOrder.WorkorderCalltypeid != 1820
-    && Model.IsCustomerPartsOrder == true)
+    && Model.WorkOrder.WorkorderCalltypeid != 1820
+    &&*/ Model.IsCustomerPartsOrder == true)
                 {
                     if (Model.WorkOrder.WorkorderCallstatus == "Hold for AB")
                     {
@@ -405,22 +405,22 @@
                         <div class="col-xs-6-o">
                             <span class="col-sm-4 col-md-5 m-b-more" style="margin-top:5px;">Notify Sales:</span>
                         </div>
-                            <div class="col-xs-6-o">
-                                <span class="col-sm-8 col-md-7 m-b-more"><a data-popup-open="popup-3" style="margin-bottom:5px;" class="btn btn-primary ">Notification</a></span>
-                            </div>
-                            <div class="col-xs-8-o">
-                                <span class="col-sm-4 col-md-5 m-b-more" style="margin-top:5px;">Overtime Request:</span>
-                            </div>
-                            <div class="col-xs-6-o">
-                                <span class="col-sm-8 col-md-7 m-b-more"><a data-popup-open="popup-4" style="width:96px;" class="btn btn-primary ">Requests</a></span>
-                            </div>
-                            <div class="col-sm-6-o">
-                                @*<span class="col-md-5">Related Work Order Pictures:<br /></span>*@
-                                <div class="col-md-7">
-                                    <div class="form-group">
-                                    </div>
+                        <div class="col-xs-6-o">
+                            <span class="col-sm-8 col-md-7 m-b-more"><a data-popup-open="popup-3" style="margin-bottom:5px;" class="btn btn-primary ">Notification</a></span>
+                        </div>
+                        <div class="col-xs-8-o">
+                            <span class="col-sm-4 col-md-5 m-b-more" style="margin-top:5px;">Overtime Request:</span>
+                        </div>
+                        <div class="col-xs-6-o">
+                            <span class="col-sm-8 col-md-7 m-b-more"><a data-popup-open="popup-4" style="width:96px;" class="btn btn-primary ">Requests</a></span>
+                        </div>
+                        <div class="col-sm-6-o">
+                            @*<span class="col-md-5">Related Work Order Pictures:<br /></span>*@
+                            <div class="col-md-7">
+                                <div class="form-group">
                                 </div>
                             </div>
+                        </div>
                     }
 
 
@@ -430,8 +430,21 @@
                     <span class="col-md-5">Customer PO:</span>
                     <div class="col-md-7">
                         <div class="form-group">
-                            @Html.TextBoxFor(w => w.WorkOrder.CustomerPO, new { @class = "form-control WorkOrderFields inputFields" })
+                            @Html.TextBoxFor(w => w.WorkOrder.CustomerPO, new { @class = "form-control WorkOrderFields inputFields", @maxlength = "25" })
                             @Html.ValidationMessageFor(m => m.WorkOrder.CustomerPO, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="form-group">
+                            &nbsp;
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6-o">
+                    <span class="col-md-5">NTE:</span>
+                    <div class="col-md-7">
+                        <div class="form-group">
+                            @Html.TextBoxFor(w => w.WorkOrder.NTE, new { @class = "form-control WorkOrderFields inputFields" })
+                            @Html.ValidationMessageFor(m => m.WorkOrder.NTE, "", new { @class = "text-danger" })
                         </div>
                         <div class="form-group">
                             &nbsp;

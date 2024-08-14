@@ -746,23 +746,26 @@
                             //if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["Work Order"] == "Read-Only"))
                             if (UserPrivilege["ERF"] == "Full")
                             {
-                                <div class="col-md-3">
+                                @*<div class="col-md-3">
                                     @Html.ActionLink("Create Parts Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>(), isNewPartsOrder = true }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                                </div>
+                                </div>*@
                             }
+                            <div class="col-md-3">
+                                @Html.ActionLink("Create Parts Order", "WorkorderManagement", "Workorder", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>(), isNewPartsOrder = true }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                            </div>
                         }
 
                         @*@{
-                            UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
-                            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
-                            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
-                            if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only"))
-                            {
-                                <div class="col-md-3">
-                                    @Html.ActionLink("Create ERF", "ERFManagement", "ERF", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
-                                </div>
-                            }
-                        }*@
+            UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+            ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+            (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+            if ((UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] != "No-Permission") || (UserPrivilege["Customer"] == "Full" && UserPrivilege["ERF"] == "Read-Only"))
+            {
+                <div class="col-md-3">
+                    @Html.ActionLink("Create ERF", "ERFManagement", "ERF", new { customerId = @Model.CustomerId, workOrderId = new Nullable<int>() }, new { @Class = "btn btn-primary", @Style = "width:100%" })
+                </div>
+            }
+        }*@
 
                         @{
                             UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null

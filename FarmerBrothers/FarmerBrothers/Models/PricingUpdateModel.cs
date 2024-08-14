@@ -25,6 +25,7 @@ namespace FarmerBrothers.Models
         public decimal AfterHourLaborRate { get; set; }
         public decimal PartsDiscount { get; set; }
         public bool AfterHourRatesApply { get; set; }
-        public decimal AdditionalFee { get; set; }        
+        public decimal AdditionalFee { get; set; }
+        public bool Approved3rdPartyUse { get; set; }
     }
 }

@@ -29,10 +29,11 @@ namespace FarmerBrothers.Data
             this.WorkorderImages = new HashSet<WorkorderImage>();
             this.WorkorderInstallationSurveys = new HashSet<WorkorderInstallationSurvey>();
             this.WorkorderNonAudits = new HashSet<WorkorderNonAudit>();
-            this.WorkorderParts = new HashSet<WorkorderPart>();
             this.WorkorderReasonlogs = new HashSet<WorkorderReasonlog>();
             this.WorkorderSchedules = new HashSet<WorkorderSchedule>();
             this.WorkorderStatusLogs = new HashSet<WorkorderStatusLog>();
+            this.CCInvoiceDetails = new HashSet<CCInvoiceDetail>();
+            this.WorkorderParts = new HashSet<WorkorderPart>();
         }
     
         public int WorkorderID { get; set; }
@@ -143,6 +144,12 @@ namespace FarmerBrothers.Data
         public string AuthTransactionId { get; set; }
         public string FinalTransactionId { get; set; }
         public string ShippingPriority { get; set; }
+        public string NTE { get; set; }
+        public Nullable<int> ETAUpdated { get; set; }
+        public string CallerPhone { get; set; }
+        public string EquipmentBrand { get; set; }
+        public string EquipmentModel { get; set; }
+        public string PaymentTerm { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FBERFExpendable> FBERFExpendables { get; set; }
@@ -169,12 +176,14 @@ namespace FarmerBrothers.Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderNonAudit> WorkorderNonAudits { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<WorkorderPart> WorkorderParts { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderReasonlog> WorkorderReasonlogs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderSchedule> WorkorderSchedules { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderStatusLog> WorkorderStatusLogs { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<CCInvoiceDetail> CCInvoiceDetails { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<WorkorderPart> WorkorderParts { get; set; }
     }
 }

@@ -2,6 +2,10 @@
 @{
     ViewBag.Title = "WorkorderManagement";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var jsonClosurePartsModel = serializer.Serialize(Model.CloserPartsOrSKUs);
 }
 
 @using FarmerBrothers.Data;
@@ -11,7 +15,7 @@
 @using Syncfusion.JavaScript;
 @using FarmerBrothers.Models;
 <script src="~/Content/jquery.validate.min.js"></script>
-<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>s
+<script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
 
 
 @* Clover Iframe *@
@@ -31,6 +35,7 @@
     #StartDateTime, #ArrivalDateTime, #CompletionDateTime {
         background-color: #eee;
     }
+
     .e-grid .e-toolbar > .e-horizontal.e-ul {
         vertical-align: middle;
         float: right;
@@ -97,6 +102,9 @@
         var TmpHours = $("#WorkOrder_HoursOfOperation").val();
         var TmpSplClosure = $("#Closure_SpecialClosure").val();
         var TmpPriorityCode = $("#WorkOrder_PriorityCode").val();
+
+        WarrentyRequiredDropdownChange();
+        FollowupRequiredChange();
 
         $(".inputFields").on("change", function(){
             var CustName = $("#CustomerName").val();
@@ -1082,7 +1090,7 @@
 
                     if ($("#WorkOrderPartsHidden").length)
                     {
-                        $("#WorkOrderPartsHidden").val(JSON.stringify($("#WorkOrderParts").ejGrid("instance").model.dataSource.dataSource.json));
+                        $("#WorkOrderPartsHidden").val(JSON.stringify($("#WorkOrderParts").ejGrid("instance").model.dataSource));
                     }
                     else
                     {
@@ -1092,7 +1100,7 @@
                         if ($("#WorkOrderParts").ejGrid("instance").model!=undefined) {
                             var input4 = $("<input id='WorkOrderPartsHidden'>")
                                                    .attr("type", "hidden")
-                                                   .attr("name", "WorkOrderPartsHidden").val(JSON.stringify($("#WorkOrderParts").ejGrid("instance").model.dataSource.dataSource.json));
+                                                   .attr("name", "WorkOrderPartsHidden").val(JSON.stringify($("#WorkOrderParts").ejGrid("instance").model.dataSource));
                             $(this).append($(input4));
                         }
 
@@ -1866,6 +1874,9 @@
                         if (sign._canvas === undefined) {
 
                         }
+                        else if ((sign.points === undefined || (sign.points && sign.points.length == 0)) && $('#CustomerSignatureImage').is(":hidden")) {
+
+                        }
                         else
                         {
                             image = sign._canvas[0].toDataURL();
@@ -1874,10 +1885,12 @@
                     }
                     else
                     {
-
                         var sign = $("#CustomerSignatureArea").ejSignature("instance");
 
                         if (sign._canvas === undefined) {
+
+                        }
+                        else if ((sign.points === undefined || (sign.points && sign.points.length == 0)) && $('#CustomerSignatureImage').is(":hidden")) {
 
                         }
                         else
@@ -1895,7 +1908,10 @@
                         var sign = $("#CustomerSignatureArea").ejSignature("instance");
                         if (sign._canvas === undefined) {
 
-                        }
+                         }
+                         else if ((sign.points === undefined || (sign.points && sign.points.length == 0)) && $('#CustomerSignatureImage').is(":hidden")) {
+
+                         }
                         else
                         {
                             image = sign._canvas[0].toDataURL();
@@ -1909,7 +1925,10 @@
 
                         if (sign._canvas === undefined) {
 
-                        }
+                         }
+                         else if ((sign.points === undefined || (sign.points && sign.points.length == 0)) && $('#CustomerSignatureImage').is(":hidden")) {
+
+                         }
                         else
                         {
                             image = sign._canvas[0].toDataURL();
@@ -2093,13 +2112,91 @@
                     var input54 = $("#cloverTransactionId");
                     $(this).append($(input54));
 
+                    //Start of New Closure Fields
+                    if ($("#stateofEquipmentHidden").length) {
+                        $("#stateofEquipmentHidden").val($('.stateofEquipment').val());
+                    }
+                    else {
+                        var input55 = $("<input id='stateofEquipmentHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "stateofEquipmentHidden").val($('.stateofEquipment').val());
+                        $(this).append($(input55));
+                    }
+
+
+                    if ($("#serviceDelayedHidden").length) {
+                        $("#serviceDelayedHidden").val($('.serviceDelayed').val());
+                    }
+                    else {
+                        var input56 = $("<input id='serviceDelayedHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "serviceDelayedHidden").val($('.serviceDelayed').val());
+                        $(this).append($(input56));
+                    }
+
+                    if ($("#troubleshootStepsHidden").length) {
+                        $("#troubleshootStepsHidden").val($('.troubleshootSteps').val());
+                    }
+                    else {
+                        var input57 = $("<input id='troubleshootStepsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "troubleshootStepsHidden").val($('.troubleshootSteps').val());
+                        $(this).append($(input57));
+                    }
+
+                    if ($("#ReviewedByHidden").length) {
+                        $("#ReviewedByHidden").val($('#ReviewedBy').val());
+                    }
+                    else {
+                        var input58 = $("<input id='ReviewedByHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "ReviewedByHidden").val($('#ReviewedBy').val());
+                        $(this).append($(input58));
+                    }
+
+                    if ($("#followupCommentsHidden").length) {
+                        $("#followupCommentsHidden").val($('.followupComments').val());
+                    }
+                    else {
+                        var input59 = $("<input id='followupCommentsHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "followupCommentsHidden").val($('.followupComments').val());
+                        $(this).append($(input59));
+                    }
+
+                    if ($("#IsServiceBillableFeedHidden").length) {
+                        $("#IsServiceBillableFeedHidden").val(JSON.stringify($(".IsServiceBillableFeed").is(':checked')));
+                    }
+                    else {
+                        var input60 = $("<input id='IsServiceBillableFeedHidden'>")
+                            .attr("type", "hidden")
+                            .attr("name", "IsServiceBillableFeedHidden").val(JSON.stringify($(".IsServiceBillableFeed").is(':checked')));
+                        $(this).append($(input60));
+                    }
+
+                    //if ($("#operationalCommentsHidden").length) {
+                    //    $("#operationalCommentsHidden").val($('.operationalComments').val());
+                    //}
+                    //else {
+                    //    var input60 = $("<input id='operationalCommentsHidden'>")
+                    //        .attr("type", "hidden")
+                    //        .attr("name", "operationalCommentsHidden").val($('.operationalComments').val());
+                    //    $(this).append($(input60));
+                    //}
+
+
+
+
+                    //END of New Closure Fields
+
+
                     if (ValidateWorkorderModel() && ValidateCustomerModel()) {
                         $('#SaveWorkOrderId').hide();
                         var $this = $(this);
                         var frmValues = $this.serialize();
                         $.ajax({
                             type: $this.attr('method'),
-                            url: "@Url.Action("SaveWorkOrder",HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
+                            url: "@Url.Action("SaveWorkOrder", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
                             data: frmValues
                         }).done(function (response) {
                             if (response != null && response.success == true) {
@@ -2110,8 +2207,7 @@
                                 }
                                 else if (response.returnValue > 0)
                                 {
-                                    if (operation == 1)
-                                    {
+                                    if (operation == 1) {
                                         // Doc Upload Block
                                         $("#docWorkorderId").val(response.WorkOrderId);
                                         //$("#btnUpload").trigger("click");
@@ -2120,30 +2216,24 @@
 
                                         AlertPopup("|Work Order saved successfully! \r\n Work Order#: " + response.WorkOrderId);
                                     }
-                                    else if (operation == 2)
-                                    {
+                                    else if (operation == 2) {
                                         AlertPopup("|Notification sent to sales successfully!");
                                     }
-                                    else if (operation == 3)
-                                    {
+                                    else if (operation == 3) {
                                         AlertPopup("|Overtime request sent successfully!");
                                     }
-                                    else if (operation == 4)
-                                    {
-                                        if (response.WorkorderCallstatus == "Hold")
-                                        {
+                                    else if (operation == 4) {
+                                        if (response.WorkorderCallstatus == "Hold") {
                                             AlertPopup("|Work Order put on hold successfully!");
                                             $('#WorkorderCallStatus').text("Hold");
                                         }
-                                        else
-                                        {
+                                        else {
                                             //AlertPopup("|Work Order put on Open successfully!");
                                             //$('#WorkorderCallStatus').text("Open");
                                             AlertPopup("|Work Order removed from Hold Status successfully!");
                                         }
                                     }
-                                    else if (operation == 5)
-                                    {
+                                    else if (operation == 5) {
                                         AlertPopup("|Appointment is updated successfully!");
                                         @*$.ajax({
                                             type: $this.attr('method'),
@@ -2166,33 +2256,69 @@
                                             }
                                         });*@
                                     }
-                                    else if (operation == 6)
-                                    {
-                                        if (response.WOConfirmationCode == undefined ) {
+                                    else if (operation == 6) {
+                                        if (response.WOConfirmationCode == undefined) {
                                             AlertPopup("|Work Order completed successfully! " + response.message);
                                         }
-                                        else{
-                                            AlertPopup("|Work Order completed successfully! " + response.message +" \r |Work Order Confirmation Code#: "+response.WOConfirmationCode );
+                                        else {
+                                            AlertPopup("|Work Order completed successfully! " + response.message + " \r |Work Order Confirmation Code#: " + response.WOConfirmationCode);
+                                        }
+
+                                        if (response.message == "Please process the Payment, before Closing the Event!") {
+                                            var responsibleTech = "@Model.ResponsibleTechId";
+                                            var workorderid = "@Model.WorkOrder.WorkorderID";
+                                            //window.open("/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&techId=" + responsibleTech);
+                                            //return false;
+                                            //response.Url = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&techId=" + responsibleTech + "&FromView=workordermanagement";
+                                            response.Url = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&FromView=workordermanagement";
                                         }
                                     }
-                                    else if (operation == 7)
-                                    {
+                                    else if (operation == 7) {
                                         AlertPopup("|Work Order created successfully! \r\n Work Order#: " + response.WorkOrderId);
                                         response.Url = null;
                                     }
-                                    else if (operation == 8)
-                                    {
+                                    else if (operation == 8) {
                                         AlertPopup(response.message);
+                                    }
+                                    else if (operation == 10) {
+                                        var responsibleTech = "@Model.ResponsibleTechId";
+                                        var workorderid = response.WorkOrderId;
+                                        //response.Url = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&techId=" + responsibleTech + "&FromView=workordermanagement";
+                                        if (workorderid > 0) {
+                                            response.Url = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&FromView=workordermanagement";
+                                        }
+
+                                        AlertPopup("|Work Order created successfully! \r\n Work Order#: " + response.WorkOrderId +" \r\n Proceed to Pay");
                                     }
 
                                     updateUrl = response.Url;
                                 }
                                 else
                                 {
-                                    if (operation == 6 || operation == 1 || operation == 8 )
+                                    if (operation == 6 || operation == 1 || operation == 8 || operation == 10)
                                     {
                                         AlertPopup(response.message);
                                     }
+
+                                    if (operation == 6 && response.message == "Please process the Payment, before Closing the Event!") {
+                                        var responsibleTech = "@Model.ResponsibleTechId";
+                                        var workorderid = "@Model.WorkOrder.WorkorderID";
+                                        //window.open("/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&techId=" + responsibleTech);
+                                        //return false;
+
+                                       // updateUrl = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&techId=" + responsibleTech + "&FromView=workordermanagement";
+                                        if (workorderid > 0) {
+                                            updateUrl = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&FromView=workordermanagement";
+                                        }
+                                    }
+                                    @*else if (operation == 10) {
+                                        var responsibleTech = "@Model.ResponsibleTechId";
+                                            var workorderid = response.WorkOrderId;
+                                            //response.Url = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&techId=" + responsibleTech + "&FromView=workordermanagement";
+                                        if (workorderid > 0) {
+                                            updateUrl = "/DispatchResponse/ProcessCardRedirect?workOrderId=" + workorderid + "&FromView=workordermanagement";
+                                        }
+                                    }*@
                                 }
                             }
                             else {
@@ -2216,7 +2342,7 @@
                                 {
                                     AlertPopup("|There is a problem in saving appointment! Please contact  support");
                                 }
-                                else if (operation == 6)
+                                else if (operation == 6 || operation == 10)
                                 {
                                     AlertPopup(response.message);
                                 }
@@ -2258,13 +2384,13 @@
             }
         }
 
-        $("[data-popup-close='popupalert']").click(function() {
-            //alert("pop ="+updateUrl)
-            if (updateUrl != null)
-            {
-                window.location.href = updateUrl;
-            }
-        });
+        //$("[data-popup-close='popupalert']").click(function() {
+        //    //alert("pop ="+updateUrl)
+        //    if (updateUrl != null)
+        //    {
+        //        window.location.href = updateUrl;
+        //    }
+        //});
 
 
         $("input[name$='ShipTo']").click(function() {
@@ -2656,9 +2782,71 @@
 
         $("#BillingTotalLbl").html(Number(@Model.BillingTotal).toFixed(2));
         TotalCost = @Model.BillingTotal;
+
+
+        if ("@Model.BillableSKUList.Count()" > 0) {
+            $("#IsBillableFeed").prop("checked", true);
+        }
+        else {
+            $("#IsBillableFeed").prop("checked", false);
+        }
+
+        if ($("#WorkOrder_FinalTransactionId").val() && $("#WorkOrder_FinalTransactionId").val().trim().length > 0 ) {
+            $(".IsServiceBillableFeed").prop("checked", true);
+            $(".IsServiceBillableFeed").attr("disabled", true);
+
+            $(".SaveandPayWorkOrderBtn").hide();
+        }
+
+        $(".IsServiceBillableFeed").on('click', function () {
+            if ($(".IsServiceBillableFeed").is(':checked') == true) {
+                $("#completeEventBtn").text("Pay & Complete Work Order");
+            }
+            else {
+                $("#completeEventBtn").text("Complete Work Order");
+            }
+        });
+
+
+        if ("@Model.RedirectFromCardProcess" == "True" && $(".IsServiceBillableFeed").is(':checked') == true) {
+            $("#successAlertTxt").html("Do you want to Complete the Workorder !");
+            ShowSuccessPopup();
+        }
+
     });
 
+    function ShowSuccessPopup() {
+        $('[data-popup="popup-coremark-successBlock"]').fadeIn(350);
+    }
+    function HideSuccessPopup() {
+        $('[data-popup="popup-coremark-successBlock"]').fadeOut(350);
+    }
 
+    function CompleteEventTrigger() {
+        SetSubmitOperation(6);
+        $("form").trigger("submit");
+    }
+
+    function WarrentyRequiredDropdownChange() {
+        var warrentyForValue = $("#WarrentyDropDownList").val();
+        if (warrentyForValue && warrentyForValue.toUpperCase() == 'YES') {
+            $("#WarrentyForSection").show();
+        }
+        else {
+            $("#WarrentyForSection").hide();
+        }
+    }
+
+    function FollowupRequiredChange()
+    {
+        var followupValue = $("#AdditionalFollowupDropDownList").val();
+        if (followupValue && followupValue.toUpperCase() == 'YES') {
+            $("#FollowupCommentsSection").show();
+        }
+        else {
+            $("#FollowupCommentsSection").hide();
+        }
+    }
 
     function updateSerialNumbers(serialNo)
     {
@@ -3226,16 +3414,67 @@
         workOrderPartsDescription = $(children[4]).text();
     }
 
+    function onWorkorderPartsToolbarClick(args) {
+        if ((args.itemName == "Edit" || args.itemName == "Delete")) {
+
+            if (args.itemName == "Delete") {
+
+                var rowData = this.getSelectedRecords();
+                if (rowData.length > 0) {
+                var obj = $("#WorkOrderParts").ejGrid("instance");
+                var datasource = [];
+                if (obj.model.dataSource && obj.model.dataSource.dataSource && obj.model.dataSource.dataSource.json.length > 0) {
+                    datasource = obj.model.dataSource.dataSource.json;
+                }
+                else if (obj.model.dataSource) {
+                    datasource = obj.model.dataSource;
+                }
+
+                var rowDataDetails = {
+                    "PartsIssueid": rowData[0].PartsIssueid,
+                    "PartReplenish": rowData[0].PartReplenish,
+                    "Manufacturer": rowData[0].Manufacturer,
+                    "Sku": rowData[0].Sku,
+                    "Quantity": rowData[0].Quantity,
+                    "Description": rowData[0].Description,
+                    "Issue": rowData[0].Issue,
+                    "skuCost": rowData[0].skuCost,
+                    "partsTotal": rowData[0].partsTotal,
+                    "PartsList": datasource,
+                    "UpdateType": args.itemName
+                }
+
+
+                $.ajax({
+                    url: '@Url.Action("UpdateWorkorderPartsGridData", "workorder")',
+                    type: 'POST',
+                    data: JSON.stringify(rowDataDetails),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.success) {
+                            obj.dataSource(response.data);
+                        }
+                    },
+                    error: function (response) {
+
+                    }
+                });
+
+            }
+        }
+        }
+    }
+
     function CompleteWorkOrderParts(args) {
 
         if (args.requestType == "beginedit" || args.requestType == "add") {
-            $("#WorkOrderPartsSku").ejDropDownList({ change: "WorkOrderPartsSkuChange", enableFilterSearch: true });
+            //$("#WorkOrderPartsSku").ejDropDownList({ change: "WorkOrderPartsSkuChange", enableFilterSearch: true });
             //$("#WorkOrderPartsManufacturer").ejDropDownList({ change: "WorkOrderPartsManufacturerChange", enableFilterSearch: true });
 
             if (args.requestType == "beginedit") {
 
-                var manufacturerObj = $("#WorkOrderPartsManufacturer").val();
-                var currentSku = $("#WorkOrderPartsSku").val();
+                //var manufacturerObj = $("#WorkOrderPartsManufacturer").val();
+                //var currentSku = $("#WorkOrderPartsSku").val();
 
                 @*$.ajax({
                     url: '@Url.Action("GetNonTaggedSkus", "Workorder")',
@@ -3248,8 +3487,8 @@
                     }
                 });*@
 
-                $.ajax({
-                    url: '@Url.Action("GetNonTaggedManufacturer", "Workorder")',
+                @*$.ajax({
+                    url: '@Url.Action("GetCloserNonTaggedManufacturer", "Workorder")',
                     type: 'GET',
                     data: { "skuValue": currentSku },
                     success: function (jsonResult) {
@@ -3282,10 +3521,12 @@
                     }
                 });
 
-                $("#WorkOrderPartsQuantity").attr("type", "number");
+                $("#WorkOrderPartsQuantity").attr("type", "number");*@
             }
 
-            $("#WorkOrderPartsQuantity").keyup(function() {
+
+
+            $("#WorkOrderPartsQuantity").keyup(function () {
                 var val = $("#WorkOrderPartsQuantity").val();
                 if (parseInt(val) < 0 || isNaN(val)) {
                     $("#WorkOrderPartsQuantity").val("");
@@ -3293,6 +3534,53 @@
                 }
             });
         }
+
+        if (args.requestType == "save") {
+
+            var rowData = args.data;
+            if (rowData) {
+                var obj = $("#WorkOrderParts").ejGrid("instance");
+                var datasource = [];
+                if (obj.model.dataSource && obj.model.dataSource.dataSource && obj.model.dataSource.dataSource.json.length > 0) {
+                    datasource = obj.model.dataSource.dataSource.json;
+                }
+                else if (obj.model.dataSource) {
+                    datasource = obj.model.dataSource;
+                }
+
+                var rowDataDetails = {
+                    "PartsIssueid": rowData.PartsIssueid,
+                    "PartReplenish": rowData.PartReplenish,
+                    "Manufacturer": rowData.Manufacturer,
+                    "Sku": rowData.Sku,
+                    "Quantity": rowData.Quantity,
+                    "Description": rowData.Description,
+                    "Issue": rowData.Issue,
+                    "skuCost": rowData.skuCost,
+                    "partsTotal": rowData.partsTotal,
+                    "PartsList": datasource,
+                    "UpdateType": args.requestType
+                }
+
+
+                $.ajax({
+                    url: '@Url.Action("UpdateWorkorderPartsGridData", "workorder")',
+                    type: 'POST',
+                    data: JSON.stringify(rowDataDetails),
+                    contentType: "application/json",
+                    success: function (response) {
+                        if (response.success) {
+                            obj.dataSource(response.data);
+                        }
+                    },
+                    error: function (response) {
+
+                    }
+                });
+
+            }
+        }
+
     }
 
     function ManufacturerChange(e) {
@@ -3487,14 +3775,14 @@
     function WorkOrderPartsSkuChange(e) {
 
         $.ajax({
-            url: '@Url.Action("GetNonTaggedManufacturer", "Workorder")',
+            url: '@Url.Action("GetCloserNonTaggedManufacturer", "Workorder")',
             type: 'GET',
             data: { "skuValue": e.value },
             success: function (jsonResult) {
                 if (jsonResult.success == true)
                 {
-                    $("#WorkOrderPartsManufacturer").val(jsonResult.data[0].Manufacturer);
-                    $("#WorkOrderPartsDescription").val(jsonResult.data[0].Description);
+                    $("#WorkOrderPartsManufacturer").val(jsonResult.data[0].text);
+                    $("#WorkOrderPartsDescription").val(jsonResult.data[0].text);
                 }
                 else{
                     AlertPopup("|There is a problem in getting Manufacturer!");
@@ -4519,6 +4807,22 @@
         window.open(url, '_blank').focus();
     }
 
+    @*function UpdateServiceQuote() {
+         $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetServiceQuoteDetails", "Workorder")",
+             data: { Workorderid: $("#WorkOrder_WorkorderID").val() }
+            }).done(function (jsonResult) {
+                if (jsonResult.success) {
+                    $("#quoteDistance").val(jsonResult.data.TravelDistance);
+                    $("#quoteTravelTime").val(jsonResult.data.TravelTime);
+                    $("#quoteLabor").val(jsonResult.data.Labor);
+                    $("#quoteParts").val(jsonResult.data.PartsTotal);
+                    $("#quoteTotal").val(jsonResult.data.TotalServiceQuote);
+                }
+            });
+    }*@
+
 </script>
 
 @using (Html.BeginForm())
@@ -4545,8 +4849,8 @@
 
     <section class="container-fluid white-bg pad fixedSecond header">
         @{ Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
-                                                                                                                                                                                                        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
-                                                                                                                                                                                                        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]]; }
+                                                                                                                                                                                                         ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                                                                                                                                                                                                         (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]]; }
         <div class="row vertical-align">
             <div class="col-md-12">
                 <div class="col-md-8">
@@ -4665,6 +4969,7 @@
                                     <a data-popup-open="popup-8" class="btn btn-primary enableonclose" style="margin-right:5px;">Email WO</a>
                                     if (Model.IsOpen == false)
                                     {
+                                        <button type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose SaveandPayWorkOrderBtn" onclick="SetSubmitOperation(10)" name="action:WorkorderSave">Save & Pay</button>
                                         <button id="SaveWorkOrderId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose" onclick="SetSubmitOperation(1)" name="action:WorkorderSave">Save</button>
                                     }
                                     <button id="ExitWorkOrder" class="btn btn-primary enableonclose">Exit Work Order</button>
@@ -4689,6 +4994,7 @@
 
                                 if (Model.IsOpen == false)
                                 {
+                                    <button type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose SaveandPayWorkOrderBtn" onclick="SetSubmitOperation(10)" name="action:WorkorderSave">Save & Pay</button>
                                     <button id="SaveWorkOrderId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose" onclick="SetSubmitOperation(1)" name="action:WorkorderSave">Save</button>
                                 }
 
@@ -4724,7 +5030,7 @@
         else
         {*@
     @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
-                        //}
+    //}
 
     <div class="popup" data-popup="popup-5">
         <div class="popup-inner">
@@ -4746,19 +5052,19 @@
         </div>
     </div>
 
-                        if (Model.IsNewPartsOrder != true
-                             /*&& Model.WorkOrder.WorkorderCalltypeid != 1800
-                             && Model.WorkOrder.WorkorderCalltypeid != 1810
-                             && Model.WorkOrder.WorkorderCalltypeid != 1830
-                             && Model.WorkOrder.WorkorderCalltypeid != 1820*/
-                             && Model.WorkOrder.WorkorderCalltypeDesc != "Parts Request")
-                        {
+    if (Model.IsNewPartsOrder != true
+         /*&& Model.WorkOrder.WorkorderCalltypeid != 1800
+         && Model.WorkOrder.WorkorderCalltypeid != 1810
+         && Model.WorkOrder.WorkorderCalltypeid != 1830
+         && Model.WorkOrder.WorkorderCalltypeid != 1820*/
+         && Model.WorkOrder.WorkorderCalltypeDesc != "Parts Request")
+    {
         @Html.Partial("~/Views/Shared/_WorkOrderDetails.cshtml", Model)
 
-                            //if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Accepted", true) == 0)
-                            //{
+        //if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Accepted", true) == 0)
+        //{
 
-                            //}
+        //}
         <style>
             .work-requested-details-content {
                 display: block !important;
@@ -4881,17 +5187,17 @@
                 </div>
             </div>
         </section>
-                        }
+    }
 
     @Html.HiddenFor(m => m.PartsShipTo)
 
-                        if (Model.WorkOrder.WorkorderID >= 0 && (Model.IsNewPartsOrder == true
-                            /*|| Model.WorkOrder.WorkorderCalltypeid == 1800
-                            || Model.WorkOrder.WorkorderCalltypeid == 1810
-                            || Model.WorkOrder.WorkorderCalltypeid == 1830
-                            || Model.WorkOrder.WorkorderCalltypeid == 1820*/
-                            || Model.WorkOrder.WorkorderCalltypeDesc == "Parts Request"))
-                        {
+    if (Model.WorkOrder.WorkorderID >= 0 && (Model.IsNewPartsOrder == true
+        /*|| Model.WorkOrder.WorkorderCalltypeid == 1800
+        || Model.WorkOrder.WorkorderCalltypeid == 1810
+        || Model.WorkOrder.WorkorderCalltypeid == 1830
+        || Model.WorkOrder.WorkorderCalltypeid == 1820*/
+        || Model.WorkOrder.WorkorderCalltypeDesc == "Parts Request"))
+    {
         <style>
             .parts-ordering-details-content {
                 display: block !important;
@@ -4909,9 +5215,9 @@
                             <div class="col-md-12 customer-col1 sm-pad-reset">
                                 @if (Model.IsNewPartsOrder == false
 && (Model.IsCustomerPartsOrder == false || Model.WorkOrder.WorkorderCalltypeDesc != "Parts Request" /*|| Model.WorkOrder.WorkorderCalltypeid != 1820
-                                                                                                                                                            || Model.WorkOrder.WorkorderCalltypeid != 1800
-                                                                                                                                                            || Model.WorkOrder.WorkorderCalltypeid != 1810
-                                                                                                                                                            || Model.WorkOrder.WorkorderCalltypeid != 1830*/))
+                                                                                                                                                                        || Model.WorkOrder.WorkorderCalltypeid != 1800
+                                                                                                                                                                        || Model.WorkOrder.WorkorderCalltypeid != 1810
+                                                                                                                                                                        || Model.WorkOrder.WorkorderCalltypeid != 1830*/))
                                 {
                                     <div class=" col-xs-6-o">
                                         <span class="col-sm-8 col-md-7"><input name="ShipTo" value="1" type="radio"> Local Branch</span>
@@ -4927,7 +5233,7 @@
                                                     </div>
                                                     <div id="BranchAlternateAddressSection" style="margin-left:30px;">
                                                         <div class="col-sm-6-o">
-                                                            <span class="col-md-5">Name:</span>
+                                                            <span class="col-md-5 required">Name:</span>
                                                             <div class="col-md-7">
                                                                 <div class="form-group">
                                                                     @Html.TextBoxFor(m => m.BranchOtherPartsName, new { @class = "form-control WorkOrderFields" })
@@ -4935,7 +5241,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6-o">
-                                                            <span class="col-md-5">Contact Name:</span>
+                                                            <span class="col-md-5 required">Contact Name:</span>
                                                             <div class="col-md-7">
                                                                 <div class="form-group">
                                                                     @Html.TextBoxFor(m => m.BranchOtherPartsContactName, new { @class = "form-control WorkOrderFields" })
@@ -4943,7 +5249,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6-o">
-                                                            <span class="col-md-5">Address:</span>
+                                                            <span class="col-md-5 required">Address:</span>
                                                             <div class="col-md-7">
                                                                 <div class="form-group">
                                                                     @Html.TextBoxFor(m => m.BranchOtherPartsAddress1, new { @class = "form-control WorkOrderFields", @style = "margin-bottom: 10px;" })
@@ -4952,7 +5258,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6-o">
-                                                            <span class="col-md-5">City:</span>
+                                                            <span class="col-md-5 required">City:</span>
                                                             <div class="col-md-7">
                                                                 <div class="form-group">
                                                                     @Html.TextBoxFor(m => m.BranchOtherPartsCity, new { @class = "form-control WorkOrderFields" })
@@ -4960,7 +5266,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6-o">
-                                                            <span class="col-md-5">State:</span>
+                                                            <span class="col-md-5 required">State:</span>
                                                             <div class="col-md-7">
                                                                 <div class="form-group">
                                                                     @Html.DropDownListFor(m => m.BranchOtherPartsState, new SelectList(Model.States, "StateCode", "StateName"), new { @Id = "StatesDropDown", @class = "form-control WorkOrderFields" })
@@ -4968,7 +5274,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-6-o">
-                                                            <span class="col-md-5">Zip:</span>
+                                                            <span class="col-md-5 required">Zip:</span>
                                                             <div class="col-md-7">
                                                                 <div class="form-group">
                                                                     @Html.TextBoxFor(m => m.BranchOtherPartsZip, new { @class = "form-control WorkOrderFields" })
@@ -5075,7 +5381,7 @@
                             <div class="row">
 
                                 <div class="col-sm-6-o">
-                                    <span class="col-md-2">Date Needed:</span>
+                                    <span class="col-md-2 required">Date Needed:</span>
                                     <div class="col-md-2">
                                         <div class="form-group" style="float:right">
                                             @Html.TextBoxFor(m => m.WorkOrder.DateNeeded, new { @class = "form-control WorkOrderFields", @Id = "PartsOrderDateNeeded" })
@@ -5091,7 +5397,7 @@
                                 </div>
 
                                 <div class="col-sm-6-o">
-                                    <span class="col-md-2">Shipping Priority:</span>
+                                    <span class="col-md-2 required">Shipping Priority:</span>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             @Html.DropDownListFor(m => m.ShippingPriority, new SelectList(Model.ShippigPriorities, "FBStatusID", "FBStatus"), new { @Id = "ShippingPriorityDropDown", @class = "form-control WorkOrderFields" })
@@ -5108,75 +5414,234 @@
                                         </div>
                                     </div>
                                 </div>
+                                @*<div class="col-md-12 customer-col2">
+                                                                        <h4 class="customer-head">Standard Non-Serialized:</h4>
+                                                                        @if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
+                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Invoiced", true) == 0)
+                                                                        {
+                                                                            @(Html.EJ().Grid<object>
+                                    ("WorkOrderParts")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)Model.WorkOrderParts))
+                                    .AllowPaging()
+                                    .Columns(col =>
+                                    {
+                                        col.Field("PartsIssueid").HeaderText("PartsIssue ID").IsPrimaryKey(true).Visible(false).Add();
+                                        col.Field("Quantity").HeaderText("Qty").Add();
+                                        col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.NonTaggedModels)).Add();
+                                        //col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>)Model.CloserPartsOrSKUs)).Add();
+
+                                        //col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>
+                                        //    )Model.NonTaggedManufacturer)).Add();
+
+                                        col.Field("Manufacturer").HeaderText("Manufacturer").Add();
+                                        col.Field("Description").HeaderText("Description").Add();
+                                    })
+                                    .ClientSideEvents(eve =>
+                                    {
+                                        eve.ActionComplete("CompleteWorkOrderParts").BeginEdit("WorkorderPartsBeginEdit").ActionBegin("WorkorderPartsBegin").EndEdit("WorkorderPartsEndEdit").EndAdd("WorkorderPartsEndAdd").ToolbarClick("onToolbarClick");
+                                    }))
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @(Html.EJ().Grid<object>
+                                    ("WorkOrderParts")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)Model.WorkOrderParts).UpdateURL(Url.Action("WorkorderPartsUpdate", "Workorder")).InsertURL(Url.Action("WorkorderPartsInsert", "Workorder")).RemoveURL(Url.Action("WorkorderPartsDelete", "Workorder")).Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .EditSettings(edit =>
+                                    {
+                                        edit.AllowAdding().AllowDeleting().AllowEditing();
+                                    })
+                                    .AllowPaging()
+                                    .ToolbarSettings(toolbar =>
+                                    {
+                                        toolbar.ShowToolbar().ToolbarItems(items =>
+                                        {
+                                            items.AddTool(ToolBarItems.Add);
+                                            items.AddTool(ToolBarItems.Edit);
+                                            items.AddTool(ToolBarItems.Delete);
+                                            items.AddTool(ToolBarItems.Update);
+                                            items.AddTool(ToolBarItems.Cancel);
+                                        });
+                                    })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("PartsIssueid").HeaderText("PartsIssue ID").IsPrimaryKey(true).Visible(false).Add();
+                                        col.Field("Quantity").HeaderText("Qty").Add();
+                                        col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>)Model.NonTaggedModels)).Add();
+                                        //col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>)serializer.Deserialize<object>(jsonClosurePartsModel))).Add();
+
+                                        //col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>
+                                        //    )Model.NonTaggedManufacturer)).Add();
+                                        col.Field("Manufacturer").HeaderText("Manufacturer").Add();
+                                        col.Field("Description").HeaderText("Description").Add();
+                                    })
+                                    .ClientSideEvents(eve =>
+                                    {
+                                        eve.ActionComplete("CompleteWorkOrderParts").
+                                        BeginEdit("WorkorderPartsBeginEdit").ActionBegin("WorkorderPartsBegin").
+                                        EndEdit("WorkorderPartsEndEdit").EndAdd("WorkorderPartsEndAdd").
+                                        ToolbarClick("onToolbarClick");
+                                    }
+                                    ))
+                                                                        }
+                                                                        <div class="clearfix"></div>
+                                                                    </div>*@
                                 <div class="col-md-12 customer-col2">
                                     <h4 class="customer-head">Standard Non-Serialized:</h4>
-                                    @if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
-|| string.Compare(Model.WorkOrder.WorkorderCallstatus, "Invoiced", true) == 0)
-                                    {
-                                        @(Html.EJ().Grid<object>
-("WorkOrderParts")
-.Datasource(ds => ds.Json((IEnumerable<object>)Model.WorkOrderParts))
-.AllowPaging()
-.Columns(col =>
-{
-    col.Field("PartsIssueid").HeaderText("PartsIssue ID").IsPrimaryKey(true).Visible(false).Add();
-    col.Field("Quantity").HeaderText("Qty").Add();
-    col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>
-       )Model.NonTaggedModels)).Add();
-    //col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>
-    //    )Model.NonTaggedManufacturer)).Add();
 
-    col.Field("Manufacturer").HeaderText("Manufacturer").Add();
-    col.Field("Description").HeaderText("Description").Add();
-})
-.ClientSideEvents(eve =>
-{
-    eve.ActionComplete("CompleteWorkOrderParts").BeginEdit("WorkorderPartsBeginEdit").ActionBegin("WorkorderPartsBegin").EndEdit("WorkorderPartsEndEdit").EndAdd("WorkorderPartsEndAdd").ToolbarClick("onToolbarClick");
-}))
+                                    <div id="WorkOrderParts"></div>
+
+                                    @if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
+                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Invoiced", true) == 0)
+                                    {
+
+
+
+
+
+
                                     }
                                     else
                                     {
-                                        @(Html.EJ().Grid<object>
-("WorkOrderParts")
-.Datasource(ds => ds.Json((IEnumerable<object>)Model.WorkOrderParts).UpdateURL(Url.Action("WorkorderPartsUpdate", "Workorder")).InsertURL(Url.Action("WorkorderPartsInsert", "Workorder")).RemoveURL(Url.Action("WorkorderPartsDelete", "Workorder")).Adaptor(AdaptorType.RemoteSaveAdaptor))
-.EditSettings(edit =>
-{
-    edit.AllowAdding().AllowDeleting().AllowEditing();
-})
-.AllowPaging()
-.ToolbarSettings(toolbar =>
-{
-    toolbar.ShowToolbar().ToolbarItems(items =>
-    {
-        items.AddTool(ToolBarItems.Add);
-        items.AddTool(ToolBarItems.Edit);
-        items.AddTool(ToolBarItems.Delete);
-        items.AddTool(ToolBarItems.Update);
-        items.AddTool(ToolBarItems.Cancel);
-    });
-})
-.Columns(col =>
-{
-    col.Field("PartsIssueid").HeaderText("PartsIssue ID").IsPrimaryKey(true).Visible(false).Add();
-    col.Field("Quantity").HeaderText("Qty").Add();
-    col.Field("Sku").HeaderText("Part#/SKU").ForeignKeyField("Model").ForeignKeyValue("Model").DataSource(((IEnumerable<object>
-        )Model.NonTaggedModels)).Add();
-    //col.Field("Manufacturer").HeaderText("Manufacturer").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>
-    //    )Model.NonTaggedManufacturer)).Add();
-    col.Field("Manufacturer").HeaderText("Manufacturer").Add();
-    col.Field("Description").HeaderText("Description").Add();
-})
-.ClientSideEvents(eve =>
-{
-    eve.ActionComplete("CompleteWorkOrderParts").
-    BeginEdit("WorkorderPartsBeginEdit").ActionBegin("WorkorderPartsBegin").
-    EndEdit("WorkorderPartsEndEdit").EndAdd("WorkorderPartsEndAdd").
-    ToolbarClick("onToolbarClick");
-}
-))
+
+                                        <script>
+                                var newWorkorderGrid = $("#WorkOrderParts");
+
+                                 //updateUrl: Url.Action("WorkorderPartsUpdate", "Workorder"),
+                                //    insertUrl: Url.Action("WorkorderPartsInsert", "Workorder"),
+                                //        removeUrl: Url.Action("WorkorderPartsDelete", "Workorder"),
+
+
+                                var dataResults =  @Html.Raw(Json.Encode(Model.WorkOrderParts));
+
+                                newWorkorderGrid.ejGrid({
+                                    allowSelection: true,
+                                    toolbarSettings: { showToolbar: true, toolbarItems: ["add", "edit", "delete", "update", "cancel"] },
+                                    dataSource: dataResults,
+                                    //dataSource: ej.DataManager({
+                                    //    json: dataResults, updateUrl: "/Workorder/WorkorderPartsUpdate", insertUrl: "/Workorder/WorkorderPartsInsert", removeUrl: "/Workorder/WorkorderPartsDelete"
+                                    //}),
+                                    columns: [
+                                        { field: "PartsIssueid", headerText: "PartsIssue ID", width: 80, visible: false, IsPrimaryKey: true, textAlign: ej.TextAlign.Center, allowEditing: false },
+                                        { field: "Quantity", headerText: 'Quantity', width: 80, textAlign: ej.TextAlign.Left },
+                                        {
+                                            field: "Sku", headerText: 'Part#/SKU', width: 120, textAlign: ej.TextAlign.Left, width: 120, editTemplate:
+                                            {
+                                                create: () => { return "<input>"; },
+                                                read: (args) => {
+                                                    args.ejAutocomplete('suggestionList').css('display', 'none');
+                                                    return args.ejAutocomplete("getValue");
+                                                },
+                                                destroy: () => { },
+                                                write: (args) => {
+                                                    var dataList = @Html.Raw(jsonClosurePartsModel);
+                                                    var data = ej.DataManager(dataList).executeLocal(new ej.Query().select("VendorDescription"));
+                                                    args.element.ejAutocomplete(
+                                                        {
+                                                            width: "100%",
+                                                            dataSource: data,
+                                                            enableDistinct: true,
+                                                            value: args.rowdata !== undefined ? args.rowdata["VendorDescription"] : "",
+                                                            select: function (argument) {
+                                                                var item = argument.item;
+                                                                var gridId = this._id.substring(0, this._id.length - 3);
+
+                                                                $.ajax({
+                                                                    url: '@Url.Action("GetCloserNonTaggedManufacturer", "Workorder")',
+                                                                    type: 'GET',
+                                                                    data: { "skuValue": item },
+                                                                    success: function (jsonResult) {
+                                                                        if (jsonResult.success == true) {
+                                                                            $("#" + gridId + "Manufacturer").val(jsonResult.data[0].text);
+                                                                        }
+                                                                    }
+                                                                });
+
+                                                                $.ajax({
+                                                                    url: '@Url.Action("GetCloserSkuDescription", "Workorder")',
+                                                                    type: 'GET',
+                                                                    data: { "skuValue": item },
+                                                                    success: function (jsonResult) {
+                                                                        //debugger;
+                                                                        if (jsonResult.success == true) {
+                                                                            $("#" + gridId + "Description").val(jsonResult.data);
+                                                                        }
+                                                                        else {
+                                                                            AlertPopup("|There is a problem in getting Model description!");
+                                                                        }
+                                                                    }
+                                                                });
+
+                                                                var proxy = this;
+                                                                if (proxy.inputSearch && proxy.inputSearch.val() != "") {
+                                                                    var item = {}, alreadyAdded = false;
+                                                                    item[proxy.model.fields.value] = args.selectedValue;
+                                                                    item[proxy.model.fields.text] = args.selectedText;
+                                                                    if (args.isChecked) {
+                                                                        for (var i = 0; i < selectedItemsOnSearch.length; i++) {
+                                                                            if (selectedItemsOnSearch[i].value == args.value) {
+                                                                                alreadyAdded = true;
+                                                                            }
+                                                                        }
+                                                                        if (!alreadyAdded) selectedItemsOnSearch.push(item);
+                                                                    }
+                                                                    else {
+                                                                        for (var i = 0; i < selectedItemsOnSearch.length; i++) {
+                                                                            if (selectedItemsOnSearch[i].value == args.value) {
+                                                                                selectedItemsOnSearch.splice(i, 1);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                                else if (selectedItemsOnSearch.length > 0) {
+                                                                    appendList(proxy, selectedItemsOnSearch);
+                                                                    selectedItemsOnSearch = [];
+                                                                }
+                                                            }
+                                                        });
+                                                }
+
+                                            }
+                                        },
+                                        { field: "Manufacturer", headerText: 'Manufacturer', width: 200, textAlign: ej.TextAlign.Left },
+                                        { field: "Description", headerText: 'Description', width: 400, textAlign: ej.TextAlign.Left }
+                                    ],
+                                    //actionBegin: "WorkorderPartsBegin",
+                                    actionComplete: "CompleteWorkOrderParts",
+                                    //beginEdit: "WorkorderPartsBeginEdit",
+                                    //endEdit: "WorkorderPartsEndEdit",
+                                    //endAdd: "WorkorderPartsEndAdd",
+                                    toolbarClick: "onWorkorderPartsToolbarClick"
+
+                                });
+
+                                                                                                    newWorkorderGrid.keyup(function (e) {
+                                                                                                        if (e.keyCode == 40 && $(e.target).hasClass("e-autocomplete")) {
+                                                                                                            var autocomp = $("#WorkOrderParts_VendorDescription").ejAutocomplete("instance")
+                                                                                                            if (autocomp.getValue()!="" && autocomp.getActiveText() != "No suggestions")
+                                                                                                                $(e.target).val(autocomp.getActiveText());
+                                                                                                        }
+                                                                                                    });
+
+                                                                                                    if (workOrderStatus.localeCompare("Closed") != 0
+                                                                                                        && workOrderStatus.localeCompare("Invoiced") != 0)
+                                                                                                    {
+                                                                                                        newWorkorderGrid.ejGrid({
+                                                                                                            allowSelection: true,
+                                                                                                            editSettings:{allowAdding:true,allowDeleting:true,allowEditing:true,allowSaving:true,allowCanceling:true},
+                                                                                                        });
+                                                                                                    }
+
+
+
+
+
+                                        </script>
+
+
                                     }
                                     <div class="clearfix"></div>
                                 </div>
+
                                 <div class="col-md-12 customer-col2">
                                     <span class="col-md-5" style="padding-left:0px;">Other Items (Not on File):</span><br />
                                     <div class="form-group">
@@ -5189,7 +5654,7 @@
                 </div>
             </div>
         </section>
-                        }
+    }
 
     @*<section class="block">
             <div class="container-fluid">
@@ -5209,8 +5674,8 @@
             </div>
         </section>*@
 
-if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1300))
-{
+    if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1300))
+    {
         <section class="block">
             <div class="container-fluid">
                 <h2 class="erf-details-head arrow-down tabheader">ERF</h2>
@@ -5280,7 +5745,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                 </div>
             </div>
         </section>
-}
+    }
 
 
 
@@ -5292,11 +5757,11 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
         </section>*@
 
 
-                        //***** Billing Section*************
-                        //if (Model.Customer.ServiceTier == "5" && (!string.IsNullOrEmpty(Model.Customer.CustomerType) && Model.Customer.CustomerType.ToLower() != "ce")
-                        //    && (string.IsNullOrEmpty(Model.Customer.ParentNumber) || Model.Customer.ParentNumber == "0"))
-                        if (!string.IsNullOrEmpty(Model.Customer.BillingCode) && Model.Customer.BillingCode.ToLower() == "s08")
-                        {
+    //***** Billing Section*************
+    //if (Model.Customer.ServiceTier == "5" && (!string.IsNullOrEmpty(Model.Customer.CustomerType) && Model.Customer.CustomerType.ToLower() != "ce")
+    //    && (string.IsNullOrEmpty(Model.Customer.ParentNumber) || Model.Customer.ParentNumber == "0"))
+    if (!string.IsNullOrEmpty(Model.Customer.BillingCode) && Model.Customer.BillingCode.ToLower() == "s08")
+    {
         <section class="block">
             <div class="container-fluid">
                 <h2 class="billing-head arrow-down tabheader">Billing Items</h2>
@@ -5455,19 +5920,19 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
 
             </div>
         </section>
-                        }
-                        //***** End of Billing Section*************
+    }
+    //***** End of Billing Section*************
 
-                        if (Model.WorkOrder.WorkorderID > 0)
-                        {
-                            if (Model.IsNewPartsOrder != true
-                            /*&& Model.WorkOrder.WorkorderCalltypeid != 1800
-                            && Model.WorkOrder.WorkorderCalltypeid != 1810
-                            //&& Model.WorkOrder.WorkorderCallstatus != "Hold for AB"
-                            && Model.WorkOrder.WorkorderCalltypeid != 1830
-                            && Model.WorkOrder.WorkorderCalltypeid != 1820*/
-                            && Model.WorkOrder.WorkorderCalltypeDesc != "Parts Request")
-                            {
+    if (Model.WorkOrder.WorkorderID > 0)
+    {
+        if (Model.IsNewPartsOrder != true
+        /*&& Model.WorkOrder.WorkorderCalltypeid != 1800
+        && Model.WorkOrder.WorkorderCalltypeid != 1810
+        //&& Model.WorkOrder.WorkorderCallstatus != "Hold for AB"
+        && Model.WorkOrder.WorkorderCalltypeid != 1830
+        && Model.WorkOrder.WorkorderCalltypeid != 1820*/
+        && Model.WorkOrder.WorkorderCalltypeDesc != "Parts Request")
+        {
 
             <style>
                 .work-order-dispatch-content {
@@ -5679,35 +6144,52 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
 
 
                         <div class="row" style="margin-top: 11px;">
-                            <div class="row" style="margin-top: 11px; margin-left:10px;">
-                                <h3>Service Quote:  </h3>
-                            </div>
-                            <div class="col-md-7">
+                            @*<div class="row" style="margin-top: 11px; margin-left:10px;">
+                                    <h3>Service Quote:
+                                    <button title="Refesh Service Quote" class="btn btn-primary" style="padding:2px 4px;" onclick="UpdateServiceQuote()"><i class="icon-refresh"></i></button>
+                                    </h3>
+                                </div>*@
+                            <div class="col-md-5" style="width: 60%;">
                                 <div class="col-md-2" style="padding:0px;">
                                     <div class="form-group">
-                                        Distance:@Html.TextBoxFor(w => w.TravelDistance, new { @class = "form-control", @readonly = "readonly" })
+                                        Distance:@Html.TextBoxFor(w => w.ServiceQuoteDetails.TravelDistance, new { @class = "form-control", @readonly = "readonly", @id = "quoteDistance" })
                                     </div>
 
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        Duration:@Html.TextBoxFor(w => w.TravelTime, new { @class = "form-control", @readonly = "readonly" })
+                                        Duration:@Html.TextBoxFor(w => w.ServiceQuoteDetails.TravelTime, new { @class = "form-control", @readonly = "readonly", @id = "quoteTravelTime" })
                                     </div>
                                 </div>
-                                <div class="col-md-3" style="padding: 0px; padding-left: 10px;">
+                                <div class="col-md-2" style="padding: 0px; padding-left: 10px;">
                                     <div class="form-group">
                                         Labor:<br />
 
-                                        @{var labor = string.Format("{0:c}", Model.Labor);}
-                                        @Html.TextBoxFor(w => labor, new { @class = "form-control", @readonly = "readonly" })
+                                        @*@{var labor = string.Format("{0:c}", Model.ServiceQuoteDetails.Labor);}*@
+                                        @Html.TextBoxFor(w => w.ServiceQuoteDetails.Labor, new { @class = "form-control", @readonly = "readonly", @id = "quoteLabor", Value = String.Format("$ {0:n2}", Model.ServiceQuoteDetails.Labor) })
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-2" style="padding: 0px; padding-left: 10px;">
                                     <div class="form-group">
-                                        Total Quote:@Html.TextBoxFor(w => w.TotalServiceQuote, new { @class = "form-control", @readonly = "readonly" })
+                                        Parts:<br />
+
+                                        @*@{var parts = string.Format("{0:c}", Model.ServiceQuoteDetails.PartsTotal);}*@
+                                        @Html.TextBoxFor(w => w.ServiceQuoteDetails.PartsTotal, new { @class = "form-control", @readonly = "readonly", @id = "quoteParts", Value = String.Format("$ {0:n2}", Model.ServiceQuoteDetails.PartsTotal) })
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        @{var total = Convert.ToDecimal(Model.ServiceQuoteDetails.TotalServiceQuote) + Convert.ToDecimal(Model.ServiceQuoteDetails.PartsTotal);}
+                                        Total Quote:@Html.TextBoxFor(w => total, new { @class = "form-control", @readonly = "readonly", @id = "quoteTotal", Value = String.Format("$ {0:n2}", total) })
 
                                     </div>
                                 </div>
+
+                                @*<div class="col-md-2">
+                                        <div class="form-group">
+
+                                        </div>
+                                    </div>*@
 
                             </div>
                         </div>
@@ -5716,10 +6198,10 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                     </div>
                 </div>
             </section>
-                                            }
+        }
 
-                                            if (Model.IsCustomerPartsOrder == false && Model.IsNewPartsOrder == false)
-                                            {
+        if (Model.IsCustomerPartsOrder == false && Model.IsNewPartsOrder == false)
+        {
             <style>
                 .closure-content {
                     display: block !important;
@@ -5776,14 +6258,14 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                     </div>
                 </div>
             </section>
-                                }
-                                else if (Model.IsCustomerPartsOrder == true && Model.IsNewPartsOrder == true
-                                     /*|| (Model.WorkOrder.WorkorderCalltypeid == 1800
-                                     || Model.WorkOrder.WorkorderCalltypeid == 1810
-                                     || Model.WorkOrder.WorkorderCalltypeid == 1830)
-                                     || Model.WorkOrder.WorkorderCalltypeid == 1820*/
-                                     || Model.WorkOrder.WorkorderCalltypeDesc == "Parts Request")
-                                {
+        }
+        else if (Model.IsCustomerPartsOrder == true && Model.IsNewPartsOrder == true
+             /*|| (Model.WorkOrder.WorkorderCalltypeid == 1800
+             || Model.WorkOrder.WorkorderCalltypeid == 1810
+             || Model.WorkOrder.WorkorderCalltypeid == 1830)
+             || Model.WorkOrder.WorkorderCalltypeid == 1820*/
+             || Model.WorkOrder.WorkorderCalltypeDesc == "Parts Request")
+        {
             <style>
                 .closure-content {
                     display: block !important;
@@ -5859,18 +6341,18 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                     </div>
                 </div>
             </section>
-                                }
-                                else if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Accepted", true) == 0
-                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Accepted-Partial", true) == 0
-                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "On Site", true) == 0
-                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "In Progress", true) == 0
-                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Completed", true) == 0
-                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
-                                    || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Invoiced", true) == 0)
-                                {
+        }
+        else if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Accepted", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Accepted-Partial", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "On Site", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "In Progress", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Completed", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0
+            || string.Compare(Model.WorkOrder.WorkorderCallstatus, "Invoiced", true) == 0)
+        {
 
-                                    if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0)
-                                    {
+            if (string.Compare(Model.WorkOrder.WorkorderCallstatus, "Closed", true) == 0)
+            {
                 <style>
                     .billable-content {
                         display: block !important;
@@ -5927,9 +6409,9 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                         </div>
                     </div>
                 </section>
-                                    }
-                                    else
-                                    {
+            }
+            else
+            {
                 <style>
                     .billable-content {
                         display: block !important;
@@ -5996,7 +6478,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                         </div>
                     </div>
                 </section>
-                                    }
+            }
 
             <style>
                 .closure-content {
@@ -6008,6 +6490,167 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                     <h2 class="closure-head arrow-down tabheader">Closure</h2>
                     <div class="closure-content margin-top" style="display:block !important;">
                         <div class="row customer">
+
+                            <div class="col-md-12 customer-col2">
+                                <div class="col-md-3 customer-col1 sm-pad-reset">
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            @*<span class="col-md-3">State of Equipment:</span>*@
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">
+                                                        State of Equipment upon arrival:
+                                                    </span><br />
+                                                    @Html.TextArea("stateofEquipment", Model.Closure.StateOfEquipment, new { @class = "form-control WorkOrderFields stateofEquipment NonSurveyPanel", @style = "width:300px;height:150px" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            @*<span class="col-md-3">Service Delayed (explain):</span>*@
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">
+                                                        Was Service Delayed (explain):
+                                                    </span><br />
+                                                    @Html.TextArea("serviceDelayed", Model.Closure.serviceDelayed, new { @class = "form-control WorkOrderFields serviceDelayed NonSurveyPanel", @style = "width:300px;height:150px" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 customer-col1 sm-pad-reset">
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            @*<span class="col-md-3">Steps to Troubleshoot and Resolve:</span>*@
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">
+                                                        Steps to Troubleshoot and Resolve:
+                                                    </span><br />
+                                                    @Html.TextArea("troubleshootSteps", Model.Closure.troubleshootSteps, new { @class = "form-control WorkOrderFields troubleshootSteps NonSurveyPanel", @style = "width:300px;height:150px" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            @*<span class="col-md-3">Is Under Warranty:</span>*@
+                                            <div class="col-md-4" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">
+                                                        Is Under Warranty:
+                                                    </span><br />
+                                                    @Html.DropDownListFor(w => w.Closure.IsUnderWarrenty, new SelectList(Model.Closure.WarrentyList, Model.Closure.IsUnderWarrenty), new
+                                                    {
+                                                        @class = "form-control SearchPanelControl",
+                                                        @Id = "WarrentyDropDownList",
+                                                        onchange = "WarrentyRequiredDropdownChange()"
+})
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            @*<span class="col-md-3">Warranty For:</span>*@
+                                            <div class="col-md-4" style="margin-left:10px;">
+                                                <div class="form-group" id="WarrentyForSection">
+                                                    <span class="required1">
+                                                        Warranty For:
+                                                    </span><br />
+                                                    @Html.DropDownListFor(w => w.Closure.WarrentyFor, new SelectList(Model.Closure.WarrentyForList, Model.Closure.WarrentyFor), new
+                                                    {
+                                                        @class = "form-control SearchPanelControl",
+                                                        @Id = "WarrentyForDropDownList"@*, onchange = "TechTypeChange(this)"*@
+})
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            @*<span class="col-md-3">Steps to Troubleshoot and Resolve:</span>*@
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">Full name of person you review the work with:</span><br />
+                                                    @Html.TextBoxFor(c => c.Closure.ReviewedBy, new { @class = "form-control SearchPanelControl", @id = "ReviewedBy" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-3 customer-col1 sm-pad-reset">
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">
+                                                        Is Additional Followup Needed:
+                                                    </span><br />
+                                                    @Html.DropDownListFor(w => w.Closure.AdditionalFollowup, new SelectList(Model.Closure.AdditionalFollowupList, Model.Closure.AdditionalFollowup), new
+                                                    {
+                                                        @class = "form-control SearchPanelControl",
+                                                        @Id = "AdditionalFollowupDropDownList",
+                                                        onchange = "FollowupRequiredChange()"
+})
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group" id="FollowupCommentsSection">
+                                                    <span class="required1"> Additional Followup Comments:</span><br />
+                                                    @Html.TextArea("FollowupComments", Model.Closure.followupComments, new { @class = "form-control WorkOrderFields followupComments NonSurveyPanel", @style = "width:300px;height:150px" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 customer-col1 sm-pad-reset">
+                                    <div class="col-sm-6-o">
+                                        <div class="form-group">
+                                            <div class="col-md-8" style="margin-left:10px;">
+                                                <div class="form-group">
+                                                    <span class="required1">
+                                                        Is Operational:
+                                                    </span><br />
+                                                    @Html.DropDownListFor(w => w.Closure.Operational, new SelectList(Model.Closure.OperationalList, Model.Closure.Operational), new
+                                                    {
+                                                        @class = "form-control SearchPanelControl",
+                                                        @Id = "OperationalDropDownList"@*, onchange = "TechTypeChange(this)"*@
+})
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @*<div class="col-sm-6-o">
+                                            <div class="form-group">
+                                                <div class="col-md-8" style="margin-left:10px;">
+                                                    <div class="form-group">
+                                                        Operational Comments:<br />
+                                                        @Html.TextArea("OperationalComments", Model.Closure.operationalComments, new { @class = "form-control WorkOrderFields operationalComments NonSurveyPanel", @style = "width:300px;height:150px" })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>*@
+                                </div>
+
+
+                            </div>
+
                             <div class="col-md-12 customer-col2">
                                 <h4 class="customer-head">Call Details</h4>
                             </div>
@@ -6015,7 +6658,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                 <div class="col-md-3 customer-col1 sm-pad-reset">
                                     <div class="col-sm-6-o">
                                         <div class="form-group">
-                                            Start Date/Time:<br />
+                                            <span class="required1">Start Date/Time:</span><br />
                                             @Html.TextBoxFor(w => w.Closure.StartDateTime, new
                                        {
                                            @class = "form-control WorkOrderFields",
@@ -6072,7 +6715,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                 <div class="col-md-3 customer-col1 sm-pad-reset">
                                     <div class="col-sm-6-o">
                                         <div class="form-group">
-                                            Arrival Date/Time:<br />
+                                            <span class="required1"> Arrival Date/Time:</span><br />
                                             @Html.TextBoxFor(w => w.Closure.ArrivalDateTime, new
                                        {
                                            @class = "form-control WorkOrderFields",
@@ -6081,10 +6724,15 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                     </div>
                                     <div class="col-sm-6-o">
                                         <div class="form-group" style="height:54px;">
-                                            Travel Time:<br />
-                                            <div class="col-md-5" style="padding:0px;"><span style="float:left;margin-top:6px;">Hrs.</span>@Html.TextBoxFor(w => w.Closure.TravelHours, new { @class = "form-control WorkOrderFields", @style = "width:80px;float:left;", @Id = "TravelTimeHours" })</div>
+                                            @*Travel Time:<br />
+                                                <div class="col-md-5" style="padding:0px;"><span style="float:left;margin-top:6px;">Hrs.</span>@Html.TextBoxFor(w => w.Closure.TravelHours, new { @class = "form-control WorkOrderFields", @style = "width:80px;float:left;", @Id = "TravelTimeHours" })</div>
 
-                                            <div class="col-md-6"><span style="float:left;margin-top:6px;">Mins.</span>@Html.DropDownListFor(w => w.Closure.TravelMinutes, new SelectList(Model.Closure.MinutesList, "Description", "Description", Model.Closure.TravelMinutes), new { @style = "width:80px;float:left;", @Id = "TravelMinutes", @class = "form-control WorkOrderFields" })</div>
+                                                <div class="col-md-6"><span style="float:left;margin-top:6px;">Mins.</span>@Html.DropDownListFor(w => w.Closure.TravelMinutes, new SelectList(Model.Closure.MinutesList, "Description", "Description", Model.Closure.TravelMinutes), new { @style = "width:80px;float:left;", @Id = "TravelMinutes", @class = "form-control WorkOrderFields" })</div>*@
+
+                                            Travel Distance: <br />
+                                            <div class="col-md-5" style="padding:0px;"><span style="float:left;margin-top:6px;">Miles : </span>@Html.TextBoxFor(w => w.Distance, new { @class = "form-control WorkOrderFields", @style = "width:80px;float:left;", @Id = "TravelDistance" })</div>
+
+
                                             <div class="clear"></div>
                                         </div>
                                     </div>
@@ -6108,7 +6756,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
 
                                     <div class="col-sm-6-o">
                                         <div class="form-group">
-                                            Completion Date/Time:<br />
+                                            <span class="required1">Completion Date/Time:</span><br />
                                             @Html.TextBoxFor(w => w.Closure.CompletionDateTime, new
                                        {
                                            @class = "form-control WorkOrderFields",
@@ -6142,13 +6790,13 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                 <div class="col-md-3 customer-col1 sm-pad-reset" style="background: #b5b4b440;  width: auto;">
                                     <div class="col-sm-6-o">
                                         <br />
-                                        Signature By: <br />
+                                        <span class="required1">Signature By: </span><br />
                                         <div class="form-group">
                                             @Html.TextBoxFor(w => w.Closure.CustomerSignedBy, new { @class = "form-control WorkOrderFields" })
                                         </div>
                                         <br />
                                         @*<div class="col-md-5">*@
-                                        Customer Signature:
+                                        <span class="required1">Customer Signature:</span>
                                         @*</div>
                                             <div class="col-md-7">*@
                                         <div class="form-group">
@@ -6180,9 +6828,37 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                     </div>
                                     @*</div>*@
                                 </div>
+
                             </div>
+
+
                             <div class="col-md-12 customer-col2">
-                                <h4 class="customer-head required">Asset Details</h4>
+                                <div style="float: left; padding-top: 2em;"><h4 class="customer-head required">Asset Details</h4></div>
+                                <div class="col-md-6 customer-col1 sm-pad-reset" style="float: right;">
+                                    <div class="col-md-2" style="padding: 0px; padding-left: 10px; padding-top: 2em;">
+                                        <label>Service Quote with Parts</label>
+                                    </div>
+                                    <div class="col-md-3" style="padding: 0px; padding-left: 10px;">
+                                        <div class="form-group">
+                                            Parts:<br />
+                                            @Html.TextBoxFor(w => Model.ServiceQuoteDetails.PartsTotal, new { @class = "form-control", @readonly = "readonly", @id = "newPartsQuote", Value = String.Format("$ {0:n2}", Model.ServiceQuoteDetails.PartsTotal) })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            @{var prevtotal = Convert.ToDecimal(Model.ServiceQuoteDetails.TotalServiceQuote);}
+                                            Previous Quote:@Html.TextBoxFor(w => prevtotal, new { @class = "form-control", @readonly = "readonly", @id = "previousQuote", Value = String.Format("$ {0:n2}", Model.ServiceQuoteDetails.TotalServiceQuote) })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            @{var finaltotal = Convert.ToDecimal(Model.ServiceQuoteDetails.TotalServiceQuote) + Convert.ToDecimal(Model.ServiceQuoteDetails.PartsTotal);}
+                                            Total Quote:@Html.TextBoxFor(w => finaltotal, new { @class = "form-control", @readonly = "readonly", @id = "newTotalQuote", Value = String.Format("$ {0:n2}", finaltotal) })
+                                        </div>
+                                    </div>
+
+                                </div>
+
                             </div>
                             @*<div class="col-md-12 customer-col2">
                                     <div class="col-md-6">
@@ -6301,11 +6977,15 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
 
                                 if (UserPrivilege["Work Order"] == "Edit-Only" || UserPrivilege["Work Order"] == "Full")
                                 {
-                                    <div class="col-md-12 customer-col2">
+                                    <div class="col-md-12 customer-col2" style="justify-content: flex-end; display: flex;">
+                                        <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
+                                            Service Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsServiceBillableFeed" })
+                                            @Html.Hidden("IsServiceBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsServiceBillableFeed}}", new { @class = "IsServiceBillableFeedHidden" })
+                                        </span>
                                         @if (Model.IsOpen == false)
                                         {
                                             @*<button onclick="OnCCProcessClick()" style="float:right;margin-top:10px;" class="btn btn-primary">CC Process</button>*@
-                                            <button type="submit" style="float:right;margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
+                                            <button id="completeEventBtn" type="submit" style="margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
                                         }
 
                                     </div>
@@ -6316,8 +6996,8 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                     </div>
                 </div>
             </section>
-                                    }
-                                }
+        }
+    }
 
     <section class="block">
         <div class="container-fluid">
@@ -6326,15 +7006,15 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
         </div>
     </section>
 
-                                //if (Model.WorkOrder.WorkorderID > 0)
-                                //{
+    //if (Model.WorkOrder.WorkorderID > 0)
+    //{
     <section class="block">
         <div class="container-fluid">
             <h2 class="notes-details-head arrow-down tabheader required1">Documents</h2>
             @Html.Partial("_DocumentUpload", Model.Documents)
         </div>
     </section>
-                                //}
+    //}
     <script id="tabGridContents" type="text/x-jsrender">
         <div id="SurveyPanel" class="SurveyPanel">
             <div class="col-md-12">
@@ -6646,12 +7326,14 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                                                                             var skuDropDown = "";
                                                                                             function detailGridActionComplete(args)
                                                                                             {
-                                                                                                if (args.requestType == "beginedit" || args.requestType == "add") {
+                                                                                                if (args.requestType == "beginedit" || args.requestType == "add" || args.requestType == "save") {
 
                                                                                                     if (args.requestType == "add") {
                                                                                                         //hide loader
                                                                                                         //alert("add close")
                                                                                                         //$( '#ForWaitCursor' ).addClass( "loading" );
+
+                                                                                                        $("#" + this._id + "PartReplenish").prop("checked", true); //Defaulting Parts replenish to true
 
                                                                                                     }
                                                                                                     if (args.requestType == "cancel") {
@@ -6660,7 +7342,41 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                                                                                     //$("#" + this._id + "Manufacturer").ejDropDownList({ change: "DetailGridManufacturerChange", enableFilterSearch: true });
                                                                                                     /*$("#" + this._id + "Sku").ejDropDownList({change : "DetailGridSkuChange", enableFilterSearch: true, allowVirtualScrolling: true, virtualScrollMode: "continuous" });*/
 
+                                                                                                    if (args.requestType == "save") {
+                                                                                                        var gridDatasource = $("#" + this._id).ejGrid("instance").model.dataSource;
+                                                                                                        //var partsCost = 0;
+                                                                                                        //$.each(gridDatasource, function (i, item) {
+                                                                                                        //    partsCost = parseFloat(partsCost) + (parseFloat(item.StandardCost) * parseInt(item.Quantity));
+                                                                                                        //});
 
+                                                                                                        //$("#newPartsQuote").val(parseFloat(partsCost).toFixed(2));
+
+                                                                                                        //var prevTotal = $("#previousQuote").val().replace('$', '');
+                                                                                                        //$("#newTotalQuote").val(parseFloat(parseFloat(partsCost) + parseFloat(prevTotal)).toFixed(2));
+                                                                                                        var quoteObj = {
+                                                                                                            "WorkorderId": $("#WorkOrder_WorkorderID").val(),
+                                                                                                            "PreviousQuote": $("#previousQuote").val().replace('$', ''),
+                                                                                                            "SkuList": gridDatasource
+                                                                                                            }
+
+                                                                                                         $.ajax({
+                                                                                                             type: "POST",
+                                                                                                             url: "@Url.Action("GetServiceQuoteDetailsWithParts", "Workorder")",
+                                                                                                             data: JSON.stringify(quoteObj),
+                                                                                                             contentType: "application/json",
+                                                                                                            }).done(function (jsonResult) {
+                                                                                                                if (jsonResult.success) {
+                                                                                                                    $("#newPartsQuote").val("$ " + jsonResult.data.PartsTotal.toFixed(2));
+                                                                                                                    $("#newTotalQuote").val("$ " + jsonResult.data.TotalServiceQuote.toFixed(2));
+
+                                                                                                                    var prevQuot = $("#previousQuote").val().replace('$', '');
+                                                                                                                    $("#previousQuote").val("$ " + parseFloat(prevQuot).toFixed(2));
+                                                                                                                }
+                                                                                                            });
+
+
+
+                                                                                                    }
 
 
 
@@ -7024,16 +7740,14 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                                                                                                 AlertPopup( "|No records selected for " + args.itemName + " operation" );
 
                                                                                                             }
-                                                                                                            //if (args.itemName == "add") {
-                                                                                                            //    alert("add");
-                                                                                                            //}
 
                                                                                                         },
                                                                                                         dataSource : dataResults,
                                                                                                         columns: [
-                                                                                                            { field: "Issue",headerText: "Issue",template: true, width: 80, templateID: "#checkboxTemplate", visible: false, textAlign:ej.TextAlign.Center,allowEditing: false },//The checkbox column is bound to the grid using template property and headerTemplateID property
+                                                                                                            { field: "Issue", headerText: "Issue", template: true, width: 80, templateID: "#checkboxTemplate", visible: false, textAlign: ej.TextAlign.Center, allowEditing: false, isPrimaryKey: true },//The checkbox column is bound to the grid using template property and headerTemplateID property
+                                                                                                            { field: "PartReplenish", headerText: "Part Replenish", width: 80, textAlign: ej.TextAlign.Center, type: 'boolean', displayAsCheckBox: true, editType: 'booleanedit' },
                                                                                                             { field: "Quantity", headerText: 'Quantity', width: 80, textAlign: ej.TextAlign.Left },
-                                                                                                            //{ field: "Sku", headerText: 'Part#/SKU', width: 120, textAlign: ej.TextAlign.Left, foreignKeyField: "VendorDescription",foreignKeyValue: "VendorDescription",dataSource: @Html.Raw(Json.Encode(Model.CloserPartsOrSKUs)), width: 120  },
+                                                                                                            //{ field: "Sku", headerText: 'Part#/SKU', width: 120, textAlign: ej.TextAlign.Left, foreignKeyField: "VendorDescription",foreignKeyValue: "VendorDescription",dataSource: @Html.Raw(jsonClosurePartsModel), width: 120  },
                                                                                                             //{ field: "Sku", headerText: 'Part#/SKU', width: 120, textAlign: ej.TextAlign.Left, width: 120 },
                                                                                                             { field: "Sku", headerText: 'Part#/SKU', width: 120, textAlign: ej.TextAlign.Left, width: 120, editTemplate:
                                                                                                                 {
@@ -7043,7 +7757,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                                                                                                         return args.ejAutocomplete("getValue");},
                                                                                                                     destroy: () => {},
                                                                                                                     write: (args) => {
-                                                                                                                        var dataList = @Html.Raw(Json.Encode(Model.CloserPartsOrSKUs));
+                                                                                                                        var dataList = @Html.Raw(jsonClosurePartsModel);
                                                                                                                         var data = ej.DataManager(dataList).executeLocal(new ej.Query().select("VendorDescription"));
                                                                                                                          args.element.ejAutocomplete(
                                                                                                                              {
@@ -7084,6 +7798,27 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                                                                                                                          }
                                                                                                                                      });
 
+                                                                                                                                     $.ajax({
+                                                                                                                                         url: '@Url.Action("GetSkuCost", "Workorder")',
+                                                                                                                                         type: 'GET',
+                                                                                                                                         data: { "skuValue": item },
+                                                                                                                                         success: function (jsonResult) {
+                                                                                                                                             if (jsonResult.success == true)
+                                                                                                                                             {
+
+                                                                                                                                                 $("#" + gridId + "StandardCost").val(parseFloat(jsonResult.data).toFixed(2));
+
+                                                                                                                                                 //var partsCost = $("#quoteParts").val();
+                                                                                                                                                 //var latestTotal = parseFloat(partsCost.replace('$', '')) + parseFloat(jsonResult.data);
+                                                                                                                                                 //$("#quoteParts").val(latestTotal);
+                                                                                                                                             }
+                                                                                                                                             else
+                                                                                                                                             {
+                                                                                                                                                 AlertPopup("|There is a problem in getting Sku Cost!");
+                                                                                                                                             }
+                                                                                                                                         }
+                                                                                                                                     });
+
                                                                                                                                      var proxy = this;
                                                                                                                                      if (proxy.inputSearch && proxy.inputSearch.val() != "") {
                                                                                                                                          var item = {}, alreadyAdded = false;
@@ -7116,7 +7851,8 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
                                                                                                                 }
                                                                                                             },
                                                                                                             { field: "Manufacturer", headerText: 'Manufacturer', width: 200, textAlign: ej.TextAlign.Left },
-                                                                                                            { field: "Description", headerText: 'Description', width: 400, textAlign: ej.TextAlign.Left }
+                                                                                                            { field: "Description", headerText: 'Description', width: 400, textAlign: ej.TextAlign.Left },
+                                                                                                            { field: "StandardCost", headerText: 'SkuCost', width: 400, textAlign: ej.TextAlign.Left, visible: false }
                                                                                                         ],
                                                                                                         actionBegin: "detailGridActionBegin",
                                                                                                         actionComplete: "detailGridActionComplete"
@@ -7630,7 +8366,7 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
             <div id="card-response" role="alert"></div>
 
             <div class="button-container">
-                <input type="submit" value="Submit Paymnt">
+                <input type="submit" value="Submit Payment">
             </div>
         </form>
 
@@ -7639,3 +8375,20 @@ if (Model.WorkOrder.WorkorderID > 0 && (Model.WorkOrder.WorkorderCalltypeid == 1
     </div>
 </div>
 
+<div class="popup" data-popup="popup-coremark-successBlock">
+    <div class="popup-inner">
+        <table>
+            <tr>
+                <td id="successAlertTxt"></td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" class="btn btn-primary enableonclose" style="margin:1vw;" onclick="CompleteEventTrigger()">Yes</button>
+                    <button data-popup-close="popup" class="btn btn-primary btn-orange enableonclose" style="margin:1vw;" onclick="HideSuccessPopup()">No</button>
+                </td>
+                <td></td>
+            </tr>
+        </table>
+        <a class="popup-close" data-popup-close="popup-coremark-successBlock" href="#">x</a>
+    </div>
+</div>

@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewBag.Title = "EventsUpload";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model FarmerBrothers.Models.CustomerZipcodeUpdateModel
+@using Newtonsoft.Json;
+@using Syncfusion.MVC.EJ;
+@using Syncfusion.JavaScript;
+@using FarmerBrothers.Models;
+<script type="text/javascript">
+    var updateUrl = null;
+
+    $(document).ready(function () {
+
+        $("#uploadBtn").on("click", function () {
+            $(".modal").show();
+        })
+
+
+    });
+
+    function queryCellInfo(args) {
+        if ( args.column.headerText === "Success/Error Message" )
+        {
+            if (args.data.Message == "Success") {
+                args.cell.className += " successStyle";
+            }
+            else {
+                args.cell.className += " errorStyle";
+            }
+        }
+    }
+
+</script>
+@using (Html.BeginForm("UploadBulkEvents", "EventsUpload", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <section class="block margin-top">
+        <div class="container-fluid">
+            <h2 class="customerUpload-head arrow-down tabheader">Bulk Events Upload</h2>
+            <div class="customerUpload-content margin-top">
+                <div class="row customerUpload clear-input">
+                    <div class="col-md-12">
+                        <div class="col-md-2" style="width: 30%;">
+                            <div class="form-group right-inner-addon">
+                                @Html.TextBox("file", "", new { type = "file" }) <br />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group right-inner-addon" style="top:1.3em;">
+                                <button type="submit" class="btn btn-primary" id="uploadBtn">Upload</button>
+                            </div>
+                        </div>
+
+                        @if (ViewBag.isSuccess != null && !(ViewBag.isSuccess))
+                        {
+                            <div class="row customer clear-input">
+                                <div class="col-md-12  sm-pad-reset">
+                                    <b>Error: </b>
+                                    @Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))
+                                </div>
+                            </div>
+                        }
+                        else if (ViewBag.isSuccess != null && (ViewBag.isSuccess))
+                        {
+                            <div class="row customer clear-input">
+                                <div class="col-md-12  sm-pad-reset">
+                                    <b>Success: </b>
+                                    @*@Html.Raw(Html.Encode(ViewBag.Message).Replace("\n", "<br />"))*@
+                                    <div class="row customer clear-input">
+                                        <div class="col-md-12  sm-pad-reset">
+
+                                            @(Html.EJ().Grid<object>("CustomerFileUploadResults")
+                                    .Datasource(ds => ds.Json((IEnumerable<object>)ViewBag.dataSource)
+                                     .Adaptor(AdaptorType.RemoteSaveAdaptor))
+                                    .AllowPaging()
+                                    .AllowFiltering()
+                                    .AllowTextWrap(true)
+                                    .TextWrapSettings(w => { w.WrapMode(WrapMode.Both); })
+                                    .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
+                                    .Columns(col =>
+                                    {
+                                        col.Field("CustomerId").HeaderText("Customer#").Width(100).Add();
+                                        col.Field("CustomerName").HeaderText("Customer Name").Width(100).Add();
+                                        col.Field("Address").HeaderText("Address1").Width(100).Add();
+                                        col.Field("Address2").HeaderText("Address2").Width(100).Add();
+                                        col.Field("Address3").HeaderText("Address3").Width(100).Add();
+                                        col.Field("City").HeaderText("City").Width(100).Add();
+                                        col.Field("State").HeaderText("State").Width(70).Add();
+                                        col.Field("ZipCode").HeaderText("Postal Code").Width(80).Add();
+                                        col.Field("PhoneNumber").HeaderText("Phone").Width(100).Add();
+                                        col.Field("Route").HeaderText("Route").Width(60).Add();
+                                        col.Field("Branch").HeaderText("Branch").Width(60).Add();
+                                        col.Field("Message").HeaderText("Success/Error Message").Width(200).Add();
+                                    })
+                                     .ClientSideEvents(eve =>
+                                        {
+                                            eve.QueryCellInfo("queryCellInfo");
+                                        }))
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+}
+

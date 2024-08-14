@@ -37,6 +37,7 @@ namespace FarmerBrothers.Models
         public string ParentId { get; set; }
         public string PhoneWithAreaCode { get; set; }
         public int ZipCode { get; set; }
+        public string Branch { get; set; }
 
         public IList<State> States;
         public IList<Contact> CustomerSearchResults;
@@ -47,6 +48,7 @@ namespace FarmerBrothers.Models
         public string AccountNumber { get; set; }
         public string ZipCode { get; set; }
         public string SalesEmail { get; set; }
+        public string ParentId { get; set; }
     }
 
     public class PMUploadContactUpdateModel

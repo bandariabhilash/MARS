@@ -28,6 +28,7 @@ namespace FarmerBrothers.Data
         public Nullable<decimal> Total { get; set; }
         public Nullable<int> AssetID { get; set; }
         public Nullable<bool> NonSerializedIssue { get; set; }
+        public Nullable<bool> PartReplenish { get; set; }
     
         public virtual WorkOrder WorkOrder { get; set; }
     }

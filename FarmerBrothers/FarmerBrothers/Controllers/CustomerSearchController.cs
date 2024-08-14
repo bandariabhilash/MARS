@@ -44,7 +44,7 @@ namespace FarmerBrothers.Controllers
                             //      || e.SearchType.ToString().Equals("CFS") || e.SearchType.ToString().Equals("CB") || e.SearchType.ToString().Equals("CE") || e.SearchType.ToString().Equals("CFD") || 
                             //      e.SearchType.ToString().Equals("PFS"));
                             predicate = predicate.And(e => e.SearchType.ToString().Equals("C") || e.SearchType.ToString().Equals("CA") || e.SearchType.ToString().Equals("CFD") || 
-                                   e.SearchType.ToString().Equals("CB") || e.SearchType.ToString().Equals("CE")  || e.SearchType.ToString().Equals("PFS"));
+                                   e.SearchType.ToString().Equals("CB") || e.SearchType.ToString().Equals("CE")  || e.SearchType.ToString().Equals("PFS") || e.SearchType.ToString().Equals("BR"));
 
                             if (customerSearchModel.ZipCode > 0 && !string.IsNullOrWhiteSpace(customerSearchModel.ZipCode.ToString()))
                             {
@@ -84,7 +84,11 @@ namespace FarmerBrothers.Controllers
                             if (!string.IsNullOrWhiteSpace(customerSearchModel.ParentId))
                             {
                                 predicate = predicate.And(w => w.PricingParentID.ToString().Contains(customerSearchModel.ParentId));
-                            }                            
+                            }
+                            if (!string.IsNullOrWhiteSpace(customerSearchModel.Branch))
+                            {
+                                predicate = predicate.And(w => w.Branch.ToString().Contains(customerSearchModel.Branch));
+                            }
                             //predicate = predicate.And(c => c.IsUnknownUser != 1);
 
                             IQueryable<Contact> contacts = FarmerBrothersEntitites.Set<Contact>().AsExpandable().Where(predicate).Take(500); 

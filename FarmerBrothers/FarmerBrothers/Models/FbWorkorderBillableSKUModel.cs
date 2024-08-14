@@ -34,6 +34,7 @@ namespace FarmerBrothers.Models
         public Nullable<int> Qty { get; set; }
         public decimal? UnitPrice { get; set; }
         public string Description { get; set; }
+        public bool? PartReplenish { get; set; }
 
 
     }

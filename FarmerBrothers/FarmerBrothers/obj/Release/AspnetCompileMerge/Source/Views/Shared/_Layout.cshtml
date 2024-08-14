@@ -285,6 +285,10 @@
                                             {
                                                 <li>@Html.ActionLink("Closest Tech Lookup", "ClosestTechLookup", "ClosestTechLookup", null, null)</li>
                                             }
+                                            @if (UserPrivilege["Technician Update"] != "No-Permission")
+                                            {
+                                                <li>@Html.ActionLink("Events Upload", "EventsUpload", "EventsUpload", null, null)</li>
+                                            }
                                             @*<li>@Html.ActionLink("Update Zone Technician", "UpdateZoneTechnician", "ZoneTechnician", null, new { @Id = "workOrderId" })</li>*@
                                         </ul>
                                     </li>

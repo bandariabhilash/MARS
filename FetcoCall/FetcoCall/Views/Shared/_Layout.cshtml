@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Fetco Protect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap core CSS -->
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+    <script src="~/Scripts/jquery-2.2.3.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(document).on({
+                ajaxStart: function () { $('#ForWaitCursor').addClass("loading"); },
+                ajaxStop: function () { $('#ForWaitCursor').removeClass("loading"); }
+            });
+
+            $('[data-popup-open]').on('click', function (e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-open');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeIn(350);
+                // $(".modal").hide();
+                e.preventDefault();
+            });
+
+            $('[data-popup-close]').on('click', function (e) {
+                var targeted_popup_class = jQuery(this).attr('data-popup-close');
+                $('[data-popup="' + targeted_popup_class + '"]').fadeOut(350);
+                if ($("#alertmessage").text().indexOf("Invoice Message: ") != -1) {
+                    location.reload(true);
+                }
+                //$(".modal").hide();
+                e.preventDefault();
+
+            });
+        });
+
+        function AlertPopup(message) {
+            var messages = message.split("|");
+
+            $('#alertmessage').text('');
+            if (messages.length > 1) {
+                $('#alertmessage').append('Please Enter ');
+                $('#alertmessage').append('<ul>');
+                for (var i = 0; i < messages.length; i++) {
+                    if (messages[i].length > 0) {
+                        $('#alertmessage').append('<li>' + messages[i] + '</li>');
+                    }
+                }
+                $('#alertmessage').append('</ul>');
+            }
+            else {
+                $('#alertmessage').text(message);
+            }
+            $("[data-popup='popupalert']").show();
+        }
+
+
+    </script>
+    <style>
+        body {
+            font-family: "Source Sans 3", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: weight;
+            font-style: normal;
+        }
+
+        h2 {
+            font-family: "Source Sans 3", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 900;
+            font-style: normal;
+        }
+
+        p {
+            font-family: "Source Sans 3", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .container {
+            max-width: 800px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0.8;
+            background: #000;
+            z-index: 99999;
+            background: rgba( 255, 255, 255, .62 ) url(../../images/FhHRx.gif) 50% 50% no-repeat;
+        }
+
+        #ForWaitCursor.loading {
+            overflow: hidden;
+        }
+
+            /* Anytime the body has the loading class, our
+        modal element will be visible */
+            #ForWaitCursor.loading .modal {
+                display: block;
+            }
+
+        .modal.loading {
+            display: block;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div id="ForWaitCursor">
+
+        @*<section class="container-fluid dark-bg" style="padding-bottom: 9px;padding-top:6px;">
+            
+            <div class="col-xs-12 col-sm-4 col-md-2 contactno" style="float: right;padding-top: 40px;text-align: right;">
+                <b>Contact: </b> 877-322-6885
+            </div>
+            <h2 class="h2style">Service Request Form</h2>
+            <div style="clear:both;"></div>
+        </section>
+        <hr style="border: 0.2em solid #000000; width: 100%; margin-top:3em;" />*@
+        <div>
+            @RenderBody()
+            <hr />
+            <footer>
+                <div class="col-md-12" style="position: fixed; left: 0; bottom: 0; width: 100%;  text-align: center;">
+                    @*<p>Copyright © @DateTime.Now.Year Marketing Alternatives Inc. All rights reserved.</p>*@
+                </div>
+            </footer>
+        </div>
+        @*@Scripts.Render("~/bundles/jquery")
+            @Scripts.Render("~/bundles/bootstrap")
+            @RenderSection("scripts", required: false)*@
+        <div class="modal"></div>
+    </div>
+    <div class="popup" data-popup="popupalert" style="display:none;">
+        <div class="popup-inner" style="min-width:300px;min-height:100px;">
+            <table>
+                <tr>
+                    <td>
+                        <span id="alertmessage"></span>
+                    </td>
+                </tr>
+            </table>
+            <a data-popup-close="popupalert"  class="w-10 btn btn-dark btn-lg" style="margin-top:10px;">Close</a>
+            <a class="popup-close" data-popup-close="popupalert">x</a>
+        </div>
+    </div>
+
+
+
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

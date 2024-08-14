@@ -88,6 +88,20 @@
     <Property Name="ColUpdated" Type="int" />
     <Property Name="CategoryCode" Type="varchar" MaxLength="10" />
   </EntityType>
+  <EntityType Name="CCInvoiceDetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkorderId" Type="int" />
+    <Property Name="TravelCost" Type="money" />
+    <Property Name="LaborCost" Type="money" />
+    <Property Name="PartsCost" Type="money" />
+    <Property Name="PartsDiscount" Type="decimal" Precision="4" Scale="2" />
+    <Property Name="SalesTax" Type="float" />
+    <Property Name="TransactionId" Type="varchar" MaxLength="100" />
+    <Property Name="ManualCosts" Type="bit" />
+  </EntityType>
   <EntityType Name="Contact">
     <Key>
       <PropertyRef Name="ContactID" />
@@ -321,6 +335,7 @@
     <Property Name="BulkUploadResult" Type="varchar" MaxLength="50" />
     <Property Name="UploadError" Type="ntext" />
     <Property Name="CashSaleStatus" Type="varchar" MaxLength="150" />
+    <Property Name="Tracking" Type="varchar" MaxLength="25" />
   </EntityType>
   <EntityType Name="ERFBranchDetails">
     <Key>
@@ -962,6 +977,7 @@
     <Property Name="AfterHoursRatesApply" Type="bit" />
     <Property Name="AdditionalFee" Type="money" />
     <Property Name="PricingTypeId" Type="int" />
+    <Property Name="Approved3rdPartyUse" Type="bit" />
   </EntityType>
   <EntityType Name="PricingType">
     <Key>
@@ -1446,6 +1462,12 @@ warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a pri
     <Property Name="AuthTransactionId" Type="varchar" MaxLength="150" />
     <Property Name="FinalTransactionId" Type="varchar" MaxLength="150" />
     <Property Name="ShippingPriority" Type="varchar" MaxLength="25" />
+    <Property Name="NTE" Type="varchar" MaxLength="150" />
+    <Property Name="ETAUpdated" Type="int" />
+    <Property Name="CallerPhone" Type="varchar" MaxLength="30" />
+    <Property Name="EquipmentBrand" Type="varchar" MaxLength="100" />
+    <Property Name="EquipmentModel" Type="varchar" MaxLength="100" />
+    <Property Name="PaymentTerm" Type="varchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="WorkorderBillingDetails">
     <Key>
@@ -1500,6 +1522,16 @@ warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a pri
     <Property Name="TechnicianSignatureDetails" Type="nvarchar(max)" />
     <Property Name="CustomerSignatureBy" Type="nvarchar" MaxLength="250" />
     <Property Name="TotalDissolvedSolids" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="StateofEquipment" Type="ntext" />
+    <Property Name="ServiceDelayReason" Type="ntext" />
+    <Property Name="TroubleshootSteps" Type="ntext" />
+    <Property Name="FollowupComments" Type="ntext" />
+    <Property Name="OperationalComments" Type="ntext" />
+    <Property Name="ReviewedBy" Type="nvarchar" MaxLength="150" />
+    <Property Name="IsUnderWarrenty" Type="nvarchar" MaxLength="10" />
+    <Property Name="WarrentyFor" Type="nvarchar" MaxLength="150" />
+    <Property Name="AdditionalFollowupReq" Type="nvarchar" MaxLength="10" />
+    <Property Name="IsOperational" Type="nvarchar" MaxLength="10" />
   </EntityType>
   <EntityType Name="WorkorderEquipment">
     <Key>
@@ -1621,6 +1653,7 @@ warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a pri
     <Property Name="Total" Type="money" />
     <Property Name="AssetID" Type="int" />
     <Property Name="NonSerializedIssue" Type="bit" />
+    <Property Name="PartReplenish" Type="bit" />
   </EntityType>
   <EntityType Name="WorkorderReasonlog">
     <Key>
@@ -2100,6 +2133,18 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <Property Name="AreaCode" Type="nvarchar" MaxLength="6" />
     <Property Name="SearchType" Type="nvarchar" MaxLength="3" />
   </EntityType>
+  <Association Name="FK__CCInvoice__Worko__52793849">
+    <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+    <End Role="CCInvoiceDetails" Type="Self.CCInvoiceDetails" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="WorkOrder">
+        <PropertyRef Name="WorkorderID" />
+      </Principal>
+      <Dependent Role="CCInvoiceDetails">
+        <PropertyRef Name="WorkorderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK__FbUserMas__RoleI__4589517F">
     <End Role="FbRoles" Type="Self.FbRoles" Multiplicity="1" />
     <End Role="FbUserMaster" Type="Self.FbUserMaster" Multiplicity="*" />
@@ -2625,6 +2670,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="BrandNames" EntityType="Self.BrandNames" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CallTypeSymptomSolutionMaster" EntityType="Self.CallTypeSymptomSolutionMaster" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CCInvoiceDetails" EntityType="Self.CCInvoiceDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Contact_PMUploadsALL" EntityType="Self.Contact_PMUploadsALL" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Contingent" EntityType="Self.Contingent" Schema="dbo" store:Type="Tables" />
@@ -3025,6 +3071,10 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     [VW_tech_Hierarchy].[SearchType] AS [SearchType]
     FROM [dbo].[VW_tech_Hierarchy] AS [VW_tech_Hierarchy]</DefiningQuery>
     </EntitySet>
+    <AssociationSet Name="FK__CCInvoice__Worko__52793849" Association="Self.FK__CCInvoice__Worko__52793849">
+      <End Role="WorkOrder" EntitySet="WorkOrder" />
+      <End Role="CCInvoiceDetails" EntitySet="CCInvoiceDetails" />
+    </AssociationSet>
     <AssociationSet Name="FK__FbUserMas__RoleI__4589517F" Association="Self.FK__FbUserMas__RoleI__4589517F">
       <End Role="FbRoles" EntitySet="FbRoles" />
       <End Role="FbUserMaster" EntitySet="FbUserMaster" />

@@ -26,6 +26,7 @@ namespace FarmerBrothers.Data
         public Nullable<bool> AfterHoursRatesApply { get; set; }
         public Nullable<decimal> AdditionalFee { get; set; }
         public Nullable<int> PricingTypeId { get; set; }
+        public Nullable<bool> Approved3rdPartyUse { get; set; }
     
         public virtual PricingType PricingType { get; set; }
     }

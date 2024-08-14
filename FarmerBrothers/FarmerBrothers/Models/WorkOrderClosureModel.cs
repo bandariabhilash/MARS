@@ -189,7 +189,27 @@ namespace FarmerBrothers.Models
 
         public decimal TDS { get; set; }
 
-        public IList<WorkOrderManagementEquipmentModel> WorkOrderEquipments;
+        public IList<string> WarrentyList;
+        public string IsUnderWarrenty { get; set; }
+
+        public IList<string> WarrentyForList;
+        public string WarrentyFor { get; set; }
+
+        public IList<string> AdditionalFollowupList;
+        public string AdditionalFollowup { get; set; }
+
+        public IList<string> OperationalList;
+        public string Operational { get; set; }
+        
+        public string StateOfEquipment { get; set; }
+        public string serviceDelayed { get; set; }
+        public string troubleshootSteps { get; set; }
+        public string ReviewedBy { get; set; }
+        public string followupComments { get; set; }
+        public string operationalComments{ get; set; }
+
+
+public IList<WorkOrderManagementEquipmentModel> WorkOrderEquipments;
         public IList<AllFBStatu> PhoneSolveList;
         public IList<SpecialClosureModel> SpecialClosureList;
         public IList<MinutesModel> MinutesList;

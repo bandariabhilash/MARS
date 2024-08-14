@@ -76,6 +76,7 @@ namespace FarmerBrothers.Controllers
             }
 
             customerModel.EquipmentSummary = new List<EquipmentSummaryModel>();
+            FarmerBrothersEntitites.Database.CommandTimeout = 300;
             List<FBCBE> fbcbeList = FarmerBrothersEntitites.FBCBEs.Where(cbe => cbe.CurrentCustomerId == id).ToList();
             foreach(FBCBE cbeData in fbcbeList)
             {
@@ -206,6 +207,7 @@ namespace FarmerBrothers.Controllers
             oldCustomer.DistributorName = contact.DistributorName;
             oldCustomer.MainEmailAddress = contact.Email;
             oldCustomer.CustomerId = contact.ContactID.ToString();
+            oldCustomer.ParentNumber = contact.PricingParentID;
 
             contact.AreaCode = customer.AreaCode;
             contact.Phone = customer.PhoneNumber;
@@ -241,6 +243,7 @@ namespace FarmerBrothers.Controllers
             contact.DistributorName = customer.DistributorName;
             contact.Email = customer.MainEmailAddress;
             contact.CustomerSpecialInstructions = customer.CustomerSpecialInstructions;
+            contact.PricingParentID = customer.ParentNumber;
             if (ValidateZipCode(customer.ZipCode))
             {
                 FarmerBrothersEntitites.SaveChanges();
@@ -360,7 +363,8 @@ namespace FarmerBrothers.Controllers
                                  {
                                      CustomerId = p.ContactID,
                                      ZipCode = p.PostalCode,
-                                     SalesEmail = p.SalesEmail
+                                     SalesEmail = p.SalesEmail,
+                                     ParentId=p.PricingParentID
                                  }).FirstOrDefault();
 
 
@@ -472,7 +476,87 @@ namespace FarmerBrothers.Controllers
             jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
             return jsonResult;
         }
+
+        [HttpPost]
+        public JsonResult UpdateCustomerDetails(int CustomerId, string ZipCode, string SalesEmail, string ParentId)
+        {
+            CustomerZipcodeUpdateModel workorderModel = new CustomerZipcodeUpdateModel();
+            JsonResult jsonResult = new JsonResult();
+            try
+            {
+                string Message = "";
+
+                Contact customer = FarmerBrothersEntitites.Contacts.Where(c => c.ContactID == CustomerId).FirstOrDefault();
+
+                if (customer != null)
+                {
+                    if (!string.IsNullOrEmpty(ZipCode.Trim()))
+                    {
+                        bool IsValidZip = ValidateZipCode(ZipCode);
+                        if (IsValidZip)
+                        {
+                            customer.PostalCode = ZipCode;
+                        }
+                        else
+                        {
+                            Message = "|Please Enter Valid Zip Code";
+                        }
+                    }
+                    else
+                    {
+                        Message = "|Please Enter Valid Zip Code";
+                    }
+
+                    if (string.IsNullOrEmpty(SalesEmail))
+                    {
+                        customer.SalesEmail = "";
+                    }
+                    else
+                    {
+                        bool IsValidEmail = Utility.isValidEmail(SalesEmail);
+                        if (IsValidEmail)
+                        {
+                            customer.SalesEmail = SalesEmail;
+                        }
+                        else
+                        {
+                            Message = "|Please Enter Valid Email";
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(ParentId))
+                    {
+                        customer.PricingParentID = "";
+                    }
+                    else
+                    {
+                        customer.PricingParentID = ParentId;
+                    }
+
+                    FarmerBrothersEntitites.SaveChanges();
+                    jsonResult.Data = new { success = true, message = Message };
+                }
+                else
+                {
+                    jsonResult.Data = new { success = true, message = "|Please Enter Valid Customer Id" };
+                }
+
+            }
+            catch (Exception)
+            {
+
+                jsonResult.Data = new { success = false };
+            }
+
+
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
+        }
+
+
+
         #endregion
+
 
 
         #region PMUpload Contact Update        
@@ -601,6 +685,8 @@ namespace FarmerBrothers.Controllers
                     fileDataObj.FileName = _FileName;
                     int i = 0;
 
+                    string headerRows = "customer number,company,address1,address2,address3,city,state,postalcode,phone,route,branch,route code,email,parent";
+
                     while ((line = csvReader.ReadLine()) != null)
                     {
                         if (string.IsNullOrEmpty(line)) continue;
@@ -610,14 +696,14 @@ namespace FarmerBrothers.Controllers
 
                         if (i == 0)
                         {
-                            fileDataObj = IsValidCustomerCSVFile(lineVal);
+                            fileDataObj = IsValidCustomerCSVFile(headerRows, lineVal);
 
                             if (!fileDataObj.IsValid)
                             {
                                 ViewBag.Message = "File upload failed!! " + "\n" + fileDataObj.ErrorMsg;
                                 ViewBag.isSuccess = false;
                                 ViewBag.dataSource = new List<CustomerModel>();
-                                return View("CustomerUpload");
+                                return View("CustomerZipCodeUpdate");
                             }
                         }
                        
@@ -683,6 +769,7 @@ namespace FarmerBrothers.Controllers
                                         break;
                                     case 13:
                                         pricingParentId = string.IsNullOrEmpty(str) ? "" : str.Trim().ToString();
+                                        if (string.IsNullOrEmpty(pricingParentId)) { ErrorMessage += "ParentId is Missing"; }
                                         break;
                                 }
                             }
@@ -717,11 +804,6 @@ namespace FarmerBrothers.Controllers
                             {
                                 Contact contacttem = FarmerBrothersEntitites.Contacts.Where(cr => cr.LongAddressNumber == CustomerId).FirstOrDefault();
 
-                                IndexCounter customerCounter = Utility.GetIndexCounter("CustomerID", 1);
-                                customerCounter.IndexValue++;
-                                int contactIndex = customerCounter.IndexValue.Value;
-
-
                                 ESMCCMRSMEscalation esmDetails = FarmerBrothersEntitites.ESMCCMRSMEscalations.Where(e => e.ZIPCode == ZipCode).FirstOrDefault();
                                 if (esmDetails == null)
                                 {
@@ -730,6 +812,10 @@ namespace FarmerBrothers.Controllers
 
                                 if (contacttem == null)
                                 {
+                                    IndexCounter customerCounter = Utility.GetIndexCounter("CustomerID", 1);
+                                    customerCounter.IndexValue++;
+                                    int contactIndex = customerCounter.IndexValue.Value;
+
                                     Contact contact = new Contact();
                                     contact.ContactID = contactIndex;
                                     contact.LongAddressNumber = CustomerId;
@@ -771,7 +857,7 @@ namespace FarmerBrothers.Controllers
                                 }
                                 else
                                 {
-                                    contacttem.ContactID = contactIndex;
+                                    //contacttem.ContactID = contactIndex;
                                     contacttem.LongAddressNumber = CustomerId;
                                     contacttem.CompanyName = CustomerName;
                                     contacttem.Address1 = Address1;
@@ -980,7 +1066,7 @@ namespace FarmerBrothers.Controllers
                 ViewBag.Message = "File uploaded ! ";
                 ViewBag.isSuccess = true;
                 ViewBag.dataSource = customerList;
-                return View("CustomerUpload");
+                return View("CustomerZipCodeUpdate");
             }
             catch (Exception ex)
             {
@@ -990,8 +1076,8 @@ namespace FarmerBrothers.Controllers
                 return View("CustomerUpload");
             }
         }
-
-        private static FileReading IsValidCustomerCSVFile(string HeaderRow)
+        
+        private static FileReading IsValidCustomerCSVFile_old(string HeaderRow)
         {
             FileReading fr = new FileReading();
             fr.ErrorMsg = "";
@@ -1089,12 +1175,49 @@ namespace FarmerBrothers.Controllers
                             fr.IsValid = false;
                         }
                         break;
+                    case 12:
+                        if (hdrValue.Trim() != "email")
+                        {
+                            fr.ErrorMsg += "\n Email Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
+                    case 13:
+                        if (hdrValue.Trim() != "parent")
+                        {
+                            fr.ErrorMsg += "\n Parent Column Missing";
+                            fr.IsValid = false;
+                        }
+                        break;
                 }
             }
 
             return fr;
         }
 
+        private static FileReading IsValidCustomerCSVFile(string ExpectedRow, string HeaderRow)
+        {
+            FileReading fr = new FileReading();
+            fr.ErrorMsg = "";
+            fr.IsValid = true;
+
+            string[] headerValues = HeaderRow.Split(',');
+            string[] expectedValues = ExpectedRow.Split(',');
+
+            for (var index = 0; index <= expectedValues.Count() - 1; index++)
+            {
+                string expValue = expectedValues.ElementAtOrDefault(index) != null ? expectedValues[index].ToLower().Trim() : "";
+                string hdrValue = headerValues.ElementAtOrDefault(index) != null ? headerValues[index].ToLower().Trim() : "";
+
+                if(expValue != hdrValue)
+                {
+                    fr.ErrorMsg += "\n "+ expValue +" Column Missing";
+                    fr.IsValid = false;
+                }
+            }
+
+            return fr;
+        }
 
         #endregion
         //}

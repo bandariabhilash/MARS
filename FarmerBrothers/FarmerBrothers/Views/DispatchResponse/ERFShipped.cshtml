@@ -26,7 +26,7 @@
             $.ajax( {
                 type: 'GET',
                 url: "@Url.Action("ERFShippedStatus", "DispatchResponse")",
-                data: { ERFID: erfId, ESM: ESM, Status: status, Notes: $("#NotesHistory").val() },
+                data: { ERFID: erfId, ESM: ESM, Status: status, Notes: $("#NotesHistory").val(), Tracking: $("#trackingTxt").val() },
                 contentType: "application/json",
                 success: function ( response )
                 {
@@ -71,8 +71,16 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <span class="col-md-1  required">Tracking:</span>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                @Html.TextBox("Tracking", "", new { Value = "", @class = "form-control", @Id="trackingTxt" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         @*<input type="submit" id="btnTransmitTechnicians" style="display: inline-block;margin-right:5px;float:left;" class="btn btn-primary" value="Transmit" disabled />*@
-                        <button type="button" class="btn btn-primary" style="margin-left:40px" id="btnERFShippedSubmit" >Submit</button>
+                        <button type="button" class="btn btn-primary" style="margin-left:40px" id="btnERFShippedSubmit">Submit</button>
                     </div>
                     <div class="col-md-3">
                     </div>

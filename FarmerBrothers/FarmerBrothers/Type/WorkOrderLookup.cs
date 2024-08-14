@@ -317,12 +317,31 @@ namespace FarmerBrothers
 
             try
             {
-                List<FbPrimaryTechnician> primaryTechnames =FarmerBrothersEntitites.FbPrimaryTechnicians.ToList();
-
+                /*List<FbPrimaryTechnician> primaryTechnames =FarmerBrothersEntitites.FbPrimaryTechnicians.ToList();
                 foreach (FbPrimaryTechnician name in primaryTechnames)
                 {
                     PrimaryTechList.Add(new BranchRegion(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.PrimaryTechName.ToLower()), name.PrimaryTechId.ToString()));
+                }*/
+
+                var primaryTechnames1 = (from fbp in FarmerBrothersEntitites.FbPrimaryTechnicians
+                                         select new {
+                                             PrimaryTechName = fbp.PrimaryTechName,
+                                             PrimaryTechId = fbp.PrimaryTechId
+                                         }).ToList();
+                var techList = (from th in FarmerBrothersEntitites.TECH_HIERARCHY where th.SearchType.ToLower() == "sp"
+                                select new
+                                {
+                                    PrimaryTechName = th.CompanyName,
+                                    PrimaryTechId = th.DealerId
+                                }).ToList();
+
+                var totalPrimaryTechList = primaryTechnames1.Union(techList);
+
+                foreach(var name in totalPrimaryTechList)
+                {
+                    PrimaryTechList.Add(new BranchRegion(CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.PrimaryTechName.ToLower()), name.PrimaryTechId.ToString()));
                 }
+                PrimaryTechList = PrimaryTechList.OrderBy(o => o.Name).ToList();
             }
             catch (Exception ex)
             {

@@ -83,7 +83,8 @@ namespace FarmerBrothers.Controllers
                                        additionalFee = pric.AdditionalFee == null ? 0 : pric.AdditionalFee,
                                        milageRt = pric.MilageRate == null ? 0 : pric.MilageRate,
                                        id = pric.HourlyLablrRate == null ? 0 : pric.Id,
-                                       partsDiscount = pric.PartsDiscount == null ? 0 : pric.PartsDiscount
+                                       partsDiscount = pric.PartsDiscount == null ? 0 : pric.PartsDiscount,
+                                       approved3rdPartyUse = pric.Approved3rdPartyUse
                                    }).ToList();
             foreach(var priceItem in PricingDataList)
             {
@@ -97,6 +98,7 @@ namespace FarmerBrothers.Controllers
                 data.PartsDiscount = Convert.ToDecimal(priceItem.partsDiscount);
                 data.AdditionalFee = Convert.ToDecimal(priceItem.additionalFee);
                 data.AfterHourRatesApply = Convert.ToBoolean(priceItem.afterHourRateApply);
+                data.Approved3rdPartyUse = Convert.ToBoolean(priceItem.approved3rdPartyUse);
 
                 priceList.Add(data);
             }
@@ -123,6 +125,7 @@ namespace FarmerBrothers.Controllers
                     ParentItem.HourlyTravlRate = value.HourlyTravelRate;
                     ParentItem.MilageRate = value.MileageRate;
                     ParentItem.PartsDiscount = value.PartsDiscount;
+                    ParentItem.Approved3rdPartyUse = value.Approved3rdPartyUse;
                 }
                 else
                 {
@@ -141,6 +144,7 @@ namespace FarmerBrothers.Controllers
                     ParentItm.MilageRate = value.MileageRate;
                     ParentItm.PartsDiscount = value.PartsDiscount;
                     ParentItm.PricingTypeId = FarmerBrothersEntitites.PricingTypes.Where(p => p.PricingTypeName.ToLower() == "parent").Select(s => s.PricingTypeId).FirstOrDefault();
+                    ParentItm.Approved3rdPartyUse = value.Approved3rdPartyUse;
 
                     FarmerBrothersEntitites.PricingDetails.Add(ParentItm);
 
@@ -156,7 +160,7 @@ namespace FarmerBrothers.Controllers
             List<PriceDataModel> ParentPricingModelResults = GetParentPricingDetails();
             string gridModel = HttpContext.Request.Params["GridModel"];
 
-            string[] columns = { "PricingEntityId", "PricingEntityName", "HourlyLaborRate" , "HourlyTravelRate", "AfterHourLaborRate", "AfterHourTravelRate", "PartsDiscount", "AdditionalFee", "AfterHourRatesApply" };
+            string[] columns = { "PricingEntityId", "PricingEntityName", "HourlyLaborRate" , "HourlyTravelRate", "AfterHourLaborRate", "AfterHourTravelRate", "PartsDiscount", "AdditionalFee", "AfterHourRatesApply", "Approved3rdPartyUse" };
             byte[] filecontent = ExcelExportHelper.ExportExcel(ParentPricingModelResults, "", true, columns);
             var fileStream = new MemoryStream(filecontent);
             return File(filecontent, System.Net.Mime.MediaTypeNames.Application.Octet, "ParentPricingData.xlsx");
@@ -186,7 +190,8 @@ namespace FarmerBrothers.Controllers
                                        additionalFee = pric.AdditionalFee == null ? 0 : pric.AdditionalFee,
                                        milageRt = pric.MilageRate == null ? 0 : pric.MilageRate,
                                        id = pric.HourlyLablrRate == null ? 0 : pric.Id,
-                                       partsDiscount = pric.PartsDiscount == null ? 0 : pric.PartsDiscount
+                                       partsDiscount = pric.PartsDiscount == null ? 0 : pric.PartsDiscount,
+                                       approved3rdPartyUse = pric.Approved3rdPartyUse
                                    }).ToList();
             foreach (var priceItem in PricingDataList)
             {
@@ -200,6 +205,7 @@ namespace FarmerBrothers.Controllers
                 data.PartsDiscount = Convert.ToDecimal(priceItem.partsDiscount);
                 data.AdditionalFee = Convert.ToDecimal(priceItem.additionalFee);
                 data.AfterHourRatesApply = Convert.ToBoolean(priceItem.afterHourRateApply);
+                data.Approved3rdPartyUse = Convert.ToBoolean(priceItem.approved3rdPartyUse);
 
                 priceList.Add(data);
             }
@@ -226,6 +232,7 @@ namespace FarmerBrothers.Controllers
                     ParentItem.HourlyTravlRate = value.HourlyTravelRate;
                     ParentItem.MilageRate = value.MileageRate;
                     ParentItem.PartsDiscount = value.PartsDiscount;
+                    ParentItem.Approved3rdPartyUse = value.Approved3rdPartyUse;
                 }
                 else
                 {
@@ -242,6 +249,7 @@ namespace FarmerBrothers.Controllers
                     ParentItm.MilageRate = value.MileageRate;
                     ParentItm.PartsDiscount = value.PartsDiscount;
                     ParentItm.PricingTypeId = FarmerBrothersEntitites.PricingTypes.Where(p => p.PricingTypeName.ToLower() == "3rdparty").Select(s => s.PricingTypeId).FirstOrDefault();
+                    ParentItm.Approved3rdPartyUse = value.Approved3rdPartyUse;
 
                     FarmerBrothersEntitites.PricingDetails.Add(ParentItm);
 
@@ -258,7 +266,7 @@ namespace FarmerBrothers.Controllers
             List<PriceDataModel> ParentPricingModelResults = Get3rdPartyPricingDetails();
             string gridModel = HttpContext.Request.Params["GridModel"];
 
-            string[] columns = { "PricingEntityId", "PricingEntityName", "HourlyLaborRate", "HourlyTravelRate", "AfterHourLaborRate", "AfterHourTravelRate", "PartsDiscount", "AdditionalFee", "AfterHourRatesApply" };
+            string[] columns = { "PricingEntityId", "PricingEntityName", "HourlyLaborRate", "HourlyTravelRate", "AfterHourLaborRate", "AfterHourTravelRate", "PartsDiscount", "AdditionalFee", "AfterHourRatesApply", "Approved3rdPartyUse" };
             byte[] filecontent = ExcelExportHelper.ExportExcel(ParentPricingModelResults, "", true, columns);
             var fileStream = new MemoryStream(filecontent);
             return File(filecontent, System.Net.Mime.MediaTypeNames.Application.Octet, "ThirdPartyPricingData.xlsx");
@@ -287,7 +295,8 @@ namespace FarmerBrothers.Controllers
                                        additionalFee = pric.AdditionalFee == null ? 0 : pric.AdditionalFee,
                                        milageRt = pric.MilageRate == null ? 0 : pric.MilageRate,
                                        id = pric.HourlyLablrRate == null ? 0 : pric.Id,
-                                       partsDiscount = pric.PartsDiscount == null ? 0 : pric.PartsDiscount
+                                       partsDiscount = pric.PartsDiscount == null ? 0 : pric.PartsDiscount,
+                                       approved3rdPartyUse = pric.Approved3rdPartyUse
                                    }).ToList();
             foreach (var priceItem in PricingDataList)
             {
@@ -301,6 +310,7 @@ namespace FarmerBrothers.Controllers
                 data.PartsDiscount = Convert.ToDecimal(priceItem.partsDiscount);
                 data.AdditionalFee = Convert.ToDecimal(priceItem.additionalFee);
                 data.AfterHourRatesApply = Convert.ToBoolean(priceItem.afterHourRateApply);
+                data.Approved3rdPartyUse = Convert.ToBoolean(priceItem.approved3rdPartyUse);
 
                 priceList.Add(data);
             }
@@ -327,6 +337,7 @@ namespace FarmerBrothers.Controllers
                     ParentItem.HourlyTravlRate = value.HourlyTravelRate;
                     ParentItem.MilageRate = value.MileageRate;
                     ParentItem.PartsDiscount = value.PartsDiscount;
+                    ParentItem.Approved3rdPartyUse = value.Approved3rdPartyUse;
                 }
                 else
                 {
@@ -343,6 +354,7 @@ namespace FarmerBrothers.Controllers
                     ParentItm.MilageRate = value.MileageRate;
                     ParentItm.PartsDiscount = value.PartsDiscount;
                     ParentItm.PricingTypeId = FarmerBrothersEntitites.PricingTypes.Where(p => p.PricingTypeName.ToLower() == "state").Select(s => s.PricingTypeId).FirstOrDefault();
+                    ParentItm.Approved3rdPartyUse = value.Approved3rdPartyUse;
 
                     FarmerBrothersEntitites.PricingDetails.Add(ParentItm);
 
@@ -359,7 +371,7 @@ namespace FarmerBrothers.Controllers
             List<PriceDataModel> ParentPricingModelResults = GetStatePricingDetails();
             string gridModel = HttpContext.Request.Params["GridModel"];
 
-            string[] columns = { "PricingEntityId", "PricingEntityName", "HourlyLaborRate", "HourlyTravelRate", "AfterHourLaborRate", "AfterHourTravelRate", "PartsDiscount", "AdditionalFee", "AfterHourRatesApply" };
+            string[] columns = { "PricingEntityId", "PricingEntityName", "HourlyLaborRate", "HourlyTravelRate", "AfterHourLaborRate", "AfterHourTravelRate", "PartsDiscount", "AdditionalFee", "AfterHourRatesApply", "Approved3rdPartyUse" };
             byte[] filecontent = ExcelExportHelper.ExportExcel(ParentPricingModelResults, "", true, columns);
             var fileStream = new MemoryStream(filecontent);
             return File(filecontent, System.Net.Mime.MediaTypeNames.Application.Octet, "StatePricingData.xlsx");

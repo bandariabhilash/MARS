@@ -51,7 +51,7 @@
         });
 
 
-        $('#billingResults').ejGrid({
+        @*$('#billingResults').ejGrid({
             exportToExcelAction : '@Url.Action("PrepaidBillingReportExcelExport", "Reports")',
             toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
             allowPaging: true,
@@ -123,6 +123,45 @@
                 { field: "Distance", headerText: "Distance"}
 
 
+            ]
+        });*@
+
+         $('#billingResults').ejGrid({
+            exportToExcelAction : '@Url.Action("PrepaidBillingReportExcelExport", "Reports")',
+            toolbarSettings: { showToolbar: true, toolbarItems: [ej.Grid.ToolBarItems.ExcelExport] },
+            allowPaging: true,
+            isResponsive: true,
+            enableResponsiveRow: true,
+            allowSorting:true ,
+            allowTextWrap: true,
+            pageSettings: { pageSize: 25 },
+            allowResizeToFit : true,
+            queryCellInfo:"queryCellInfo",
+            dataSource : @Html.Raw(Json.Encode(Model.SearchResults)),
+            columns: [
+                { field: "WorkorderID", headerText: "WorkorderID" },
+                { field: "FinalTransactionId", headerText: "FinalTransactionId" },
+                 { field: "WorkorderEntryDate", headerText: "WorkorderEntryDate"},
+                 { field: "CustomerID", headerText: "CustomerID"},
+                 { field: "CompanyName", headerText: "CompanyName"},
+                 { field: "Techid", headerText: "Techid"},
+                 { field: "TechName", headerText: "TechName"},
+                 { field: "WorkorderCallstatus", headerText: "WorkorderCallstatus"},
+                 { field: "StartDateTime", headerText: "StartDateTime"},
+                 { field: "ArrivalDateTime", headerText: "ArrivalDateTime"},
+                 { field: "CompletionDateTime", headerText: "CompletionDateTime"},
+                 { field: "OriginalWorkorderid", headerText: "OriginalWorkorderid"},
+                 { field: "WorkorderCalltypeid", headerText: "WorkorderCalltypeid"},
+                 { field: "DispatchTechID", headerText: "DispatchTechID"},
+                 { field: "DispatchTechName", headerText: "DispatchTechName"},
+                 { field: "PricingParentID", headerText: "PricingParentID"},
+                { field: "CustomerPO", headerText: "CustomerPO"},
+                 { field: "TravelTotal", headerText: "TravelTotal", format: "{0:C2}"},
+                 { field: "LaborTotal", headerText: "LaborTotal", format: "{0:C2}"},
+                { field: "PartsTotal", headerText: "PartsTotal", format: "{0:C2}" },
+                { field: "PartsDiscount", headerText: "PartsDiscount", format: "{0:C2}" },
+                { field: "SalesTaxTotal", headerText: "SalesTaxTotal", format: "{0:C2}" },
+                 { field: "TotalInvoice", headerText: "TotalInvoice", format: "{0:C2}"}
             ]
         });
 

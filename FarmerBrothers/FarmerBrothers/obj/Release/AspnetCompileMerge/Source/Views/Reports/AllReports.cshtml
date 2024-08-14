@@ -69,14 +69,14 @@
                                             <div class="col-xs-12 col-sm-4 col-md-3">                                                
                                                 @if (userReports.Contains(name))
                                                 {
-                                                    if (name == "Non-Service Report")
+                                                    @*if (name == "Non-Service Report")
                                                     {
                                                         <a href="@MvcHtmlString.Create(name.Replace(" ", "").Replace("-", ""))" title="@Html.Raw(Html.AttributeEncode(name))"> Customer Service Report</a>
                                                     }
                                                     else
-                                                    {
+                                                    {*@
                                                         <a href="@MvcHtmlString.Create(name.Replace(" ", "").Replace("-", ""))" title="@Html.Raw(Html.AttributeEncode(name))"> @Html.Raw(Html.AttributeEncode(name))</a>
-                                                    }
+                                                    //}
                                                 }
 
                                             </div>

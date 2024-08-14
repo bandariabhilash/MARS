@@ -1,0 +1,2758 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="FB_DevModelStoreContainer" CdmEntityContainer="FetcoEntities">
+    <EntitySetMapping Name="AgentDispatchLogs">
+      <EntityTypeMapping TypeName="FB_DevModel.AgentDispatchLog">
+        <MappingFragment StoreEntitySet="AgentDispatchLog">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="TDate" ColumnName="TDate" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AllFBStatus">
+      <EntityTypeMapping TypeName="FB_DevModel.AllFBStatu">
+        <MappingFragment StoreEntitySet="AllFBStatus">
+          <ScalarProperty Name="FBStatusID" ColumnName="FBStatusID" />
+          <ScalarProperty Name="FBStatus" ColumnName="FBStatus" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="StatusSequence" ColumnName="StatusSequence" />
+          <ScalarProperty Name="StatusFor" ColumnName="StatusFor" />
+          <ScalarProperty Name="SolutionID" ColumnName="SolutionID" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="AMPSLists">
+      <EntityTypeMapping TypeName="FB_DevModel.AMPSList">
+        <MappingFragment StoreEntitySet="AMPSList">
+          <ScalarProperty Name="AMPSID" ColumnName="AMPSID" />
+          <ScalarProperty Name="AMPSDescription" ColumnName="AMPSDescription" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Applications">
+      <EntityTypeMapping TypeName="FB_DevModel.Application">
+        <MappingFragment StoreEntitySet="Application">
+          <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
+          <ScalarProperty Name="ApplicationName" ColumnName="ApplicationName" />
+          <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BillingItems">
+      <EntityTypeMapping TypeName="FB_DevModel.BillingItem">
+        <MappingFragment StoreEntitySet="BillingItems">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="BillingCode" ColumnName="BillingCode" />
+          <ScalarProperty Name="BillingName" ColumnName="BillingName" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BranchESMs">
+      <EntityTypeMapping TypeName="FB_DevModel.BranchESM">
+        <MappingFragment StoreEntitySet="BranchESM">
+          <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+          <ScalarProperty Name="BranchNo" ColumnName="BranchNo" />
+          <ScalarProperty Name="ESMName" ColumnName="ESMName" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="BrandNames">
+      <EntityTypeMapping TypeName="FB_DevModel.BrandName">
+        <MappingFragment StoreEntitySet="BrandNames">
+          <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+          <ScalarProperty Name="BrandName1" ColumnName="BrandName" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CallTypeSymptomSolutionMasters">
+      <EntityTypeMapping TypeName="FB_DevModel.CallTypeSymptomSolutionMaster">
+        <MappingFragment StoreEntitySet="CallTypeSymptomSolutionMaster">
+          <ScalarProperty Name="CallTypeID" ColumnName="CallTypeID" />
+          <ScalarProperty Name="SymptomID" ColumnName="SymptomID" />
+          <ScalarProperty Name="SolutionID" ColumnName="SolutionID" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="ColUpdated" ColumnName="ColUpdated" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Categories">
+      <EntityTypeMapping TypeName="FB_DevModel.Category">
+        <MappingFragment StoreEntitySet="Category">
+          <ScalarProperty Name="CategoryId" ColumnName="CategoryId" />
+          <ScalarProperty Name="CategoryDesc" ColumnName="CategoryDesc" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="ColUpdated" ColumnName="ColUpdated" />
+          <ScalarProperty Name="CategoryCode" ColumnName="CategoryCode" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Contacts">
+      <EntityTypeMapping TypeName="FB_DevModel.Contact">
+        <MappingFragment StoreEntitySet="Contact">
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address3" ColumnName="Address3" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Division" ColumnName="Division" />
+          <ScalarProperty Name="DivisionDesc" ColumnName="DivisionDesc" />
+          <ScalarProperty Name="District" ColumnName="District" />
+          <ScalarProperty Name="DistrictDesc" ColumnName="DistrictDesc" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="FamilyAffDesc" ColumnName="FamilyAffDesc" />
+          <ScalarProperty Name="PricingParent" ColumnName="PricingParent" />
+          <ScalarProperty Name="PricingParentName" ColumnName="PricingParentName" />
+          <ScalarProperty Name="AcctRep" ColumnName="AcctRep" />
+          <ScalarProperty Name="AcctRepDesc" ColumnName="AcctRepDesc" />
+          <ScalarProperty Name="RouteNumber" ColumnName="RouteNumber" />
+          <ScalarProperty Name="Distributor" ColumnName="Distributor" />
+          <ScalarProperty Name="DistributorName" ColumnName="DistributorName" />
+          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+          <ScalarProperty Name="DeliveryDesc" ColumnName="DeliveryDesc" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="BusinessUnit" ColumnName="BusinessUnit" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="ContactActive" ColumnName="ContactActive" />
+          <ScalarProperty Name="LongAddressNumber" ColumnName="LongAddressNumber" />
+          <ScalarProperty Name="LastModifiedByFTP" ColumnName="LastModifiedByFTP" />
+          <ScalarProperty Name="AuditFlow" ColumnName="AuditFlow" />
+          <ScalarProperty Name="SendInvoiceTo" ColumnName="SendInvoiceTo" />
+          <ScalarProperty Name="FSMJDE" ColumnName="FSMJDE" />
+          <ScalarProperty Name="FieldServiceManager" ColumnName="FieldServiceManager" />
+          <ScalarProperty Name="ServiceLevelCode" ColumnName="ServiceLevelCode" />
+          <ScalarProperty Name="AnniversaryDate" ColumnName="AnniversaryDate" />
+          <ScalarProperty Name="TierDesc" ColumnName="TierDesc" />
+          <ScalarProperty Name="RemainingFreeCalls" ColumnName="RemainingFreeCalls" />
+          <ScalarProperty Name="CCMJDE" ColumnName="CCMJDE" />
+          <ScalarProperty Name="RCCMJDE" ColumnName="RCCMJDE" />
+          <ScalarProperty Name="CategoryCode" ColumnName="CategoryCode" />
+          <ScalarProperty Name="OperatingUnit" ColumnName="OperatingUnit" />
+          <ScalarProperty Name="Route" ColumnName="Route" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="C1099Reporting" ColumnName="1099Reporting" />
+          <ScalarProperty Name="Chain" ColumnName="Chain" />
+          <ScalarProperty Name="BrewmaticAgentCode" ColumnName="BrewmaticAgentCode" />
+          <ScalarProperty Name="NTR" ColumnName="NTR" />
+          <ScalarProperty Name="DelDayOrFOB" ColumnName="DelDayOrFOB" />
+          <ScalarProperty Name="RouteCode" ColumnName="RouteCode" />
+          <ScalarProperty Name="ZoneNumber" ColumnName="ZoneNumber" />
+          <ScalarProperty Name="MailingName" ColumnName="MailingName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="FBProviderID" ColumnName="FBProviderID" />
+          <ScalarProperty Name="NOFBPSPEmails" ColumnName="NOFBPSPEmails" />
+          <ScalarProperty Name="LastAutoEmail" ColumnName="LastAutoEmail" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+          <ScalarProperty Name="PricingParentID" ColumnName="PricingParentID" />
+          <ScalarProperty Name="PricingParentDesc" ColumnName="PricingParentDesc" />
+          <ScalarProperty Name="LastSaleDate" ColumnName="LastSaleDate" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="CustomerSpecialInstructions" ColumnName="CustomerSpecialInstructions" />
+          <ScalarProperty Name="PhoneWithAreaCode" ColumnName="PhoneWithAreaCode" />
+          <ScalarProperty Name="IsUnknownUser" ColumnName="IsUnknownUser" />
+          <ScalarProperty Name="BillingCode" ColumnName="BillingCode" />
+          <ScalarProperty Name="FilterReplaced" ColumnName="FilterReplaced" />
+          <ScalarProperty Name="FilterReplacedDate" ColumnName="FilterReplacedDate" />
+          <ScalarProperty Name="NextFilterReplacementDate" ColumnName="NextFilterReplacementDate" />
+          <ScalarProperty Name="SalesEmail" ColumnName="SalesEmail" />
+          <ScalarProperty Name="ESMName" ColumnName="ESMName" />
+          <ScalarProperty Name="ESMPhone" ColumnName="ESMPhone" />
+          <ScalarProperty Name="ESMEmail" ColumnName="ESMEmail" />
+          <ScalarProperty Name="RSMName" ColumnName="RSMName" />
+          <ScalarProperty Name="RSMPhone" ColumnName="RSMPhone" />
+          <ScalarProperty Name="RSMEmail" ColumnName="RSMEmail" />
+          <ScalarProperty Name="CCMName" ColumnName="CCMName" />
+          <ScalarProperty Name="CCMPhone" ColumnName="CCMPhone" />
+          <ScalarProperty Name="CCMEmail" ColumnName="CCMEmail" />
+          <ScalarProperty Name="DaysSinceLastSale" ColumnName="DaysSinceLastSale" />
+          <ScalarProperty Name="ProfitabilityTier" ColumnName="ProfitabilityTier" />
+          <ScalarProperty Name="ContributionMargin" ColumnName="ContributionMargin" />
+          <ScalarProperty Name="NetSalesAmount" ColumnName="NetSalesAmount" />
+          <ScalarProperty Name="PaymentTerm" ColumnName="PaymentTerm" />
+          <ScalarProperty Name="IsNonFbCustomer" ColumnName="IsNonFbCustomer" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Contact_PMUploadsALL">
+      <EntityTypeMapping TypeName="FB_DevModel.Contact_PMUploadsALL">
+        <MappingFragment StoreEntitySet="Contact_PMUploadsALL">
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="EquipmentModel" ColumnName="EquipmentModel" />
+          <ScalarProperty Name="EquipmentLocation" ColumnName="EquipmentLocation" />
+          <ScalarProperty Name="TPSP" ColumnName="TPSP" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="ContactName" ColumnName="ContactName" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
+          <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="IntervalType" ColumnName="IntervalType" />
+          <ScalarProperty Name="NextRunDate" ColumnName="NextRunDate" />
+          <ScalarProperty Name="FirstRun" ColumnName="FirstRun" />
+          <ScalarProperty Name="IntervalDuration" ColumnName="IntervalDuration" />
+          <ScalarProperty Name="EventCreated" ColumnName="EventCreated" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="TechName" ColumnName="TechName" />
+          <ScalarProperty Name="SpecialUpdate" ColumnName="SpecialUpdate" />
+          <ScalarProperty Name="SkipDate" ColumnName="SkipDate" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Contingents">
+      <EntityTypeMapping TypeName="FB_DevModel.Contingent">
+        <MappingFragment StoreEntitySet="Contingent">
+          <ScalarProperty Name="ContingentID" ColumnName="ContingentID" />
+          <ScalarProperty Name="ContingentName" ColumnName="ContingentName" />
+          <ScalarProperty Name="ContingentType" ColumnName="ContingentType" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ContingentDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.ContingentDetail">
+        <MappingFragment StoreEntitySet="ContingentDetails">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="ContingentID" ColumnName="ContingentID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="LaidInCost" ColumnName="LaidInCost" />
+          <ScalarProperty Name="CashSale" ColumnName="CashSale" />
+          <ScalarProperty Name="Rental" ColumnName="Rental" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="CustomCriterias">
+      <EntityTypeMapping TypeName="FB_DevModel.CustomCriteria">
+        <MappingFragment StoreEntitySet="CustomCriteria">
+          <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+          <ScalarProperty Name="CategoryName" ColumnName="CategoryName" />
+          <ScalarProperty Name="CategoryValue" ColumnName="CategoryValue" />
+          <ScalarProperty Name="CategoryType" ColumnName="CategoryType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ElectricalPhaseLists">
+      <EntityTypeMapping TypeName="FB_DevModel.ElectricalPhaseList">
+        <MappingFragment StoreEntitySet="ElectricalPhaseList">
+          <ScalarProperty Name="ElectricalPhaseID" ColumnName="ElectricalPhaseID" />
+          <ScalarProperty Name="ElectricalPhase" ColumnName="ElectricalPhase" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EquipTypes">
+      <EntityTypeMapping TypeName="FB_DevModel.EquipType">
+        <MappingFragment StoreEntitySet="EquipType">
+          <ScalarProperty Name="EquipTypeCode" ColumnName="EquipTypeCode" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="EquipTypeId" ColumnName="EquipTypeId" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Erfs">
+      <EntityTypeMapping TypeName="FB_DevModel.Erf">
+        <MappingFragment StoreEntitySet="Erf">
+          <ScalarProperty Name="ErfID" ColumnName="ErfID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="CustomerAddress" ColumnName="CustomerAddress" />
+          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
+          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
+          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
+          <ScalarProperty Name="CustomerMainContactName" ColumnName="CustomerMainContactName" />
+          <ScalarProperty Name="CustomerPhone" ColumnName="CustomerPhone" />
+          <ScalarProperty Name="CustomerPhoneExtn" ColumnName="CustomerPhoneExtn" />
+          <ScalarProperty Name="CustomerMainEmail" ColumnName="CustomerMainEmail" />
+          <ScalarProperty Name="FeastMovementID" ColumnName="FeastMovementID" />
+          <ScalarProperty Name="ChannelID" ColumnName="ChannelID" />
+          <ScalarProperty Name="SalesPerson" ColumnName="SalesPerson" />
+          <ScalarProperty Name="EntryUserID" ColumnName="EntryUserID" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ReasonID" ColumnName="ReasonID" />
+          <ScalarProperty Name="DateOnERF" ColumnName="DateOnERF" />
+          <ScalarProperty Name="DateERFReceived" ColumnName="DateERFReceived" />
+          <ScalarProperty Name="DateERFProcessed" ColumnName="DateERFProcessed" />
+          <ScalarProperty Name="TimeERFProcessed" ColumnName="TimeERFProcessed" />
+          <ScalarProperty Name="OriginalRequestedDate" ColumnName="OriginalRequestedDate" />
+          <ScalarProperty Name="InstallLocation" ColumnName="InstallLocation" />
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
+          <ScalarProperty Name="EquipETADate" ColumnName="EquipETADate" />
+          <ScalarProperty Name="ShipToJDE" ColumnName="ShipToJDE" />
+          <ScalarProperty Name="SiteReady" ColumnName="SiteReady" />
+          <ScalarProperty Name="JdeProcessDate" ColumnName="JdeProcessDate" />
+          <ScalarProperty Name="ShipfromJDE" ColumnName="ShipfromJDE" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="TransType" ColumnName="TransType" />
+          <ScalarProperty Name="CustomerPO" ColumnName="CustomerPO" />
+          <ScalarProperty Name="CmUser" ColumnName="CmUser" />
+          <ScalarProperty Name="CmReceviedDate" ColumnName="CmReceviedDate" />
+          <ScalarProperty Name="DateReceived" ColumnName="DateReceived" />
+          <ScalarProperty Name="LoanSale" ColumnName="LoanSale" />
+          <ScalarProperty Name="HoursofOperation" ColumnName="HoursofOperation" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="IsSiteReady" ColumnName="IsSiteReady" />
+          <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+          <ScalarProperty Name="ShipToBranch" ColumnName="ShipToBranch" />
+          <ScalarProperty Name="ERFStatus" ColumnName="ERFStatus" />
+          <ScalarProperty Name="TotalNSV" ColumnName="TotalNSV" />
+          <ScalarProperty Name="CurrentEqp" ColumnName="CurrentEqp" />
+          <ScalarProperty Name="AdditionalEqp" ColumnName="AdditionalEqp" />
+          <ScalarProperty Name="ApprovalStatus" ColumnName="ApprovalStatus" />
+          <ScalarProperty Name="CurrentNSV" ColumnName="CurrentNSV" />
+          <ScalarProperty Name="ContributionMargin" ColumnName="ContributionMargin" />
+          <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+          <ScalarProperty Name="BulkUploadResult" ColumnName="BulkUploadResult" />
+          <ScalarProperty Name="UploadError" ColumnName="UploadError" />
+          <ScalarProperty Name="CashSaleStatus" ColumnName="CashSaleStatus" />
+          <ScalarProperty Name="Tracking" ColumnName="Tracking" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ERFBranchDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.ERFBranchDetail">
+        <MappingFragment StoreEntitySet="ERFBranchDetails">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Region" ColumnName="Region" />
+          <ScalarProperty Name="District" ColumnName="District" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ERFOrderTypes">
+      <EntityTypeMapping TypeName="FB_DevModel.ERFOrderType">
+        <MappingFragment StoreEntitySet="ERFOrderType">
+          <ScalarProperty Name="OrderTypeId" ColumnName="OrderTypeId" />
+          <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ErfWorkorderLogs">
+      <EntityTypeMapping TypeName="FB_DevModel.ErfWorkorderLog">
+        <MappingFragment StoreEntitySet="ErfWorkorderLog">
+          <ScalarProperty Name="ErfID" ColumnName="ErfID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ESMCCMRSMEscalations">
+      <EntityTypeMapping TypeName="FB_DevModel.ESMCCMRSMEscalation">
+        <MappingFragment StoreEntitySet="ESMCCMRSMEscalation">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="ZIPCode" ColumnName="ZIPCode" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="EDSMID" ColumnName="EDSMID" />
+          <ScalarProperty Name="ESMName" ColumnName="ESMName" />
+          <ScalarProperty Name="ESMPhone" ColumnName="ESMPhone" />
+          <ScalarProperty Name="ESMEmail" ColumnName="ESMEmail" />
+          <ScalarProperty Name="CCMID" ColumnName="CCMID" />
+          <ScalarProperty Name="CCMName" ColumnName="CCMName" />
+          <ScalarProperty Name="CCMEmail" ColumnName="CCMEmail" />
+          <ScalarProperty Name="CCMPhone" ColumnName="CCMPhone" />
+          <ScalarProperty Name="RSMID" ColumnName="RSMID" />
+          <ScalarProperty Name="RSM" ColumnName="RSM" />
+          <ScalarProperty Name="RSMEmail" ColumnName="RSMEmail" />
+          <ScalarProperty Name="RSMPhone" ColumnName="RSMPhone" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ESMDSMRSMs">
+      <EntityTypeMapping TypeName="FB_DevModel.ESMDSMRSM">
+        <MappingFragment StoreEntitySet="ESMDSMRSM">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Region" ColumnName="Region" />
+          <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+          <ScalarProperty Name="RSMID" ColumnName="RSMID" />
+          <ScalarProperty Name="RSM" ColumnName="RSM" />
+          <ScalarProperty Name="RSMEmail" ColumnName="RSMEmail" />
+          <ScalarProperty Name="RSMPhone" ColumnName="RSMPhone" />
+          <ScalarProperty Name="BranchNO" ColumnName="BranchNO" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="EDSMID" ColumnName="EDSMID" />
+          <ScalarProperty Name="ESMName" ColumnName="ESMName" />
+          <ScalarProperty Name="ESMPhone" ColumnName="ESMPhone" />
+          <ScalarProperty Name="ESMEmail" ColumnName="ESMEmail" />
+          <ScalarProperty Name="CCMID" ColumnName="CCMID" />
+          <ScalarProperty Name="CCMName" ColumnName="CCMName" />
+          <ScalarProperty Name="CCMEmail" ColumnName="CCMEmail" />
+          <ScalarProperty Name="CCMPhone" ColumnName="CCMPhone" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="EstimateEscalations">
+      <EntityTypeMapping TypeName="FB_DevModel.EstimateEscalation">
+        <MappingFragment StoreEntitySet="EstimateEscalation">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBActivityLogs">
+      <EntityTypeMapping TypeName="FB_DevModel.FBActivityLog">
+        <MappingFragment StoreEntitySet="FBActivityLog">
+          <ScalarProperty Name="LogId" ColumnName="LogId" />
+          <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="ErrorDetails" ColumnName="ErrorDetails" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBBillableFeeds">
+      <EntityTypeMapping TypeName="FB_DevModel.FBBillableFeed">
+        <MappingFragment StoreEntitySet="FBBillableFeeds">
+          <ScalarProperty Name="Code" ColumnName="Code" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FbBillableSKUs">
+      <EntityTypeMapping TypeName="FB_DevModel.FbBillableSKU">
+        <MappingFragment StoreEntitySet="FbBillableSKU">
+          <ScalarProperty Name="SKU" ColumnName="SKU" />
+          <ScalarProperty Name="SKUDescription" ColumnName="SKUDescription" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBCallReasons">
+      <EntityTypeMapping TypeName="FB_DevModel.FBCallReason">
+        <MappingFragment StoreEntitySet="FBCallReason">
+          <ScalarProperty Name="SourceID" ColumnName="SourceID" />
+          <ScalarProperty Name="SourceCode" ColumnName="SourceCode" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="DateActive" ColumnName="DateActive" />
+          <ScalarProperty Name="DateInactive" ColumnName="DateInactive" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="EmailFSM" ColumnName="EmailFSM" />
+          <ScalarProperty Name="EmailCCM" ColumnName="EmailCCM" />
+          <ScalarProperty Name="AdditionalEmail" ColumnName="AdditionalEmail" />
+          <ScalarProperty Name="SalesCall" ColumnName="SalesCall" />
+          <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
+          <ScalarProperty Name="EmailRegional" ColumnName="EmailRegional" />
+          <ScalarProperty Name="EmailSalesManager" ColumnName="EmailSalesManager" />
+          <ScalarProperty Name="EmailRSR" ColumnName="EmailRSR" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBCBEs">
+      <EntityTypeMapping TypeName="FB_DevModel.FBCBE">
+        <MappingFragment StoreEntitySet="FBCBE">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="ItemNumber" ColumnName="ItemNumber" />
+          <ScalarProperty Name="ItemDescription" ColumnName="ItemDescription" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="AssetStatus" ColumnName="AssetStatus" />
+          <ScalarProperty Name="CurrentLocation" ColumnName="CurrentLocation" />
+          <ScalarProperty Name="CurrentCustomerId" ColumnName="CurrentCustomerId" />
+          <ScalarProperty Name="CurrentCustomerName" ColumnName="CurrentCustomerName" />
+          <ScalarProperty Name="TransDate" ColumnName="TransDate" />
+          <ScalarProperty Name="InitialValue" ColumnName="InitialValue" />
+          <ScalarProperty Name="InitialDate" ColumnName="InitialDate" />
+          <ScalarProperty Name="CurrentGLCode" ColumnName="CurrentGLCode" />
+          <ScalarProperty Name="CurrentGLObject" ColumnName="CurrentGLObject" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBClosureParts">
+      <EntityTypeMapping TypeName="FB_DevModel.FBClosurePart">
+        <MappingFragment StoreEntitySet="FBClosureParts">
+          <ScalarProperty Name="SkuId" ColumnName="SkuId" />
+          <ScalarProperty Name="EntryNumber" ColumnName="EntryNumber" />
+          <ScalarProperty Name="ItemNo" ColumnName="ItemNo" />
+          <ScalarProperty Name="VendorNo" ColumnName="VendorNo" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Supplier" ColumnName="Supplier" />
+          <ScalarProperty Name="OrderSource" ColumnName="OrderSource" />
+          <ScalarProperty Name="Version" ColumnName="Version" />
+          <ScalarProperty Name="SkuActive" ColumnName="SkuActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBCustomerNotes">
+      <EntityTypeMapping TypeName="FB_DevModel.FBCustomerNote">
+        <MappingFragment StoreEntitySet="FBCustomerNotes">
+          <ScalarProperty Name="CustomerNotesId" ColumnName="CustomerNotesId" />
+          <ScalarProperty Name="CustomerId" ColumnName="CustomerId" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBCustomerServiceDistributions">
+      <EntityTypeMapping TypeName="FB_DevModel.FBCustomerServiceDistribution">
+        <MappingFragment StoreEntitySet="FBCustomerServiceDistribution">
+          <ScalarProperty Name="ServiceId" ColumnName="ServiceId" />
+          <ScalarProperty Name="Route" ColumnName="Route" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="RSRName" ColumnName="RSRName" />
+          <ScalarProperty Name="RSRPhone" ColumnName="RSRPhone" />
+          <ScalarProperty Name="RSREmail" ColumnName="RSREmail" />
+          <ScalarProperty Name="SalesManagerName" ColumnName="SalesManagerName" />
+          <ScalarProperty Name="SalesManagerPhone" ColumnName="SalesManagerPhone" />
+          <ScalarProperty Name="SalesMmanagerEmail" ColumnName="SalesMmanagerEmail" />
+          <ScalarProperty Name="RegionalsName" ColumnName="RegionalsName" />
+          <ScalarProperty Name="RegonalsPhone" ColumnName="RegonalsPhone" />
+          <ScalarProperty Name="RegionalsEmail" ColumnName="RegionalsEmail" />
+          <ScalarProperty Name="ModifiedUserId" ColumnName="ModifiedUserId" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="CreatedUserId" ColumnName="CreatedUserId" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBEquipments">
+      <EntityTypeMapping TypeName="FB_DevModel.FBEquipment">
+        <MappingFragment StoreEntitySet="FBEquipment">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="ModelNO" ColumnName="ModelNO" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBERFEquipments">
+      <EntityTypeMapping TypeName="FB_DevModel.FBERFEquipment">
+        <MappingFragment StoreEntitySet="FBERFEquipment">
+          <ScalarProperty Name="ERFEquipmentId" ColumnName="ERFEquipmentId" />
+          <ScalarProperty Name="ERFId" ColumnName="ERFId" />
+          <ScalarProperty Name="WorkOrderId" ColumnName="WorkOrderId" />
+          <ScalarProperty Name="ModelNo" ColumnName="ModelNo" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="EquipmentType" ColumnName="EquipmentType" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+          <ScalarProperty Name="Substitution" ColumnName="Substitution" />
+          <ScalarProperty Name="Extra" ColumnName="Extra" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="ContingentCategoryId" ColumnName="ContingentCategoryId" />
+          <ScalarProperty Name="ContingentCategoryTypeId" ColumnName="ContingentCategoryTypeId" />
+          <ScalarProperty Name="UsingBranch" ColumnName="UsingBranch" />
+          <ScalarProperty Name="LaidInCost" ColumnName="LaidInCost" />
+          <ScalarProperty Name="RentalCost" ColumnName="RentalCost" />
+          <ScalarProperty Name="TotalCost" ColumnName="TotalCost" />
+          <ScalarProperty Name="InternalOrderType" ColumnName="InternalOrderType" />
+          <ScalarProperty Name="VendorOrderType" ColumnName="VendorOrderType" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="OrderType" ColumnName="OrderType" />
+          <ScalarProperty Name="DepositInvoiceNumber" ColumnName="DepositInvoiceNumber" />
+          <ScalarProperty Name="DepositAmount" ColumnName="DepositAmount" />
+          <ScalarProperty Name="FinalInvoiceNumber" ColumnName="FinalInvoiceNumber" />
+          <ScalarProperty Name="InvoiceTotal" ColumnName="InvoiceTotal" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBERFExpendables">
+      <EntityTypeMapping TypeName="FB_DevModel.FBERFExpendable">
+        <MappingFragment StoreEntitySet="FBERFExpendable">
+          <ScalarProperty Name="ERFExpendableId" ColumnName="ERFExpendableId" />
+          <ScalarProperty Name="ERFId" ColumnName="ERFId" />
+          <ScalarProperty Name="WorkOrderId" ColumnName="WorkOrderId" />
+          <ScalarProperty Name="ModelNo" ColumnName="ModelNo" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="Extra" ColumnName="Extra" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="ContingentCategoryId" ColumnName="ContingentCategoryId" />
+          <ScalarProperty Name="ContingentCategoryTypeId" ColumnName="ContingentCategoryTypeId" />
+          <ScalarProperty Name="UsingBranch" ColumnName="UsingBranch" />
+          <ScalarProperty Name="LaidInCost" ColumnName="LaidInCost" />
+          <ScalarProperty Name="RentalCost" ColumnName="RentalCost" />
+          <ScalarProperty Name="TotalCost" ColumnName="TotalCost" />
+          <ScalarProperty Name="InternalOrderType" ColumnName="InternalOrderType" />
+          <ScalarProperty Name="VendorOrderType" ColumnName="VendorOrderType" />
+          <ScalarProperty Name="EquipmentType" ColumnName="EquipmentType" />
+          <ScalarProperty Name="Substitution" ColumnName="Substitution" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBERFPos">
+      <EntityTypeMapping TypeName="FB_DevModel.FBERFPos">
+        <MappingFragment StoreEntitySet="FBERFPos">
+          <ScalarProperty Name="ERFPosId" ColumnName="ERFPosId" />
+          <ScalarProperty Name="ERFId" ColumnName="ERFId" />
+          <ScalarProperty Name="WorkOrderId" ColumnName="WorkOrderId" />
+          <ScalarProperty Name="ModelNo" ColumnName="ModelNo" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="Extra" ColumnName="Extra" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="ContingentCategoryId" ColumnName="ContingentCategoryId" />
+          <ScalarProperty Name="ContingentCategoryTypeId" ColumnName="ContingentCategoryTypeId" />
+          <ScalarProperty Name="UsingBranch" ColumnName="UsingBranch" />
+          <ScalarProperty Name="LaidInCost" ColumnName="LaidInCost" />
+          <ScalarProperty Name="RentalCost" ColumnName="RentalCost" />
+          <ScalarProperty Name="TotalCost" ColumnName="TotalCost" />
+          <ScalarProperty Name="InternalOrderType" ColumnName="InternalOrderType" />
+          <ScalarProperty Name="VendorOrderType" ColumnName="VendorOrderType" />
+          <ScalarProperty Name="EquipmentType" ColumnName="EquipmentType" />
+          <ScalarProperty Name="Substitution" ColumnName="Substitution" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBERFTransactionTypes">
+      <EntityTypeMapping TypeName="FB_DevModel.FBERFTransactionType">
+        <MappingFragment StoreEntitySet="FBERFTransactionType">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
+          <ScalarProperty Name="TypeOrder" ColumnName="TypeOrder" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBExpendables">
+      <EntityTypeMapping TypeName="FB_DevModel.FBExpendable">
+        <MappingFragment StoreEntitySet="FBExpendable">
+          <ScalarProperty Name="ProductId" ColumnName="ProductId" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="ModelNO" ColumnName="ModelNO" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBFunctionalities">
+      <EntityTypeMapping TypeName="FB_DevModel.FBFunctionality">
+        <MappingFragment StoreEntitySet="FBFunctionality">
+          <ScalarProperty Name="FunctionID" ColumnName="FunctionID" />
+          <ScalarProperty Name="ParentFunctionID" ColumnName="ParentFunctionID" />
+          <ScalarProperty Name="FunctionName" ColumnName="FunctionName" />
+          <ScalarProperty Name="FunctionLevel" ColumnName="FunctionLevel" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="Order" ColumnName="Order" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FbPrimaryTechnicians">
+      <EntityTypeMapping TypeName="FB_DevModel.FbPrimaryTechnician">
+        <MappingFragment StoreEntitySet="FbPrimaryTechnicians">
+          <ScalarProperty Name="PrimaryTechId" ColumnName="PrimaryTechId" />
+          <ScalarProperty Name="PrimaryTechName" ColumnName="PrimaryTechName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBReports">
+      <EntityTypeMapping TypeName="FB_DevModel.FBReport">
+        <MappingFragment StoreEntitySet="FBReports">
+          <ScalarProperty Name="report_id" ColumnName="report_id" />
+          <ScalarProperty Name="report_name" ColumnName="report_name" />
+          <ScalarProperty Name="report_filename" ColumnName="report_filename" />
+          <ScalarProperty Name="report_category" ColumnName="report_category" />
+          <ScalarProperty Name="DownloadName" ColumnName="DownloadName" />
+          <ScalarProperty Name="DisplayFile" ColumnName="DisplayFile" />
+          <ScalarProperty Name="DescriptionFile" ColumnName="DescriptionFile" />
+          <ScalarProperty Name="DownloadFile" ColumnName="DownloadFile" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="ReportType" ColumnName="ReportType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBRoleFunctions">
+      <EntityTypeMapping TypeName="FB_DevModel.FBRoleFunction">
+        <MappingFragment StoreEntitySet="FBRoleFunction">
+          <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+          <ScalarProperty Name="FunctionID" ColumnName="FunctionID" />
+          <ScalarProperty Name="CanCreate" ColumnName="CanCreate" />
+          <ScalarProperty Name="CanUpdate" ColumnName="CanUpdate" />
+          <ScalarProperty Name="CanView" ColumnName="CanView" />
+          <ScalarProperty Name="CanExport" ColumnName="CanExport" />
+          <ScalarProperty Name="CanEmail" ColumnName="CanEmail" />
+          <ScalarProperty Name="RoleFunctionID" ColumnName="RoleFunctionID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FbRoles">
+      <EntityTypeMapping TypeName="FB_DevModel.FbRole">
+        <MappingFragment StoreEntitySet="FbRoles">
+          <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+          <ScalarProperty Name="RoleName" ColumnName="RoleName" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBSKUs">
+      <EntityTypeMapping TypeName="FB_DevModel.FBSKU">
+        <MappingFragment StoreEntitySet="FBSKU">
+          <ScalarProperty Name="SKUId" ColumnName="SKUId" />
+          <ScalarProperty Name="SKU" ColumnName="SKU" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="SKUActive" ColumnName="SKUActive" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="SKUCost" ColumnName="SKUCost" />
+          <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+          <ScalarProperty Name="ShortProductNumber" ColumnName="ShortProductNumber" />
+          <ScalarProperty Name="SystemSource" ColumnName="SystemSource" />
+          <ScalarProperty Name="Ben02ItemNumber" ColumnName="Ben02ItemNumber" />
+          <ScalarProperty Name="VendorNo" ColumnName="VendorNo" />
+          <ScalarProperty Name="E1Number" ColumnName="E1Number" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FbUserMasters">
+      <EntityTypeMapping TypeName="FB_DevModel.FbUserMaster">
+        <MappingFragment StoreEntitySet="FbUserMaster">
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="RoleId" ColumnName="RoleId" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="Address" ColumnName="Address" />
+          <ScalarProperty Name="Apt" ColumnName="Apt" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="Zip" ColumnName="Zip" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="Password" ColumnName="Password" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="ConfirmPassword" ColumnName="ConfirmPassword" />
+          <ScalarProperty Name="MI" ColumnName="MI" />
+          <ScalarProperty Name="Company" ColumnName="Company" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Manager" ColumnName="Manager" />
+          <ScalarProperty Name="Region" ColumnName="Region" />
+          <ScalarProperty Name="Division" ColumnName="Division" />
+          <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+          <ScalarProperty Name="Fax" ColumnName="Fax" />
+          <ScalarProperty Name="JDE" ColumnName="JDE" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="UserTypeId" ColumnName="UserTypeId" />
+          <ScalarProperty Name="CallClosure" ColumnName="CallClosure" />
+          <ScalarProperty Name="OnCallAccess" ColumnName="OnCallAccess" />
+          <ScalarProperty Name="IsFirstTimeLogin" ColumnName="IsFirstTimeLogin" />
+          <ScalarProperty Name="PasswordUpdatedDate" ColumnName="PasswordUpdatedDate" />
+          <ScalarProperty Name="CanExport" ColumnName="CanExport" />
+          <ScalarProperty Name="TechId" ColumnName="TechId" />
+          <ScalarProperty Name="IsTechnician" ColumnName="IsTechnician" />
+          <ScalarProperty Name="IsERFUser" ColumnName="IsERFUser" />
+          <ScalarProperty Name="EmailId" ColumnName="EmailId" />
+          <ScalarProperty Name="CreatedUserId" ColumnName="CreatedUserId" />
+          <ScalarProperty Name="CreatedUserName" ColumnName="CreatedUserName" />
+          <ScalarProperty Name="CustomerParent" ColumnName="CustomerParent" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FBUserReports">
+      <EntityTypeMapping TypeName="FB_DevModel.FBUserReport">
+        <MappingFragment StoreEntitySet="FBUserReports">
+          <ScalarProperty Name="UserReportId" ColumnName="UserReportId" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="report_id" ColumnName="report_id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FbWorkOrderSKUs">
+      <EntityTypeMapping TypeName="FB_DevModel.FbWorkOrderSKU">
+        <MappingFragment StoreEntitySet="FbWorkOrderSKU">
+          <ScalarProperty Name="WorkOrderSKUId" ColumnName="WorkOrderSKUId" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="SKU" ColumnName="SKU" />
+          <ScalarProperty Name="Qty" ColumnName="Qty" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FeastMovements">
+      <EntityTypeMapping TypeName="FB_DevModel.FeastMovement">
+        <MappingFragment StoreEntitySet="FeastMovement">
+          <ScalarProperty Name="Feastmovementid" ColumnName="Feastmovementid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="Erfid" ColumnName="Erfid" />
+          <ScalarProperty Name="FeastmovementState" ColumnName="FeastmovementState" />
+          <ScalarProperty Name="ShipMethod" ColumnName="ShipMethod" />
+          <ScalarProperty Name="ShipCarrier" ColumnName="ShipCarrier" />
+          <ScalarProperty Name="TrackingNumber" ColumnName="TrackingNumber" />
+          <ScalarProperty Name="Comments" ColumnName="Comments" />
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="HolidayLists">
+      <EntityTypeMapping TypeName="FB_DevModel.HolidayList">
+        <MappingFragment StoreEntitySet="HolidayList">
+          <ScalarProperty Name="HolidayDate" ColumnName="HolidayDate" />
+          <ScalarProperty Name="HolidayName" ColumnName="HolidayName" />
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="IndexCounters">
+      <EntityTypeMapping TypeName="FB_DevModel.IndexCounter">
+        <MappingFragment StoreEntitySet="IndexCounter">
+          <ScalarProperty Name="Indexid" ColumnName="Indexid" />
+          <ScalarProperty Name="IndexName" ColumnName="IndexName" />
+          <ScalarProperty Name="IndexValue" ColumnName="IndexValue" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Invoices">
+      <EntityTypeMapping TypeName="FB_DevModel.Invoice">
+        <MappingFragment StoreEntitySet="Invoices">
+          <ScalarProperty Name="InvoiceUniqueid" ColumnName="InvoiceUniqueid" />
+          <ScalarProperty Name="Invoiceid" ColumnName="Invoiceid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="ServiceLocation" ColumnName="ServiceLocation" />
+          <ScalarProperty Name="WorkorderCompletionDate" ColumnName="WorkorderCompletionDate" />
+          <ScalarProperty Name="InvoiceStatus" ColumnName="InvoiceStatus" />
+          <ScalarProperty Name="InvoiceSubmitDate" ColumnName="InvoiceSubmitDate" />
+          <ScalarProperty Name="SubmitAmount" ColumnName="SubmitAmount" />
+          <ScalarProperty Name="PaymentCreated" ColumnName="PaymentCreated" />
+          <ScalarProperty Name="PaymentAmtApproved" ColumnName="PaymentAmtApproved" />
+          <ScalarProperty Name="CheckNumber" ColumnName="CheckNumber" />
+          <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+          <ScalarProperty Name="TravelTimeInSecs" ColumnName="TravelTimeInSecs" />
+          <ScalarProperty Name="StandardTravelSecs" ColumnName="StandardTravelSecs" />
+          <ScalarProperty Name="OverTimeTravelSecs" ColumnName="OverTimeTravelSecs" />
+          <ScalarProperty Name="RoundTripIncluded" ColumnName="RoundTripIncluded" />
+          <ScalarProperty Name="LaborHours" ColumnName="LaborHours" />
+          <ScalarProperty Name="StandardLabor" ColumnName="StandardLabor" />
+          <ScalarProperty Name="OvertimeLabor" ColumnName="OvertimeLabor" />
+          <ScalarProperty Name="ZoneRateid" ColumnName="ZoneRateid" />
+          <ScalarProperty Name="AdditionalCharge" ColumnName="AdditionalCharge" />
+          <ScalarProperty Name="AdditionalChargeDescription" ColumnName="AdditionalChargeDescription" />
+          <ScalarProperty Name="InvoiceComments" ColumnName="InvoiceComments" />
+          <ScalarProperty Name="PartsTotal" ColumnName="PartsTotal" />
+          <ScalarProperty Name="LaborTotal" ColumnName="LaborTotal" />
+          <ScalarProperty Name="TravelTotal" ColumnName="TravelTotal" />
+          <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+          <ScalarProperty Name="TaxAmount" ColumnName="TaxAmount" />
+          <ScalarProperty Name="InvoiceTotal" ColumnName="InvoiceTotal" />
+          <ScalarProperty Name="PhoneSolveTotal" ColumnName="PhoneSolveTotal" />
+          <ScalarProperty Name="ProjectTotal" ColumnName="ProjectTotal" />
+          <ScalarProperty Name="OverTimeRequestApproved" ColumnName="OverTimeRequestApproved" />
+          <ScalarProperty Name="DateCheckCreated" ColumnName="DateCheckCreated" />
+          <ScalarProperty Name="AmountPaid" ColumnName="AmountPaid" />
+          <ScalarProperty Name="AdjustmentAmount" ColumnName="AdjustmentAmount" />
+          <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="JDEPaymentTerms">
+      <EntityTypeMapping TypeName="FB_DevModel.JDEPaymentTerm">
+        <MappingFragment StoreEntitySet="JDEPaymentTerms">
+          <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+          <ScalarProperty Name="PaymentTerm" ColumnName="PaymentTerm" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NARF_NewAccount">
+      <EntityTypeMapping TypeName="FB_DevModel.NARF_NewAccount">
+        <MappingFragment StoreEntitySet="NARF_NewAccount">
+          <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="DBAName" ColumnName="DBAName" />
+          <ScalarProperty Name="BilllingAddress" ColumnName="BilllingAddress" />
+          <ScalarProperty Name="BilllingState" ColumnName="BilllingState" />
+          <ScalarProperty Name="BilllingCity" ColumnName="BilllingCity" />
+          <ScalarProperty Name="BilllingZip" ColumnName="BilllingZip" />
+          <ScalarProperty Name="DeliveryAddress" ColumnName="DeliveryAddress" />
+          <ScalarProperty Name="DeliveryState" ColumnName="DeliveryState" />
+          <ScalarProperty Name="DeliveryCity" ColumnName="DeliveryCity" />
+          <ScalarProperty Name="DeliveryZip" ColumnName="DeliveryZip" />
+          <ScalarProperty Name="CompanyType" ColumnName="CompanyType" />
+          <ScalarProperty Name="PrincipalOfficer" ColumnName="PrincipalOfficer" />
+          <ScalarProperty Name="PrincipalOfficerTitle" ColumnName="PrincipalOfficerTitle" />
+          <ScalarProperty Name="NatureOfBusiness" ColumnName="NatureOfBusiness" />
+          <ScalarProperty Name="EstablishedYear" ColumnName="EstablishedYear" />
+          <ScalarProperty Name="StateIncorporated" ColumnName="StateIncorporated" />
+          <ScalarProperty Name="FederalTaxID" ColumnName="FederalTaxID" />
+          <ScalarProperty Name="ResaleCertificateNumber" ColumnName="ResaleCertificateNumber" />
+          <ScalarProperty Name="TaxExempt" ColumnName="TaxExempt" />
+          <ScalarProperty Name="PORequired" ColumnName="PORequired" />
+          <ScalarProperty Name="AlreadyHasFBAccount" ColumnName="AlreadyHasFBAccount" />
+          <ScalarProperty Name="FBAccount" ColumnName="FBAccount" />
+          <ScalarProperty Name="AccountPayableContact" ColumnName="AccountPayableContact" />
+          <ScalarProperty Name="AccountPayableTitle" ColumnName="AccountPayableTitle" />
+          <ScalarProperty Name="AccountPayablePhone" ColumnName="AccountPayablePhone" />
+          <ScalarProperty Name="AccountPayableEmail" ColumnName="AccountPayableEmail" />
+          <ScalarProperty Name="CreditRequested" ColumnName="CreditRequested" />
+          <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+          <ScalarProperty Name="CreatedUserName" ColumnName="CreatedUserName" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="ModifiedUserName" ColumnName="ModifiedUserName" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NARF_TradeReference">
+      <EntityTypeMapping TypeName="FB_DevModel.NARF_TradeReference">
+        <MappingFragment StoreEntitySet="NARF_TradeReference">
+          <ScalarProperty Name="TradeRefID" ColumnName="TradeRefID" />
+          <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="AccountId" ColumnName="AccountId" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="CreatedUserID" ColumnName="CreatedUserID" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NEMANumberLists">
+      <EntityTypeMapping TypeName="FB_DevModel.NEMANumberList">
+        <MappingFragment StoreEntitySet="NEMANumberList">
+          <ScalarProperty Name="NemaNumberID" ColumnName="NemaNumberID" />
+          <ScalarProperty Name="NemaNumberDescription" ColumnName="NemaNumberDescription" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NoAutoEmailZipCodes">
+      <EntityTypeMapping TypeName="FB_DevModel.NoAutoEmailZipCode">
+        <MappingFragment StoreEntitySet="NoAutoEmailZipCodes">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NoAutomaticEmailContracts">
+      <EntityTypeMapping TypeName="FB_DevModel.NoAutomaticEmailContract">
+        <MappingFragment StoreEntitySet="NoAutomaticEmailContracts">
+          <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NonFBCustomers">
+      <EntityTypeMapping TypeName="FB_DevModel.NonFBCustomer">
+        <MappingFragment StoreEntitySet="NonFBCustomers">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="NonFBCustomerId" ColumnName="NonFBCustomerId" />
+          <ScalarProperty Name="NonFBCustomerName" ColumnName="NonFBCustomerName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NonSerializeds">
+      <EntityTypeMapping TypeName="FB_DevModel.NonSerialized">
+        <MappingFragment StoreEntitySet="NonSerialized">
+          <ScalarProperty Name="NSerialid" ColumnName="NSerialid" />
+          <ScalarProperty Name="Erfid" ColumnName="Erfid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="OrigOrderQuantity" ColumnName="OrigOrderQuantity" />
+          <ScalarProperty Name="ExpectedQty" ColumnName="ExpectedQty" />
+          <ScalarProperty Name="ShippedQuantity" ColumnName="ShippedQuantity" />
+          <ScalarProperty Name="ManufNumber" ColumnName="ManufNumber" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Bin" ColumnName="Bin" />
+          <ScalarProperty Name="Catalogid" ColumnName="Catalogid" />
+          <ScalarProperty Name="TagType" ColumnName="TagType" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="TotalLineAmount" ColumnName="TotalLineAmount" />
+          <ScalarProperty Name="ShippedFrom" ColumnName="ShippedFrom" />
+          <ScalarProperty Name="FeastMovementid" ColumnName="FeastMovementid" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NonServiceworkorders">
+      <EntityTypeMapping TypeName="FB_DevModel.NonServiceworkorder">
+        <MappingFragment StoreEntitySet="NonServiceworkorder">
+          <ScalarProperty Name="NonServiceID" ColumnName="NonServiceID" />
+          <ScalarProperty Name="WorkOrderID" ColumnName="WorkOrderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="CallReason" ColumnName="CallReason" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
+          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
+          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
+          <ScalarProperty Name="IsAutoDispatched" ColumnName="IsAutoDispatched" />
+          <ScalarProperty Name="CallerName" ColumnName="CallerName" />
+          <ScalarProperty Name="CallBack" ColumnName="CallBack" />
+          <ScalarProperty Name="IsUnknownWorkOrder" ColumnName="IsUnknownWorkOrder" />
+          <ScalarProperty Name="NonServiceEventStatus" ColumnName="NonServiceEventStatus" />
+          <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
+          <ScalarProperty Name="EmailSentTo" ColumnName="EmailSentTo" />
+          <ScalarProperty Name="MainContactName" ColumnName="MainContactName" />
+          <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NotesHistories">
+      <EntityTypeMapping TypeName="FB_DevModel.NotesHistory">
+        <MappingFragment StoreEntitySet="NotesHistory">
+          <ScalarProperty Name="ErfID" ColumnName="ErfID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="FeastMovementID" ColumnName="FeastMovementID" />
+          <ScalarProperty Name="Userid" ColumnName="Userid" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="AutomaticNotes" ColumnName="AutomaticNotes" />
+          <ScalarProperty Name="NotesID" ColumnName="NotesID" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="NonServiceWorkorderID" ColumnName="NonServiceWorkorderID" />
+          <ScalarProperty Name="isDispatchNotes" ColumnName="isDispatchNotes" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="OnCallGroups">
+      <EntityTypeMapping TypeName="FB_DevModel.OnCallGroup">
+        <MappingFragment StoreEntitySet="OnCallGroup">
+          <ScalarProperty Name="OnCallGroupID" ColumnName="OnCallGroupID" />
+          <ScalarProperty Name="OnCallGroup1" ColumnName="OnCallGroup" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PhoneSolveLogs">
+      <EntityTypeMapping TypeName="FB_DevModel.PhoneSolveLog">
+        <MappingFragment StoreEntitySet="PhoneSolveLog">
+          <ScalarProperty Name="PhoneSolveLogId" ColumnName="PhoneSolveLogId" />
+          <ScalarProperty Name="WorkorderId" ColumnName="WorkorderId" />
+          <ScalarProperty Name="PhoneSolveId" ColumnName="PhoneSolveId" />
+          <ScalarProperty Name="TechId" ColumnName="TechId" />
+          <ScalarProperty Name="AttemptedDate" ColumnName="AttemptedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PricingDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.PricingDetail">
+        <MappingFragment StoreEntitySet="PricingDetails">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="PricingEntityId" ColumnName="PricingEntityId" />
+          <ScalarProperty Name="PricingEntityName" ColumnName="PricingEntityName" />
+          <ScalarProperty Name="HourlyTravlRate" ColumnName="HourlyTravlRate" />
+          <ScalarProperty Name="HourlyLablrRate" ColumnName="HourlyLablrRate" />
+          <ScalarProperty Name="MilageRate" ColumnName="MilageRate" />
+          <ScalarProperty Name="AfterHoursTravelRate" ColumnName="AfterHoursTravelRate" />
+          <ScalarProperty Name="AfterHoursLaborRate" ColumnName="AfterHoursLaborRate" />
+          <ScalarProperty Name="PartsDiscount" ColumnName="PartsDiscount" />
+          <ScalarProperty Name="AfterHoursRatesApply" ColumnName="AfterHoursRatesApply" />
+          <ScalarProperty Name="AdditionalFee" ColumnName="AdditionalFee" />
+          <ScalarProperty Name="PricingTypeId" ColumnName="PricingTypeId" />
+          <ScalarProperty Name="Approved3rdPartyUse" ColumnName="Approved3rdPartyUse" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="PricingTypes">
+      <EntityTypeMapping TypeName="FB_DevModel.PricingType">
+        <MappingFragment StoreEntitySet="PricingType">
+          <ScalarProperty Name="PricingTypeId" ColumnName="PricingTypeId" />
+          <ScalarProperty Name="PricingTypeName" ColumnName="PricingTypeName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Privileges">
+      <EntityTypeMapping TypeName="FB_DevModel.Privilege">
+        <MappingFragment StoreEntitySet="Privilege">
+          <ScalarProperty Name="PrivilegeId" ColumnName="PrivilegeId" />
+          <ScalarProperty Name="PrivilegeType" ColumnName="PrivilegeType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RemovalSurveys">
+      <EntityTypeMapping TypeName="FB_DevModel.RemovalSurvey">
+        <MappingFragment StoreEntitySet="RemovalSurvey">
+          <ScalarProperty Name="RemovalSurveyID" ColumnName="RemovalSurveyID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="JMSOwnedMachines" ColumnName="JMSOwnedMachines" />
+          <ScalarProperty Name="RemovalDate" ColumnName="RemovalDate" />
+          <ScalarProperty Name="RemoveAllMachines" ColumnName="RemoveAllMachines" />
+          <ScalarProperty Name="RemovalReason" ColumnName="RemovalReason" />
+          <ScalarProperty Name="BeveragesSupplier" ColumnName="BeveragesSupplier" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Skus">
+      <EntityTypeMapping TypeName="FB_DevModel.Sku">
+        <MappingFragment StoreEntitySet="Sku">
+          <ScalarProperty Name="Skuid" ColumnName="Skuid" />
+          <ScalarProperty Name="Sku1" ColumnName="Sku" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="SkuActive" ColumnName="SkuActive" />
+          <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+          <ScalarProperty Name="SKUCost" ColumnName="SKUCost" />
+          <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="ColUpdated" ColumnName="ColUpdated" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="JMS_ITEM_NUMBER" ColumnName="JMS_ITEM_NUMBER" />
+          <ScalarProperty Name="VEND_ITEM_NUMBER" ColumnName="VEND_ITEM_NUMBER" />
+          <ScalarProperty Name="EQUIPMENT_TAG" ColumnName="EQUIPMENT_TAG" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Solutions">
+      <EntityTypeMapping TypeName="FB_DevModel.Solution">
+        <MappingFragment StoreEntitySet="Solution">
+          <ScalarProperty Name="SolutionId" ColumnName="SolutionId" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="ColUpdated" ColumnName="ColUpdated" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="States">
+      <EntityTypeMapping TypeName="FB_DevModel.State">
+        <MappingFragment StoreEntitySet="State">
+          <ScalarProperty Name="StateCode" ColumnName="StateCode" />
+          <ScalarProperty Name="StateName" ColumnName="StateName" />
+          <ScalarProperty Name="TaxPercent" ColumnName="TaxPercent" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="StateTaxes">
+      <EntityTypeMapping TypeName="FB_DevModel.StateTax">
+        <MappingFragment StoreEntitySet="StateTax">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+          <ScalarProperty Name="TaxRegionName" ColumnName="TaxRegionName" />
+          <ScalarProperty Name="EstimatedCombinedRate" ColumnName="EstimatedCombinedRate" />
+          <ScalarProperty Name="StateRate" ColumnName="StateRate" />
+          <ScalarProperty Name="EstimatedCountyRate" ColumnName="EstimatedCountyRate" />
+          <ScalarProperty Name="EstimatedCityRate" ColumnName="EstimatedCityRate" />
+          <ScalarProperty Name="EstimatedSpecialRate" ColumnName="EstimatedSpecialRate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Symptoms">
+      <EntityTypeMapping TypeName="FB_DevModel.Symptom">
+        <MappingFragment StoreEntitySet="Symptom">
+          <ScalarProperty Name="SymptomID" ColumnName="SymptomID" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="ColUpdated" ColumnName="ColUpdated" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="SystemInfoes">
+      <EntityTypeMapping TypeName="FB_DevModel.SystemInfo">
+        <MappingFragment StoreEntitySet="SystemInfo">
+          <ScalarProperty Name="SystemId" ColumnName="SystemId" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TECH_HIERARCHY">
+      <EntityTypeMapping TypeName="FB_DevModel.TECH_HIERARCHY">
+        <MappingFragment StoreEntitySet="TECH_HIERARCHY">
+          <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address3" ColumnName="Address3" />
+          <ScalarProperty Name="Address4" ColumnName="Address4" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Contact" ColumnName="Contact" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="DealerType" ColumnName="DealerType" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Fax" ColumnName="Fax" />
+          <ScalarProperty Name="NextelPhone" ColumnName="NextelPhone" />
+          <ScalarProperty Name="SerialNoMan" ColumnName="SerialNoMan" />
+          <ScalarProperty Name="ServiceRegion" ColumnName="ServiceRegion" />
+          <ScalarProperty Name="EmailCC" ColumnName="EmailCC" />
+          <ScalarProperty Name="LongAddressNumber" ColumnName="LongAddressNumber" />
+          <ScalarProperty Name="BusinessUnit" ColumnName="BusinessUnit" />
+          <ScalarProperty Name="RimEmail" ColumnName="RimEmail" />
+          <ScalarProperty Name="BranchAssociations" ColumnName="BranchAssociations" />
+          <ScalarProperty Name="LastModifiedByFTP" ColumnName="LastModifiedByFTP" />
+          <ScalarProperty Name="SendFax" ColumnName="SendFax" />
+          <ScalarProperty Name="SendNextel" ColumnName="SendNextel" />
+          <ScalarProperty Name="SendEmail" ColumnName="SendEmail" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="FamilyAffDesc" ColumnName="FamilyAffDesc" />
+          <ScalarProperty Name="PricingParentId" ColumnName="PricingParentId" />
+          <ScalarProperty Name="PricingParentName" ColumnName="PricingParentName" />
+          <ScalarProperty Name="SendAutomaticEmail" ColumnName="SendAutomaticEmail" />
+          <ScalarProperty Name="SendDispatchConf" ColumnName="SendDispatchConf" />
+          <ScalarProperty Name="SendNSREmail" ColumnName="SendNSREmail" />
+          <ScalarProperty Name="AlternativePhone" ColumnName="AlternativePhone" />
+          <ScalarProperty Name="AfterHoursOnly" ColumnName="AfterHoursOnly" />
+          <ScalarProperty Name="PickFromZipRateTable" ColumnName="PickFromZipRateTable" />
+          <ScalarProperty Name="CustomerOwnNumber" ColumnName="CustomerOwnNumber" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="BranchType" ColumnName="BranchType" />
+          <ScalarProperty Name="Unavailable" ColumnName="Unavailable" />
+          <ScalarProperty Name="UnavailableStartDate" ColumnName="UnavailableStartDate" />
+          <ScalarProperty Name="UnavailableEnddate" ColumnName="UnavailableEnddate" />
+          <ScalarProperty Name="ReplacementTech" ColumnName="ReplacementTech" />
+          <ScalarProperty Name="BranchNumber" ColumnName="BranchNumber" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="AutoDispatch" ColumnName="AutoDispatch" />
+          <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+          <ScalarProperty Name="FieldServiceManager" ColumnName="FieldServiceManager" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="PrimaryTechId" ColumnName="PrimaryTechId" />
+          <ScalarProperty Name="CustomerSpecificTech" ColumnName="CustomerSpecificTech" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TechOnCalls">
+      <EntityTypeMapping TypeName="FB_DevModel.TechOnCall">
+        <MappingFragment StoreEntitySet="TechOnCall">
+          <ScalarProperty Name="TechOnCallID" ColumnName="TechOnCallID" />
+          <ScalarProperty Name="TechId" ColumnName="TechId" />
+          <ScalarProperty Name="ScheduleDate" ColumnName="ScheduleDate" />
+          <ScalarProperty Name="ScheduleStartTime" ColumnName="ScheduleStartTime" />
+          <ScalarProperty Name="ScheduleEndTime" ColumnName="ScheduleEndTime" />
+          <ScalarProperty Name="EntryUserID" ColumnName="EntryUserID" />
+          <ScalarProperty Name="EntryUserName" ColumnName="EntryUserName" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="ModifiedUserName" ColumnName="ModifiedUserName" />
+          <ScalarProperty Name="ScheduleEndDate" ColumnName="ScheduleEndDate" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ScheduleCreatedDate" ColumnName="ScheduleCreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TechSchedules">
+      <EntityTypeMapping TypeName="FB_DevModel.TechSchedule">
+        <MappingFragment StoreEntitySet="TechSchedule">
+          <ScalarProperty Name="TechScheduleID" ColumnName="TechScheduleID" />
+          <ScalarProperty Name="TechId" ColumnName="TechId" />
+          <ScalarProperty Name="Availability" ColumnName="Availability" />
+          <ScalarProperty Name="ScheduleDate" ColumnName="ScheduleDate" />
+          <ScalarProperty Name="ScheduleStartTime" ColumnName="ScheduleStartTime" />
+          <ScalarProperty Name="ScheduleEndTime" ColumnName="ScheduleEndTime" />
+          <ScalarProperty Name="WorkOrderID" ColumnName="WorkOrderID" />
+          <ScalarProperty Name="EntryUserID" ColumnName="EntryUserID" />
+          <ScalarProperty Name="EntryUserName" ColumnName="EntryUserName" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="ModifiedUserName" ColumnName="ModifiedUserName" />
+          <ScalarProperty Name="AppointmentSubject" ColumnName="AppointmentSubject" />
+          <ScalarProperty Name="scheduleStartEndID" ColumnName="scheduleStartEndID" />
+          <ScalarProperty Name="ReplaceTech" ColumnName="ReplaceTech" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ScheduleCreatedDate" ColumnName="ScheduleCreatedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ThirdpartyConMaintenanceZonerates">
+      <EntityTypeMapping TypeName="FB_DevModel.ThirdpartyConMaintenanceZonerate">
+        <MappingFragment StoreEntitySet="ThirdpartyConMaintenanceZonerate">
+          <ScalarProperty Name="ContractMaintenanceid" ColumnName="ContractMaintenanceid" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="ZoneRateid" ColumnName="ZoneRateid" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Rate" ColumnName="Rate" />
+          <ScalarProperty Name="BasedOn" ColumnName="BasedOn" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ThirdPartyContractMaintenances">
+      <EntityTypeMapping TypeName="FB_DevModel.ThirdPartyContractMaintenance">
+        <MappingFragment StoreEntitySet="ThirdPartyContractMaintenance">
+          <ScalarProperty Name="ContractMaintenanceid" ColumnName="ContractMaintenanceid" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="PartsUpCharge" ColumnName="PartsUpCharge" />
+          <ScalarProperty Name="LaborHourlyRate" ColumnName="LaborHourlyRate" />
+          <ScalarProperty Name="LaborOvertimeRate" ColumnName="LaborOvertimeRate" />
+          <ScalarProperty Name="MinOneHourFlag" ColumnName="MinOneHourFlag" />
+          <ScalarProperty Name="RatePerPalletFlag" ColumnName="RatePerPalletFlag" />
+          <ScalarProperty Name="RatePerPallet" ColumnName="RatePerPallet" />
+          <ScalarProperty Name="TravelRatePerMileFlag" ColumnName="TravelRatePerMileFlag" />
+          <ScalarProperty Name="TravelRatePerMile" ColumnName="TravelRatePerMile" />
+          <ScalarProperty Name="TravelAllowRoundTripFlag" ColumnName="TravelAllowRoundTripFlag" />
+          <ScalarProperty Name="TravelMinOneHour" ColumnName="TravelMinOneHour" />
+          <ScalarProperty Name="TravelHourlyRateFlag" ColumnName="TravelHourlyRateFlag" />
+          <ScalarProperty Name="TravelHourlyRate" ColumnName="TravelHourlyRate" />
+          <ScalarProperty Name="TravelOverTimeRateFlag" ColumnName="TravelOverTimeRateFlag" />
+          <ScalarProperty Name="TravelOvertimeRate" ColumnName="TravelOvertimeRate" />
+          <ScalarProperty Name="TravelZoneRateFlag" ColumnName="TravelZoneRateFlag" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TmpInvTransfers">
+      <EntityTypeMapping TypeName="FB_DevModel.TmpInvTransfer">
+        <MappingFragment StoreEntitySet="TmpInvTransfer">
+          <ScalarProperty Name="Transferid" ColumnName="Transferid" />
+          <ScalarProperty Name="TransferDate" ColumnName="TransferDate" />
+          <ScalarProperty Name="FromLoc" ColumnName="FromLoc" />
+          <ScalarProperty Name="ToLoc" ColumnName="ToLoc" />
+          <ScalarProperty Name="Comments" ColumnName="Comments" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TmpinvTransferNonserializeds">
+      <EntityTypeMapping TypeName="FB_DevModel.TmpinvTransferNonserialized">
+        <MappingFragment StoreEntitySet="TmpinvTransferNonserialized">
+          <ScalarProperty Name="Transferid" ColumnName="Transferid" />
+          <ScalarProperty Name="Catalogid" ColumnName="Catalogid" />
+          <ScalarProperty Name="ManufNumber" ColumnName="ManufNumber" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="QtyTransfered" ColumnName="QtyTransfered" />
+          <ScalarProperty Name="Bin" ColumnName="Bin" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="Van" ColumnName="Van" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TmpinvTransferSerializeds">
+      <EntityTypeMapping TypeName="FB_DevModel.TmpinvTransferSerialized">
+        <MappingFragment StoreEntitySet="TmpinvTransferSerialized">
+          <ScalarProperty Name="Transferid" ColumnName="Transferid" />
+          <ScalarProperty Name="Catalogid" ColumnName="Catalogid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="Sealed" ColumnName="Sealed" />
+          <ScalarProperty Name="EquipmentStatus" ColumnName="EquipmentStatus" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="FileName" ColumnName="FileName" />
+          <ScalarProperty Name="Bin" ColumnName="Bin" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="Van" ColumnName="Van" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UnKnownCustomerLogs">
+      <EntityTypeMapping TypeName="FB_DevModel.UnKnownCustomerLog">
+        <MappingFragment StoreEntitySet="UnKnownCustomerLog">
+          <ScalarProperty Name="CustomerLogID" ColumnName="CustomerLogID" />
+          <ScalarProperty Name="OldCustomerID" ColumnName="OldCustomerID" />
+          <ScalarProperty Name="NewCustomerID" ColumnName="NewCustomerID" />
+          <ScalarProperty Name="ModifiedUserName" ColumnName="ModifiedUserName" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserApplications">
+      <EntityTypeMapping TypeName="FB_DevModel.UserApplication">
+        <MappingFragment StoreEntitySet="UserApplication">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="ApplicationId" ColumnName="ApplicationId" />
+          <ScalarProperty Name="PrivilegeId" ColumnName="PrivilegeId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserProfiles">
+      <EntityTypeMapping TypeName="FB_DevModel.UserProfile">
+        <MappingFragment StoreEntitySet="UserProfile">
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="Branchid" ColumnName="Branchid" />
+          <ScalarProperty Name="AcceptDate" ColumnName="AcceptDate" />
+          <ScalarProperty Name="LastAcceptDate" ColumnName="LastAcceptDate" />
+          <ScalarProperty Name="TechType" ColumnName="TechType" />
+          <ScalarProperty Name="UsrPassword" ColumnName="UsrPassword" />
+          <ScalarProperty Name="UserName" ColumnName="UserName" />
+          <ScalarProperty Name="ApiKey" ColumnName="ApiKey" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="TokenKey" ColumnName="TokenKey" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="UserActive" ColumnName="UserActive" />
+          <ScalarProperty Name="DispatchEmails" ColumnName="DispatchEmails" />
+          <ScalarProperty Name="TechnicianAccount" ColumnName="TechnicianAccount" />
+          <ScalarProperty Name="InvoicingAccount" ColumnName="InvoicingAccount" />
+          <ScalarProperty Name="IsInvoice" ColumnName="IsInvoice" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="UserTypes">
+      <EntityTypeMapping TypeName="FB_DevModel.UserType">
+        <MappingFragment StoreEntitySet="UserType">
+          <ScalarProperty Name="TypeId" ColumnName="TypeId" />
+          <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Vendors">
+      <EntityTypeMapping TypeName="FB_DevModel.Vendor">
+        <MappingFragment StoreEntitySet="Vendor">
+          <ScalarProperty Name="VendorID" ColumnName="VendorID" />
+          <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+          <ScalarProperty Name="VendorDescription" ColumnName="VendorDescription" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Fax" ColumnName="Fax" />
+          <ScalarProperty Name="Contact" ColumnName="Contact" />
+          <ScalarProperty Name="APVendorNo" ColumnName="APVendorNo" />
+          <ScalarProperty Name="VendorActive" ColumnName="VendorActive" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VoltageLists">
+      <EntityTypeMapping TypeName="FB_DevModel.VoltageList">
+        <MappingFragment StoreEntitySet="VoltageList">
+          <ScalarProperty Name="VoltageID" ColumnName="VoltageID" />
+          <ScalarProperty Name="Voltage" ColumnName="Voltage" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WaterLineLists">
+      <EntityTypeMapping TypeName="FB_DevModel.WaterLineList">
+        <MappingFragment StoreEntitySet="WaterLineList">
+          <ScalarProperty Name="WaterLineID" ColumnName="WaterLineID" />
+          <ScalarProperty Name="WaterLine" ColumnName="WaterLine" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderBillingDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderBillingDetail">
+        <MappingFragment StoreEntitySet="WorkorderBillingDetails">
+          <ScalarProperty Name="BillingId" ColumnName="BillingId" />
+          <ScalarProperty Name="WorkorderId" ColumnName="WorkorderId" />
+          <ScalarProperty Name="BillingCode" ColumnName="BillingCode" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="Duration" ColumnName="Duration" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkOrderBrands">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkOrderBrand">
+        <MappingFragment StoreEntitySet="WorkOrderBrands">
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderDetail">
+        <MappingFragment StoreEntitySet="WorkorderDetails">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderDetailid" ColumnName="WorkorderDetailid" />
+          <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+          <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+          <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
+          <ScalarProperty Name="ResponsibleTechid" ColumnName="ResponsibleTechid" />
+          <ScalarProperty Name="ResponsibleTechName" ColumnName="ResponsibleTechName" />
+          <ScalarProperty Name="Mileage" ColumnName="Mileage" />
+          <ScalarProperty Name="TravelTime" ColumnName="TravelTime" />
+          <ScalarProperty Name="PhoneSolveid" ColumnName="PhoneSolveid" />
+          <ScalarProperty Name="OriginalWorkorder" ColumnName="OriginalWorkorder" />
+          <ScalarProperty Name="SpawnReason" ColumnName="SpawnReason" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="CustomerEmail" ColumnName="CustomerEmail" />
+          <ScalarProperty Name="CustomerSignature" ColumnName="CustomerSignature" />
+          <ScalarProperty Name="EntryUserid" ColumnName="EntryUserid" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="ModifiedUserid" ColumnName="ModifiedUserid" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="SpecialClosure" ColumnName="SpecialClosure" />
+          <ScalarProperty Name="SolutionId" ColumnName="SolutionId" />
+          <ScalarProperty Name="CustomerSignatureDetails" ColumnName="CustomerSignatureDetails" />
+          <ScalarProperty Name="NSRReason" ColumnName="NSRReason" />
+          <ScalarProperty Name="WaterTested" ColumnName="WaterTested" />
+          <ScalarProperty Name="HardnessRating" ColumnName="HardnessRating" />
+          <ScalarProperty Name="TechnicianSignatureDetails" ColumnName="TechnicianSignatureDetails" />
+          <ScalarProperty Name="CustomerSignatureBy" ColumnName="CustomerSignatureBy" />
+          <ScalarProperty Name="TotalDissolvedSolids" ColumnName="TotalDissolvedSolids" />
+          <ScalarProperty Name="StateofEquipment" ColumnName="StateofEquipment" />
+          <ScalarProperty Name="ServiceDelayReason" ColumnName="ServiceDelayReason" />
+          <ScalarProperty Name="TroubleshootSteps" ColumnName="TroubleshootSteps" />
+          <ScalarProperty Name="FollowupComments" ColumnName="FollowupComments" />
+          <ScalarProperty Name="OperationalComments" ColumnName="OperationalComments" />
+          <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
+          <ScalarProperty Name="IsUnderWarrenty" ColumnName="IsUnderWarrenty" />
+          <ScalarProperty Name="WarrentyFor" ColumnName="WarrentyFor" />
+          <ScalarProperty Name="AdditionalFollowupReq" ColumnName="AdditionalFollowupReq" />
+          <ScalarProperty Name="IsOperational" ColumnName="IsOperational" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderEquipments">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderEquipment">
+        <MappingFragment StoreEntitySet="WorkorderEquipment">
+          <ScalarProperty Name="Assetid" ColumnName="Assetid" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Solutionid" ColumnName="Solutionid" />
+          <ScalarProperty Name="Temperature" ColumnName="Temperature" />
+          <ScalarProperty Name="Settings" ColumnName="Settings" />
+          <ScalarProperty Name="Systemid" ColumnName="Systemid" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+          <ScalarProperty Name="QualityIssue" ColumnName="QualityIssue" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="WorkDescription" ColumnName="WorkDescription" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkPerformedCounter" ColumnName="WorkPerformedCounter" />
+          <ScalarProperty Name="NoPartsNeeded" ColumnName="NoPartsNeeded" />
+          <ScalarProperty Name="CatalogID" ColumnName="CatalogID" />
+          <ScalarProperty Name="FeastMovementid" ColumnName="FeastMovementid" />
+          <ScalarProperty Name="IsSlNumberImageExist" ColumnName="IsSlNumberImageExist" />
+          <ScalarProperty Name="EquipmentId" ColumnName="EquipmentId" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="Ratio" ColumnName="Ratio" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderEquipmentRequesteds">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderEquipmentRequested">
+        <MappingFragment StoreEntitySet="WorkorderEquipmentRequested">
+          <ScalarProperty Name="Assetid" ColumnName="Assetid" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Solutionid" ColumnName="Solutionid" />
+          <ScalarProperty Name="Temperature" ColumnName="Temperature" />
+          <ScalarProperty Name="Settings" ColumnName="Settings" />
+          <ScalarProperty Name="Systemid" ColumnName="Systemid" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+          <ScalarProperty Name="QualityIssue" ColumnName="QualityIssue" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="WorkDescription" ColumnName="WorkDescription" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkPerformedCounter" ColumnName="WorkPerformedCounter" />
+          <ScalarProperty Name="NoPartsNeeded" ColumnName="NoPartsNeeded" />
+          <ScalarProperty Name="CatalogID" ColumnName="CatalogID" />
+          <ScalarProperty Name="FeastMovementid" ColumnName="FeastMovementid" />
+          <ScalarProperty Name="IsSlNumberImageExist" ColumnName="IsSlNumberImageExist" />
+          <ScalarProperty Name="EquipmentId" ColumnName="EquipmentId" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="Ratio" ColumnName="Ratio" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderImages">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderImage">
+        <MappingFragment StoreEntitySet="WorkorderImages">
+          <ScalarProperty Name="WorkorderImageid" ColumnName="WorkorderImageid" />
+          <ScalarProperty Name="WorkorderDetailid" ColumnName="WorkorderDetailid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderPicture" ColumnName="WorkorderPicture" />
+          <ScalarProperty Name="WorkorderImagePath" ColumnName="WorkorderImagePath" />
+          <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderInstallationSurveys">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderInstallationSurvey">
+        <MappingFragment StoreEntitySet="WorkorderInstallationSurvey">
+          <ScalarProperty Name="Installsurveyid" ColumnName="Installsurveyid" />
+          <ScalarProperty Name="NemwNumber" ColumnName="NemwNumber" />
+          <ScalarProperty Name="ElectricalPhase" ColumnName="ElectricalPhase" />
+          <ScalarProperty Name="MachineAmperage" ColumnName="MachineAmperage" />
+          <ScalarProperty Name="UnitFitSpace" ColumnName="UnitFitSpace" />
+          <ScalarProperty Name="Voltage" ColumnName="Voltage" />
+          <ScalarProperty Name="CounterUnitSpace" ColumnName="CounterUnitSpace" />
+          <ScalarProperty Name="WaterLine" ColumnName="WaterLine" />
+          <ScalarProperty Name="AssetLocation" ColumnName="AssetLocation" />
+          <ScalarProperty Name="Comments" ColumnName="Comments" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderNonAudits">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderNonAudit">
+        <MappingFragment StoreEntitySet="WorkorderNonAudit">
+          <ScalarProperty Name="NonAuditid" ColumnName="NonAuditid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Equipment" ColumnName="Equipment" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderParts">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderPart">
+        <MappingFragment StoreEntitySet="WorkorderParts">
+          <ScalarProperty Name="PartsIssueid" ColumnName="PartsIssueid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Sku" ColumnName="Sku" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Erfid" ColumnName="Erfid" />
+          <ScalarProperty Name="ProdNo" ColumnName="ProdNo" />
+          <ScalarProperty Name="ModelNo" ColumnName="ModelNo" />
+          <ScalarProperty Name="StandardCost" ColumnName="StandardCost" />
+          <ScalarProperty Name="TPSPCost" ColumnName="TPSPCost" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+          <ScalarProperty Name="NonSerializedIssue" ColumnName="NonSerializedIssue" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderReasonlogs">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderReasonlog">
+        <MappingFragment StoreEntitySet="WorkorderReasonlog">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="OldAppointmentDate" ColumnName="OldAppointmentDate" />
+          <ScalarProperty Name="NewAppointmentDate" ColumnName="NewAppointmentDate" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="Reasonid" ColumnName="Reasonid" />
+          <ScalarProperty Name="LogDescription" ColumnName="LogDescription" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="WorkorderLogid" ColumnName="WorkorderLogid" />
+          <ScalarProperty Name="ReasonFor" ColumnName="ReasonFor" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderSavedSearches">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderSavedSearch">
+        <MappingFragment StoreEntitySet="WorkorderSavedSearch">
+          <ScalarProperty Name="SavedSearchName" ColumnName="SavedSearchName" />
+          <ScalarProperty Name="Customerid" ColumnName="Customerid" />
+          <ScalarProperty Name="Erfid" ColumnName="Erfid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderCallStatus" ColumnName="WorkorderCallStatus" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="FollowupCall" ColumnName="FollowupCall" />
+          <ScalarProperty Name="AutoDispatch" ColumnName="AutoDispatch" />
+          <ScalarProperty Name="WorkorderType" ColumnName="WorkorderType" />
+          <ScalarProperty Name="Priority" ColumnName="Priority" />
+          <ScalarProperty Name="Fsr" ColumnName="Fsr" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+          <ScalarProperty Name="CoverageZoneIndex" ColumnName="CoverageZoneIndex" />
+          <ScalarProperty Name="Tsm" ColumnName="Tsm" />
+          <ScalarProperty Name="TechType" ColumnName="TechType" />
+          <ScalarProperty Name="ServiceCompany" ColumnName="ServiceCompany" />
+          <ScalarProperty Name="Technician" ColumnName="Technician" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="Fsm" ColumnName="Fsm" />
+          <ScalarProperty Name="DateFrom" ColumnName="DateFrom" />
+          <ScalarProperty Name="DateTo" ColumnName="DateTo" />
+          <ScalarProperty Name="ApptdateFrom" ColumnName="ApptdateFrom" />
+          <ScalarProperty Name="ApptDateTo" ColumnName="ApptDateTo" />
+          <ScalarProperty Name="SavedSearchid" ColumnName="SavedSearchid" />
+          <ScalarProperty Name="UserID" ColumnName="UserID" />
+          <ScalarProperty Name="OriginalWorkOrderID" ColumnName="OriginalWorkOrderID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderSchedules">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderSchedule">
+        <MappingFragment StoreEntitySet="WorkorderSchedule">
+          <ScalarProperty Name="Scheduleid" ColumnName="Scheduleid" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="ScheduleDate" ColumnName="ScheduleDate" />
+          <ScalarProperty Name="ScheduleUserid" ColumnName="ScheduleUserid" />
+          <ScalarProperty Name="ModifiedScheduleDate" ColumnName="ModifiedScheduleDate" />
+          <ScalarProperty Name="ModifiedScheduleUserid" ColumnName="ModifiedScheduleUserid" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="ServiceCenterID" ColumnName="ServiceCenterID" />
+          <ScalarProperty Name="PrimaryTech" ColumnName="PrimaryTech" />
+          <ScalarProperty Name="TechName" ColumnName="TechName" />
+          <ScalarProperty Name="TechPhone" ColumnName="TechPhone" />
+          <ScalarProperty Name="ServiceCenterName" ColumnName="ServiceCenterName" />
+          <ScalarProperty Name="FSMID" ColumnName="FSMID" />
+          <ScalarProperty Name="FSMName" ColumnName="FSMName" />
+          <ScalarProperty Name="FSMPhone" ColumnName="FSMPhone" />
+          <ScalarProperty Name="TSMID" ColumnName="TSMID" />
+          <ScalarProperty Name="TSMName" ColumnName="TSMName" />
+          <ScalarProperty Name="TSMEmail" ColumnName="TSMEmail" />
+          <ScalarProperty Name="TSMPhone" ColumnName="TSMPhone" />
+          <ScalarProperty Name="FSMEmail" ColumnName="FSMEmail" />
+          <ScalarProperty Name="TeamLeadID" ColumnName="TeamLeadID" />
+          <ScalarProperty Name="TeamLeadName" ColumnName="TeamLeadName" />
+          <ScalarProperty Name="AssignedStatus" ColumnName="AssignedStatus" />
+          <ScalarProperty Name="AssistTech" ColumnName="AssistTech" />
+          <ScalarProperty Name="WS_ArrivalDateTime" ColumnName="WS_ArrivalDateTime" />
+          <ScalarProperty Name="WS_CompletionDateTime" ColumnName="WS_CompletionDateTime" />
+          <ScalarProperty Name="WS_Mileage" ColumnName="WS_Mileage" />
+          <ScalarProperty Name="WS_TravelTime" ColumnName="WS_TravelTime" />
+          <ScalarProperty Name="WS_AppointmentDate" ColumnName="WS_AppointmentDate" />
+          <ScalarProperty Name="IsTechClosed" ColumnName="IsTechClosed" />
+          <ScalarProperty Name="EventScheduleDate" ColumnName="EventScheduleDate" />
+          <ScalarProperty Name="ScheduleContactName" ColumnName="ScheduleContactName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderServiceClaims">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderServiceClaim">
+        <MappingFragment StoreEntitySet="WorkorderServiceClaim">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="Assetid" ColumnName="Assetid" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="ServiceClaimid" ColumnName="ServiceClaimid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderStatusLogs">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderStatusLog">
+        <MappingFragment StoreEntitySet="WorkorderStatusLog">
+          <ScalarProperty Name="WorkorderStatusLogID" ColumnName="WorkorderStatusLogID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="StatusFrom" ColumnName="StatusFrom" />
+          <ScalarProperty Name="StatusTo" ColumnName="StatusTo" />
+          <ScalarProperty Name="StausChangeDate" ColumnName="StausChangeDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkorderTypes">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkorderType">
+        <MappingFragment StoreEntitySet="WorkorderType">
+          <ScalarProperty Name="CallTypeID" ColumnName="CallTypeID" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Sequence" ColumnName="Sequence" />
+          <ScalarProperty Name="Active" ColumnName="Active" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ZonePriorities">
+      <EntityTypeMapping TypeName="FB_DevModel.ZonePriority">
+        <MappingFragment StoreEntitySet="ZonePriority">
+          <ScalarProperty Name="ZoneIndex" ColumnName="ZoneIndex" />
+          <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
+          <ScalarProperty Name="ResponsibletechID" ColumnName="ResponsibletechID" />
+          <ScalarProperty Name="ResponsibleTechName" ColumnName="ResponsibleTechName" />
+          <ScalarProperty Name="ResponsibleTechPhone" ColumnName="ResponsibleTechPhone" />
+          <ScalarProperty Name="TechTeamLead" ColumnName="TechTeamLead" />
+          <ScalarProperty Name="ResponsibleTechBranch" ColumnName="ResponsibleTechBranch" />
+          <ScalarProperty Name="SecondaryTechID" ColumnName="SecondaryTechID" />
+          <ScalarProperty Name="SecondaryTechName" ColumnName="SecondaryTechName" />
+          <ScalarProperty Name="SecondaryTechPhone" ColumnName="SecondaryTechPhone" />
+          <ScalarProperty Name="SecondaryTechBranch" ColumnName="SecondaryTechBranch" />
+          <ScalarProperty Name="Fsm" ColumnName="Fsm" />
+          <ScalarProperty Name="Rsm" ColumnName="Rsm" />
+          <ScalarProperty Name="Tsm" ColumnName="Tsm" />
+          <ScalarProperty Name="TechTeamLeadName" ColumnName="TechTeamLeadName" />
+          <ScalarProperty Name="ResponsibleTechBranchName" ColumnName="ResponsibleTechBranchName" />
+          <ScalarProperty Name="SecondaryTechBranchName" ColumnName="SecondaryTechBranchName" />
+          <ScalarProperty Name="RSMName" ColumnName="RSMName" />
+          <ScalarProperty Name="FSMName" ColumnName="FSMName" />
+          <ScalarProperty Name="PhoneSolveTechID" ColumnName="PhoneSolveTechID" />
+          <ScalarProperty Name="PhoneSolveTechName" ColumnName="PhoneSolveTechName" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Coordinates" ColumnName="Coordinates" />
+          <ScalarProperty Name="OnCallGroupID" ColumnName="OnCallGroupID" />
+          <ScalarProperty Name="OnCallPrimarytechID" ColumnName="OnCallPrimarytechID" />
+          <ScalarProperty Name="OnCallBackupTechID" ColumnName="OnCallBackupTechID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FbPrimaryTechnicians1">
+      <EntityTypeMapping TypeName="FB_DevModel.FbPrimaryTechnicians1">
+        <MappingFragment StoreEntitySet="FbPrimaryTechnicians1">
+          <ScalarProperty Name="PrimaryTechId" ColumnName="PrimaryTechId" />
+          <ScalarProperty Name="PrimaryTechName" ColumnName="PrimaryTechName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TECH_HIERARCHY_BACKUP">
+      <EntityTypeMapping TypeName="FB_DevModel.TECH_HIERARCHY_BACKUP">
+        <MappingFragment StoreEntitySet="TECH_HIERARCHY_BACKUP">
+          <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address3" ColumnName="Address3" />
+          <ScalarProperty Name="Address4" ColumnName="Address4" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Contact" ColumnName="Contact" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="DealerType" ColumnName="DealerType" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="Fax" ColumnName="Fax" />
+          <ScalarProperty Name="NextelPhone" ColumnName="NextelPhone" />
+          <ScalarProperty Name="SerialNoMan" ColumnName="SerialNoMan" />
+          <ScalarProperty Name="ServiceRegion" ColumnName="ServiceRegion" />
+          <ScalarProperty Name="EmailCC" ColumnName="EmailCC" />
+          <ScalarProperty Name="LongAddressNumber" ColumnName="LongAddressNumber" />
+          <ScalarProperty Name="BusinessUnit" ColumnName="BusinessUnit" />
+          <ScalarProperty Name="RimEmail" ColumnName="RimEmail" />
+          <ScalarProperty Name="BranchAssociations" ColumnName="BranchAssociations" />
+          <ScalarProperty Name="LastModifiedByFTP" ColumnName="LastModifiedByFTP" />
+          <ScalarProperty Name="SendFax" ColumnName="SendFax" />
+          <ScalarProperty Name="SendNextel" ColumnName="SendNextel" />
+          <ScalarProperty Name="SendEmail" ColumnName="SendEmail" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="FamilyAffDesc" ColumnName="FamilyAffDesc" />
+          <ScalarProperty Name="PricingParentId" ColumnName="PricingParentId" />
+          <ScalarProperty Name="PricingParentName" ColumnName="PricingParentName" />
+          <ScalarProperty Name="SendAutomaticEmail" ColumnName="SendAutomaticEmail" />
+          <ScalarProperty Name="SendDispatchConf" ColumnName="SendDispatchConf" />
+          <ScalarProperty Name="SendNSREmail" ColumnName="SendNSREmail" />
+          <ScalarProperty Name="AlternativePhone" ColumnName="AlternativePhone" />
+          <ScalarProperty Name="AfterHoursOnly" ColumnName="AfterHoursOnly" />
+          <ScalarProperty Name="PickFromZipRateTable" ColumnName="PickFromZipRateTable" />
+          <ScalarProperty Name="CustomerOwnNumber" ColumnName="CustomerOwnNumber" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ModifiedUserID" ColumnName="ModifiedUserID" />
+          <ScalarProperty Name="BranchType" ColumnName="BranchType" />
+          <ScalarProperty Name="Unavailable" ColumnName="Unavailable" />
+          <ScalarProperty Name="UnavailableStartDate" ColumnName="UnavailableStartDate" />
+          <ScalarProperty Name="UnavailableEnddate" ColumnName="UnavailableEnddate" />
+          <ScalarProperty Name="ReplacementTech" ColumnName="ReplacementTech" />
+          <ScalarProperty Name="BranchNumber" ColumnName="BranchNumber" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="AutoDispatch" ColumnName="AutoDispatch" />
+          <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+          <ScalarProperty Name="FieldServiceManager" ColumnName="FieldServiceManager" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="PrimaryTechId" ColumnName="PrimaryTechId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TMP_SerialNOReport">
+      <EntityTypeMapping TypeName="FB_DevModel.TMP_SerialNOReport">
+        <MappingFragment StoreEntitySet="TMP_SerialNOReport">
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="FulfillmentStatus" ColumnName="FulfillmentStatus" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="CallTypeId" ColumnName="CallTypeId" />
+          <ScalarProperty Name="CallTypeDesc" ColumnName="CallTypeDesc" />
+          <ScalarProperty Name="SerialNo" ColumnName="SerialNo" />
+          <ScalarProperty Name="ProductNo" ColumnName="ProductNo" />
+          <ScalarProperty Name="ProductDesc1" ColumnName="ProductDesc1" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="ManufacturerDesc" ColumnName="ManufacturerDesc" />
+          <ScalarProperty Name="NoService" ColumnName="NoService" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHCompassSurveys">
+      <EntityTypeMapping TypeName="FB_DevModel.YHCompassSurvey">
+        <MappingFragment StoreEntitySet="YHCompassSurvey">
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="AssetKey" ColumnName="AssetKey" />
+          <ScalarProperty Name="NemaNumberID" ColumnName="NemaNumberID" />
+          <ScalarProperty Name="AMPSID" ColumnName="AMPSID" />
+          <ScalarProperty Name="VoltageID" ColumnName="VoltageID" />
+          <ScalarProperty Name="WaterLineID" ColumnName="WaterLineID" />
+          <ScalarProperty Name="ElectricalPhaseID" ColumnName="ElectricalPhaseID" />
+          <ScalarProperty Name="UnitSpaceID" ColumnName="UnitSpaceID" />
+          <ScalarProperty Name="UnitWeightID" ColumnName="UnitWeightID" />
+          <ScalarProperty Name="CompassSurveyID" ColumnName="CompassSurveyID" />
+          <ScalarProperty Name="Removed" ColumnName="Removed" />
+          <ScalarProperty Name="SurveyLocation" ColumnName="SurveyLocation" />
+          <ScalarProperty Name="NemwNumber" ColumnName="NemwNumber" />
+          <ScalarProperty Name="ElectricalPhase" ColumnName="ElectricalPhase" />
+          <ScalarProperty Name="MachineAmperage" ColumnName="MachineAmperage" />
+          <ScalarProperty Name="UnitFitSpace" ColumnName="UnitFitSpace" />
+          <ScalarProperty Name="Voltage" ColumnName="Voltage" />
+          <ScalarProperty Name="CounterUnitSpace" ColumnName="CounterUnitSpace" />
+          <ScalarProperty Name="WaterLine" ColumnName="WaterLine" />
+          <ScalarProperty Name="AssetLocation" ColumnName="AssetLocation" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHContacts">
+      <EntityTypeMapping TypeName="FB_DevModel.YHContact">
+        <MappingFragment StoreEntitySet="YHContact">
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address3" ColumnName="Address3" />
+          <ScalarProperty Name="Address4" ColumnName="Address4" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="SalesRegion" ColumnName="SalesRegion" />
+          <ScalarProperty Name="RegionDesc" ColumnName="RegionDesc" />
+          <ScalarProperty Name="Division" ColumnName="Division" />
+          <ScalarProperty Name="DivisionDesc" ColumnName="DivisionDesc" />
+          <ScalarProperty Name="District" ColumnName="District" />
+          <ScalarProperty Name="DistrictDesc" ColumnName="DistrictDesc" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="FamilyAffDesc" ColumnName="FamilyAffDesc" />
+          <ScalarProperty Name="PricingParent" ColumnName="PricingParent" />
+          <ScalarProperty Name="PricingParentName" ColumnName="PricingParentName" />
+          <ScalarProperty Name="AcctRep" ColumnName="AcctRep" />
+          <ScalarProperty Name="AcctRepDesc" ColumnName="AcctRepDesc" />
+          <ScalarProperty Name="RouteNumber" ColumnName="RouteNumber" />
+          <ScalarProperty Name="Distributor" ColumnName="Distributor" />
+          <ScalarProperty Name="DistributorName" ColumnName="DistributorName" />
+          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+          <ScalarProperty Name="DeliveryDesc" ColumnName="DeliveryDesc" />
+          <ScalarProperty Name="ContractID" ColumnName="ContractID" />
+          <ScalarProperty Name="CreditMessage" ColumnName="CreditMessage" />
+          <ScalarProperty Name="CreditMessageDesc" ColumnName="CreditMessageDesc" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="BusinessUnit" ColumnName="BusinessUnit" />
+          <ScalarProperty Name="OrgStructure" ColumnName="OrgStructure" />
+          <ScalarProperty Name="BusinessType" ColumnName="BusinessType" />
+          <ScalarProperty Name="Class" ColumnName="Class" />
+          <ScalarProperty Name="ClassDesc" ColumnName="ClassDesc" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="ContactActive" ColumnName="ContactActive" />
+          <ScalarProperty Name="LastInvDate" ColumnName="LastInvDate" />
+          <ScalarProperty Name="SeasonalCustomer" ColumnName="SeasonalCustomer" />
+          <ScalarProperty Name="ReportingFamily" ColumnName="ReportingFamily" />
+          <ScalarProperty Name="ReportingFamilyDesc" ColumnName="ReportingFamilyDesc" />
+          <ScalarProperty Name="LongAddressNumber" ColumnName="LongAddressNumber" />
+          <ScalarProperty Name="CustInternal" ColumnName="CustInternal" />
+          <ScalarProperty Name="AcquisitionCode" ColumnName="AcquisitionCode" />
+          <ScalarProperty Name="Employee" ColumnName="Employee" />
+          <ScalarProperty Name="LastModifiedByFTP" ColumnName="LastModifiedByFTP" />
+          <ScalarProperty Name="AuditReadWrite" ColumnName="AuditReadWrite" />
+          <ScalarProperty Name="AuditFlow" ColumnName="AuditFlow" />
+          <ScalarProperty Name="LastSurveyed" ColumnName="LastSurveyed" />
+          <ScalarProperty Name="SendInvoiceTo" ColumnName="SendInvoiceTo" />
+          <ScalarProperty Name="BusinessLine" ColumnName="BusinessLine" />
+          <ScalarProperty Name="CustomerOwnNumber" ColumnName="CustomerOwnNumber" />
+          <ScalarProperty Name="FSMJDE" ColumnName="FSMJDE" />
+          <ScalarProperty Name="ActionCenterJDE" ColumnName="ActionCenterJDE" />
+          <ScalarProperty Name="FieldServiceManager" ColumnName="FieldServiceManager" />
+          <ScalarProperty Name="ServiceLevelCode" ColumnName="ServiceLevelCode" />
+          <ScalarProperty Name="AnniversaryDate" ColumnName="AnniversaryDate" />
+          <ScalarProperty Name="TierDesc" ColumnName="TierDesc" />
+          <ScalarProperty Name="RemainingFreeCalls" ColumnName="RemainingFreeCalls" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="CCMJDE" ColumnName="CCMJDE" />
+          <ScalarProperty Name="RCCMJDE" ColumnName="RCCMJDE" />
+          <ScalarProperty Name="CategoryCode" ColumnName="CategoryCode" />
+          <ScalarProperty Name="OperatingUnit" ColumnName="OperatingUnit" />
+          <ScalarProperty Name="Route" ColumnName="Route" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="C1099Reporting" ColumnName="1099Reporting" />
+          <ScalarProperty Name="Chain" ColumnName="Chain" />
+          <ScalarProperty Name="BrewmaticAgentCode" ColumnName="BrewmaticAgentCode" />
+          <ScalarProperty Name="NTR" ColumnName="NTR" />
+          <ScalarProperty Name="DelDayOrFOB" ColumnName="DelDayOrFOB" />
+          <ScalarProperty Name="RouteCode" ColumnName="RouteCode" />
+          <ScalarProperty Name="ZoneNumber" ColumnName="ZoneNumber" />
+          <ScalarProperty Name="County" ColumnName="County" />
+          <ScalarProperty Name="MailingName" ColumnName="MailingName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="OldContactID" ColumnName="OldContactID" />
+          <ScalarProperty Name="OldSearchType" ColumnName="OldSearchType" />
+          <ScalarProperty Name="FBProviderID" ColumnName="FBProviderID" />
+          <ScalarProperty Name="NOFBPSPEmails" ColumnName="NOFBPSPEmails" />
+          <ScalarProperty Name="LastAutoEmail" ColumnName="LastAutoEmail" />
+          <ScalarProperty Name="RCCMJDE1" ColumnName="RCCMJDE1" />
+          <ScalarProperty Name="FSMJDE1" ColumnName="FSMJDE1" />
+          <ScalarProperty Name="CCMJDE1" ColumnName="CCMJDE1" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+          <ScalarProperty Name="PricingParentID" ColumnName="PricingParentID" />
+          <ScalarProperty Name="PricingParentDesc" ColumnName="PricingParentDesc" />
+          <ScalarProperty Name="LastSaleDate" ColumnName="LastSaleDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHContact_PMUploadsALL">
+      <EntityTypeMapping TypeName="FB_DevModel.YHContact_PMUploadsALL">
+        <MappingFragment StoreEntitySet="YHContact_PMUploadsALL">
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="EquipmentModel" ColumnName="EquipmentModel" />
+          <ScalarProperty Name="EquipmentLocation" ColumnName="EquipmentLocation" />
+          <ScalarProperty Name="TPSP" ColumnName="TPSP" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="ContactName" ColumnName="ContactName" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
+          <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+          <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+          <ScalarProperty Name="IntervalType" ColumnName="IntervalType" />
+          <ScalarProperty Name="NextRunDate" ColumnName="NextRunDate" />
+          <ScalarProperty Name="FirstRun" ColumnName="FirstRun" />
+          <ScalarProperty Name="IntervalDuration" ColumnName="IntervalDuration" />
+          <ScalarProperty Name="EventCreated" ColumnName="EventCreated" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="TechName" ColumnName="TechName" />
+          <ScalarProperty Name="SpecialUpdate" ColumnName="SpecialUpdate" />
+          <ScalarProperty Name="SkipDate" ColumnName="SkipDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHERFEquipments">
+      <EntityTypeMapping TypeName="FB_DevModel.YHERFEquipment">
+        <MappingFragment StoreEntitySet="YHERFEquipment">
+          <ScalarProperty Name="ERFNO" ColumnName="ERFNO" />
+          <ScalarProperty Name="Sno" ColumnName="Sno" />
+          <ScalarProperty Name="EquipQuantity" ColumnName="EquipQuantity" />
+          <ScalarProperty Name="EquipProdNo" ColumnName="EquipProdNo" />
+          <ScalarProperty Name="EquipType" ColumnName="EquipType" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="TransactionTypeID" ColumnName="TransactionTypeID" />
+          <ScalarProperty Name="EquipModelNo" ColumnName="EquipModelNo" />
+          <ScalarProperty Name="Substitution" ColumnName="Substitution" />
+          <ScalarProperty Name="EquipDescription" ColumnName="EquipDescription" />
+          <ScalarProperty Name="Extra" ColumnName="Extra" />
+          <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHERFExpendables">
+      <EntityTypeMapping TypeName="FB_DevModel.YHERFExpendable">
+        <MappingFragment StoreEntitySet="YHERFExpendable">
+          <ScalarProperty Name="ERFNO" ColumnName="ERFNO" />
+          <ScalarProperty Name="ExpQuantity" ColumnName="ExpQuantity" />
+          <ScalarProperty Name="TransactionTypeID" ColumnName="TransactionTypeID" />
+          <ScalarProperty Name="ExpProdNo" ColumnName="ExpProdNo" />
+          <ScalarProperty Name="ExpModelNo" ColumnName="ExpModelNo" />
+          <ScalarProperty Name="EXpDescription" ColumnName="EXpDescription" />
+          <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
+          <ScalarProperty Name="Extra" ColumnName="Extra" />
+          <ScalarProperty Name="TotalPrice" ColumnName="TotalPrice" />
+          <ScalarProperty Name="Sno" ColumnName="Sno" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHEventBrands">
+      <EntityTypeMapping TypeName="FB_DevModel.YHEventBrand">
+        <MappingFragment StoreEntitySet="YHEventBrands">
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="BrandID" ColumnName="BrandID" />
+          <ScalarProperty Name="BrandName" ColumnName="BrandName" />
+          <ScalarProperty Name="ID" ColumnName="ID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHEventNotes">
+      <EntityTypeMapping TypeName="FB_DevModel.YHEventNote">
+        <MappingFragment StoreEntitySet="YHEventNotes">
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="EvenTID" ColumnName="EvenTID" />
+          <ScalarProperty Name="USerID" ColumnName="USerID" />
+          <ScalarProperty Name="EnterDate" ColumnName="EnterDate" />
+          <ScalarProperty Name="USerName" ColumnName="USerName" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="AutomaticNotes" ColumnName="AutomaticNotes" />
+          <ScalarProperty Name="EventNotesID" ColumnName="EventNotesID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHSMEvents">
+      <EntityTypeMapping TypeName="FB_DevModel.YHSMEvent">
+        <MappingFragment StoreEntitySet="YHSMEvent">
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="FulfillmentStatus" ColumnName="FulfillmentStatus" />
+          <ScalarProperty Name="EntryUserID" ColumnName="EntryUserID" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="CloseUserID" ColumnName="CloseUserID" />
+          <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
+          <ScalarProperty Name="ModifiedUserId" ColumnName="ModifiedUserId" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="ERFNO" ColumnName="ERFNO" />
+          <ScalarProperty Name="EquipCount" ColumnName="EquipCount" />
+          <ScalarProperty Name="CallTypeId" ColumnName="CallTypeId" />
+          <ScalarProperty Name="CallTypeDesc" ColumnName="CallTypeDesc" />
+          <ScalarProperty Name="SpawnEvent" ColumnName="SpawnEvent" />
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
+          <ScalarProperty Name="ClosureConfirmationNo" ColumnName="ClosureConfirmationNo" />
+          <ScalarProperty Name="FSM" ColumnName="FSM" />
+          <ScalarProperty Name="SeriviceLevelCode" ColumnName="SeriviceLevelCode" />
+          <ScalarProperty Name="AppointmentDate" ColumnName="AppointmentDate" />
+          <ScalarProperty Name="recallevent" ColumnName="recallevent" />
+          <ScalarProperty Name="NewPriorityCode" ColumnName="NewPriorityCode" />
+          <ScalarProperty Name="EventContact" ColumnName="EventContact" />
+          <ScalarProperty Name="CallPriority" ColumnName="CallPriority" />
+          <ScalarProperty Name="ContactPhone" ColumnName="ContactPhone" />
+          <ScalarProperty Name="CallerName" ColumnName="CallerName" />
+          <ScalarProperty Name="ProjectNumber" ColumnName="ProjectNumber" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHSMEventInvoices">
+      <EntityTypeMapping TypeName="FB_DevModel.YHSMEventInvoice">
+        <MappingFragment StoreEntitySet="YHSMEventInvoice">
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+          <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
+          <ScalarProperty Name="InvoiceUserID" ColumnName="InvoiceUserID" />
+          <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
+          <ScalarProperty Name="ModifiedUserid" ColumnName="ModifiedUserid" />
+          <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+          <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+          <ScalarProperty Name="techID" ColumnName="techID" />
+          <ScalarProperty Name="technician" ColumnName="technician" />
+          <ScalarProperty Name="InvoiceKey" ColumnName="InvoiceKey" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHSMEventSymcalls">
+      <EntityTypeMapping TypeName="FB_DevModel.YHSMEventSymcall">
+        <MappingFragment StoreEntitySet="YHSMEventSymcall">
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="AssetKey" ColumnName="AssetKey" />
+          <ScalarProperty Name="CallTypeID" ColumnName="CallTypeID" />
+          <ScalarProperty Name="ManufacturerDesc" ColumnName="ManufacturerDesc" />
+          <ScalarProperty Name="ProductNo" ColumnName="ProductNo" />
+          <ScalarProperty Name="SerialNo" ColumnName="SerialNo" />
+          <ScalarProperty Name="SolutionId" ColumnName="SolutionId" />
+          <ScalarProperty Name="Temperature" ColumnName="Temperature" />
+          <ScalarProperty Name="Settings" ColumnName="Settings" />
+          <ScalarProperty Name="SystemId" ColumnName="SystemId" />
+          <ScalarProperty Name="SymptomID" ColumnName="SymptomID" />
+          <ScalarProperty Name="CategoryDesc" ColumnName="CategoryDesc" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="EquipTypeCode" ColumnName="EquipTypeCode" />
+          <ScalarProperty Name="Electricity" ColumnName="Electricity" />
+          <ScalarProperty Name="Plumbing" ColumnName="Plumbing" />
+          <ScalarProperty Name="NeworReman" ColumnName="NeworReman" />
+          <ScalarProperty Name="Defective" ColumnName="Defective" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="YHSMSchedules">
+      <EntityTypeMapping TypeName="FB_DevModel.YHSMSchedule">
+        <MappingFragment StoreEntitySet="YHSMSchedule">
+          <ScalarProperty Name="Scheduleid" ColumnName="Scheduleid" />
+          <ScalarProperty Name="EventID" ColumnName="EventID" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="ScheduleDate" ColumnName="ScheduleDate" />
+          <ScalarProperty Name="ScheduleUserid" ColumnName="ScheduleUserid" />
+          <ScalarProperty Name="ModifiedScheduleDate" ColumnName="ModifiedScheduleDate" />
+          <ScalarProperty Name="ModifiedScheduleUserid" ColumnName="ModifiedScheduleUserid" />
+          <ScalarProperty Name="BranchID" ColumnName="BranchID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Zips">
+      <EntityTypeMapping TypeName="FB_DevModel.Zip">
+        <MappingFragment StoreEntitySet="Zip">
+          <ScalarProperty Name="ZIP1" ColumnName="ZIP" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="County" ColumnName="County" />
+          <ScalarProperty Name="Country" ColumnName="Country" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="PreferredCity" ColumnName="PreferredCity" />
+          <ScalarProperty Name="TimeZone" ColumnName="TimeZone" />
+          <ScalarProperty Name="DayLightSaving" ColumnName="DayLightSaving" />
+          <ScalarProperty Name="FIPSState" ColumnName="FIPSState" />
+          <ScalarProperty Name="FIPSCounty" ColumnName="FIPSCounty" />
+          <ScalarProperty Name="FIPSCity" ColumnName="FIPSCity" />
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="TimeZoneName" ColumnName="TimeZoneName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="ZoneZips">
+      <EntityTypeMapping TypeName="FB_DevModel.ZoneZip">
+        <MappingFragment StoreEntitySet="ZoneZip">
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+          <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+          <ScalarProperty Name="ZoneIndex" ColumnName="ZoneIndex" />
+          <ScalarProperty Name="ZoneName" ColumnName="ZoneName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="v_AllPMandServiceEventsWithUniqueSerial">
+      <EntityTypeMapping TypeName="FB_DevModel.v_AllPMandServiceEventsWithUniqueSerial">
+        <MappingFragment StoreEntitySet="v_AllPMandServiceEventsWithUniqueSerial">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="v_Contact">
+      <EntityTypeMapping TypeName="FB_DevModel.v_Contact">
+        <MappingFragment StoreEntitySet="v_Contact">
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address3" ColumnName="Address3" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="Phone" ColumnName="Phone" />
+          <ScalarProperty Name="Division" ColumnName="Division" />
+          <ScalarProperty Name="DivisionDesc" ColumnName="DivisionDesc" />
+          <ScalarProperty Name="District" ColumnName="District" />
+          <ScalarProperty Name="DistrictDesc" ColumnName="DistrictDesc" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="FamilyAffDesc" ColumnName="FamilyAffDesc" />
+          <ScalarProperty Name="PricingParent" ColumnName="PricingParent" />
+          <ScalarProperty Name="PricingParentName" ColumnName="PricingParentName" />
+          <ScalarProperty Name="AcctRep" ColumnName="AcctRep" />
+          <ScalarProperty Name="AcctRepDesc" ColumnName="AcctRepDesc" />
+          <ScalarProperty Name="RouteNumber" ColumnName="RouteNumber" />
+          <ScalarProperty Name="Distributor" ColumnName="Distributor" />
+          <ScalarProperty Name="DistributorName" ColumnName="DistributorName" />
+          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+          <ScalarProperty Name="DeliveryDesc" ColumnName="DeliveryDesc" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="BusinessUnit" ColumnName="BusinessUnit" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="LastModified" ColumnName="LastModified" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="ContactActive" ColumnName="ContactActive" />
+          <ScalarProperty Name="LongAddressNumber" ColumnName="LongAddressNumber" />
+          <ScalarProperty Name="LastModifiedByFTP" ColumnName="LastModifiedByFTP" />
+          <ScalarProperty Name="AuditFlow" ColumnName="AuditFlow" />
+          <ScalarProperty Name="SendInvoiceTo" ColumnName="SendInvoiceTo" />
+          <ScalarProperty Name="FSMJDE" ColumnName="FSMJDE" />
+          <ScalarProperty Name="FieldServiceManager" ColumnName="FieldServiceManager" />
+          <ScalarProperty Name="ServiceLevelCode" ColumnName="ServiceLevelCode" />
+          <ScalarProperty Name="AnniversaryDate" ColumnName="AnniversaryDate" />
+          <ScalarProperty Name="TierDesc" ColumnName="TierDesc" />
+          <ScalarProperty Name="RemainingFreeCalls" ColumnName="RemainingFreeCalls" />
+          <ScalarProperty Name="CCMJDE" ColumnName="CCMJDE" />
+          <ScalarProperty Name="RCCMJDE" ColumnName="RCCMJDE" />
+          <ScalarProperty Name="CategoryCode" ColumnName="CategoryCode" />
+          <ScalarProperty Name="OperatingUnit" ColumnName="OperatingUnit" />
+          <ScalarProperty Name="Route" ColumnName="Route" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="C1099Reporting" ColumnName="1099Reporting" />
+          <ScalarProperty Name="Chain" ColumnName="Chain" />
+          <ScalarProperty Name="BrewmaticAgentCode" ColumnName="BrewmaticAgentCode" />
+          <ScalarProperty Name="NTR" ColumnName="NTR" />
+          <ScalarProperty Name="DelDayOrFOB" ColumnName="DelDayOrFOB" />
+          <ScalarProperty Name="RouteCode" ColumnName="RouteCode" />
+          <ScalarProperty Name="ZoneNumber" ColumnName="ZoneNumber" />
+          <ScalarProperty Name="MailingName" ColumnName="MailingName" />
+          <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+          <ScalarProperty Name="MiddleName" ColumnName="MiddleName" />
+          <ScalarProperty Name="LastName" ColumnName="LastName" />
+          <ScalarProperty Name="FBProviderID" ColumnName="FBProviderID" />
+          <ScalarProperty Name="NOFBPSPEmails" ColumnName="NOFBPSPEmails" />
+          <ScalarProperty Name="LastAutoEmail" ColumnName="LastAutoEmail" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+          <ScalarProperty Name="PricingParentID" ColumnName="PricingParentID" />
+          <ScalarProperty Name="PricingParentDesc" ColumnName="PricingParentDesc" />
+          <ScalarProperty Name="LastSaleDate" ColumnName="LastSaleDate" />
+          <ScalarProperty Name="Email" ColumnName="Email" />
+          <ScalarProperty Name="CustomerSpecialInstructions" ColumnName="CustomerSpecialInstructions" />
+          <ScalarProperty Name="PhoneWithAreaCode" ColumnName="PhoneWithAreaCode" />
+          <ScalarProperty Name="IsUnknownUser" ColumnName="IsUnknownUser" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+          <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+          <ScalarProperty Name="EmailCC" ColumnName="EmailCC" />
+          <ScalarProperty Name="Expr2" ColumnName="Expr2" />
+          <ScalarProperty Name="RimEmail" ColumnName="RimEmail" />
+          <ScalarProperty Name="BranchAssociations" ColumnName="BranchAssociations" />
+          <ScalarProperty Name="Expr3" ColumnName="Expr3" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="v_ContactServiceHistory">
+      <EntityTypeMapping TypeName="FB_DevModel.v_ContactServiceHistory">
+        <MappingFragment StoreEntitySet="v_ContactServiceHistory">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="CallTypeDesc" ColumnName="CallTypeDesc" />
+          <ScalarProperty Name="SymptomDesc" ColumnName="SymptomDesc" />
+          <ScalarProperty Name="SymptomID" ColumnName="SymptomID" />
+          <ScalarProperty Name="CallTypeID" ColumnName="CallTypeID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="Solutionid" ColumnName="Solutionid" />
+          <ScalarProperty Name="Systemid" ColumnName="Systemid" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Assetid" ColumnName="Assetid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_EquipmentCount">
+      <EntityTypeMapping TypeName="FB_DevModel.V_EquipmentCount">
+        <MappingFragment StoreEntitySet="V_EquipmentCount">
+          <ScalarProperty Name="EquipCount" ColumnName="EquipCount" />
+          <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="BranchNumber" ColumnName="BranchNumber" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="WorkorderCalltypeid" ColumnName="WorkorderCalltypeid" />
+          <ScalarProperty Name="WorkorderCalltypeDesc" ColumnName="WorkorderCalltypeDesc" />
+          <ScalarProperty Name="NoServiceRequired" ColumnName="NoServiceRequired" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_LastOneyearDispatches">
+      <EntityTypeMapping TypeName="FB_DevModel.V_LastOneyearDispatches">
+        <MappingFragment StoreEntitySet="V_LastOneyearDispatches">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="ScheduleDate" ColumnName="ScheduleDate" />
+          <ScalarProperty Name="DealerId" ColumnName="DealerId" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="ScheduleUserid" ColumnName="ScheduleUserid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_LastOneyearInvoices">
+      <EntityTypeMapping TypeName="FB_DevModel.V_LastOneyearInvoices">
+        <MappingFragment StoreEntitySet="V_LastOneyearInvoices">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+          <ScalarProperty Name="InvoiceDate" ColumnName="InvoiceDate" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+          <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
+          <ScalarProperty Name="ResponsibleTechid" ColumnName="ResponsibleTechid" />
+          <ScalarProperty Name="ResponsibleTechName" ColumnName="ResponsibleTechName" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_OpenCallTime">
+      <EntityTypeMapping TypeName="FB_DevModel.V_OpenCallTime">
+        <MappingFragment StoreEntitySet="V_OpenCallTime">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="Techid" ColumnName="Techid" />
+          <ScalarProperty Name="DispatchCompany" ColumnName="DispatchCompany" />
+          <ScalarProperty Name="ScheduleDate" ColumnName="ScheduleDate" />
+          <ScalarProperty Name="ScheduleUserid" ColumnName="ScheduleUserid" />
+          <ScalarProperty Name="ElapsedTime" ColumnName="ElapsedTime" />
+          <ScalarProperty Name="ElapsedTimeInMins" ColumnName="ElapsedTimeInMins" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="CustomerBranchNo" ColumnName="CustomerBranchNo" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="AssignedStatus" ColumnName="AssignedStatus" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_OriginalCallDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.V_OriginalCallDetails">
+        <MappingFragment StoreEntitySet="V_OriginalCallDetails">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="TechId" ColumnName="TechId" />
+          <ScalarProperty Name="DispatchCompany" ColumnName="DispatchCompany" />
+          <ScalarProperty Name="Scheduledate" ColumnName="Scheduledate" />
+          <ScalarProperty Name="ScheduleUserId" ColumnName="ScheduleUserId" />
+          <ScalarProperty Name="ElapsedTime" ColumnName="ElapsedTime" />
+          <ScalarProperty Name="ElapsedTimeInMins" ColumnName="ElapsedTimeInMins" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="City" ColumnName="City" />
+          <ScalarProperty Name="State" ColumnName="State" />
+          <ScalarProperty Name="PostalCode" ColumnName="PostalCode" />
+          <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="CustomerBranchNo" ColumnName="CustomerBranchNo" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_RepeatedPMandServiceEventDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.V_RepeatedPMandServiceEventDetails">
+        <MappingFragment StoreEntitySet="V_RepeatedPMandServiceEventDetails">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="RepeatedEventId" ColumnName="RepeatedEventId" />
+          <ScalarProperty Name="RepeatedEntryDate" ColumnName="RepeatedEntryDate" />
+          <ScalarProperty Name="RepeatSerialNumber" ColumnName="RepeatSerialNumber" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+          <ScalarProperty Name="RepeatedCloseDate" ColumnName="RepeatedCloseDate" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="RepeatedCategory" ColumnName="RepeatedCategory" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="RepeatedCallTypeID" ColumnName="RepeatedCallTypeID" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+          <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="OriginalEventTechID" ColumnName="OriginalEventTechID" />
+          <ScalarProperty Name="OriginalEventTechName" ColumnName="OriginalEventTechName" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="FSMName" ColumnName="FSMName" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_RepeatedPMandServiceEvents">
+      <EntityTypeMapping TypeName="FB_DevModel.V_RepeatedPMandServiceEvents">
+        <MappingFragment StoreEntitySet="V_RepeatedPMandServiceEvents">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+          <ScalarProperty Name="RepeatedEventId" ColumnName="RepeatedEventId" />
+          <ScalarProperty Name="RepeatedEntryDate" ColumnName="RepeatedEntryDate" />
+          <ScalarProperty Name="RepeatedCloseDate" ColumnName="RepeatedCloseDate" />
+          <ScalarProperty Name="RepeatedCallTypeID" ColumnName="RepeatedCallTypeID" />
+          <ScalarProperty Name="RepeatedCategory" ColumnName="RepeatedCategory" />
+          <ScalarProperty Name="RepeatedManufacturer" ColumnName="RepeatedManufacturer" />
+          <ScalarProperty Name="RepeatedModel" ColumnName="RepeatedModel" />
+          <ScalarProperty Name="RepeatSerialNumber" ColumnName="RepeatSerialNumber" />
+          <ScalarProperty Name="RepeatSymptomid" ColumnName="RepeatSymptomid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_RepeatServiceRepair">
+      <EntityTypeMapping TypeName="FB_DevModel.V_RepeatServiceRepair">
+        <MappingFragment StoreEntitySet="V_RepeatServiceRepair">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+          <ScalarProperty Name="RepeatedEventId" ColumnName="RepeatedEventId" />
+          <ScalarProperty Name="RepeatedEntryDate" ColumnName="RepeatedEntryDate" />
+          <ScalarProperty Name="RepeatedCloseDate" ColumnName="RepeatedCloseDate" />
+          <ScalarProperty Name="RepeatedCallTypeID" ColumnName="RepeatedCallTypeID" />
+          <ScalarProperty Name="RepeatedCategory" ColumnName="RepeatedCategory" />
+          <ScalarProperty Name="RepeatedManufacturer" ColumnName="RepeatedManufacturer" />
+          <ScalarProperty Name="RepeatedModel" ColumnName="RepeatedModel" />
+          <ScalarProperty Name="RepeatSerialNumber" ColumnName="RepeatSerialNumber" />
+          <ScalarProperty Name="RepeatSymptomid" ColumnName="RepeatSymptomid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="V_RepeatServiceRepairDetails">
+      <EntityTypeMapping TypeName="FB_DevModel.V_RepeatServiceRepairDetails">
+        <MappingFragment StoreEntitySet="V_RepeatServiceRepairDetails">
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+          <ScalarProperty Name="RepeatedEventId" ColumnName="RepeatedEventId" />
+          <ScalarProperty Name="RepeatedEntryDate" ColumnName="RepeatedEntryDate" />
+          <ScalarProperty Name="RepeatSerialNumber" ColumnName="RepeatSerialNumber" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+          <ScalarProperty Name="RepeatedCloseDate" ColumnName="RepeatedCloseDate" />
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="RepeatedCategory" ColumnName="RepeatedCategory" />
+          <ScalarProperty Name="CallTypeid" ColumnName="CallTypeid" />
+          <ScalarProperty Name="RepeatedCallTypeID" ColumnName="RepeatedCallTypeID" />
+          <ScalarProperty Name="Symptomid" ColumnName="Symptomid" />
+          <ScalarProperty Name="Expr1" ColumnName="Expr1" />
+          <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="CustomerBranch" ColumnName="CustomerBranch" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="CustomerRegion" ColumnName="CustomerRegion" />
+          <ScalarProperty Name="OriginalEventTechID" ColumnName="OriginalEventTechID" />
+          <ScalarProperty Name="OriginalEventTechName" ColumnName="OriginalEventTechName" />
+          <ScalarProperty Name="FamilyAff" ColumnName="FamilyAff" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+          <ScalarProperty Name="SearchDesc" ColumnName="SearchDesc" />
+          <ScalarProperty Name="FSMName" ColumnName="FSMName" />
+          <ScalarProperty Name="Manufacturer" ColumnName="Manufacturer" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VW_FBRoleFunction">
+      <EntityTypeMapping TypeName="FB_DevModel.VW_FBRoleFunction">
+        <MappingFragment StoreEntitySet="VW_FBRoleFunction">
+          <ScalarProperty Name="RoleID" ColumnName="RoleID" />
+          <ScalarProperty Name="FunctionID" ColumnName="FunctionID" />
+          <ScalarProperty Name="CanCreate" ColumnName="CanCreate" />
+          <ScalarProperty Name="CanUpdate" ColumnName="CanUpdate" />
+          <ScalarProperty Name="CanView" ColumnName="CanView" />
+          <ScalarProperty Name="CanExport" ColumnName="CanExport" />
+          <ScalarProperty Name="CanEmail" ColumnName="CanEmail" />
+          <ScalarProperty Name="ParentFunctionID" ColumnName="ParentFunctionID" />
+          <ScalarProperty Name="FunctionName" ColumnName="FunctionName" />
+          <ScalarProperty Name="FunctionLevel" ColumnName="FunctionLevel" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="RoleFunctionID" ColumnName="RoleFunctionID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="VW_tech_Hierarchy">
+      <EntityTypeMapping TypeName="FB_DevModel.VW_tech_Hierarchy">
+        <MappingFragment StoreEntitySet="VW_tech_Hierarchy">
+          <ScalarProperty Name="RSMName" ColumnName="RSMName" />
+          <ScalarProperty Name="RSMPhone" ColumnName="RSMPhone" />
+          <ScalarProperty Name="ESMName" ColumnName="ESMName" />
+          <ScalarProperty Name="ESMPhone" ColumnName="ESMPhone" />
+          <ScalarProperty Name="DSMName" ColumnName="DSMName" />
+          <ScalarProperty Name="DSMPhone" ColumnName="DSMPhone" />
+          <ScalarProperty Name="Branch" ColumnName="Branch" />
+          <ScalarProperty Name="RegionName" ColumnName="RegionName" />
+          <ScalarProperty Name="RSMID" ColumnName="RSMID" />
+          <ScalarProperty Name="ESMID" ColumnName="ESMID" />
+          <ScalarProperty Name="DSMID" ColumnName="DSMID" />
+          <ScalarProperty Name="PreferredProvider" ColumnName="PreferredProvider" />
+          <ScalarProperty Name="ProviderPhone" ColumnName="ProviderPhone" />
+          <ScalarProperty Name="PricingParent" ColumnName="PricingParent" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="TechZIP" ColumnName="TechZIP" />
+          <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+          <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+          <ScalarProperty Name="TechType" ColumnName="TechType" />
+          <ScalarProperty Name="TechTypeDesc" ColumnName="TechTypeDesc" />
+          <ScalarProperty Name="TechEmail" ColumnName="TechEmail" />
+          <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
+          <ScalarProperty Name="BranchNumber" ColumnName="BranchNumber" />
+          <ScalarProperty Name="BranchName" ColumnName="BranchName" />
+          <ScalarProperty Name="AreaCode" ColumnName="AreaCode" />
+          <ScalarProperty Name="SearchType" ColumnName="SearchType" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="FetcoCustomers">
+      <EntityTypeMapping TypeName="FB_DevModel.FetcoCustomer">
+        <MappingFragment StoreEntitySet="FetcoCustomers">
+          <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="CustomerNumber" ColumnName="CustomerNumber" />
+          <ScalarProperty Name="UniqueId" ColumnName="UniqueId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="WorkOrders">
+      <EntityTypeMapping TypeName="FB_DevModel.WorkOrder">
+        <MappingFragment StoreEntitySet="WorkOrder">
+          <ScalarProperty Name="PaymentTerm" ColumnName="PaymentTerm" />
+          <ScalarProperty Name="EquipmentModel" ColumnName="EquipmentModel" />
+          <ScalarProperty Name="EquipmentBrand" ColumnName="EquipmentBrand" />
+          <ScalarProperty Name="CallerPhone" ColumnName="CallerPhone" />
+          <ScalarProperty Name="ETAUpdated" ColumnName="ETAUpdated" />
+          <ScalarProperty Name="NTE" ColumnName="NTE" />
+          <ScalarProperty Name="ShippingPriority" ColumnName="ShippingPriority" />
+          <ScalarProperty Name="FinalTransactionId" ColumnName="FinalTransactionId" />
+          <ScalarProperty Name="AuthTransactionId" ColumnName="AuthTransactionId" />
+          <ScalarProperty Name="RescheduleReasonCode" ColumnName="RescheduleReasonCode" />
+          <ScalarProperty Name="CustomerPO" ColumnName="CustomerPO" />
+          <ScalarProperty Name="ElectronicEmailSent" ColumnName="ElectronicEmailSent" />
+          <ScalarProperty Name="TotalUnitPrice" ColumnName="TotalUnitPrice" />
+          <ScalarProperty Name="IsBillable" ColumnName="IsBillable" />
+          <ScalarProperty Name="HighlightDispatchBoard" ColumnName="HighlightDispatchBoard" />
+          <ScalarProperty Name="OverrideAutoEmail" ColumnName="OverrideAutoEmail" />
+          <ScalarProperty Name="AutoEmailSent" ColumnName="AutoEmailSent" />
+          <ScalarProperty Name="HoursOfOperation" ColumnName="HoursOfOperation" />
+          <ScalarProperty Name="IsAutoDispatched" ColumnName="IsAutoDispatched" />
+          <ScalarProperty Name="EstimateApprovedBy" ColumnName="EstimateApprovedBy" />
+          <ScalarProperty Name="ThirdPartyPO" ColumnName="ThirdPartyPO" />
+          <ScalarProperty Name="IsEstimateApproved" ColumnName="IsEstimateApproved" />
+          <ScalarProperty Name="FinalEstimate" ColumnName="FinalEstimate" />
+          <ScalarProperty Name="Estimate" ColumnName="Estimate" />
+          <ScalarProperty Name="SpecificTechnician" ColumnName="SpecificTechnician" />
+          <ScalarProperty Name="IsSpecificTechnician" ColumnName="IsSpecificTechnician" />
+          <ScalarProperty Name="IsAutoGenerated" ColumnName="IsAutoGenerated" />
+          <ScalarProperty Name="WorkOrderOpenedDateTime" ColumnName="WorkOrderOpenedDateTime" />
+          <ScalarProperty Name="CurrentUserName" ColumnName="CurrentUserName" />
+          <ScalarProperty Name="ParentWorkorderid" ColumnName="ParentWorkorderid" />
+          <ScalarProperty Name="SpawnCounter" ColumnName="SpawnCounter" />
+          <ScalarProperty Name="OtherPartsPhone" ColumnName="OtherPartsPhone" />
+          <ScalarProperty Name="IsRejected" ColumnName="IsRejected" />
+          <ScalarProperty Name="TechType" ColumnName="TechType" />
+          <ScalarProperty Name="EmailSent" ColumnName="EmailSent" />
+          <ScalarProperty Name="HoldDateTime" ColumnName="HoldDateTime" />
+          <ScalarProperty Name="FSRName" ColumnName="FSRName" />
+          <ScalarProperty Name="NoServiceRequired" ColumnName="NoServiceRequired" />
+          <ScalarProperty Name="ProjectFlatRate" ColumnName="ProjectFlatRate" />
+          <ScalarProperty Name="FSMID" ColumnName="FSMID" />
+          <ScalarProperty Name="TSMPhone" ColumnName="TSMPhone" />
+          <ScalarProperty Name="TSMEmail" ColumnName="TSMEmail" />
+          <ScalarProperty Name="ModifiedUserName" ColumnName="ModifiedUserName" />
+          <ScalarProperty Name="ClosedUserName" ColumnName="ClosedUserName" />
+          <ScalarProperty Name="EntryUserName" ColumnName="EntryUserName" />
+          <ScalarProperty Name="TechTeamLeadID" ColumnName="TechTeamLeadID" />
+          <ScalarProperty Name="OtherPartsZip" ColumnName="OtherPartsZip" />
+          <ScalarProperty Name="OtherPartsState" ColumnName="OtherPartsState" />
+          <ScalarProperty Name="OtherPartsCity" ColumnName="OtherPartsCity" />
+          <ScalarProperty Name="OtherPartsAddress2" ColumnName="OtherPartsAddress2" />
+          <ScalarProperty Name="OtherPartsAddress1" ColumnName="OtherPartsAddress1" />
+          <ScalarProperty Name="OtherPartsContactName" ColumnName="OtherPartsContactName" />
+          <ScalarProperty Name="OtherPartsName" ColumnName="OtherPartsName" />
+          <ScalarProperty Name="PartsRushOrder" ColumnName="PartsRushOrder" />
+          <ScalarProperty Name="FSR" ColumnName="FSR" />
+          <ScalarProperty Name="WorkorderContactName" ColumnName="WorkorderContactName" />
+          <ScalarProperty Name="WorkorderContactPhone" ColumnName="WorkorderContactPhone" />
+          <ScalarProperty Name="FollowupCallID" ColumnName="FollowupCallID" />
+          <ScalarProperty Name="AutoDispatch" ColumnName="AutoDispatch" />
+          <ScalarProperty Name="ProjectID" ColumnName="ProjectID" />
+          <ScalarProperty Name="PriorityCode" ColumnName="PriorityCode" />
+          <ScalarProperty Name="OvertimeRequest" ColumnName="OvertimeRequest" />
+          <ScalarProperty Name="CallerName" ColumnName="CallerName" />
+          <ScalarProperty Name="OriginalWorkorderid" ColumnName="OriginalWorkorderid" />
+          <ScalarProperty Name="AppointmentDate" ColumnName="AppointmentDate" />
+          <ScalarProperty Name="PartsShipTo" ColumnName="PartsShipTo" />
+          <ScalarProperty Name="PurchaseOrder" ColumnName="PurchaseOrder" />
+          <ScalarProperty Name="DateNeeded" ColumnName="DateNeeded" />
+          <ScalarProperty Name="OtherParts" ColumnName="OtherParts" />
+          <ScalarProperty Name="ServiceTier" ColumnName="ServiceTier" />
+          <ScalarProperty Name="DistributorName" ColumnName="DistributorName" />
+          <ScalarProperty Name="ProgramName" ColumnName="ProgramName" />
+          <ScalarProperty Name="MarketSegment" ColumnName="MarketSegment" />
+          <ScalarProperty Name="Tsm" ColumnName="Tsm" />
+          <ScalarProperty Name="Rsm" ColumnName="Rsm" />
+          <ScalarProperty Name="Fsm" ColumnName="Fsm" />
+          <ScalarProperty Name="SecondaryTechBranch" ColumnName="SecondaryTechBranch" />
+          <ScalarProperty Name="SecondaryTechPhone" ColumnName="SecondaryTechPhone" />
+          <ScalarProperty Name="SecondaryTechName" ColumnName="SecondaryTechName" />
+          <ScalarProperty Name="SecondaryTechid" ColumnName="SecondaryTechid" />
+          <ScalarProperty Name="ResponsibleTechBranch" ColumnName="ResponsibleTechBranch" />
+          <ScalarProperty Name="ResponsibleTechPhone" ColumnName="ResponsibleTechPhone" />
+          <ScalarProperty Name="ResponsibleTechName" ColumnName="ResponsibleTechName" />
+          <ScalarProperty Name="ResponsibleTechid" ColumnName="ResponsibleTechid" />
+          <ScalarProperty Name="TechTeamLead" ColumnName="TechTeamLead" />
+          <ScalarProperty Name="CoverageZone" ColumnName="CoverageZone" />
+          <ScalarProperty Name="WorkorderClosureConfirmationNo" ColumnName="WorkorderClosureConfirmationNo" />
+          <ScalarProperty Name="WorkorderDaylightSaving" ColumnName="WorkorderDaylightSaving" />
+          <ScalarProperty Name="WorkorderTimeZone" ColumnName="WorkorderTimeZone" />
+          <ScalarProperty Name="WorkorderFsm" ColumnName="WorkorderFsm" />
+          <ScalarProperty Name="WorkorderSpawnEvent" ColumnName="WorkorderSpawnEvent" />
+          <ScalarProperty Name="WorkorderCalltypeDesc" ColumnName="WorkorderCalltypeDesc" />
+          <ScalarProperty Name="WorkorderCalltypeid" ColumnName="WorkorderCalltypeid" />
+          <ScalarProperty Name="WorkorderEquipCount" ColumnName="WorkorderEquipCount" />
+          <ScalarProperty Name="WorkorderErfid" ColumnName="WorkorderErfid" />
+          <ScalarProperty Name="WorkorderModifiedDate" ColumnName="WorkorderModifiedDate" />
+          <ScalarProperty Name="WorkorderModifiedUserid" ColumnName="WorkorderModifiedUserid" />
+          <ScalarProperty Name="WorkorderCloseDate" ColumnName="WorkorderCloseDate" />
+          <ScalarProperty Name="WorkorderCloseUserid" ColumnName="WorkorderCloseUserid" />
+          <ScalarProperty Name="WorkorderEntryDate" ColumnName="WorkorderEntryDate" />
+          <ScalarProperty Name="WorkorderEntryUserid" ColumnName="WorkorderEntryUserid" />
+          <ScalarProperty Name="CustomerCustomerPreferences" ColumnName="CustomerCustomerPreferences" />
+          <ScalarProperty Name="CustomerMainEmail" ColumnName="CustomerMainEmail" />
+          <ScalarProperty Name="CustomerPhoneExtn" ColumnName="CustomerPhoneExtn" />
+          <ScalarProperty Name="CustomerPhone" ColumnName="CustomerPhone" />
+          <ScalarProperty Name="CustomerMainContactName" ColumnName="CustomerMainContactName" />
+          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
+          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
+          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
+          <ScalarProperty Name="CustomerAddress" ColumnName="CustomerAddress" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkorderCallstatus" ColumnName="WorkorderCallstatus" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

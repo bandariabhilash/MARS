@@ -1,6 +1,10 @@
 ﻿
 @{
     Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
+
+    var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var jsonSkuList = serializer.Serialize(Model.SKUList);
 }
 
 @model FarmerBrothers.Models.ProcessCardModel
@@ -20,12 +24,14 @@
 <script type="text/javascript">
     var LaborTotal = 0, PartsTotal = 0, TravelTotal = 0, SalesTotal = 0;
     var SalesTax = 0;
+    var updateUrl = null;
     $(document).ready(function () {
         //PartsGrid();
 
         $("#salesTaxHeader").html("Sales Tax (" + @Model.SaleTax +" %)");
         $("#preTravelTxt").val("$" + @Model.PreTravelCost);
         $("#partsDiscountHeader").html("Parts Discount (" + @Model.PartsDiscount +" %)");
+        $("#recEmailTxt").val('@Model.ReceiptEmail');
 
         //$("#salesTxt").val(@Model.SaleTax);
         //UpdateDetailedCostValues("SalesTax");
@@ -113,12 +119,12 @@
 
             //var salesValue = $("#salesTxt").val();
             if ($("#salesTxtHidden").length) {
-                $("#salesTxtHidden").val(SalesTotal);
+                $("#salesTxtHidden").val($("#salesTxt").val());
             }
             else {
                 var input6 = $("<input id='salesTxtHidden'>")
                     .attr("type", "hidden")
-                    .attr("name", "salesTxtHidden").val(SalesTotal);
+                    .attr("name", "salesTxtHidden").val($("#salesTxt").val());
                 $(this).append($(input6));
             }
             //var input6 = $("#salesTxt");
@@ -194,6 +200,26 @@
                 $(this).append($(input12));
             }
 
+            if ($("#partsDiscountTxtHidden").length) {
+                $("#partsDiscountTxtHidden").val($("#partsDiscountTxt").val());
+            }
+            else {
+                var input13 = $("<input id='partsDiscountTxtHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "partsDiscountTxtHidden").val($("#partsDiscountTxt").val());
+                $(this).append($(input13));
+            }
+
+            if ($("#manualOverrideChkHidden").length) {
+                $("#manualOverrideChkHidden").val($("#manualOverrideChk").is(":checked"));
+            }
+            else {
+                var input14 = $("<input id='manualOverrideChkHidden'>")
+                    .attr("type", "hidden")
+                    .attr("name", "manualOverrideChkHidden").val($("#manualOverrideChk").is(":checked"));
+                $(this).append($(input14));
+            }
+
             var $this = $(this);
             var frmValues = $this.serialize();
             $.ajax({
@@ -206,6 +232,15 @@
                             $('[data-popup="popup-successBlock"]').fadeIn(350);
                             AlertPopup(response.message);
                             //AlertPopup("|Payment Process Successfully Completed !");
+
+                            //updateUrl = "Workorder/Workordermanagement/" + response.customerId + "/" + response.workorderId + "/false/false";
+                            if ("@Model.FromView.ToLower()" == "workordermanagement") {
+                                updateUrl = "/Workorder/Workordermanagement?customerId=" + response.customerId + "&workOrderId=" + response.workorderId + "&isNewPartsOrder=false&showAllTechs=false&isCustomerDashboard=false&isFromProcessCardScreen=true";
+                            }
+                            else if ("@Model.FromView.ToLower()" == "callclosuremanagement") {
+                                updateUrl = "/CallClosure/CallClosureManagement?customerId=" + response.customerId + "&workOrderId=" + response.workorderId + "&isFromProcessCardScreen=true";
+                            }
+
                         }
                         else {
                             AlertPopup(response.message);
@@ -416,14 +451,57 @@
 
         }
 
+        $("[data-popup-close='popupalert']").click(function () {
+            if (updateUrl != null) {
+                window.location.href = updateUrl;
+            }
+        });
+
+
+        if ("@Model.FromView.ToLower()" == "workordermanagement") {
+            $("#pretravelBlock").hide();
+        }
+        else if ("@Model.FromView.ToLower()" == "callclosuremanagement") {
+            $("#pretravelBlock").hide();
+        }
+        else {
+            $("#pretravelBlock").show();
+        }
+
+
+        $("#manualOverrideChk").on("change", function () {
+            var check = $(this).is(":checked")
+
+            @{
+                Model.BillingDetails = new List<BillingModel>();
+            }
+
+            var obj = $("#BillingDetails").ejGrid("instance");
+
+            //var gridData = [];
+            //obj.dataSource(gridData);
+            obj.option({
+                editSettings: { allowEditing: check, allowAdding: check, allowDeleting: check },
+                enableRowHover: check
+                @*updateURL: '@Url.Action("BillingDataUpdate", "DispatchResponse")',
+                insertURL: '@Url.Action("BillingDataInsert", "DispatchResponse")',
+                RemoveURL: '@Url.Action("BillingDataDelete", "DispatchResponse")'*@
+            });
+
+
+        });
 
     })
-
 
     function SetBillingData() {
         //var startTime = new Date($("#StartDateTime").val());
         //var arrivalTime = new Date($("#ArrivalDateTime").val());
         //var completionTime = new Date($("#CompletionDateTime").val());
+
+        if ($("#manualOverrideChk").is(":checked")) {
+            return false;
+        }
+
 
         var startTime = $("#StartDateTime").val();
         var arrivalTime = $("#ArrivalDateTime").val();
@@ -499,6 +577,10 @@
     {
         if ( args.requestType == "beginedit" || args.requestType == "add" )
         {
+            if (args.requestType == "add") {
+                $("#" + this._id + "PartReplenish").prop("checked", true); //Defaulting Parts replenish to true
+            }
+
             if ( args.requestType == "beginedit" )
             {
 
@@ -624,14 +706,19 @@
             if (args.requestType == "beginedit") {
                 $("#BillingDetailsBillingType").ejDropDownList().data("ejDropDownList").selectItemByText(BillingType);
                 $("#BillingDetailsBillingCode").val(BillingCode)
-                $("#BillingDetailsQty").val(BillingQty)
-                $("#BillingDetailsUnitPrice").val(BillingUnitPrice)
-                $("#BillingDetailsTotal").val(BillingTotal)
+                //$("#BillingDetailsQty").val(BillingQty)
+                //$("#BillingDetailsUnitPrice").val(BillingUnitPrice)
+                //$("#BillingDetailsTotal").val(BillingTotal)
             }
 
             $("#BillingDetailsBillingType").ejDropDownList({ change: "BillingTypeChange", enableFilterSearch: true });
-            $("#BillingDetailsQuantity").on("keyup", BillingQuantityChange);
-        }
+           // $("#BillingDetailsQuantity").on("keyup", BillingQuantityChange);
+         }
+
+         if (args.requestType == "save") {
+             UpdateGridData(args.data);
+             UpdateDetailedCostValues("BillingGrid");
+         }
     }
 
     function BillingQuantityChange(e) {
@@ -654,7 +741,7 @@
             if (jsonResult.success == true) {
                 var result = jsonResult.data;
                 $("#BillingDetailsBillingCode").val(result.BillingCode);
-                $("#BillingDetailsCost").val("$" + result.UnitPrice.toFixed(2));
+               //$("#BillingDetailsCost").val("$" + result.UnitPrice.toFixed(2));
             }
             else {
                 AlertPopup("|Problem fetching the Billing Item!");
@@ -691,8 +778,6 @@
     }
     function BillingDetailsEndAdd(args)
     {
-        UpdateDetailedCostValues("BillingGrid");
-
         $('#BillingDetails_WaitingPopup').css("visibility", "hidden");
     }
     function onBillingToolBarClick(args) {
@@ -712,10 +797,52 @@
 
     }
 
-    function UpdateDetailedCostValues(gridName) {
+    function UpdateGridData(rowData) {
+        if (rowData) {
+            var obj = $("#BillingDetails").ejGrid("instance");
+            var datasource = [];
+            if (obj.model.dataSource && obj.model.dataSource.dataSource && obj.model.dataSource.dataSource.json.length > 0) {
+                datasource = obj.model.dataSource.dataSource.json;
+            }
+            else if (obj.model.dataSource) {
+                datasource = obj.model.dataSource;
+            }
 
+
+            var rowDataDetails = {
+                "Id": rowData.Id,
+                "BillingType": rowData.BillingType,
+                "BillingCode": rowData.BillingCode,
+                "Quantity": rowData.Quantity,
+                "Cost": rowData.Cost,
+                "Total": rowData.Total,
+                "Duration": rowData.Duration,
+                "IsManualOverride": $("#manualOverrideChk").is(":checked"),
+                "BillingList": datasource
+            }
+
+
+            $.ajax({
+                url: '@Url.Action("UpdateBillingGridData", "DispatchResponse")',
+                type: 'POST',
+                data: JSON.stringify(rowDataDetails),
+                contentType: "application/json",
+                success: function (response) {
+                    if (response.success) {
+                        obj.dataSource(response.data);
+                        UpdateDetailedCostValues("BillingGrid");
+                    }
+                },
+                error: function (response) {
+
+                }
+            });
+        }
+    }
+
+    function UpdateDetailedCostValues(gridName) {
         if (gridName == "BillingGrid") {
-           // var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json;
+            // var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json;
             var billingData = $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource ? $("#BillingDetails").ejGrid("instance").model.dataSource.dataSource.json : $("#BillingDetails").ejGrid("instance").model.dataSource;
             var labor = 0, travel = 0, sales = 0;
             for (i = 0; i < billingData.length; i++) {
@@ -745,6 +872,7 @@
             var parts = 0;
             for (i = 0; i < PartsData.length; i++) {
                 //parts = parts + parseInt(PartsData[i].Total);
+                if (PartsData[i].PartReplenish == true) continue;
                 parts = parts + Number(parseInt(PartsData[i].Qty) * Number(PartsData[i].UnitPrice));
             }
             PartsTotal = Number(parts).toFixed(2)
@@ -757,7 +885,7 @@
 
         TotalCost = Number(LaborTotal) + Number(TravelTotal) + Number(SalesTotal);// + Number(PartsTotal);
 
-        var partsDiscount = Number(PartsTotal) * @Model.PartsDiscount
+        var partsDiscount = Number(PartsTotal) * @Model.PartsDiscount;
         var partsAmount = Number(PartsTotal) - Number(partsDiscount);
         $("#partsTxt").val("$" + partsAmount.toFixed(2));
 
@@ -819,7 +947,7 @@
 
                         },
                         write: function (args) {
-                            var dataList = @Html.Raw(Json.Encode(Model.SKUList));
+                            var dataList = @Html.Raw(jsonSkuList);
                             var data = ej.DataManager(dataList).executeLocal(new ej.Query().select("VendorDescription"));
                             args.element.ejAutocomplete(
                                 {
@@ -944,12 +1072,13 @@
                                     <span>@Model.WorkorderId</span>
                                 }
                                 @Html.HiddenFor(w => w.WorkorderId)
+                                @Html.HiddenFor(w => w.CustomerId)
                             </div>
                             <div style="text-align:right;">
-                                @if (string.IsNullOrEmpty(Model.FinalTransactionId))
-                                {
-                                    <button id="SaveProcessDataId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose">Save</button>
-                                }
+                                @*@if (string.IsNullOrEmpty(Model.FinalTransactionId))
+                                    {
+                                        <button id="SaveProcessDataId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose">Save</button>
+                                    }*@
                             </div>
                         </div>
                     </div>
@@ -969,7 +1098,58 @@
                         @*<div class="table-responsive" id="partsGrid"></div>*@
 
                         <div class="table-responsive">
-                            @(Html.EJ().Grid<FarmerBrothers.Models.FbWorkorderBillableSKUModel>
+                            @if (Model.CompletionDateTime != null)
+                            {
+                                @(Html.EJ().Grid<FarmerBrothers.Models.FbWorkorderBillableSKUModel>
+            ("PartsDetails")
+            .Datasource(ds => ds.Json((IEnumerable<object>)Model.PartsList)
+            .UpdateURL(Url.Action("PartUpdate", "DispatchResponse"))
+            .InsertURL(Url.Action("PartInsert", "DispatchResponse"))
+            .RemoveURL(Url.Action("PartDelete", "DispatchResponse"))
+            .Adaptor(AdaptorType.RemoteSaveAdaptor))
+            //.EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+            .AllowPaging()
+            .ToolbarSettings(toolbar =>
+            {
+                toolbar.ShowToolbar().ToolbarItems(items =>
+                {
+                    //items.AddTool(ToolBarItems.Add);
+                    //items.AddTool(ToolBarItems.Edit);
+                    //items.AddTool(ToolBarItems.Delete);
+                    //items.AddTool(ToolBarItems.Update);
+                    //items.AddTool(ToolBarItems.Cancel);
+                });
+            })
+
+            .Columns(col =>
+            {
+                col.Field("WorkOrderSKUId").HeaderText("SKU ID").IsPrimaryKey(true).Visible(false).Add();
+                //col.Field("SKU").HeaderText("SKU").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>)Model.SKUList))
+                //.ValidationRules(r => r.AddRule("required", true)).Add();
+                col.Field("PartReplenish").HeaderText("Part Replenish").Type("boolean").DisplayAsCheckbox().EditType(EditingType.Boolean).Add();
+                col.Field("SKU").HeaderText("SKU").Add();
+                col.Field("Description").HeaderText("Description").AllowEditing(false).Add();
+                //col.Field("Manufacturer").HeaderText("Manufacturer").AllowEditing(false).Add();
+                col.Field("Qty").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
+                col.Field("UnitPrice").HeaderTextAlign(TextAlign.Right).HeaderText("Unit Price").TextAlign(TextAlign.Right).AllowEditing(false).ValidationRules(r => r.AddRule("number", true)).Add();
+                col.Field("PartsTotal").HeaderTextAlign(TextAlign.Right).HeaderText("Total Line Amount").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:n2}").Add();
+
+            })
+            .ClientSideEvents(eve =>
+            {
+                eve.ActionComplete("CompletePartsModels")
+                .BeginEdit("PartsDetailsBeginEdit")
+                .ActionBegin("PartsDetailsBegin")
+                .EndEdit("PartsDetailsEndEdit")
+                .EndAdd("PartsDetailsEndAdd")
+                .QueryCellInfo("queryCellInfoParts")
+                .DetailsExpand("DetailRowExpand")
+                .ToolbarClick("onPartsToolbarClick");
+            }))
+                            }
+                            else
+                            {
+                                @(Html.EJ().Grid<FarmerBrothers.Models.FbWorkorderBillableSKUModel>
             ("PartsDetails")
             .Datasource(ds => ds.Json((IEnumerable<object>)Model.PartsList)
             .UpdateURL(Url.Action("PartUpdate", "DispatchResponse"))
@@ -995,6 +1175,7 @@
                 col.Field("WorkOrderSKUId").HeaderText("SKU ID").IsPrimaryKey(true).Visible(false).Add();
                 col.Field("SKU").HeaderText("SKU").ForeignKeyField("VendorDescription").ForeignKeyValue("VendorDescription").DataSource(((IEnumerable<object>)Model.SKUList))
                 .ValidationRules(r => r.AddRule("required", true)).Add();
+                //col.Field("SKU").HeaderText("SKU").Add();
                 col.Field("Description").HeaderText("Description").AllowEditing(false).Add();
                 //col.Field("Manufacturer").HeaderText("Manufacturer").AllowEditing(false).Add();
                 col.Field("Qty").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
@@ -1013,6 +1194,7 @@
                 .DetailsExpand("DetailRowExpand")
                 .ToolbarClick("onPartsToolbarClick");
             }))
+                            }
                         </div>
 
                     </div>
@@ -1026,6 +1208,15 @@
             <div class="container-fluid">
                 <h2 class="billing-head arrow-down tabheader">Billing Details</h2>
                 <div class="billing-content margin-top" style="display:block !important;">
+                    <div class="col-sm-6-o">
+                        <span class="col-md-1" id="recEmailHeader">Manual Override:</span>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <input type="checkbox" class="WorkOrderFields" id="manualOverrideChk" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-12">
 
                         @*<div class="col-md-12 customer-col2" style="padding-bottom: 1vw;">*@
@@ -1033,11 +1224,11 @@
                             @(Html.EJ().Grid<FarmerBrothers.Models.BillingModel>
 ("BillingDetails")
 .Datasource(ds => ds.Json((IEnumerable<object>)Model.BillingDetails)
- .UpdateURL(Url.Action("BillingDataUpdate", "DispatchResponse"))
-        .InsertURL(Url.Action("BillingDataInsert", "DispatchResponse"))
-        .RemoveURL(Url.Action("BillingDataDelete", "DispatchResponse"))
+//.UpdateURL(Url.Action("BillingDataUpdate", "DispatchResponse"))
+//       .InsertURL(Url.Action("BillingDataInsert", "DispatchResponse"))
+//       .RemoveURL(Url.Action("BillingDataDelete", "DispatchResponse"))
 .Adaptor(AdaptorType.RemoteSaveAdaptor))
-.EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
+//.EditSettings(edit => { edit.AllowAdding().AllowDeleting().AllowEditing(); })
 .AllowPaging()
 .ToolbarSettings(toolbar =>
 {
@@ -1058,8 +1249,8 @@
     col.Field("BillingCode").HeaderText("Billable Code").AllowEditing(false).Add();
     //col.Field("Quantity").HeaderText("Qty").Type(ColumnType.Number).ValidationRules(r => r.AddRule("min", 1).AddRule("required", true).AddRule("number", true)).Add();
     col.Field("Duration").HeaderText("Duration").Type(ColumnType.Number).AllowEditing(false).Add();
-    col.Field("Cost").HeaderTextAlign(TextAlign.Right).HeaderText("Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:c2}").Add();
-    col.Field("Total").HeaderTextAlign(TextAlign.Right).HeaderText("Total Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:c2}").Add();
+    col.Field("Cost").HeaderTextAlign(TextAlign.Right).HeaderText("Cost").TextAlign(TextAlign.Right).AllowEditing(true).ValidationRules(r => r.AddRule("number", true)).Add();
+    col.Field("Total").HeaderTextAlign(TextAlign.Right).HeaderText("Total Cost").TextAlign(TextAlign.Right).AllowEditing(false).Format("{0:n2}").Add();
 
 })
 .ClientSideEvents(eve =>
@@ -1071,7 +1262,7 @@
     .EndAdd("BillingDetailsEndAdd")
     //.QueryCellInfo("queryCellInfoBillable")
     //.DetailsExpand("DetailRowExpand")
-    .ToolbarClick("onBillableToolbarClick");
+    .ToolbarClick("onBillingToolBarClick");
 }))
                         </div>
 
@@ -1081,7 +1272,7 @@
                 </div>
 
                 <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
-                    <div class="col-sm-6-o">
+                    <div class="col-sm-6-o" id="pretravelBlock" style="display:none;">
                         <span class="col-md-5">Pre-TRAVEL Cost:</span>
                         <div class="col-md-7">
                             <div class="form-group">
@@ -1098,10 +1289,27 @@
                         </div>
                     </div>
                     <div class="col-sm-6-o">
-                        <span class="col-md-5"  id="partsDiscountHeader">PARTS Discount:</span>
+                        <span class="col-md-5" id="partsDiscountHeader">PARTS Discount:</span>
                         <div class="col-md-7">
                             <div class="form-group">
                                 <input id="partsDiscountTxt" class="form-control" disabled />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5" id="recEmailHeader">Send Receipts:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input type="checkbox" class="WorkOrderFields" id="sendReciptsChk" />
+                                @*Send Receipts: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsBillableFeed" })*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5" id="recEmailHeader">Receipts Email:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input id="recEmailTxt" class="form-control" />
                             </div>
                         </div>
                     </div>
@@ -1145,10 +1353,10 @@
                     </div>
 
                     @*<div class="col-sm-6-o">
-                <div class="col-md-12">
-                    <hr style="border-color:#ff0000;">
-                </div>
-            </div>*@
+                            <div class="col-md-12">
+                                <hr style="border-color:#ff0000;">
+                            </div>
+                        </div>*@
 
                     <div class="col-sm-6-o">
                         <div class="col-md-12">
@@ -1164,7 +1372,7 @@
                 </div>
 
                 <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
-                    
+
 
                     <div class="col-sm-6-o">
                         <span class="col-md-5"><h3>Payable Amount :</h3> (Total - Pre-Travel Cost)</span>
@@ -1182,37 +1390,37 @@
 
 
                 @*<div class="col-sm-6-o">
-            <span class="col-md-5 required">Name on Card:</span>
-            <div class="col-md-7">
-                <div class="form-group">
-                    <input type="text" id="cardNameTxt" />
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6-o">
-            <span class="col-md-5 required">Credit Card#:</span>
-            <div class="col-md-7">
-                <div class="form-group">
-                    <input type="text" id="cardNoTxt" />
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6-o">
-            <span class="col-md-5 required">Exp Date(MM/YYYY):</span>
-            <div class="col-md-7">
-                <div class="form-group">
-                    <input type="month" id="expDateTxt" />
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6-o">
-            <span class="col-md-5 required">CVV:</span>
-            <div class="col-md-7">
-                <div class="form-group">
-                    <input type="text" id="cvvTxt" />
-                </div>
-            </div>
-        </div>*@
+                        <span class="col-md-5 required">Name on Card:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input type="text" id="cardNameTxt" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5 required">Credit Card#:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input type="text" id="cardNoTxt" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5 required">Exp Date(MM/YYYY):</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input type="month" id="expDateTxt" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6-o">
+                        <span class="col-md-5 required">CVV:</span>
+                        <div class="col-md-7">
+                            <div class="form-group">
+                                <input type="text" id="cvvTxt" />
+                            </div>
+                        </div>
+                    </div>*@
 
                 <div class="col-md-4 customer-col1 sm-pad-reset margin-top">
                     <div class="col-sm-6-o"> </div>
@@ -1231,25 +1439,25 @@
 
 
                 @*<div class="col-md-6 customer-col1 sm-pad-reset margin-top">
-            <div class="col-sm-6-o">
-                <span class="col-md-5"><h1>Total Cost:</h1></span>
-                <div class="col-md-7">
-                    <div class="form-group">
-                        <span class="col-md-7" style="color:#ff0000"><h3><b>$ @Model.BillingTotal</b></h3></span>
-                    </div>
-                </div>
-            </div>
-            <br />
-            <div class="col-sm-6-o">
-                <span class="col-md-8" style="text-align:center;">
-                    <img src="~/img/CardProcessingImg.png" style="width:50%;cursor:pointer;" />
-                </span>
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5"><h1>Total Cost:</h1></span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <span class="col-md-7" style="color:#ff0000"><h3><b>$ @Model.BillingTotal</b></h3></span>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="col-sm-6-o">
+                            <span class="col-md-8" style="text-align:center;">
+                                <img src="~/img/CardProcessingImg.png" style="width:50%;cursor:pointer;" />
+                            </span>
 
-            </div>
-        </div>*@
+                        </div>
+                    </div>*@
             </div>
 
-</section>
+        </section>
     </section>
 }
 
@@ -1357,7 +1565,15 @@
 
             function ProcessPayment(token) {
                 var Amount = Number($("#PayableTotalLbl").html());
-                        $.ajax({
+                var authToken = '@System.Configuration.ConfigurationManager.AppSettings["CloverAuthToken"].ToString()';
+                var BaseUrl = '@System.Configuration.ConfigurationManager.AppSettings["CloverBaseUrl"].ToString()';
+                var userid = '@System.Web.HttpContext.Current.Session["UserId"]';
+                var sendReceipts = $("#sendReciptsChk").is(":checked");
+                var receiptsEmail = "";
+                if (sendReceipts) {
+                    receiptsEmail = $("#recEmailTxt").val();
+                }
+                        @*$.ajax({
                             url: '@Url.Action("ProcessBillPayment", "DispatchResponse")',
                             type: 'POST',
                             data: { "sourceToken": token, "Amount": Amount, "Capture": true },
@@ -1366,12 +1582,46 @@
                                     $("#cloverTransactionId").val(jsonResult.data);
                                 }
                                 $('[data-popup="popup-cloverpayment"]').fadeOut(350);
-                                AlertPopup("Transaction Success, Proceed to Save");
+                                //AlertPopup("Transaction Success, Proceed to Save");
+
+                                $("#cardProcessform").trigger("submit");
                             },
                             error: function (er) {
                                 AlertPopup("Problem in Processing the Payment, Please contact Support !");
                             }
-                        });
+                        });*@
+
+                let MyData = {
+                    amount: Amount * 100, //Converting Cents to Dollar amount
+                    source: token,
+                    currency: "usd",
+                    apiurl: BaseUrl + "v1/charges",
+                    btoken: authToken,
+                    capture: true,
+                    receipt_email: receiptsEmail,
+                    external_reference_id: $("#WorkorderId").val(), //WorkorderId
+                    external_customer_reference: $("#CustomerId").val(), // CustomerId
+                    metadata: { userid: userid } //user who did the transaction
+                };
+
+                $.ajax({
+                    type: "POST",
+                    url: "https://fbclover.mktalt.com/charge",
+                    data: JSON.stringify(MyData),
+                    contentType: 'application/json',
+                    dataType: 'json',
+                    success: function (jsonResult) {
+                        if (jsonResult.status == "succeeded") {
+                            $("#cloverTransactionId").val(jsonResult.id);
+                        }
+                        $('[data-popup="popup-cloverpayment"]').fadeOut(350);
+
+                        $("#cardProcessform").trigger("submit");
+                    },
+                    error: function (er) {
+                        AlertPopup("Problem in Processing the Payment, Please contact Support !");
+                    }
+                });
                     }
 
                     function VoidOldPayment(token) {
@@ -1419,7 +1669,7 @@
             <div id="card-response" role="alert"></div>
 
             <div class="button-container">
-                <input type="submit" value="Submit Paymnt">
+                <input type="submit" value="Submit Payment">
             </div>
         </form>
         <a class="popup-close" data-popup-close="popup-cloverpayment" href="#">x</a>
@@ -1428,3 +1678,5 @@
 
 <div class="popup" data-popup="popup-successBlock" style="background: rgb(179 166 166 / 45%);">
 </div>
+
+

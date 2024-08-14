@@ -40,5 +40,15 @@ namespace FarmerBrothers.Models
 
         public string Route { get; set; }
 
+        public string WarrentyFor { get; set; }
+        public string StateOfEquipment { get; set; }
+        public string serviceDelayed { get; set; }
+        public string troubleshootSteps { get; set; }
+        public string followupComments { get; set; }
+        public string ReviewedBy { get; set; }
+        public string IsUnderWarrenty { get; set; }
+        public string AdditionalFollowup { get; set; }
+        public string Operational { get; set; }
+
     }
 }

@@ -96,7 +96,10 @@ namespace FarmerBrothers.Models
             {
                 CustomerPO = dr["CustomerPO"].ToString();
             }
-
+            if (dr.Table.Columns.Contains("NTE") && dr["NTE"] != DBNull.Value)
+            {
+                NTE = dr["NTE"].ToString();
+            }
             if (dr.Table.Columns.Contains("DealerId") && dr["DealerId"] != DBNull.Value)
             {
                 TechId = Convert.ToString(dr["DealerId"]);
@@ -830,5 +833,7 @@ namespace FarmerBrothers.Models
         public string EqpInvoiceTotal { get; set; }
         public string CaseSaleStatus { get; set; }
         public string CustomerPO { get; set; }
+        public string Tracking { get; set; }
+        public string NTE { get; set; }
     }
 }
