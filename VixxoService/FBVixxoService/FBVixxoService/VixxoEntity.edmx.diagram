@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="0b70d2bd196e4f29a69d6a3d5af936bc" Name="Diagram1" ZoomLevel="26">
+      <Diagram DiagramId="0b70d2bd196e4f29a69d6a3d5af936bc" Name="Diagram1" ZoomLevel="24">
         <EntityTypeShape EntityType="FB_DevModel.AllFBStatu" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FB_DevModel.Contact" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FB_DevModel.TECH_HIERARCHY" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
@@ -14,6 +14,9 @@
         <EntityTypeShape EntityType="FB_DevModel.Zip" Width="1.5" PointX="9.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__4C6B5938" ManuallyRouted="false" />
         <AssociationConnector Association="FB_DevModel.FK__Workorder__Worko__58D1301D" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="FB_DevModel.NotesHistory" Width="1.5" PointX="3" PointY="22.75" />
+        <AssociationConnector Association="FB_DevModel.FK__NotesHist__Worko__3493CFA7" />
+        <AssociationConnector Association="FB_DevModel.FK__NotesHist__Worko__3493CFA7" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

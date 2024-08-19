@@ -105,5 +105,33 @@ namespace FBVixxoService
         public Nullable<decimal> NetSalesAmount { get; set; }
         public string PaymentTerm { get; set; }
         public Nullable<bool> IsNonFbCustomer { get; set; }
+        public string BCClassificationCode { get; set; }
+        public string addressNumber { get; set; }
+        public string TaxExemption { get; set; }
+        public string TaxGrp { get; set; }
+        public string AddressBook12 { get; set; }
+        public string AddressBook14 { get; set; }
+        public string AddressBook15 { get; set; }
+        public string AddressBook16 { get; set; }
+        public string AddressBook17 { get; set; }
+        public string AddressBook18 { get; set; }
+        public string AddressBook19 { get; set; }
+        public string AddressBook20 { get; set; }
+        public string AddressBook21 { get; set; }
+        public string AddressBook22 { get; set; }
+        public string SpecialEquipment { get; set; }
+        public string CAProtection { get; set; }
+        public string CustomerGroup { get; set; }
+        public string SPCommisFBType { get; set; }
+        public string AlliedDiscount { get; set; }
+        public string CoffeeVolume { get; set; }
+        public string EquipmentProg { get; set; }
+        public string Special { get; set; }
+        public string BillAddrType { get; set; }
+        public string PriceAdjustSchedule { get; set; }
+        public string CustomerStatus { get; set; }
+        public string FreightHandlingCode { get; set; }
+        public string BranchType { get; set; }
+        public string OriginalSearchType { get; set; }
     }
 }

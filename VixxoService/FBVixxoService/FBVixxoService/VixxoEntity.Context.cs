@@ -32,5 +32,6 @@ namespace FBVixxoService
         public virtual DbSet<WorkorderDetail> WorkorderDetails { get; set; }
         public virtual DbSet<WorkorderSchedule> WorkorderSchedules { get; set; }
         public virtual DbSet<Zip> Zips { get; set; }
+        public virtual DbSet<NotesHistory> NotesHistories { get; set; }
     }
 }

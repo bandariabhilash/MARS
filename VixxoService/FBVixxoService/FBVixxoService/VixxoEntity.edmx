@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="FB_DevModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="FB_DevModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AllFBStatus">
           <Key>
             <PropertyRef Name="FBStatusID" />
@@ -78,7 +78,7 @@
           <Property Name="MailingName" Type="nvarchar" MaxLength="40" />
           <Property Name="FirstName" Type="nvarchar" MaxLength="50" />
           <Property Name="MiddleName" Type="nvarchar" MaxLength="25" />
-          <Property Name="LastName" Type="nvarchar" MaxLength="50" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="25" />
           <Property Name="FBProviderID" Type="int" />
           <Property Name="NOFBPSPEmails" Type="int" />
           <Property Name="LastAutoEmail" Type="smalldatetime" />
@@ -99,19 +99,63 @@
           <Property Name="SalesEmail" Type="nvarchar" MaxLength="150" />
           <Property Name="ESMName" Type="varchar" MaxLength="255" />
           <Property Name="ESMPhone" Type="varchar" MaxLength="50" />
-          <Property Name="ESMEmail" Type="varchar" MaxLength="100" />
+          <Property Name="ESMEmail" Type="varchar" MaxLength="260" />
           <Property Name="RSMName" Type="varchar" MaxLength="255" />
           <Property Name="RSMPhone" Type="varchar" MaxLength="50" />
-          <Property Name="RSMEmail" Type="varchar" MaxLength="100" />
+          <Property Name="RSMEmail" Type="varchar" MaxLength="255" />
           <Property Name="CCMName" Type="varchar" MaxLength="255" />
           <Property Name="CCMPhone" Type="varchar" MaxLength="50" />
-          <Property Name="CCMEmail" Type="varchar" MaxLength="100" />
+          <Property Name="CCMEmail" Type="varchar" MaxLength="260" />
           <Property Name="DaysSinceLastSale" Type="varchar" MaxLength="10" />
           <Property Name="ProfitabilityTier" Type="nvarchar" MaxLength="30" />
           <Property Name="ContributionMargin" Type="nvarchar" MaxLength="50" />
           <Property Name="NetSalesAmount" Type="decimal" Precision="18" Scale="0" />
           <Property Name="PaymentTerm" Type="nvarchar" MaxLength="30" />
           <Property Name="IsNonFbCustomer" Type="bit" />
+          <Property Name="BCClassificationCode" Type="varchar" MaxLength="5" />
+          <Property Name="addressNumber" Type="varchar" MaxLength="10" />
+          <Property Name="TaxExemption" Type="varchar" MaxLength="25" />
+          <Property Name="TaxGrp" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook12" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook14" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook15" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook16" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook17" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook18" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook19" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook20" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook21" Type="varchar" MaxLength="5" />
+          <Property Name="AddressBook22" Type="varchar" MaxLength="5" />
+          <Property Name="SpecialEquipment" Type="varchar" MaxLength="5" />
+          <Property Name="CAProtection" Type="varchar" MaxLength="5" />
+          <Property Name="CustomerGroup" Type="varchar" MaxLength="5" />
+          <Property Name="SPCommisFBType" Type="varchar" MaxLength="5" />
+          <Property Name="AlliedDiscount" Type="varchar" MaxLength="5" />
+          <Property Name="CoffeeVolume" Type="varchar" MaxLength="5" />
+          <Property Name="EquipmentProg" Type="varchar" MaxLength="5" />
+          <Property Name="Special" Type="varchar" MaxLength="5" />
+          <Property Name="BillAddrType" Type="varchar" MaxLength="3" />
+          <Property Name="PriceAdjustSchedule" Type="varchar" MaxLength="10" />
+          <Property Name="CustomerStatus" Type="varchar" MaxLength="3" />
+          <Property Name="FreightHandlingCode" Type="varchar" MaxLength="5" />
+          <Property Name="BranchType" Type="varchar" MaxLength="5" />
+          <Property Name="OriginalSearchType" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="NotesHistory">
+          <Key>
+            <PropertyRef Name="NotesID" />
+          </Key>
+          <Property Name="ErfID" Type="nvarchar" MaxLength="50" />
+          <Property Name="WorkorderID" Type="int" />
+          <Property Name="FeastMovementID" Type="int" />
+          <Property Name="Userid" Type="int" />
+          <Property Name="UserName" Type="varchar" MaxLength="75" />
+          <Property Name="Notes" Type="ntext" />
+          <Property Name="AutomaticNotes" Type="smallint" />
+          <Property Name="NotesID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntryDate" Type="smalldatetime" />
+          <Property Name="NonServiceWorkorderID" Type="int" />
+          <Property Name="isDispatchNotes" Type="smallint" />
         </EntityType>
         <EntityType Name="TECH_HIERARCHY">
           <Key>
@@ -322,7 +366,7 @@
           <Property Name="HardnessRating" Type="varchar" MaxLength="10" />
           <Property Name="TechnicianSignatureDetails" Type="nvarchar(max)" />
           <Property Name="CustomerSignatureBy" Type="nvarchar" MaxLength="250" />
-          <Property Name="TotalDissolvedSolids" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TotalDissolvedSolids" Type="decimal" Precision="18" Scale="0" />
           <Property Name="StateofEquipment" Type="ntext" />
           <Property Name="ServiceDelayReason" Type="ntext" />
           <Property Name="TroubleshootSteps" Type="ntext" />
@@ -373,7 +417,7 @@
           <Property Name="ScheduleContactName" Type="varchar" MaxLength="90" />
         </EntityType>
         <!--Errors Found During Generation:
-warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+warning 6002: The table/view 'FB_PROD.dbo.Zip' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="Zip">
           <Key>
             <PropertyRef Name="UniqueID" />
@@ -392,9 +436,21 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
           <Property Name="FIPSState" Type="nvarchar" MaxLength="2" />
           <Property Name="FIPSCounty" Type="nvarchar" MaxLength="3" />
           <Property Name="FIPSCity" Type="nvarchar" MaxLength="5" />
-          <Property Name="UniqueID" Type="int" Nullable="false" />
+          <Property Name="UniqueID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="TimeZoneName" Type="varchar" MaxLength="100" />
         </EntityType>
+        <Association Name="FK__NotesHist__Worko__3493CFA7">
+          <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
+          <End Role="NotesHistory" Type="Self.NotesHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkOrder">
+              <PropertyRef Name="WorkorderID" />
+            </Principal>
+            <Dependent Role="NotesHistory">
+              <PropertyRef Name="WorkorderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK__Workorder__Worko__4C6B5938">
           <End Role="WorkOrder" Type="Self.WorkOrder" Multiplicity="0..1" />
           <End Role="WorkorderDetails" Type="Self.WorkorderDetails" Multiplicity="*" />
@@ -422,6 +478,7 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
         <EntityContainer Name="FB_DevModelStoreContainer">
           <EntitySet Name="AllFBStatus" EntityType="Self.AllFBStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Contact" EntityType="Self.Contact" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NotesHistory" EntityType="Self.NotesHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TECH_HIERARCHY" EntityType="Self.TECH_HIERARCHY" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WorkOrder" EntityType="Self.WorkOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WorkorderDetails" EntityType="Self.WorkorderDetails" Schema="dbo" store:Type="Tables" />
@@ -446,6 +503,10 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
     [Zip].[TimeZoneName] AS [TimeZoneName]
     FROM [dbo].[Zip] AS [Zip]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK__NotesHist__Worko__3493CFA7" Association="Self.FK__NotesHist__Worko__3493CFA7">
+            <End Role="WorkOrder" EntitySet="WorkOrder" />
+            <End Role="NotesHistory" EntitySet="NotesHistory" />
+          </AssociationSet>
           <AssociationSet Name="FK__Workorder__Worko__4C6B5938" Association="Self.FK__Workorder__Worko__4C6B5938">
             <End Role="WorkOrder" EntitySet="WorkOrder" />
             <End Role="WorkorderDetails" EntitySet="WorkorderDetails" />
@@ -455,8 +516,7 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
             <End Role="WorkorderSchedule" EntitySet="WorkorderSchedule" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="FB_DevModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -533,7 +593,7 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
           <Property Name="MailingName" Type="String" MaxLength="40" FixedLength="false" Unicode="true" />
           <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="MiddleName" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
-          <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
           <Property Name="FBProviderID" Type="Int32" />
           <Property Name="NOFBPSPEmails" Type="Int32" />
           <Property Name="LastAutoEmail" Type="DateTime" Precision="0" />
@@ -554,19 +614,47 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
           <Property Name="SalesEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="ESMName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="ESMPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ESMEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ESMEmail" Type="String" MaxLength="260" FixedLength="false" Unicode="false" />
           <Property Name="RSMName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="RSMPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="RSMEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="RSMEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="CCMName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="CCMPhone" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="CCMEmail" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CCMEmail" Type="String" MaxLength="260" FixedLength="false" Unicode="false" />
           <Property Name="DaysSinceLastSale" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="ProfitabilityTier" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="ContributionMargin" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="NetSalesAmount" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PaymentTerm" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="IsNonFbCustomer" Type="Boolean" />
+          <Property Name="BCClassificationCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="addressNumber" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="TaxExemption" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="TaxGrp" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook12" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook14" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook15" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook16" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook17" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook18" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook19" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook20" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook21" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AddressBook22" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="SpecialEquipment" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="CAProtection" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerGroup" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="SPCommisFBType" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="AlliedDiscount" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="CoffeeVolume" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="EquipmentProg" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Special" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="BillAddrType" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="PriceAdjustSchedule" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerStatus" Type="String" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="FreightHandlingCode" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="BranchType" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="OriginalSearchType" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="TECH_HIERARCHY">
           <Key>
@@ -745,6 +833,7 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
           <Property Name="ETAUpdated" Type="Int32" />
           <NavigationProperty Name="WorkorderDetails" Relationship="Self.FK__Workorder__Worko__4C6B5938" FromRole="WorkOrder" ToRole="WorkorderDetails" />
           <NavigationProperty Name="WorkorderSchedules" Relationship="Self.FK__Workorder__Worko__58D1301D" FromRole="WorkOrder" ToRole="WorkorderSchedule" />
+          <NavigationProperty Name="NotesHistories" Relationship="FB_DevModel.FK__NotesHist__Worko__3493CFA7" FromRole="WorkOrder" ToRole="NotesHistory" />
         </EntityType>
         <EntityType Name="WorkorderDetail">
           <Key>
@@ -779,7 +868,7 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
           <Property Name="HardnessRating" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
           <Property Name="TechnicianSignatureDetails" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="CustomerSignatureBy" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="TotalDissolvedSolids" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TotalDissolvedSolids" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="StateofEquipment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ServiceDelayReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="TroubleshootSteps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
@@ -892,7 +981,41 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
             <End Role="WorkOrder" EntitySet="WorkOrders" />
             <End Role="WorkorderSchedule" EntitySet="WorkorderSchedules" />
           </AssociationSet>
+          <EntitySet Name="NotesHistories" EntityType="FB_DevModel.NotesHistory" />
+          <AssociationSet Name="FK__NotesHist__Worko__3493CFA7" Association="FB_DevModel.FK__NotesHist__Worko__3493CFA7">
+            <End Role="WorkOrder" EntitySet="WorkOrders" />
+            <End Role="NotesHistory" EntitySet="NotesHistories" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="NotesHistory">
+          <Key>
+            <PropertyRef Name="NotesID" />
+          </Key>
+          <Property Name="ErfID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="WorkorderID" Type="Int32" />
+          <Property Name="FeastMovementID" Type="Int32" />
+          <Property Name="Userid" Type="Int32" />
+          <Property Name="UserName" Type="String" MaxLength="75" FixedLength="false" Unicode="false" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="AutomaticNotes" Type="Int16" />
+          <Property Name="NotesID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntryDate" Type="DateTime" Precision="0" />
+          <Property Name="NonServiceWorkorderID" Type="Int32" />
+          <Property Name="isDispatchNotes" Type="Int16" />
+          <NavigationProperty Name="WorkOrder" Relationship="FB_DevModel.FK__NotesHist__Worko__3493CFA7" FromRole="NotesHistory" ToRole="WorkOrder" />
+        </EntityType>
+        <Association Name="FK__NotesHist__Worko__3493CFA7">
+          <End Type="FB_DevModel.WorkOrder" Role="WorkOrder" Multiplicity="0..1" />
+          <End Type="FB_DevModel.NotesHistory" Role="NotesHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="WorkOrder">
+              <PropertyRef Name="WorkorderID" />
+            </Principal>
+            <Dependent Role="NotesHistory">
+              <PropertyRef Name="WorkorderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -915,6 +1038,34 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
           <EntitySetMapping Name="Contacts">
             <EntityTypeMapping TypeName="FB_DevModel.Contact">
               <MappingFragment StoreEntitySet="Contact">
+                <ScalarProperty Name="OriginalSearchType" ColumnName="OriginalSearchType" />
+                <ScalarProperty Name="BranchType" ColumnName="BranchType" />
+                <ScalarProperty Name="FreightHandlingCode" ColumnName="FreightHandlingCode" />
+                <ScalarProperty Name="CustomerStatus" ColumnName="CustomerStatus" />
+                <ScalarProperty Name="PriceAdjustSchedule" ColumnName="PriceAdjustSchedule" />
+                <ScalarProperty Name="BillAddrType" ColumnName="BillAddrType" />
+                <ScalarProperty Name="Special" ColumnName="Special" />
+                <ScalarProperty Name="EquipmentProg" ColumnName="EquipmentProg" />
+                <ScalarProperty Name="CoffeeVolume" ColumnName="CoffeeVolume" />
+                <ScalarProperty Name="AlliedDiscount" ColumnName="AlliedDiscount" />
+                <ScalarProperty Name="SPCommisFBType" ColumnName="SPCommisFBType" />
+                <ScalarProperty Name="CustomerGroup" ColumnName="CustomerGroup" />
+                <ScalarProperty Name="CAProtection" ColumnName="CAProtection" />
+                <ScalarProperty Name="SpecialEquipment" ColumnName="SpecialEquipment" />
+                <ScalarProperty Name="AddressBook22" ColumnName="AddressBook22" />
+                <ScalarProperty Name="AddressBook21" ColumnName="AddressBook21" />
+                <ScalarProperty Name="AddressBook20" ColumnName="AddressBook20" />
+                <ScalarProperty Name="AddressBook19" ColumnName="AddressBook19" />
+                <ScalarProperty Name="AddressBook18" ColumnName="AddressBook18" />
+                <ScalarProperty Name="AddressBook17" ColumnName="AddressBook17" />
+                <ScalarProperty Name="AddressBook16" ColumnName="AddressBook16" />
+                <ScalarProperty Name="AddressBook15" ColumnName="AddressBook15" />
+                <ScalarProperty Name="AddressBook14" ColumnName="AddressBook14" />
+                <ScalarProperty Name="AddressBook12" ColumnName="AddressBook12" />
+                <ScalarProperty Name="TaxGrp" ColumnName="TaxGrp" />
+                <ScalarProperty Name="TaxExemption" ColumnName="TaxExemption" />
+                <ScalarProperty Name="addressNumber" ColumnName="addressNumber" />
+                <ScalarProperty Name="BCClassificationCode" ColumnName="BCClassificationCode" />
                 <ScalarProperty Name="ContactID" ColumnName="ContactID" />
                 <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
                 <ScalarProperty Name="Address1" ColumnName="Address1" />
@@ -1291,6 +1442,23 @@ warning 6002: The table/view 'FB_Dev.dbo.Zip' does not have a primary key define
                 <ScalarProperty Name="FIPSCity" ColumnName="FIPSCity" />
                 <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
                 <ScalarProperty Name="TimeZoneName" ColumnName="TimeZoneName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NotesHistories">
+            <EntityTypeMapping TypeName="FB_DevModel.NotesHistory">
+              <MappingFragment StoreEntitySet="NotesHistory">
+                <ScalarProperty Name="isDispatchNotes" ColumnName="isDispatchNotes" />
+                <ScalarProperty Name="NonServiceWorkorderID" ColumnName="NonServiceWorkorderID" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="NotesID" ColumnName="NotesID" />
+                <ScalarProperty Name="AutomaticNotes" ColumnName="AutomaticNotes" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Userid" ColumnName="Userid" />
+                <ScalarProperty Name="FeastMovementID" ColumnName="FeastMovementID" />
+                <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+                <ScalarProperty Name="ErfID" ColumnName="ErfID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
