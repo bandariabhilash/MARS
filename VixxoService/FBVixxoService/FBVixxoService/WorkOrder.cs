@@ -19,6 +19,7 @@ namespace FBVixxoService
         {
             this.WorkorderDetails = new HashSet<WorkorderDetail>();
             this.WorkorderSchedules = new HashSet<WorkorderSchedule>();
+            this.NotesHistories = new HashSet<NotesHistory>();
         }
     
         public int WorkorderID { get; set; }
@@ -136,5 +137,7 @@ namespace FBVixxoService
         public virtual ICollection<WorkorderDetail> WorkorderDetails { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<WorkorderSchedule> WorkorderSchedules { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NotesHistory> NotesHistories { get; set; }
     }
 }
