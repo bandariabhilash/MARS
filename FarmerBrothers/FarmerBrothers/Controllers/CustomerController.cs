@@ -32,13 +32,14 @@ namespace FarmerBrothers.Controllers
                 {
                     customerModel = new CustomerModel(customers[0], FarmerBrothersEntitites);
                     customerModel = Utility.PopulateCustomerWithZonePriorityDetails(FarmerBrothersEntitites, customerModel);
-                    customerModel.PhoneNumber = Utility.FormatPhoneNumber(customers[0].PhoneWithAreaCode);
+                    customerModel.PhoneNumber = Utility.FormatPhoneNumber(customers[0].PhoneWithAreaCode);                    
                     billingCode = customers[0].BillingCode;
 
                     CurrentTime = Utility.GetCurrentTime(customers[0].PostalCode, FarmerBrothersEntitites);
                 }
             }
             customerModel.WorkOrderId = "1";
+            customerModel.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, false);
             IQueryable<WorkOrder> workOrders = FarmerBrothersEntitites.Set<WorkOrder>().Where(w => w.CustomerID == id).OrderByDescending(w => w.WorkorderID);
             customerModel.ServiceHistory = new List<ServiceHistoryModel>();
             foreach (WorkOrder workOrder in workOrders)

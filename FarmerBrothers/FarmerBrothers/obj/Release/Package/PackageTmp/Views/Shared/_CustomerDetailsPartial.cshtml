@@ -139,32 +139,47 @@
             }
         });
 
-        ParentNumberTxtBoxAccess(); //Initially when the Event is opened, to mark the checkbox
+        //ParentNumberTxtBoxAccess(); //Initially when the Event is opened, to mark the checkbox
 
     });
 
-    function ParentNumberTxtBoxAccess()
-    {
-        var val = $(".IsNonFBCustomerChk").is(":checked");
-        if(val == true)
-        {
-            var nonFBCustomerName = $(".nonFbCustomerList").val();
-            if(nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a')
-            {
-                AlertPopup( "|Please Select NonFBCustomer from the Dropdown list" );
-                return false;
-            }
-            else
-            {
-                var nonFNCustomerParentId = nonFBCustomerName;
-                $("#ParentNumber").prop('readonly', true).val(nonFNCustomerParentId);
-            }
+    //function ParentNumberTxtBoxAccess()
+    //{
+    //    var val = $(".IsNonFBCustomerChk").is(":checked");
+    //    if(val == true)
+    //    {
+    //        var nonFBCustomerName = $(".nonFbCustomerList").val();
+    //        if(nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a')
+    //        {
+    //            AlertPopup( "|Please Select NonFBCustomer from the Dropdown list" );
+    //            return false;
+    //        }
+    //        else
+    //        {
+    //            var nonFNCustomerParentId = nonFBCustomerName;
+    //            $("#ParentNumber").prop('readonly', true).val(nonFNCustomerParentId);
+    //        }
+    //    }
+    //    else
+    //    {
+    //        $("#ParentNumber").prop('readonly', false).val("");
+    //        $(".nonFbCustomerList").val("n/a");
+    //    }
+    //}
+
+    function ParentNumberTxtBoxAccess() {
+        var nonFBCustomerName = $(".nonFbCustomerList").val();
+
+        if (nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a') {
+           // AlertPopup("|Please Select NonFBCustomer from the Dropdown list");
+            //return false;
+            $("#ParentNumber").prop('readonly', false).val('');
         }
-        else
-        {
-            $("#ParentNumber").prop('readonly', false).val("");
-            $(".nonFbCustomerList").val("n/a");
+        else {
+            var nonFNCustomerParentId = nonFBCustomerName;
+            $("#ParentNumber").prop('readonly', true).val(nonFNCustomerParentId);
         }
+
     }
 
     function ValidateCustomerModel()
@@ -262,7 +277,7 @@
 
     function NonFbCustomerChange()
     {
-        ParentNumberTxtBoxAccess();
+        //ParentNumberTxtBoxAccess();
     }
 
     //function PhoneValidation(evt) {
@@ -275,12 +290,11 @@
     //}
 
     function NonFBCustomerChangefunc(val) {
-
         if ($.trim(val).length != 0) {
+            //$(".IsNonFBCustomerChk").attr(":checked", true);
             ParentNumberTxtBoxAccess();
         }
         else {
-          
         }
     }
 </script>
@@ -301,15 +315,16 @@
             <div class="col-md-4 customer-col1 customer sm-pad-reset">
                 @if (Model.unknownCustomer || Model.CustomerId == null)
                 {
-                    <div class="col-xs-6-o">
-                        <span class="col-md-5">Is Non-FB Customer: </span>
-                        <span class="col-md-7">
-                            <div class="form-group">
-                                <input @(Convert.ToBoolean(Model.IsNonFBCustomer) == true ? "checked='checked'" : string.Empty) type="checkbox"
-                                       onchange="NonFbCustomerChange()" class="IsNonFBCustomerChk" />
-                            </div>
-                        </span>
+                    @*<div class="col-xs-6-o" style="display:none;">
+                <span class="col-md-5">Is Non-FB Customer: </span>
+                <span class="col-md-7">
+                    <div class="form-group">
+                        <input @(Convert.ToBoolean(Model.IsNonFBCustomer) == true ? "checked='checked'" : string.Empty) type="checkbox"
+                               onchange="NonFbCustomerChange()" class="IsNonFBCustomerChk" name="IsNonFBCustomerChk"/>
                     </div>
+                </span>
+            </div>*@
+
                     <div class="col-xs-6-o">
                         <span class="col-md-5">Non-FB Customer:</span>
                         <span class="col-md-7">
@@ -327,23 +342,27 @@
                         </span>
                     </div>
                 }
-                <div class="col-xs-6-o">
-                    <span class="col-md-5">Account Number:</span>
-                    <span class="col-md-7">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <div>@Html.ValueFor(c => c.CustomerId)</div>
-                                @Html.HiddenFor(c => c.CustomerId)
+
+                @if (!string.IsNullOrEmpty(Model.CustomerId))
+                {
+                    <div class="col-xs-6-o">
+                        <span class="col-md-5">Account Number:</span>
+                        <span class="col-md-7">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div>@Html.ValueFor(c => c.CustomerId)</div>
+                                    @Html.HiddenFor(c => c.CustomerId)
+                                </div>
                             </div>
-                        </div>
-                        @*<div class="col-md-8">
-                            <div>@Model.CurrentTime</div>
-                            <div>@Model.CustomerTimeZone</div>
-                        </div>*@
-                    </span>
-                </div>
+                            @*<div class="col-md-8">
+                        <div>@Model.CurrentTime</div>
+                        <div>@Model.CustomerTimeZone</div>
+                    </div>*@
+                        </span>
+                    </div>
+                }
                 <div class="col-sm-6-o">
-                    <span class="col-md-5">Customer Name:</span>
+                    <span class="col-md-5 required">Customer Name:</span>
                     <div class="col-md-7">
                         <div class="form-group">
                             @if ((Model.CustomerName != null && Model.CustomerName.ToLower().Contains("-cm"))
@@ -418,10 +437,10 @@
                     <div class="col-sm-6-o">
                         <span class="col-md-5 required">Phone Number:</span>
                         @*<div class="col-md-3">
-                            <div class="form-group">
-                                @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control CustomerData inputFields @style = "margin-left:20px" " })
-                            </div>
-                        </div>*@
+                    <div class="form-group">
+                        @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control CustomerData inputFields @style = "margin-left:20px" " })
+                    </div>
+                </div>*@
                         <div class="col-md-7">
                             <div class="form-group">
                                 @Html.TextBoxFor(c => c.PhoneNumber, new { @class = "form-control CustomerData inputFields" })
@@ -446,10 +465,10 @@
                     <div class="col-sm-6-o">
                         <span class="col-md-5">Phone Number:</span>
                         @*<div class="col-md-3">
-                            <div class="form-group">
-                                @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control CustomerData inputFields @style = "margin-left:20px" " })
-                            </div>
-                        </div>*@
+                    <div class="form-group">
+                        @Html.TextBoxFor(c => c.AreaCode, new { @class = "form-control CustomerData inputFields @style = "margin-left:20px" " })
+                    </div>
+                </div>*@
                         <div class="col-md-7">
                             <div class="form-group">
                                 @Html.TextBoxFor(c => c.PhoneNumber, new { @class = "form-control CustomerData inputFields" })

@@ -471,13 +471,17 @@ namespace FarmerBrothers.Models
                 CustomerZipCode = customer.PostalCode;
                 CustomerID = workOrder.CustomerID;
                 SearchInNonServiceWorkOrder = true;
+                WorkorderCallstatus = workOrder.NonServiceEventStatus;
+                CallTypeID = FarmerBrothersEntities.FBCallReasons.Where(c => c.SourceCode == workOrder.CallReason).Select(s => s.Description).FirstOrDefault();
 
                 WorkorderEntryDate = workOrder.CreatedDate == null ? null : workOrder.CreatedDate.ToString();
 
                 if (workOrder.CreatedDate.HasValue)
                 {
+                    DateTime currentTime = Utility.GetCurrentTime(customer.PostalCode, FarmerBrothersEntities);
+
                     //WorkorderEntryDate = workOrder.WorkorderEntryDate.Value.ToString("MM/dd/yyyy hh:mm tt");
-                    TimeSpan elapsedTime = DateTime.Now.Subtract(workOrder.CreatedDate.Value);
+                    TimeSpan elapsedTime = currentTime.Subtract(workOrder.CreatedDate.Value);
                     ElapsedTime = string.Format("{0}:{1}:{2}", elapsedTime.Days, elapsedTime.Hours, elapsedTime.Minutes);
                 }
 

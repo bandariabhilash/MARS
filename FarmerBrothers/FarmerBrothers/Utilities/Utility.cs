@@ -488,14 +488,20 @@ namespace FarmerBrothers.Utilities
             return csList;
         }
 
-        public static IList<NonFBCustomer> GetNonFBCustomers(FarmerBrothersEntities FarmerBrothersEntitites)
+        public static IList<NonFBCustomer> GetNonFBCustomers(FarmerBrothersEntities FarmerBrothersEntitites, bool isNewEvent)
         {
             IList<NonFBCustomer> nonFBCustomers = FarmerBrothersEntitites.NonFBCustomers.ToList();
+            if(isNewEvent)
+            {
+                nonFBCustomers = nonFBCustomers.Where(n => n.IsActive == true).ToList();
+            }
 
             foreach(NonFBCustomer nonFbCust in nonFBCustomers)
             {
                 nonFbCust.NonFBCustomerName = nonFbCust.NonFBCustomerName + " - " + nonFbCust.NonFBCustomerId;
             }
+
+            nonFBCustomers = nonFBCustomers.OrderBy(o => o.NonFBCustomerName).ToList();
 
             NonFBCustomer blankState = new NonFBCustomer() { Id = -1, NonFBCustomerId = "n/a", NonFBCustomerName = "Please Select" };
             nonFBCustomers.Insert(0, blankState);

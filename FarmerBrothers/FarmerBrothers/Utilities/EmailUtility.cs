@@ -201,6 +201,25 @@ namespace FarmerBrothers.Utilities
                     }
                 };
 
+                string replyToAddress = ConfigurationManager.AppSettings["DispatchMailReplyToAddress"].ToString();
+                List<Recipient> replyToRecipients = new List<Recipient>();
+                if (!string.IsNullOrEmpty(replyToAddress))
+                {
+                    string[] replyToMail = replyToAddress.Split(';');
+                    int j = 0;
+                    for (j = 0; j < replyToMail.Count(); j++)
+                    {
+                        if (string.IsNullOrEmpty(replyToMail[j])) continue;
+
+                        Recipient replyToRecipient = new Recipient();
+                        EmailAddress replyToEmailAddress = new EmailAddress();
+
+                        replyToEmailAddress.Address = replyToMail[j];
+                        replyToRecipient.EmailAddress = replyToEmailAddress;
+                        replyToRecipients.Add(replyToRecipient);
+                    }
+                }
+
                 var mailMessage = new Message
                 {
                     Subject = subject,
@@ -212,8 +231,8 @@ namespace FarmerBrothers.Utilities
                     },
                     ToRecipients = toRecipients,
                     CcRecipients = ccRecipients,
-                    Attachments = attachments
-
+                    Attachments = attachments,
+                    ReplyTo = replyToRecipients
                 };
                 // Send mail as the given user. 
                 graphServiceClient

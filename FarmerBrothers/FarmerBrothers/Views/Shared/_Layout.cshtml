@@ -160,30 +160,48 @@
                                 (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
                                 if (Session["TechId"] != null)// && UserPrivilege["Call Closure"] != "No-Permission")
                                 {
-                                    if (UserPrivilege["Customer"] != "No-Permission" || UserPrivilege["ERFNew"] == "Full")
+                                    @*if (Session["TechType"].ToString().ToLower() == "internaltech")
                                     {
-                                        <li>@Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" })</li>
+                                        <li> @Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" }) </li>
+                                        <li> @Html.ActionLink("CALL CLOSURE", "CallClosure", "CallClosure", null, new { @Id = "CallClosureLink" }) </li>
+                                        <li> @Html.ActionLink("WORK ORDER", "WorkorderSearch", "Workorder", null, new { @Id = "WorkOrderLink" }) </li>
+                                        if (UserPrivilege["ERF"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("ERF", "ERFSearch", "ERF", null, new { @Id = "ErfLink" }) </li>
+                                        }
+                                        if (UserPrivilege["Reports"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" }) </li>
+                                        }
+                                        <li> @Html.ActionLink("TECHNICIAN SCHEDULE", "Calendar", "TechnicianCalendar", null, null) </li>
                                     }
-                                    if (UserPrivilege["Call Closure"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("CALL CLOSURE", "CallClosure", "CallClosure", null, new { @Id = "CallClosureLink" })</li>
+                                    else
+                                    {*@
+                                        if (UserPrivilege["Customer"] != "No-Permission" || UserPrivilege["ERFNew"] == "Full")
+                                        {
+                                            <li> @Html.ActionLink("CUSTOMER", "CustomerSearch", "CustomerSearch", null, new { @Id = "CustomerLink" }) </li>
+                                        }
+                                        if (UserPrivilege["Call Closure"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("CALL CLOSURE", "CallClosure", "CallClosure", null, new { @Id = "CallClosureLink" }) </li>
+                                        }
+                                        if (UserPrivilege["Work Order"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("WORK ORDER", "WorkorderSearch", "Workorder", null, new { @Id = "WorkOrderLink" }) </li>
+                                        }
+                                        if (UserPrivilege["ERF"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("ERF", "ERFSearch", "ERF", null, new { @Id = "ErfLink" }) </li>
+                                        }
+                                        if (UserPrivilege["Reports"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" }) </li>
+                                        }
+                                        if (UserPrivilege["Technician Schedule"] != "No-Permission")
+                                        {
+                                            <li> @Html.ActionLink("TECHNICIAN SCHEDULE", "Calendar", "TechnicianCalendar", null, null) </li>
                                     }
-                                    if (UserPrivilege["Work Order"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("WORK ORDER", "WorkorderSearch", "Workorder", null, new { @Id = "WorkOrderLink" })</li>
-                                    }
-                                    if (UserPrivilege["ERF"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("ERF", "ERFSearch", "ERF", null, new { @Id = "ErfLink" })</li>
-                                    }
-                                    if (UserPrivilege["Reports"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("REPORTS", "AllReports", "Reports", null, new { @Id = "ReportLink" })</li>
-                                    }
-                                    if (UserPrivilege["Technician Schedule"] != "No-Permission")
-                                    {
-                                        <li>@Html.ActionLink("TECHNICIAN SCHEDULE", "Calendar", "TechnicianCalendar", null, null)</li>
-                                    }
+                                    //}
                                 }
                                 @*else if (Session["IsERFUser"] != null && Convert.ToInt32(Session["IsERFUser"]) == 1)
             {
@@ -221,7 +239,7 @@
 
                                 if ((UserPrivilege["Unknown Customer"] != "No-Permission" && UserPrivilege["Work Order"] != "No-Permission") ||
                                      UserPrivilege["Reopen Work Order"] != "No-Permission" ||
-                                     UserPrivilege["Technician Schedule"] != "No-Permission" ||
+                                     //UserPrivilege["Technician Schedule"] != "No-Permission" ||
                                      UserPrivilege["User Maintenance"] != "No-Permission" ||
                                      UserPrivilege["Holiday List Maintenance"] != "No-Permission" ||
                                      UserPrivilege["Customer Notes"] != "No-Permission" ||
@@ -243,9 +261,9 @@
                                                 <li>@Html.ActionLink("Reopen Work Order", "ReopenWorkOrder", "ReopenWorkOrder", null, new { @Id = "workOrderId" })</li>
                                             }
                                             @*@if (UserPrivilege["Technician Schedule"] != "No-Permission")
-        {
-            <li>@Html.ActionLink("Technician Schedule", "Calendar", "TechnicianCalendar", null, null)</li>
-        }*@
+                        {
+                            <li>@Html.ActionLink("Technician Schedule", "Calendar", "TechnicianCalendar", null, null)</li>
+                        }*@
                                             @if (UserPrivilege["User Maintenance"] != "No-Permission")
                                             {
                                                 <li>@Html.ActionLink("User Maintenance", "UserSearch", "User", null, null)</li>

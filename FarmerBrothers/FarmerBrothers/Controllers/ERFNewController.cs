@@ -168,7 +168,9 @@ namespace FarmerBrothers.Controllers
                     erfManagementModel.Customer.ServiceLevelDesc = " - ";
                 }
             }
-            
+
+            erfManagementModel.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, true);
+
             IQueryable<string> productNum = FarmerBrothersEntitites.FBExpendables.Select(s => s.ProdNo).Distinct();
             erfManagementModel.ErfAssetsModel.ErfExpendableProducts = new List<ExpendableProduct>();
             foreach (string type in productNum)

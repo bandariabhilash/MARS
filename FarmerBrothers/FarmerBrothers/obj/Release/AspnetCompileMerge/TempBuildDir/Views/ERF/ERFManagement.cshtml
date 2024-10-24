@@ -767,6 +767,8 @@
                 </div>
             </section>
 
+                                    FarmerBrothersEntities entity = new FarmerBrothersEntities();
+                                    Model.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(entity, false);
             @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
 
             <section class="block">

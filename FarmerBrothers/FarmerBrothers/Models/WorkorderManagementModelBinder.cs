@@ -873,10 +873,14 @@ namespace FarmerBrothers.Models
             model.Notes.Notes = request.Unvalidated.Form.Get("Notes");
             model.Notes.FollowUpRequestID = request.Unvalidated.Form.Get("FollowUpRequestID");
             model.callReason = request.Unvalidated.Form.Get("callReason");
+            model.ResolutionCallerName = request.Unvalidated.Form.Get("ResolutionCallerName");
+            //model.ClosureNotes = request.Unvalidated.Form.Get("ClosureNotes");
 
             model.CallerName = request.Unvalidated.Form.Get("CallerName");
             model.CallBack = request.Unvalidated.Form.Get("CallBack");
 
+            if (!string.IsNullOrWhiteSpace(request.Form["CloseCall"]))
+                model.CloseCall = request.Form["CloseCall"].Contains("true");
 
             string IsAutoDispatchedCheckValue = "false";
             if (request.Unvalidated.Form.Get("IsAutoDispatched") != null)

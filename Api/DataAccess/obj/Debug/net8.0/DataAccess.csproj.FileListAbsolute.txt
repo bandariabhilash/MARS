@@ -1,0 +1,15 @@
+D:\Projects\GIT\MARS\Api\DataAccess\bin\Debug\net8.0\DataAccess.deps.json
+D:\Projects\GIT\MARS\Api\DataAccess\bin\Debug\net8.0\DataAccess.runtimeconfig.json
+D:\Projects\GIT\MARS\Api\DataAccess\bin\Debug\net8.0\DataAccess.dll
+D:\Projects\GIT\MARS\Api\DataAccess\bin\Debug\net8.0\DataAccess.pdb
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.csproj.AssemblyReference.cache
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.AssemblyInfoInputs.cache
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.AssemblyInfo.cs
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.csproj.CoreCompileInputs.cache
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.sourcelink.json
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.dll
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\refint\DataAccess.dll
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.pdb
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\DataAccess.genruntimeconfig.cache
+D:\Projects\GIT\MARS\Api\DataAccess\obj\Debug\net8.0\ref\DataAccess.dll

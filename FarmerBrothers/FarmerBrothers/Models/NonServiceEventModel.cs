@@ -45,8 +45,12 @@ namespace FarmerBrothers.Models
 
         public string Status { get; set; }
         public Nullable<System.DateTime> CloseDate { get; set; }
+        public string ClosedBy { get; set; }
+        public bool CloseCall { get; set; }
 
         public string MainContatName { get; set; }
         public string PhoneNumber { get; set; }
+        public string ResolutionCallerName { get; set; }
+        public string ClosureNotes { get; set; }
     }
 }

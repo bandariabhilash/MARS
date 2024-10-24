@@ -1,0 +1,7 @@
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.csproj.AssemblyReference.cache
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.GeneratedMSBuildEditorConfig.editorconfig
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.AssemblyInfoInputs.cache
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.AssemblyInfo.cs
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.csproj.CoreCompileInputs.cache
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.MvcApplicationPartsAssemblyInfo.cache
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Debug\net6.0\ServiceApis.sourcelink.json

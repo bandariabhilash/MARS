@@ -141,15 +141,24 @@ namespace FarmerBrothers.Controllers
             if (workOrderId.HasValue)
             {
                 nse.WorkOrderID = Convert.ToInt32(workOrderId);
-                int userid = Convert.ToInt32((FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).Select(us => us.CreatedBy)).FirstOrDefault());
+                NonServiceworkorder nswo = FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).FirstOrDefault();
+
+                int userid = Convert.ToInt32(nswo.CreatedBy);
                 nse.CreatedBy = FarmerBrothersEntitites.FbUserMasters.Where(u => u.UserId == userid).Select(n => n.FirstName).FirstOrDefault();
-                nse.CreatedDate = (FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).Select(us => us.CreatedDate)).FirstOrDefault();
-                nse.CallerName = (FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).Select(us => us.CallerName)).FirstOrDefault();
-                nse.CallBack = Utility.FormatPhoneNumber((FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).Select(us => us.CallBack)).FirstOrDefault());
-                nse.CloseDate = (FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).Select(us => us.CloseDate)).FirstOrDefault();
-                nse.Status = (FarmerBrothersEntitites.NonServiceworkorders.Where(w => w.WorkOrderID == workOrderId).Select(us => us.NonServiceEventStatus)).FirstOrDefault();
+
+                nse.CreatedDate = nswo.CreatedDate;
+                nse.CallerName = nswo.CallerName;
+                nse.CallBack = Utility.FormatPhoneNumber(nswo.CallBack);
+                nse.CloseDate = nswo.CloseDate;
+                nse.Status = nswo.NonServiceEventStatus;
+                nse.CloseCall = nswo.NonServiceEventStatus?.ToLower() == "closed" ? true : false;
+                nse.ResolutionCallerName = nswo.ResolutionCallerName;
+
+                int closedUserid = nswo.ClosedBy.HasValue ? Convert.ToInt32(nswo.ClosedBy) : 0;
+                nse.ClosedBy = FarmerBrothersEntitites.FbUserMasters.Where(u => u.UserId == closedUserid).Select(n => n.FirstName).FirstOrDefault();
 
                 nse.Customer.TotalCallsCount = CustomerModel.GetCallsTotalCount(FarmerBrothersEntitites, customerId.ToString());
+                nse.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, false);
 
                 Contact serviceCustomer = FarmerBrothersEntitites.Contacts.Where(x => x.ContactID == (int)customerId).FirstOrDefault();
                 if (serviceCustomer != null)
@@ -179,6 +188,24 @@ namespace FarmerBrothers.Controllers
                 //    nse.Notes.RecordHistory.Add(new NotesHistoryModel(recordHistory));
                 //}
 
+
+                //To display the Inactive Codes if any for the old events
+                if (!string.IsNullOrEmpty(nswo.CallReason))
+                {
+                    FBCallReason inavtiveFBReason = FarmerBrothersEntitites.FBCallReasons.Where(c => c.SourceCode == nswo.CallReason).FirstOrDefault();
+
+                    FBCallReason existingCallReason = nse.FBCallReasons.Where(w => w.SourceCode == nswo.CallReason).FirstOrDefault();
+                    if (existingCallReason == null)
+                    {
+                        inavtiveFBReason.Description = inavtiveFBReason.SourceCode + " - " + inavtiveFBReason.Description;
+                        nse.FBCallReasons.Add(inavtiveFBReason);
+                    }
+                }
+
+            }
+            else
+            {
+                nse.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, true);
             }
 
             nse.Notes.CustomerNotesResults = new List<CustomerNotesModel>();
@@ -204,7 +231,7 @@ namespace FarmerBrothers.Controllers
             NonServiceworkorder workOrder = null;
             string message = string.Empty;
             bool isValid = true;
-            if (IsNotesRequired(NonService.callReason))
+            //if (IsNotesRequired(NonService.callReason))
             {
                 if (NonService.NewNotes.Count <= 0)
                 {
@@ -238,8 +265,15 @@ namespace FarmerBrothers.Controllers
                 isValid = false;
             }
 
+            if (string.IsNullOrEmpty(NonService.Customer.CustomerName))
+            {
+                message = @"|Please Enter Customer Name!";
+                returnValue = -1;
+                isValid = false;
+            }
+
             //if (string.IsNullOrEmpty(NonService.Customer.MainContactName) || (NonService.Customer.MainContactName != null && string.IsNullOrEmpty(NonService.Customer.MainContactName.Trim())))
-            if(string.IsNullOrEmpty(NonService.CallerName) || (NonService.CallerName != null && string.IsNullOrEmpty(NonService.CallerName.Trim())))
+            if (string.IsNullOrEmpty(NonService.CallerName) || (NonService.CallerName != null && string.IsNullOrEmpty(NonService.CallerName.Trim())))
             {
                 message = @"|Please Enter Main Caller Name!";
                 returnValue = -1;
@@ -264,6 +298,22 @@ namespace FarmerBrothers.Controllers
                 }
             }
 
+            if (NonService.CloseCall)
+            {
+                if (string.IsNullOrEmpty(NonService.ResolutionCallerName))
+                {
+                    message = @"|Please Enter Resolution Caller name!";
+                    returnValue = -1;
+                    isValid = false;
+                }
+            }
+
+            bool isNewEvent = true;
+            if(NonService.WorkOrderID > 0)
+            {
+                isNewEvent = false;
+            }
+
             if (isValid == true)
             {
                 returnValue = NonServiceWorkOrderSave(NonService, customerdata, out workOrder, out message);
@@ -281,7 +331,10 @@ namespace FarmerBrothers.Controllers
             {
                 if (returnValue >= 0)
                 {
-                    SendMail(NonService.WorkOrderID, FarmerBrothersEntitites);
+                    if (isNewEvent)
+                    {
+                        SendMail(NonService.WorkOrderID, FarmerBrothersEntitites);
+                    }
 
                     var redirectUrl = string.Empty;
                     if (Request != null)
@@ -319,6 +372,24 @@ namespace FarmerBrothers.Controllers
             {
                 try
                 {
+                    if (!string.IsNullOrEmpty(customerdata.NonFBCustomerNumber) && customerdata.NonFBCustomerNumber.ToUpper() != "N/A")
+                    {
+                        NonFBCustomer nonfbCust = customerdata.NonFBCustomerList.Where(c => c.NonFBCustomerId == customerdata.NonFBCustomerNumber).FirstOrDefault();
+                        if (nonfbCust != null)
+                        {
+                            customerdata.IsNonFBCustomer = true;
+                        }
+                        else
+                        {
+                            customerdata.IsNonFBCustomer = false;
+                        }
+                    }
+                    else
+                    {
+                        customerdata.IsNonFBCustomer = false;
+                    }
+
+
                     NonService.Customer = customerdata;
                     NonServiceworkorder nsw = new NonServiceworkorder();
                     
@@ -357,6 +428,37 @@ namespace FarmerBrothers.Controllers
                         nsw.MainContactName = NonService.Customer.MainContactName;
                         nsw.PhoneNumber = NonService.Customer.PhoneNumber;
 
+                        if (NonService.CloseCall)
+                        {
+                            nsw.NonServiceEventStatus = "Closed";
+                            nsw.CloseDate = currentTime;
+                            nsw.ClosedBy = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234;
+                            nsw.ResolutionCallerName = NonService.ResolutionCallerName;
+
+                            
+                            NotesHistory closurenotesHistory = new NotesHistory()
+                            {
+                                AutomaticNotes = 0,
+                                EntryDate = currentTime,
+                                Notes = "Closure Notes : " + NonService.ClosureNotes,
+                                Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                                UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
+                                NonServiceWorkorderID = counter.IndexValue.Value
+                            };
+                            FarmerBrothersEntitites.NotesHistories.Add(closurenotesHistory);
+
+                            NotesHistory newnotesHistory = new NotesHistory()
+                            {
+                                AutomaticNotes = 1,
+                                EntryDate = currentTime,
+                                Notes = "Customer Service Event Closed Successfully",
+                                Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                                UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
+                                NonServiceWorkorderID = counter.IndexValue.Value
+                            };
+                            FarmerBrothersEntitites.NotesHistories.Add(newnotesHistory);
+                        }
+
                         FarmerBrothersEntitites.NonServiceworkorders.Add(nsw);
                         workOrder = nsw;
                         NonService.WorkOrderID = nsw.WorkOrderID;
@@ -384,6 +486,26 @@ namespace FarmerBrothers.Controllers
                         nswsave.IsAutoDispatched = NonService.Notes.IsAutoDispatched;
                         nswsave.CallerName = NonService.CallerName;
                         nswsave.CallBack = NonService.CallBack;
+
+                        if (NonService.CloseCall)
+                        {
+                            nswsave.NonServiceEventStatus = "Closed";
+                            nswsave.CloseDate = currentTime;
+                            nswsave.ClosedBy = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234;
+                            nswsave.ResolutionCallerName = NonService.ResolutionCallerName;
+
+                            NotesHistory newnotesHistory = new NotesHistory()
+                            {
+                                AutomaticNotes = 1,
+                                EntryDate = currentTime,
+                                Notes = "Customer Service Event Closed Successfully",
+                                Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                                UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
+                                NonServiceWorkorderID = NonService.WorkOrderID
+                            };
+                            FarmerBrothersEntitites.NotesHistories.Add(newnotesHistory);
+                        }
+
                         FarmerBrothersEntitites.SaveChanges();
                     }
                     
@@ -396,7 +518,7 @@ namespace FarmerBrothers.Controllers
                         {
                             AutomaticNotes = 0,
                             EntryDate = currentTime,
-                            Notes = newNotesModel.Text,
+                            Notes = NonService.CloseCall ? ("Closure Notes : " + newNotesModel.Text) : newNotesModel.Text,
                             Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234, 
                             UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
                             NonServiceWorkorderID = workOrder.WorkOrderID
@@ -404,6 +526,7 @@ namespace FarmerBrothers.Controllers
                         FarmerBrothersEntitites.NotesHistories.Add(newnotesHistory);
 
                     }
+
                     returnValue = FarmerBrothersEntitites.SaveChanges();
                 }
                 catch (Exception ex)
@@ -1053,7 +1176,6 @@ namespace FarmerBrothers.Controllers
 
             }
 
-            
             bool result = true;
             if (!string.IsNullOrWhiteSpace(mailTo))
             {
@@ -1079,6 +1201,17 @@ namespace FarmerBrothers.Controllers
                                 if (!string.IsNullOrWhiteSpace(bccaddress))
                                 {
                                     message.Bcc.Add(new MailAddress(bccaddress));
+                                }
+                            }
+
+                            string replyToAddress = ConfigurationManager.AppSettings["DispatchMailReplyToAddress"].ToString();
+                            string[] ReplyToAddresses = replyToAddress.Split(';');
+                            foreach (string replytoadd in ReplyToAddresses)
+                            {
+                                if (replytoadd.ToLower().Contains("@jmsmucker.com")) continue;
+                                if (!string.IsNullOrWhiteSpace(replytoadd))
+                                {
+                                    message.ReplyToList.Add(new MailAddress(replytoadd));
                                 }
                             }
 

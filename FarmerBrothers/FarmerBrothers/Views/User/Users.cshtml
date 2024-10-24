@@ -1155,8 +1155,8 @@
                 </div>
             </div>
             <div id="btns">
-                @Html.EJ().Button("save").Text("save").ShowRoundedCorner(true).CssClass("btn-primary").ClientSideEvents(e => e.Click("onsave"))
-                @Html.EJ().Button("cancel").Text("cancel").ShowRoundedCorner(true).CssClass("btn-orange").ClientSideEvents(e => e.Click("oncancel"))
+                @Html.EJ().Button("save").Text("Save").ShowRoundedCorner(true).CssClass("btn-primary").ClientSideEvents(e => e.Click("onsave"))
+                @Html.EJ().Button("cancel").Text("Cancel").ShowRoundedCorner(true).CssClass("btn-orange").ClientSideEvents(e => e.Click("oncancel"))
             </div>
         </div>).Target("#UserDetails").ClientSideEvents(evt => evt.Close("onDialogClose")).Render();}
 

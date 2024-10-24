@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>D:\Projects\Deployment\FBServiceAPI_Publish</_PublishTargetUrl>
+    <History>True|2024-10-17T07:25:41.0598450Z;True|2024-10-17T12:20:43.5593951+05:30;True|2024-10-16T22:41:38.1143571+05:30;True|2024-10-16T21:07:43.8731472+05:30;True|2024-10-16T20:08:12.9981725+05:30;True|2024-10-16T14:07:21.1165122+05:30;True|2024-10-16T11:34:17.4573273+05:30;True|2024-10-15T18:09:52.7299110+05:30;True|2024-10-15T14:11:12.0625484+05:30;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

@@ -38,5 +38,8 @@ namespace FarmerBrothers.Models
         public string EmailSentTo { get; set; }
         public string Notes { get; set; }
         public string CreatedUserName { get; set; }
+        public string ClosedBy { get; set; }
+        public string ResolutionCallerName { get; set; }
+        public string ClosureNotes { get; set; }
     }
 }

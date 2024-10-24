@@ -4,6 +4,7 @@
     ViewBag.Title = "ERF Details";
 }
 
+@using FarmerBrothers.Data;
 @using Newtonsoft.Json;
 @using FarmerBrothers.Models;
 
@@ -144,7 +145,7 @@
 
     });
 
-   
+
 
     function SetErfSaveOperation( operation )
     {
@@ -192,15 +193,15 @@
                     <div class="col-md-2">
                     </div>
                     @{
-    Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
-    ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
-    (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
-    if (UserPrivilege["ERF"] == "Edit-Only" || UserPrivilege["ERF"] == "Full")
-    {
-        <div class="col-md-4">
-            <button type="submit" style="display: inline-block;margin-right:5px;float:right;" class="btn btn-primary" onclick="SetErfSaveOperation(1);" name="action:ErfSave">Save</button>
-        </div>
-    }
+                        Dictionary<string, string> UserPrivilege = (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]] == null
+                        ? Security.GetUserPrivilegeByUserId((int)System.Web.HttpContext.Current.Session["UserId"], null) :
+                        (Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + (int)System.Web.HttpContext.Current.Session["UserId"]];
+                        if (UserPrivilege["ERF"] == "Edit-Only" || UserPrivilege["ERF"] == "Full")
+                        {
+                            <div class="col-md-4">
+                                <button type="submit" style="display: inline-block;margin-right:5px;float:right;" class="btn btn-primary" onclick="SetErfSaveOperation(1);" name="action:ErfSave">Save</button>
+                            </div>
+                        }
                     }
 
                     <div class="col-md-4">
@@ -210,6 +211,9 @@
             </div>
         </div>
     </section>
+
+    FarmerBrothersEntities entity = new FarmerBrothersEntities();
+    Model.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(entity, false);
 
     @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
 

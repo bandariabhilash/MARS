@@ -1,0 +1,911 @@
+﻿@model NewcoCall.Models.CustomerServiceModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    .no-spinners {
+        -moz-appearance: textfield;
+    }
+
+        .no-spinners::-webkit-outer-spin-button,
+        .no-spinners::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+    .vl {
+        border-left: 0.1em solid #c62e0e;
+        height: 50em;
+    }
+
+    .clover-footer {
+        display: none;
+    }
+
+    #acctNumTxt {
+        margin-bottom: 10px;
+    }
+
+    .required:after {
+        content: "*";
+        color: red;
+    }
+
+
+    textarea {
+        width: 100%;
+        height: 110px;
+        border: 1px solid #cccccc;
+    }
+
+    .popup {
+        width: 100%;
+        height: 100%;
+        display: none;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        background: rgba(0,0,0,0.75);
+        z-index: 99999;
+    }
+
+    /* Inner */
+    .popup-inner {
+        max-width: 700px;
+        padding: 10px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        box-shadow: 0px 2px 6px rgba(0,0,0,1);
+        border-radius: 3px;
+        background: #fff;
+    }
+
+    /* Close Button */
+    .popup-close {
+        width: 30px;
+        height: 30px;
+        padding-top: 4px;
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        transition: ease 0.25s all;
+        -webkit-transform: translate(50%, -50%);
+        transform: translate(50%, -50%);
+        border-radius: 1000px;
+        background: rgba(0,0,0,0.8);
+        font-family: Arial, Sans-Serif;
+        font-size: 20px;
+        text-align: center;
+        line-height: 100%;
+        color: #fff;
+    }
+
+        .popup-close:hover {
+            -webkit-transform: translate(50%, -50%) rotate(180deg);
+            transform: translate(50%, -50%) rotate(180deg);
+            background: rgba(0,0,0,1);
+            text-decoration: none;
+        }
+
+    button {
+        background-color: #101E54 !important;
+    }
+    select {
+        -webkit-appearance: listbox !important;
+    }
+</style>
+<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
+<script src="https://checkout.sandbox.dev.clover.com/sdk.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#evetTxt").hide();
+        $(".quoteField").hide();
+
+        $("#DateNeeded").ejDatePicker({  }); /*{ value: new Date() }*/
+
+        $("input[name='IsExistingCustomer']").attr('checked', true);
+        SetExistingCustomerProperties();
+
+        $("input[name='IsExistingCustomer']").on("change", function () {
+            $("#acctNumTxt").val("");
+            SetExistingCustomerProperties();
+        })
+
+        $("#acctNumTxt").on('keyup', function (e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                GetCustomerDetails();
+            }
+        });
+
+        $("#IdSubmit").on("click", validateData);
+
+        $("#SubmitEventBtn").on('click', function () {
+            var operation = $("#Operation").val();
+            if (operation != "1" && operation != 1) {
+                event.preventDefault();
+                return false;
+            }
+
+            //"Operation=1
+            //    & PaymentTransactionId=1SKG2AGSR1PTT
+            //    & PaymentTerm=Credit + Card
+            //    & AccountNumber=1137892
+            //    & CustomerName=Amazon
+            //    & Address1=1234E+Imperial + Hwy
+            //    & Address2=c % 2Fo + Nordstrom + Order + Pickup +% 23123
+            //    & City=Los + Angeles
+            //    & State=CA
+            //    & PostalCode=90012
+            //    & MainContactName=RAVEN
+            //    & PhoneNumber=319 - 283 - 9221
+            //    & Email=mrraven % 40gmail.com
+            //    & ServiceType=1200
+            //    & Comments=test"
+
+            var CustomerDetails = [];
+            CustomerDetails.Operation = $("#Operation").val();
+            CustomerDetails.PaymentTransactionId = $("#PaymentTransactionId").val();
+            CustomerDetails.PaymentTerm = $("#PaymentTerm").val();
+            CustomerDetails.NewcoCustomerNumber = $("#acctNumTxt").val();
+            CustomerDetails.CustomerName = $("#acctNameTxt").val();
+            CustomerDetails.Address1 = $("#addr1Txt").val();
+            CustomerDetails.Address2 = $("#addr2Txt").val();
+            CustomerDetails.City = $("#cityTxt").val();
+            CustomerDetails.State = $("#stateTxt").val();
+            CustomerDetails.PostalCode = $("#zipcodeTxt").val();
+            CustomerDetails.MainContactName = $("#maincontactTxt").val();
+            CustomerDetails.PhoneNumber = $('#phoneTxt').val();
+            CustomerDetails.Email = $('#emailTxt').val();
+            CustomerDetails.ServiceType = $('#serviceTyp').val();
+            CustomerDetails.Comments = $('#Comments').val();
+            CustomerDetails.DateNeeded = new Date($("#DateNeeded").val());
+
+            $("#evetTxt").hide();
+            $("#wrkOrdIdTxt").text("");
+            $("#trvlDstTxt").val("");
+            $("#trvlTimeTxt").val("");
+            $("#trvlTxt").val("");
+            $("#lbrTxt").val("");
+            $("#totSerTxt").text("");
+        });
+
+
+        $("#IdClear").on("click", function (e) {
+            e.preventDefault();
+            ResetForm();
+        });
+
+        $("#custNumBtn").on("click", function () {
+            GetCustomerDetails();
+        });
+
+        $("#serviceQuoteBtn").on("click", function () {
+            //if ($("#zipcodeTxt").val() == '' && $("#stateTxt").val() == -1) {
+            if (!$("#zipcodeTxt").val()) {
+                AlertPopup("PostalCode and State for Service Quote |");
+                return false;
+            }
+
+            var ServiceType = $('#serviceTyp').val();
+            if (ServiceType == "0") {
+                AlertPopup("Service Type for Service Quote |");
+                return false;
+            }
+
+            SetSubmitOperation(2);
+            //$(".modal").show();
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("GetServiceQuote", "Workorder")",
+                data: { ZipCode: $("#zipcodeTxt").val(), State: $("#stateTxt").val(), ServiceType: ServiceType },
+                //async: false
+            }).done(function (response) {
+                if (response.success) {                    
+                    if (response.flag == 1) {
+                        $(".quoteField").show();
+
+                        var data = response.data;
+                        $("#trvlDstTxt").val(data.TravelDistance);
+                        $("#trvlTimeTxt").val(data.TravelTime);
+                        $("#laborTimeTxt").val(data.LaborHours);
+                        $("#trvlTxt").val("$" +data.TravelAmount);
+                        $("#lbrTxt").val("$" + data.Labor);
+                        $("#totSerTxt").text(" " + data.TotalServiceQuote);
+                    }
+                    else {
+                        AlertPopup(response.message);
+                    }
+                    //$(".modal").hide();
+                    SetSubmitOperation(0);
+
+                    var totalAmnt = $("#totSerTxt").html();
+                    if (!totalAmnt) {
+                        $("#IdSubmit").hide();
+                        $("#serviceQuoteBtn").show();
+                    }
+                    else {
+                        $("#IdSubmit").show();
+                        $("#serviceQuoteBtn").hide();
+                    }
+                }
+                else {
+                    //$(".modal").hide();
+                }
+            });
+        })
+
+        $("#onCnctNameChk").on("change", function () {
+            if ($("#onCnctNameChk").is(':checked') == true) {
+                $("#maincontactTxt").val($("#serviceReqUserTxt").val());
+                $("#phoneTxt").val($("#serviceReqUserPhoneTxt").val());
+            }
+            else {
+                $("#maincontactTxt").val("");
+                $("#phoneTxt").val("");
+            }
+        });
+
+        $("#serviceReqUserTxt").on("keyup", function () {
+            if ($("#onCnctNameChk").is(':checked') == true) {
+                $("#maincontactTxt").val($("#serviceReqUserTxt").val());
+            }
+        });
+        $("#serviceReqUserPhoneTxt").on("keyup", function () {
+            if ($("#onCnctNameChk").is(':checked') == true) {
+                $("#phoneTxt").val($("#serviceReqUserPhoneTxt").val());
+            }
+        });
+                
+    });
+
+    function SaveWorkorder() {
+        var operation = $("#Operation").val();
+        if (operation != "1" && operation != 1) {
+            event.preventDefault();
+            return false;
+        }
+
+        $("#evetTxt").hide();
+        $("#wrkOrdIdTxt").text("");
+        $("#trvlDstTxt").val("");
+        $("#trvlTimeTxt").val("");
+        $("#trvlTxt").val("");
+        $("#lbrTxt").val("");
+        $("#totSerTxt").text("");
+
+        var acctNumber = $("#acctNumTxt").val();
+        var customername = $('#acctNameTxt').val();
+        var address1 = $('#addr1Txt').val();
+        var address2 = $('#addr2Txt').val();
+        var city = $('#cityTxt').val();
+        var state = $('#stateTxt').val();
+        var postalcode = $('#zipcodeTxt').val();
+        var maincontactname = $('#maincontactTxt').val();
+        var phone = $('#phoneTxt').val();
+        var email = $('#emailTxt').val();
+        var comments = $('#Comments').val();
+        var serviceType = $("#serviceTyp").val();
+        var paymentTransactionId = $("#PaymentTransactionId").val();
+        var paymentTerm = $("#PaymentTerm").val();
+
+        var serviceRequestedUserName = $('#serviceReqUserTxt').val();
+        var serviceRequestedUserPhone = $('#serviceReqUserPhoneTxt').val();
+        var equipmentBrand = $('#eqpBrandTxt').val();
+        var equipmentModel = $('#eqpMdlTxt').val();
+
+        var dateNeeded = new Date($("#DateNeeded").val());
+
+        var CustomerDetails = {
+            "Operation": $("#Operation").val(),
+            "PaymentTransactionId": (paymentTransactionId) ? paymentTransactionId : ' ',
+            "PaymentTerm": (paymentTerm) ? paymentTerm : ' ',
+            "AccountNumber": acctNumber,
+            "CustomerName": customername,
+            "Address1": address1,
+            "Address2": address2,
+            "City": city,
+            "State": state,
+            "PostalCode": postalcode,
+            "MainContactName": maincontactname,
+            "PhoneNumber": phone,
+            "Email": email,
+            "ServiceType": serviceType,
+            "Comments": comments,
+            "ServiceRequestedPartyName": serviceRequestedUserName,
+            "ServiceRequestedPartyPhone": serviceRequestedUserPhone,
+            "EqpBrand": equipmentBrand,
+            "EqpModel": equipmentModel,
+            "DateNeeded": dateNeeded
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("SaveWorkOrder", "Workorder")",
+            //data: { "CustomerDetails": CustomerDetails },
+            data: JSON.stringify(CustomerDetails),
+            contentType: "application/json"
+        }).done(function (response) {
+            if (response != null && response.success == true) {
+                var data = response.data;
+
+                $("#wrkOrdIdTxt").text(data.WorkorderId);
+
+                AlertPopup(response.message);
+
+                ResetForm();
+                event.preventDefault();
+            }
+            else {
+                $("#evetTxt").hide();
+                AlertPopup("|There is a problem in Workorder Creation! Please contact support.");
+                event.preventDefault();
+            }
+
+            $('#ForWaitCursor').removeClass("loading");
+            $("#IdSubmit").prop('disabled', false);
+            SetSubmitOperation(0);
+        });
+    }
+
+
+    function GetCustomerDetails() {
+         if (!$("#acctNumTxt").val()) {
+                AlertPopup("Please enter the Account Number!");
+                return false;
+            }
+
+           // $(".modal").show();
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("GetCustomerDetails", "Home")",
+                data: { CustomerNumber: $("#acctNumTxt").val()},
+                //async: false
+            }).done(function (response) {
+                if (response.success) {
+                    var data = response.data;
+                    
+                    $("#newcoAcctNumTxt").val(data.NewcoCustomerNumber);
+                    $("#acctNameTxt").val(data.CustomerName);
+                    $("#addr1Txt").val(data.Address1);
+                    $("#addr2Txt").val(data.Address2);
+                    $("#cityTxt").val(data.City);
+                    $("#stateTxt").val(data.State);
+                    $("#zipcodeTxt").val(data.PostalCode);
+
+                }
+                else {
+                    AlertPopup(response.message);
+                }
+            })
+    }
+
+    function OnPaymentTermChange() {
+        $("#PaymentTerm").val($("#paymentTypDD").val());
+    }
+
+    function SetExistingCustomerProperties() {
+        var selectedValue = $("input[name='IsExistingCustomer']:checked").val();
+        if (selectedValue == 'true') {
+            $("#IdSubmit").text("Submit");
+            $(".newcoAccNumSec").show();
+            $("#serviceQuoteBtn").hide();
+            $("#IdSubmit").show();    
+        }
+        else {
+            $("#IdSubmit").text("Pay & Submit");
+            $(".newcoAccNumSec").hide();
+
+            var totalAmnt = $("#totSerTxt").html();
+            if (!totalAmnt) {
+                $("#IdSubmit").hide();
+                $("#serviceQuoteBtn").show();
+            }
+            else {                
+                $("#IdSubmit").show();        
+                $("#serviceQuoteBtn").hide();
+            }
+            
+        }
+    }
+
+    function ResetForm() {
+        $(".inputFields").val('');
+        $('#CallReason').val('-1');
+        $('#State').val("-1");
+        $('#serviceTyp').val('0');
+        $("#PaymentTransactionId").val("");
+        $("#PaymentTerm").val("");
+        $("#totSerTxt").text("");
+
+        $("input[name='IsExistingCustomer']").attr('checked', true);
+
+        $(".quoteField").hide();
+        $("#DateNeeded").val(null)
+
+        SetExistingCustomerProperties();
+    }
+
+    function SetSubmitOperation(operation) {
+        if (operation == 1) {
+            var selectedValue = $("input[name='IsExistingCustomer']:checked").val();
+            var PaymentTransactionId = $("#PaymentTransactionId").val();
+            if (selectedValue == "true") {
+                $("#Operation").val(operation);
+                SaveWorkorder();
+            }
+            else {
+                if (!PaymentTransactionId) {
+                    PaymentPopup();
+                    $("#IdSubmit").prop('disabled', false);
+                }
+                else {
+                    SaveWorkorder();
+                }
+            }
+        }
+        else {
+            $("#Operation").val(operation);
+        }
+    }
+
+    function validateData() {
+        $("#IdSubmit").prop('disabled', true);
+
+        var customername = $('#acctNameTxt').val();
+        var address1 = $('#addr1Txt').val();
+        var address2 = $('#addr2Txt').val();
+        var city = $('#cityTxt').val();
+        var state = $('#stateTxt').val();
+        var postalcode = $('#zipcodeTxt').val();
+        var maincontactname = $('#maincontactTxt').val();
+        var phone = $('#phoneTxt').val();
+        var email = $('#emailTxt').val();
+        var dateneeded = $('#DateNeeded').val();
+
+        var Message = "";
+        var isValid = true;
+
+        var selectedValue = $("input[name='IsExistingCustomer']:checked").val();
+        
+        if (selectedValue == "true") {
+            if (!$("#acctNumTxt").val()) {
+                Message += " Account Number |";
+                isValid = false;
+            }
+        }
+        else {
+            var totalAmnt = $("#totSerTxt").html();
+            if (!totalAmnt) {
+                Message += " Service Quote |";
+                isValid = false;
+            }
+        }
+
+        if (customername == "") {
+            Message += " CustomerName |";
+            isValid = false;
+        }
+        if (address1 == "") {
+            Message += " Address1 |";
+            isValid = false;
+        }
+        if (city == "") {
+            Message += " City |";
+            isValid = false;
+        }
+        if (state == "-1") {
+            Message += " State |";
+            isValid = false;
+        }
+        if (postalcode == "") {
+            Message += " PostalCode |";
+            isValid = false;
+        }
+        if (maincontactname == "") {
+            Message += " Main Contact Name |";
+            isValid = false;
+        }
+
+        if (phone == "") {
+            Message += " PhoneNumber |";
+            isValid = false;
+        }
+
+        if (email == "") {
+            Message += " Email |";
+            isValid = false;
+        }
+
+        if (dateneeded == "") {
+            Message += " Date Needed |";
+            isValid = false;
+        }
+
+        if (isValid)
+        {
+            SetSubmitOperation(1);
+        }
+        else {
+            $(".modal").hide();
+            AlertPopup(Message);
+            event.preventDefault();
+            $("#IdSubmit").prop('disabled', false);
+        }
+    }
+
+    function PaymentPopup() {
+        $('[data-popup="popup-cloverpayment"]').fadeIn(350);
+    }
+
+
+</script>
+
+
+<div class="container">
+    <main>
+        @*<div class="py-5 text-center">
+            <img src="~/images/Newco_Logo.png" style="height: 20em; width: 30em;"/>
+        </div>*@
+
+        <div class="row g-5" style="margin: auto;">
+            <div class="col-md-12 col-lg-12">
+                <form class="needs-validation" novalidate>
+                    <div class="row g-3">
+
+                        <div class="col-md-12">
+                            <label for="NEWCOcustomer" class="form-label">Are you an existing NEWCO customer?</label>
+                            <div class="row">
+                                <div class="col-md-auto">
+                                    <div>
+                                        @Html.RadioButtonFor(m => m.IsExistingCustomer, "true") Yes
+                                    </div>
+                                </div>
+                                <div class="col-md-auto">
+                                    <div>
+                                        @Html.RadioButtonFor(m => m.IsExistingCustomer, "false") No
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 newcoAccNumSec">
+                            <label for="firstName" class="form-label required">NEWCO Account Number</label>
+                            @Html.EditorFor(model => model.NewcoCustomerNumber, new { htmlAttributes = new { Value = "", @class = "form-control no-spinners inputFields", @placeholder = "NEWCO Account Number", @Id = "acctNumTxt" } })
+                            @Html.ValidationMessageFor(model => model.NewcoCustomerNumber, "", new { @class = "text-danger" })
+                            @*<div class="invalid-feedback">
+                Valid first name is .
+            </div>*@
+                        </div>
+                        <div class="col-sm-6 newcoAccNumSec">
+                            <button class="btn btn-dark" type="button" id="custNumBtn" style="margin-top:30px;">Get Customer</button>
+                        </div>
+
+                        <h4 style="color: #ff0000; font-weight: 600; ">Customer</h4>
+                        <hr class="my-1">
+
+                        @using (Html.BeginForm("SaveWorkOrder", "Workorder", FormMethod.Post, new { id = "custDtlsform" }))
+                        {
+                            @Html.HiddenFor(m => m.AccountNumber, new { htmlAttributes = new { @Id = "custNumTxt", @class = "inputFields" } })
+                            @Html.HiddenFor(m => m.Operation)
+                            @Html.HiddenFor(m => m.PaymentTransactionId)
+                            @Html.HiddenFor(m => m.PaymentTerm, new { htmlAttributes = new { @class = "form-control inputFields" } })
+
+
+
+
+                            <div class="col-12">
+                                <label for="acctNameTxt" class="form-label required">Customer Name</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.CustomerName, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Customer Name", @Id = "acctNameTxt" } })
+                                    @Html.ValidationMessageFor(model => model.CustomerName, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="addr1Txt" class="form-label required">Address1</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.Address1, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Address1", @Id = "addr1Txt" } })
+                                    @Html.ValidationMessageFor(model => model.Address1, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="addr2Txt" class="form-label">Address2</label>
+                                <div class="input-group">
+                                    @Html.EditorFor(model => model.Address2, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Address2", @Id = "addr2Txt" } })
+                                    @Html.ValidationMessageFor(model => model.Address2, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-5">
+                                <label for="cityTxt" class="form-label required">City</label>
+                                @Html.EditorFor(model => model.City, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "City", @Id = "cityTxt" } })
+                                @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="stateTxt" class="form-label required">State</label>
+                                @Html.DropDownListFor(m => m.State, new SelectList(Model.StateList, "StateCode", "StateName"), new { @class = "form-control WorkOrderFields inputFields", @placeholder = "State", @Id = "stateTxt" })
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="zipcodeTxt" class="form-label required">Zip Code</label>
+                                @Html.EditorFor(model => model.PostalCode, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Zip Code", @Id = "zipcodeTxt" } })
+                                @Html.ValidationMessageFor(model => model.PostalCode, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-12">
+                                <label for="maincontactTxt" class="form-label required">Main Contact Name</label> @*<span class="text-muted" style="float: right;">  Same Contact As Submitting Party, Click Here  <input type="checkbox" id="onCnctNameChk" style="margin-left: 0.5em; vertical-align: middle;" /></span>*@
+                                @Html.EditorFor(model => model.MainContactName, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Main Contact Name", @Id = "maincontactTxt" } })
+                                @Html.ValidationMessageFor(model => model.MainContactName, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-12">
+                                <label for="phoneTxt" class="form-label required">Phone Number </label>
+                                @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Phone Number", @Id = "phoneTxt" } })
+                                @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                            </div>
+
+                            <div class="col-12">
+                                <label for="emailTxt" class="form-label required">Email Address @*<span class="text-muted">(Optional)</span>*@</label>
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { type = "string", @class = "form-control inputFields", @placeholder = "Email Address", @Id = "emailTxt" } })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                            </div>
+
+
+
+                            <div class="col-12">
+                                <label for="dateNeededTxt" class="form-label required">Date Needed</label>
+                                @Html.TextBoxFor(model => model.DateNeeded, "{0:yyyy-MM-dd}", new { htmlAttributes = new { @class = "form-control", @id = "DateNeeded" } })
+
+                            </div>
+                        }
+
+                        <div class="row g-3" id="cardDetailsSec">
+                            <div class="col-4 quoteField">
+                                <label for="trvlDstTxt" class="form-label">Distance</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(w => w.TravelDistance, new { @class = "form-control inputFields", @readonly = "readonly", @Id = "trvlDstTxt" })
+                                </div>
+                            </div>
+                            <div class="col-4 quoteField">
+                                <label for="trvlTimeTxt" class="form-label">Travel</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(w => w.LaborHours, new { @class = "form-control inputFields", @readonly = "readonly", @Id = "trvlTimeTxt" })
+                                </div>
+                            </div>
+                            <div class="col-4 quoteField">
+                                <label for="laborTimeTxt" class="form-label">Labor</label>
+                                <div class="input-group">
+                                    @Html.TextBoxFor(w => w.Labor, new { @class = "form-control inputFields", @readonly = "readonly", @Id = "laborTimeTxt" })
+                                </div>
+                            </div>
+                            <div class="col-4 quoteField">
+                                <label for="trvlTxt" class="form-label required">Travel Amount</label>
+                                <div class="input-group">
+                                    @{var travel = string.Format("{0:c}", Model.TravelAmount);}
+                                    @Html.TextBoxFor(w => travel, new { @class = "form-control inputFields", @readonly = "readonly", @Id = "trvlTxt" })
+                                </div>
+                            </div>
+                            <div class="col-4 quoteField">
+                                <label for="lbrTxt" class="form-label required">Labor Amount</label>
+                                <div class="input-group">
+                                    @{var labor = string.Format("{0:c}", Model.Labor);}
+                                    @Html.TextBoxFor(w => labor, new { @class = "form-control inputFields", @readonly = "readonly", @Id = "lbrTxt" })
+                                </div>
+                            </div>
+
+                            <div class="col-4 quoteField">
+                                <span style="font-size: 20px; color: #ff0000; font-weight: bold;">Total Quote: </span> <h3><b>$<label id="totSerTxt"></label></b></h3>
+                            </div>
+                            <div class="col-12">
+                                @*<span style="float: right;"><button id="serviceQuoteBtn" type="button" class="w-100 btn btn-dark btn-lg">Click Here to Generate Service Quote</button></span>*@
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4">
+                    <div class="row my-3">
+                        <div class="col-md-6">
+                            <button  type="button" id="IdClear" class="w-100 btn btn-dark btn-lg" style=" margin: 0.1em 0;">Clear</button>
+                        </div>
+                        <div class="col-md-6">
+                            <span style="float: right;"><button id="serviceQuoteBtn" type="button" class="w-100 btn btn-dark btn-lg">Click Here to Generate Service Quote</button></span>
+                            <button id="IdSubmit" type="button" class="w-100 btn btn-dark btn-lg" style=" margin: 0.1em 0;">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div class="popup" data-popup="popup-cloverpayment">
+
+        <div class="popup-inner" style="width: 100%; border-radius: 1em; padding: 1.5em; ">
+            <h2>Credit Card Processing</h2>
+            <hr style="border-color: #b89898;" />
+
+            <script>
+    var accessKey = '@System.Configuration.ConfigurationManager.AppSettings["CloverAccessKey"].ToString()';
+    const clover = new Clover(accessKey);
+    const elements = clover.elements();
+    const form = document.getElementById('clover-form');
+
+    const styles = {
+        'card-number input': {
+            'width': '100%',
+            'height': '100%',
+            'font-size': '20px',
+            'padding': '3px',
+            'font-weight': 'bold'
+        }
+    };
+
+                    $(document).ready(function () {
+                        const cardNumber = elements.create('CARD_NUMBER', styles);
+                        const cardDate = elements.create('CARD_DATE', styles);
+                        const cardCvv = elements.create('CARD_CVV', styles);
+                        const cardPostalCode = elements.create('CARD_POSTAL_CODE', styles);
+
+                        cardNumber.mount('#card-number');
+                        cardDate.mount('#card-date');
+                        cardCvv.mount('#card-cvv');
+                        cardPostalCode.mount('#card-postal-code');
+
+                        const cardResponse = document.getElementById('card-response');
+                        const displayCardNumberError = document.getElementById('card-number-errors');
+                        const displayCardDateError = document.getElementById('card-date-errors');
+                        const displayCardCvvError = document.getElementById('card-cvv-errors');
+                        const displayCardPostalCodeError = document.getElementById('card-postal-code-errors');
+
+                        // Handle real-time validation errors from the card element
+                        cardNumber.addEventListener('change', function (event) {
+                            console.log(`cardNumber changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardNumber.addEventListener('blur', function (event) {
+                            console.log(`cardNumber blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardDate.addEventListener('change', function (event) {
+                            console.log(`cardDate changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardDate.addEventListener('blur', function (event) {
+                            console.log(`cardDate blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardCvv.addEventListener('change', function (event) {
+                            console.log(`cardCvv changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardCvv.addEventListener('blur', function (event) {
+                            console.log(`cardCvv blur ${JSON.stringify(event)}`);
+                        });
+
+                        cardPostalCode.addEventListener('change', function (event) {
+                            console.log(`cardPostalCode changed ${JSON.stringify(event)}`);
+                        });
+
+                        cardPostalCode.addEventListener('blur', function (event) {
+                            console.log(`cardPostalCode blur ${JSON.stringify(event)}`);
+                        });
+
+                        $('#clover-form').submit(function (event) {
+                            event.preventDefault();
+                            // Use the iframe's tokenization method with the user-entered card details
+                            clover.createToken()
+                                .then(function (result) {
+                                    if (result.errors) {
+                                        Object.values(result.errors).forEach(function (value) {
+                                            displayCardNumberError.textContent = value;
+                                        });
+                                    } else {
+                                        ProcessPayment(result.token)
+                                    }
+                                });
+                        });
+                    });
+
+                function ProcessPayment(token) {
+                    $('#ForWaitCursor').addClass("loading");
+                    var Amount = Number($("#totSerTxt").html());
+                    var authToken = '@System.Configuration.ConfigurationManager.AppSettings["CloverAuthToken"].ToString()';
+                    var BaseUrl = '@System.Configuration.ConfigurationManager.AppSettings["CloverBaseUrl"].ToString()';
+
+                    let MyData = {
+                        amount: Amount,
+                        source: token,
+                        currency: "usd",
+                        apiurl: BaseUrl + "v1/charges",
+                        btoken: authToken,
+                        capture: true
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: "https://fbclover.mktalt.com/charge",
+                        data: JSON.stringify(MyData),
+                        contentType: 'application/json',
+                        dataType: 'json',
+                        success: function (jsonResult) {
+                            if (jsonResult.status == "succeeded") {
+                                $("#PaymentTransactionId").val(jsonResult.id);
+
+                                $("#Operation").val(1);
+                                $("#IdSubmit").trigger("click");
+                            }
+                            else {
+                                AlertPopup(jsonResult.error.message);
+                                $('#ForWaitCursor').removeClass("loading");
+                            }
+
+                            $('[data-popup="popup-cloverpayment"]').fadeOut(350);
+
+                            
+                        },
+                        error: function (er) {
+                            AlertPopup("Problem in Processing the Payment, Please contact Support !");
+                        }
+                    });
+
+
+                }
+
+                    function VoidOldPayment(token) {
+                        $.ajax({
+                            url: '@Url.Action("VoidPayment", "DispatchResponse")',
+                            type: 'POST',
+                            data: { "WorkorderId": $("#WorkorderId").val()},
+                            success: function (jsonResult) {
+                                if (jsonResult.success == true) {
+                                    ProcessPayment(token);
+                                }
+                            },
+                            error: function (er) {
+                                AlertPopup("Problem in Refund, Please contact Support !");
+                            }
+                        });
+                    }
+
+
+            </script>
+
+
+            <form id="clover-form">
+                <div class="form-control" style="margin: 1em 0em; height: 50px; ">
+                    <div id="card-number" style="height:100%;"></div>
+                    <div class="input-errors" id="card-number-errors" role="alert"></div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 220px 20px auto; grid-template-rows: auto;">
+                    <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start:1; grid-column-end: 2; grid-row-start: 1; grid-row-end: 3;">
+                        <div id="card-date" style="height:100%;"></div>
+                        <div class="input-errors" id="card-date-errors" role="alert"></div>
+                    </div>
+
+                    <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start: 3; grid-column-end: 4; grid-row-start: 1; grid-row-end: 1;">
+                        <div id="card-cvv" style="height:100%;"></div>
+                        <div class="input-errors" id="card-cvv-errors" role="alert"></div>
+                    </div>
+
+                    <div class="form-control" style="margin: 1em 0em; height: 50px; grid-column-start: 5; grid-column-end: 6; grid-row-start: 1; grid-row-end: 1;">
+                        <div id="card-postal-code" style="height:100%;"></div>
+                        <div class="input-errors" id="card-postal-code-errors" role="alert"></div>
+                    </div>
+                </div>
+                <div id="card-response" role="alert"></div>
+
+                <div class="button-container">
+                    <input type="submit" value="Submit Payment">
+                </div>
+            </form>
+            <a class="popup-close" data-popup-close="popup-cloverpayment" href="#">x</a>
+        </div>
+    </div>
+
+</div>

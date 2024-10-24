@@ -44,7 +44,7 @@ namespace FarmerBrothers.Models
             {
                 States = Utility.GetStates(entities);
                 CashSaleStatusList = Utility.GetCashSaleStatusList(entities);
-                NonFBCustomerList = Utility.GetNonFBCustomers(entities);
+                NonFBCustomerList = Utility.GetNonFBCustomers(entities, false);
             }
         }
 
@@ -161,7 +161,7 @@ namespace FarmerBrothers.Models
             {
                 States = Utility.GetStates(entities);
                 CashSaleStatusList = Utility.GetCashSaleStatusList(entities);
-                NonFBCustomerList = Utility.GetNonFBCustomers(entities);
+                //NonFBCustomerList = Utility.GetNonFBCustomers(entities);
                 /*var ESMDSMRSMs = entities.ESMDSMRSMs.FirstOrDefault(x => x.BranchNO == customer.Branch);
                 if (ESMDSMRSMs != null)
                 {

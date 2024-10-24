@@ -710,6 +710,7 @@ namespace FarmerBrothers.Controllers
                 }
             }
 
+            erfManagementModel.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, false);
 
             IQueryable<string> productNum = FarmerBrothersEntitites.FBExpendables.Select(s => s.ProdNo).Distinct();
             erfManagementModel.ErfAssetsModel.ErfExpendableProducts = new List<ExpendableProduct>();

@@ -184,7 +184,8 @@
                                 $.ajax({
                                     type: $this.attr('method'),
                                     url: "@Url.Action("SaveErf", HttpContext.Current.Request.RequestContext.RouteData.Values["controller"].ToString())",
-                                    data: frmValues
+                                    data: frmValues,
+                                    dataType: 'json'
                                 }).done(function (response) {
                                     if (response != null && response.success == true) {
                                         if (response.returnValue > 0) {
@@ -1370,6 +1371,10 @@
             </div>
         </div>
     </section>
+
+                            FarmerBrothersEntities entity = new FarmerBrothersEntities();
+                            Model.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(entity, true);
+
 
             @Html.Partial("~/Views/Shared/_CustomerDetailsPartial.cshtml", Model.Customer)
 

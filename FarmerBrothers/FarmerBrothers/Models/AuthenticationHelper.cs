@@ -45,6 +45,22 @@ namespace FarmerBrothers.Models
                     System.Web.HttpContext.Current.Session["UserId"] = usermaster.UserId;
                     System.Web.HttpContext.Current.Session["CanExportSessionValue"] = usermaster.CanExport;
                     System.Web.HttpContext.Current.Session["TechId"] = usermaster.TechId;
+
+                    if(usermaster.TechId != null)
+                    {
+                        TECH_HIERARCHY techView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == usermaster.TechId).FirstOrDefault();
+
+                        if(techView != null && techView.FamilyAff != "SPT")
+                        {
+                            System.Web.HttpContext.Current.Session["TechType"] = "InternalTech";
+                        }
+                       else
+                        {
+                            System.Web.HttpContext.Current.Session["TechType"] = "ThirdPartyTech";
+                        }
+
+                    }
+
                     //System.Web.HttpContext.Current.Session["IsERFUser"] = usermaster.IsERFUser;
                     usermaster.UpdatedDate = DateTime.UtcNow.ToString();
                     FarmerBrothersEntitites.SaveChanges();

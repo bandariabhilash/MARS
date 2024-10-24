@@ -51,18 +51,18 @@
 
         $( "form" ).submit( function ( event )
         {
-            if ($("#CustomerId").val() == '' || $("#CustomerId").val() == ' ') {
+            //if ($("#CustomerId").val() == '' || $("#CustomerId").val() == ' ') {
                
-                var nonFBCustChk = $(".IsNonFBCustomerChk").is(":checked");
-                if (nonFBCustChk == true) {
-                    var nonFBCustomerName = $(".nonFbCustomerList").val();
-                    if (nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a') {
-                        AlertPopup("|Please Select NonFBCustomer from the Dropdown list");
-                        event.preventDefault();
-                        return false;
-                    }
-                }
-            }
+            //    var nonFBCustChk = $(".IsNonFBCustomerChk").is(":checked");
+            //    if (nonFBCustChk == true) {
+            //        var nonFBCustomerName = $(".nonFbCustomerList").val();
+            //        if (nonFBCustomerName <= 0 || nonFBCustomerName == 'n/a') {
+            //            AlertPopup("|Please Select NonFBCustomer from the Dropdown list");
+            //            event.preventDefault();
+            //            return false;
+            //        }
+            //    }
+            //}
 
 
             //alert("1");
@@ -173,7 +173,19 @@
             {
                 window.location.href = updateUrl;
             }
-        } );
+        });
+
+        $("#closeCallChk").on("change", function () {
+            if ($("#closeCallChk").is(":checked")) {
+                $("#ResolutionCallerName").attr("disabled", false);
+            }
+            else {
+                $("#ResolutionCallerName").attr("disabled", true);
+            }
+        })
+
+        
+
     } );
 
     function PhoneValidation( evt )
@@ -204,7 +216,7 @@
     <section class="container-fluid white-bg pad fixedSecond header">
         <div class="row vertical-align">
             <div class="col-md-12">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="row">
                         <div class="col-md-3">
 
@@ -256,6 +268,13 @@
                                     <span>@Model.CloseDate.Value.ToString("MM/dd/yyyy")</span>
                                 }
                             </div>
+                            <div class="col-md-4">
+                                <span>Closed By:</span>
+                                @if (!string.IsNullOrEmpty(Model.ClosedBy))
+                                {
+                                    <span>@Model.ClosedBy</span>
+                                }
+                            </div>
 
                         </div>
                     </div>
@@ -268,17 +287,19 @@
                             <button id="SaveNonWorkOrderId" type="submit" style="margin-right:5px;" class="btn btn-primary enableonclose" onclick="SetSubmitOperation(1)" name="action:NonServiceEventSave">Save</button>
                         }
                         @*if (Model.NonServiceWorkOrder != null)
-                            {
-                                if (Model.NonServiceWorkOrder.WorkOrderID > 0)
-                                {
-                                    @Html.ActionLink("Exit Work Order", "NonServiceEvent", "NonServiceEventCall", new { @IsBack = 1 }, new { @Class = "btn btn-primary enableonclose" })
-                                }
-                            }*@
+            {
+                if (Model.NonServiceWorkOrder.WorkOrderID > 0)
+                {
+                    @Html.ActionLink("Exit Work Order", "NonServiceEvent", "NonServiceEventCall", new { @IsBack = 1 }, new { @Class = "btn btn-primary enableonclose" })
+                }
+            }*@
 
                         if (Model.WorkOrderID > 0)
                         {
-                                @*@Html.ActionLink("Re-Send Email", "ReSendEmail", "NonServiceEvent", new { @WorkorderId = Model.WorkOrderID }, new { @Class = "btn btn-primary enableonclose" })*@
+                            @*@Html.ActionLink("Re-Send Email", "ReSendEmail", "NonServiceEvent", new { @WorkorderId = Model.WorkOrderID }, new { @Class = "btn btn-primary enableonclose" })*@
                             <button id="resendEmail" style="margin-right:5px;" class="btn btn-primary enableonclose">Re-Send Email</button>
+
+                            @Html.ActionLink("Back", "WorkorderSearch", "Workorder", new { @IsBack = 1 }, new { @Class = "btn btn-primary enableonclose" })
                         }
                     }
                 </div>
@@ -297,15 +318,16 @@
                             }
                         </style>
                         <section class="block">
-                            <div class="container-fluid">
-                                <h2 class="notes-details-head arrow-down tabheader required1">Notes</h2>
-                                <div class="col-md-4">
-                                    @Html.Label("lblCallReason", "Call Reason", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
-                                    
+                            @*<div class="container-fluid">
+                            <h2 class="notes-details-head arrow-down tabheader required1">Notes</h2>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    @Html.Label("lblCallReason", "Call Reason", new { @style = "float:left;margin-top:20px;margin-right:20px;", @class = "required" })
+
                                     @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
                                     {
-                                          @Html.DropDownListFor(m => m.callReason, new SelectList(Model.FBCallReasons, "SourceCode", "Description"),
-                                            new { @style = "max-width:270px;margin-top:15px;", @class = "form-control WorkOrderFields", @disabled = "disabled" })
+                                        @Html.DropDownListFor(m => m.callReason, new SelectList(Model.FBCallReasons, "SourceCode", "Description"),
+                                          new { @style = "max-width:270px;margin-top:15px;", @class = "form-control WorkOrderFields", @disabled = "disabled" })
                                     }
                                     else
                                     {
@@ -313,10 +335,8 @@
                                             new { @style = "max-width:270px;margin-top:15px;", @class = "form-control WorkOrderFields" })
                                     }
 
-                             </div>
-
-
-                            <div class="col-md-4">
+                                </div>
+                                <div class="col-md-3">
                                     @Html.Label("lblCallerName", "Caller Name", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
                                     @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
                                     {
@@ -336,20 +356,170 @@
                                     </div>
 
                                 </div>
-                                <div class="col-md-4">
-                                    @Html.Label("lblCallBack", "Call Back #", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
+                                <div class="col-md-3">
+                                    @Html.Label("lblCallBack", "Call Back # ", new { @style = "float:left;margin-top:20px;margin-right:20px;", @class = "required" })
                                     @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
                                     {
                                         @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)", @style = "float:left;margin-top:15px;margin-right:20px;", @disabled = "disabled" })
                                     }
                                     else
                                     {
-                                        @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)", @style = "float:left;margin-top:15px;margin-right:20px;"  })
+                                        @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)", @style = "float:left;margin-top:15px;margin-right:20px;" })
                                     }
                                     @Html.ValidationMessageFor(m => m.CallBack, "", new { @class = "text-danger" })
 
                                 </div>
-                                @*<h2 class="notes-details-head arrow-down tabheader required">Notes</h2>*@
+                            </div>
+                            <div class="row">
+            <div class="col-md-3">
+                @Html.Label("lblResolutionContactName", "Resolution- Contact Name", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
+                @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                {
+                    @Html.TextBoxFor(c => c.ResolutionCallerName, new { @class = "form-control CustomerData", @style = "float:left;margin-top:15px;margin-right:20px;", @disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.TextBoxFor(c => c.ResolutionCallerName, new { @class = "form-control CustomerData", @style = "float:left;margin-top:15px;margin-right:20px;" })
+                }
+                <div class="col-md-12">
+                    <div class="col-md-10">
+                        @Html.ValidationMessageFor(m => m.ResolutionCallerName, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                @Html.Label("lblCloseCall", "Close Call", new { @style = "float:left;margin-top:20px;margin-right:20px;" })
+                @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                {
+                    @Html.CheckBoxFor(m => m.CloseCall, new { @Id = "closeCallChk", @style = "float:left;margin-top:23px;margin-right:20px;", @disabled = "disabled" })
+                }
+                else
+                {
+                    @Html.CheckBoxFor(m => m.CloseCall, new { @Id = "closeCallChk", @style = "float:left;margin-top:23px;margin-right:20px;" })
+                }
+            </div>
+        </div>
+
+                            <h2 class="notes-details-head arrow-down tabheader required">Notes</h2>
+                            @Html.Partial("_ErfNotes", Model.Notes)
+                        </div>*@
+
+
+
+                            <div class="container-fluid">
+                                <h2 class="notes-details-head arrow-down tabheader required1">Notes</h2>
+                                
+                                    <div class="customer-content margin-top">
+                                        <div class="row">
+                                            <div class="col-md-4 customer-col1 sm-pad-reset">
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-md-5 required">Call Reason:</span>
+                                                    <span class="col-md-7">
+                                                        <div class="form-group">
+                                                            @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                                            {
+                                                                @Html.DropDownListFor(m => m.callReason, new SelectList(Model.FBCallReasons, "SourceCode", "Description"),
+                                                                  new { @class = "form-control WorkOrderFields", @disabled = "disabled" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.DropDownListFor(m => m.callReason, new SelectList(Model.FBCallReasons, "SourceCode", "Description"),
+                                                                    new { @class = "form-control WorkOrderFields" })
+                                                            }
+                                                        </div>
+                                                    </span>
+                                                </div>
+
+                                                @if (Model.WorkOrderID > 0)
+                                                {
+                                                <div class="col-xs-6-o" style="display: none;">
+                                                    <span class="col-md-5">Close Call:</span>
+                                                    <span class="col-md-7">
+                                                        <div class="form-group">
+                                                            @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                                            {
+                                                                @Html.CheckBoxFor(m => m.CloseCall, new { @Id = "closeCallChk", @disabled = "disabled" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.CheckBoxFor(m => m.CloseCall, new { @Id = "closeCallChk" })
+                                                            }
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                                }
+                                            </div>
+                                            <div class="col-md-4 customer-col1 sm-pad-reset">
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-md-5 required">Caller Name:</span>
+                                                    <span class="col-md-7">
+                                                        <div class="form-group">
+                                                            @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                                            {
+                                                                @Html.TextBoxFor(c => c.CallerName, new { @class = "form-control CustomerData", @disabled = "disabled" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.TextBoxFor(c => c.CallerName, new { @class = "form-control CustomerData" })
+                                                            }
+                                                            <div class="col-md-12">
+                                                                <div class="col-md-10">
+                                                                    @Html.ValidationMessageFor(m => m.CallerName, "", new { @class = "text-danger" })
+                                                                </div>
+                                                                <div class="col-md-2">
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </span>
+                                                </div>
+                                                @if (Model.WorkOrderID > 0)
+                                                {
+                                                    <div class="col-xs-6-o" disabled="true" style="display: none;">
+                                                        <span class="col-md-5">Resolution - Contact Name:</span>
+                                                        <span class="col-md-7">
+                                                            <div class="form-group">
+                                                                @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                                                {
+                                                                    @Html.TextBoxFor(c => c.ResolutionCallerName, new { @class = "form-control CustomerData", @disabled = "disabled" })
+                                                                }
+                                                                else
+                                                                {
+                                                                    @Html.TextBoxFor(c => c.ResolutionCallerName, new { @class = "form-control CustomerData", @disabled = "disabled" })
+                                                                }
+                                                                @Html.ValidationMessageFor(m => m.ResolutionCallerName, "", new { @class = "text-danger" })
+                                                            </div>
+                                                        </span>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div class="col-md-4 customer-col1 sm-pad-reset">
+                                                <div class="col-xs-6-o">
+                                                    <span class="col-md-5 required">Call Back # :</span>
+                                                    <span class="col-md-7">
+                                                        <div class="form-group">
+                                                            @if (!string.IsNullOrEmpty(Model.Status) && (Model.Status.ToLower() == "closed"))
+                                                            {
+                                                                @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)", @disabled = "disabled" })
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.TextBoxFor(c => c.CallBack, new { @class = "form-control CustomerData", @onkeypress = "return PhoneValidation(event)" })
+                                                            }
+                                                            @Html.ValidationMessageFor(m => m.CallBack, "", new { @class = "text-danger" })
+                                                        </div>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+
+                                </div>
                                 @Html.Partial("_ErfNotes", Model.Notes)
                             </div>
                         </section>

@@ -1551,6 +1551,7 @@ namespace FarmerBrothersMailResponse.Controllers
                             ViewBag.response = response;
                             ViewBag.isResponsible = isResponsible;
                             ViewBag.isBillable = isBillable;
+                            ViewBag.isERF = false;
                             ViewBag.text = "Escalation";
 
                             return View("ConfirmationWindow", ViewBag);
@@ -2073,9 +2074,17 @@ namespace FarmerBrothersMailResponse.Controllers
             int returnValue = FarmerBrothersEntitites.SaveChanges();
 
             if (Status.ToLower() == "cancel")
-            {
-                ERFNewController enc = new ERFNewController();
-                enc.ERFEmail(erf.ErfID, erf.WorkorderID, false, erf.ApprovalStatus, true);
+            {               
+                ViewBag.isERF = true;
+                ViewBag.erfId = erf.ErfID;
+                ViewBag.text = "ERF " + erf.ErfID;
+                ViewBag.workOrderId = erf.WorkorderID;
+                ViewBag.approvalStatus = erf.ApprovalStatus;
+
+                return View("ConfirmationWindow", ViewBag);
+
+                //ERFNewController enc = new ERFNewController();
+                //enc.ERFEmail(erf.ErfID, erf.WorkorderID, false, erf.ApprovalStatus, true);
             }
 
             dispatchModel.IsERF = true;
@@ -2085,6 +2094,36 @@ namespace FarmerBrothersMailResponse.Controllers
             }
 
             return View("DispatchResponse", "_Layout_WithOutMenu", dispatchModel);
+        }
+
+        [AllowAnonymous]
+        public JsonResult ERFCancellationProcess(string ErfId, int WorkorderId, string ApprovalStatus)
+        {
+            JsonResult jsonResult = new JsonResult();
+
+            DispatchResponseModel dispatchModel = new DispatchResponseModel();
+            dispatchModel.IsERF = true;            
+
+            WorkorderController wc = new WorkorderController();
+            List<string> notesList = new List<string>();
+            string notes = "Escalation Email sent from Email Link";
+            notesList.Add(notes);
+
+            ERFNewController enc = new ERFNewController();
+            bool emailSent = enc.ERFEmail(ErfId, WorkorderId, false, ApprovalStatus, true);
+
+            if (emailSent)
+            {
+                dispatchModel.Message = "Cancellation Email Sent Successfully";
+                jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = true, dispatchModel = dispatchModel };
+            }
+            else
+            {
+                dispatchModel.Message = "Problem in sending Cancellation Email ";
+                jsonResult.Data = new { success = false, serverError = ErrorCode.ERROR, data = false, dispatchModel = dispatchModel };
+            }
+            jsonResult.JsonRequestBehavior = JsonRequestBehavior.AllowGet;
+            return jsonResult;
         }
 
         [AllowAnonymous]

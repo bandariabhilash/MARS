@@ -1279,6 +1279,8 @@
                             .Columns(col =>
                             {
                                 col.Field("WorkorderID").HeaderText("Work Order ID").Width(100).Add();
+                                col.Field("WorkorderCallstatus").HeaderText("Status").Width(100).Add();
+                                col.Field("CallTypeID").HeaderText("Call Reason").Width(100).Add();
                                 col.Field("WorkorderEntryDate").HeaderText("Work Order Date/Time").Width(150).Add();
                                 col.Field("ElapsedTime").HeaderText("Mod. Elapsed Time").Width(80).Add();
                                 col.Field("CustomerName").HeaderText("Customer").Width(100).Add();

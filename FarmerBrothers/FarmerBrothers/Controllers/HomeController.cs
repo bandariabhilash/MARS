@@ -54,6 +54,15 @@ namespace FarmerBrothers.Controllers
 
                     System.Web.HttpContext.Current.Session["UserReports" + userId] = Security.GetUserReports(userId, FarmerBrothersEntitites);
 
+
+                    if(Session["TechType"] != null && Session["TechType"].ToString().ToLower() == "internaltech")
+                    {
+                        ((Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + userId])["Customer"] = "Full";
+                        ((Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + userId])["Call Closure"] = "Full";
+                        ((Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + userId])["Work Order"] = "Full";
+                        ((Dictionary<string, string>)System.Web.HttpContext.Current.Session["UserPrivilege" + userId])["Technician Schedule"] = "Full";
+                    }
+
                     if (Session["TechId"] != null )//&& userPrivilege["Call Closure"] != "No-Permission")
                     {
                         return RedirectToAction("CallClosure", "CallClosure");

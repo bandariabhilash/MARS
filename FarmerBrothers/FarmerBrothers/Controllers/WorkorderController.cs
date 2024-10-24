@@ -1852,10 +1852,12 @@ namespace FarmerBrothers.Controllers
                 if (workOrderId.HasValue)
                 {
                     workOrderManagementModel.Documents.isNewEvent = false;
+                    workOrderManagementModel.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, false);
                 }
                 else
                 {
                     workOrderManagementModel.Documents.isNewEvent = true;
+                    workOrderManagementModel.Customer.NonFBCustomerList = Utility.GetNonFBCustomers(FarmerBrothersEntitites, true);
                 }
 
                 workOrderManagementModel.RedirectFromCardProcess = isFromProcessCardScreen;
@@ -1882,7 +1884,6 @@ namespace FarmerBrothers.Controllers
                 quote.PartsTotal = Convert.ToDecimal(SkuTotal);
 
                 quote.TotalServiceQuote = Convert.ToDecimal(serviceQuoteObj.PreviousQuote) + Convert.ToDecimal(SkuTotal);
-
 
                 jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = quote };
             }
@@ -1943,8 +1944,10 @@ namespace FarmerBrothers.Controllers
                     PricingDetail priceDtls = Utility.GetPricingDetails(workorder.CustomerID, ws.Techid, workorder.CustomerState, FarmerBrothersEntitites);
 
 
-                    decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
-                    quote.Labor = priceDtls == null ? 0 : (priceDtls.HourlyLablrRate == null ? 0 : Convert.ToDecimal(priceDtls.HourlyLablrRate)); // LaborCost;
+                    //decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
+
+                    decimal LaborCost = priceDtls == null ? 0 : (priceDtls.HourlyLablrRate == null ? 0 : Convert.ToDecimal(priceDtls.HourlyLablrRate));
+                    quote.Labor = LaborCost;// LaborCost;
 
                     decimal TravelCost = priceDtls == null ? 0 : (priceDtls.HourlyTravlRate == null ? 0 : Convert.ToDecimal(priceDtls.HourlyTravlRate));
 
@@ -2386,6 +2389,31 @@ namespace FarmerBrothers.Controllers
                 predicate = predicate.And(w => w.CustomerZipCode.Contains(workorderSearchModel.Zipcode));
             }
 
+            if (workorderSearchModel.Status != null && workorderSearchModel.Status.Count > 0)
+            {
+                if (!string.IsNullOrWhiteSpace(workorderSearchModel.Status[0]))
+                {
+                    predicate = predicate.And(w => workorderSearchModel.Status.Contains(w.NonServiceEventStatus.ToString()));
+                }
+            }
+
+            TimeSpan time = new TimeSpan(23, 59, 59);
+            if (workorderSearchModel.DateTo.HasValue)
+            {
+                workorderSearchModel.DateTo = workorderSearchModel.DateTo.Value.Date + time;
+            }
+            if (workorderSearchModel.DateFrom.HasValue && workorderSearchModel.DateTo.HasValue)
+            {
+                predicate = predicate.And(w => w.CreatedDate >= workorderSearchModel.DateFrom && w.CreatedDate <= workorderSearchModel.DateTo);
+            }
+            else if (workorderSearchModel.DateFrom.HasValue)
+            {
+                predicate = predicate.And(w => w.CreatedDate >= workorderSearchModel.DateFrom);
+            }
+            else if (workorderSearchModel.DateTo.HasValue)
+            {
+                predicate = predicate.And(w => w.CreatedDate <= workorderSearchModel.DateTo);
+            }
 
             IQueryable<NonServiceworkorder> workOrders = FarmerBrothersEntitites.Set<NonServiceworkorder>().AsExpandable().Where(predicate).OrderByDescending(w=>w.CreatedDate);
 
@@ -3803,8 +3831,10 @@ namespace FarmerBrothers.Controllers
 
                                         if (string.IsNullOrWhiteSpace(equipment.Location))
                                         {
-                                            message += @"|Location is required for equipment at row " + nCount;
-                                            isValid = false;
+                                            //message += @"|Location is required for equipment at row " + nCount;
+                                            //isValid = false;
+
+                                            equipment.Location = "N/A";
                                         }
                                         nCount++;
                                     }

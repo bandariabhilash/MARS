@@ -11,10 +11,12 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Data.Entity;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using System.Web.UI.WebControls;
 
@@ -321,6 +323,317 @@ namespace FarmerBrothers.Controllers
                 return result;
             }
         }
+        
+        private async Task<IList<BillingReportSearchResultModel>> GetBillingreport_Linq(BillingReportModel BillingRptModel)
+        {
+            List<BillingReportSearchResultModel> BillingData = new List<BillingReportSearchResultModel>();
+            DateTime DF = Convert.ToDateTime(BillingRptModel.BillingFromDate);
+            DateTime DT = Convert.ToDateTime(BillingRptModel.BillingToDate).AddDays(1);
+            String TL = BillingRptModel.DealerId.ToString();
+            String FA = BillingRptModel.TechID.ToString();
+            String PPID = BillingRptModel.ParentACC == null ? "0" : BillingRptModel.ParentACC.ToString();
+            String AccountNo = BillingRptModel.AccountNo == null ? "0" : BillingRptModel.AccountNo.ToString();
+            MarsViews mars = new MarsViews();
+            decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
+
+            //var wrkOrds = await FarmerBrothersEntitites.WorkOrders
+            //    .Join(FarmerBrothersEntitites.Contacts, w => w.CustomerID, c => c.ContactID, (w, c) => new { w, c })
+            //    .Join(FarmerBrothersEntitites.WorkorderDetails, wc => wc.w.WorkorderID, wd => wd.WorkorderID, (wc, wd) => new { wc.w, wc.c, wd })
+            //    .Join(FarmerBrothersEntitites.WorkorderSchedules, wcd => wcd.w.WorkorderID, ws => ws.WorkorderID, (wcd, ws) => new { wcd.w, wcd.c, wcd.wd, ws })
+            //    .Join(FarmerBrothersEntitites.WorkorderEquipments, wcdws => wcdws.w.WorkorderID, eqp => eqp.WorkorderID, (wcdws, eqp) => new { wcdws.w, wcdws.c, wcdws.wd, wcdws.ws, eqp })
+            //    .Where(x => (x.ws.AssignedStatus == "Accepted" || x.ws.AssignedStatus == "Scheduled") &&
+            //     x.w.WorkorderCallstatus == "Closed" &&
+            //     x.w.WorkorderCloseDate >= BillingRptModel.BillingFromDate &&
+            //     x.w.WorkorderCloseDate < BillingRptModel.BillingToDate).ToListAsync();
+
+            var woClosedList = await FarmerBrothersEntitites.WorkOrders.Where(w => w.WorkorderCallstatus == "Closed").Select(s => new
+                                                                                                            {
+                                                                                                                s.WorkorderID,
+                                                                                                                s.AppointmentDate,
+                                                                                                                s.CustomerID,
+                                                                                                                s.CustomerState,
+                                                                                                                s.CustomerName,
+                                                                                                                s.WorkorderEntryDate,
+                                                                                                                s.WorkorderCloseDate,
+                                                                                                                s.WorkorderCallstatus,
+                                                                                                                s.PurchaseOrder,
+                                                                                                                s.WorkorderEquipCount,
+                                                                                                                s.ThirdPartyPO,
+                                                                                                                s.Estimate,
+                                                                                                                s.FinalEstimate,
+                                                                                                                s.EstimateApprovedBy,
+                                                                                                                s.OriginalWorkorderid,
+                                                                                                                s.WorkorderCalltypeid,
+                                                                                                                s.NoServiceRequired,
+                                                                                                                s.CustomerPO
+                                                                                                            }).ToListAsync();
+
+            var woList = woClosedList.Where(w => w.WorkorderCloseDate >= DF.Date &&
+                                                                                                            w.WorkorderCloseDate < DT.Date).ToList();
+
+
+            var workorderids = woList.Select(s => s.WorkorderID).Distinct().ToList();
+            var woContacIds = woList.Select(c => c.CustomerID).Distinct().ToList();
+
+            var cntsList = await FarmerBrothersEntitites.Contacts.Where(c => woContacIds.Contains(c.ContactID)).Select(s => new
+            {
+                s.ContactID,
+                s.CompanyName,
+                s.Address1,
+                s.Address2,
+                s.City,
+                s.State,
+                s.PostalCode,
+                s.Branch,
+                s.Route,
+                s.PricingParentID
+            }).ToListAsync();
+            var wdList = await FarmerBrothersEntitites.WorkorderDetails.Where(w => workorderids.Contains(Convert.ToInt32(w.WorkorderID))).Select(s => new
+            {
+                s.WorkorderID,
+                s.StartDateTime,
+                s.ArrivalDateTime,
+                s.CompletionDateTime,
+                s.HardnessRating,
+                s.NSRReason
+            }).ToListAsync();
+            var wsList = await FarmerBrothersEntitites.WorkorderSchedules.Where(w => workorderids.Contains(Convert.ToInt32(w.WorkorderID)) 
+                                                                                            && (w.AssignedStatus == "Accepted" || w.AssignedStatus == "Scheduled")).Select(s=>new { 
+                                                                                            s.WorkorderID,
+                                                                                            s.AssignedStatus,
+                                                                                            s.ScheduleDate,
+                                                                                            s.Techid,
+                                                                                            s.TechName
+                                                                                            }).ToListAsync();
+            var eqpList = await FarmerBrothersEntitites.WorkorderEquipments.Where(w => workorderids.Contains(Convert.ToInt32(w.WorkorderID))).ToListAsync();
+
+            var workorderparts = await FarmerBrothersEntitites.WorkorderParts.Where(w => workorderids.Contains(Convert.ToInt32(w.WorkorderID))).Select(s => new
+            {
+                s.WorkorderID,
+                s.Sku,
+                s.Quantity,
+                s.Manufacturer,
+                s.Description,
+                s.AssetID
+            }).ToListAsync();
+            var woSkus = workorderparts.Select(s => s.Sku).Distinct().ToList();
+            var workorderSkus = await FarmerBrothersEntitites.Skus.Where(w => woSkus.Contains(w.Sku1) && w.SkuActive == 1).Select(s => new
+            {
+                s.Sku1,
+                s.SkuActive,
+                s.SKUCost,
+                s.Manufacturer,
+                s.Category,
+                s.Description,
+                s.VendorCode
+            }).ToListAsync();
+            var tmp_wo_Data = await FarmerBrothersEntitites.TMP_BlackBerry_SCFAssetInfo.Where(w => workorderids.Contains(Convert.ToInt32(w.WorkorderID))).Select(s => new { 
+            s.WorkorderID,
+            s.Notes,
+            s.AssetKey
+            }).ToListAsync();
+
+            BillingReportSearchResultModel FBBillingSearchResult;
+            foreach (int woId in workorderids)
+            {
+                var workOrd = woList.Where(w => w.WorkorderID == woId).FirstOrDefault();
+
+                FBBillingSearchResult = new BillingReportSearchResultModel();
+                string WorkorderID = woId.ToString();
+                FBBillingSearchResult.WorkorderID = WorkorderID;
+                FBBillingSearchResult.WorkorderEntryDate = workOrd?.WorkorderEntryDate?.ToString();
+                string customertId = workOrd?.CustomerID?.ToString();
+                FBBillingSearchResult.CustomerID = customertId;
+
+                var cnt = cntsList.Where(c => c.ContactID == Convert.ToInt32(customertId)).FirstOrDefault();
+                FBBillingSearchResult.CompanyName = cnt?.CompanyName?.ToString();
+                FBBillingSearchResult.Address1 = cnt?.Address1?.ToString();
+                FBBillingSearchResult.Address2 = cnt?.Address2?.ToString();
+                FBBillingSearchResult.City = cnt?.City?.ToString();
+                string customerState = workOrd?.CustomerState?.ToString();
+                FBBillingSearchResult.CustomerState = customerState;
+                string postalCode = cnt?.PostalCode?.ToString();
+                FBBillingSearchResult.PostalCode = postalCode;
+                FBBillingSearchResult.Route = cnt?.Route?.ToString();
+                FBBillingSearchResult.Branch = cnt?.Branch?.ToString();
+
+
+                var ws = wsList.Where(w => w.WorkorderID == workOrd.WorkorderID).FirstOrDefault();
+                int techId =  Convert.ToInt32(ws?.Techid);
+                FBBillingSearchResult.Techid = techId == 0 ? "" : techId.ToString();
+                FBBillingSearchResult.TechName = ws?.TechName .ToString();
+                FBBillingSearchResult.WorkorderCallstatus = workOrd?.WorkorderCallstatus.ToString();
+
+                var wd = wdList.Where(w => w.WorkorderID == workOrd.WorkorderID).FirstOrDefault();
+                string arrivalDateTime, startDateTime, completionDateTime = "";
+                startDateTime = wd?.StartDateTime.ToString();
+                arrivalDateTime = wd?.ArrivalDateTime.ToString();
+                completionDateTime = wd?.CompletionDateTime.ToString();
+
+                FBBillingSearchResult.StartDateTime = startDateTime;
+                FBBillingSearchResult.ArrivalDateTime = arrivalDateTime;
+                FBBillingSearchResult.CompletionDateTime = completionDateTime;
+
+                FBBillingSearchResult.PurchaseOrder = workOrd?.PurchaseOrder.ToString();
+                FBBillingSearchResult.BillingID = "N";
+                FBBillingSearchResult.ScheduleDate = ws?.ScheduleDate.ToString();
+                FBBillingSearchResult.AppointmentDate = workOrd?.AppointmentDate.ToString();
+                FBBillingSearchResult.WorkorderEquipCount = workOrd?.WorkorderEquipCount.ToString();
+                FBBillingSearchResult.ThirdPartyPO = workOrd?.ThirdPartyPO.ToString();
+                FBBillingSearchResult.Estimate = workOrd?.Estimate.ToString();
+                FBBillingSearchResult.FinalEstimate = workOrd?.FinalEstimate.ToString();
+                FBBillingSearchResult.EstimateApprovedBy = workOrd?.EstimateApprovedBy.ToString();
+                FBBillingSearchResult.OriginalWorkorderid = workOrd?.OriginalWorkorderid.ToString();
+                FBBillingSearchResult.WorkorderCalltypeid = workOrd?.WorkorderCalltypeid.ToString();
+                FBBillingSearchResult.TechCalled = "";
+                FBBillingSearchResult.DispatchTechID = ws?.Techid.ToString();
+                FBBillingSearchResult.DispatchTechName = ws?.TechName.ToString();
+                FBBillingSearchResult.NoServiceRequired = workOrd?.NoServiceRequired.ToString();
+                FBBillingSearchResult.NSRReason = wd?.NSRReason.ToString();
+                string parentId = cnt?.PricingParentID.ToString();
+                FBBillingSearchResult.PricingParentID = parentId;
+
+                var eqp = eqpList.Where(w => w.WorkorderID == workOrd.WorkorderID).FirstOrDefault();
+                FBBillingSearchResult.Category = eqp?.Category.ToString();
+                FBBillingSearchResult.SerialNumber = eqp?.SerialNumber.ToString();
+                FBBillingSearchResult.Model = eqp?.Model.ToString();
+                FBBillingSearchResult.Manufacturer = eqp?.Manufacturer.ToString();
+                FBBillingSearchResult.Solutionid = eqp?.Solutionid.ToString();
+
+                var tbsData = tmp_wo_Data.Where(w => w.WorkorderID == Convert.ToInt32(WorkorderID) && w.AssetKey == eqp?.Assetid).FirstOrDefault();
+                FBBillingSearchResult.WorkPerformedNotes = tbsData?.Notes?.ToString();
+                
+                FBBillingSearchResult.CustomerName = workOrd?.CustomerName.ToString();
+
+                var partData = workorderparts.Where(w => w.WorkorderID == Convert.ToInt32(WorkorderID) && w.AssetID == eqp?.Assetid).FirstOrDefault();
+                int Quantity = Convert.ToInt32(partData?.Quantity);
+                FBBillingSearchResult.Quantity = Quantity.ToString();
+
+                FBBillingSearchResult.Sku = partData.Sku.ToString();
+
+                var skuData = workorderSkus.Where(w => w.Sku1 == partData.Sku).FirstOrDefault();
+                decimal SKUCost = Convert.ToDecimal(skuData?.SKUCost);
+                FBBillingSearchResult.SKUCost = SKUCost;
+
+                FBBillingSearchResult.VendorCode = skuData?.VendorCode.ToString();
+                FBBillingSearchResult.Description = partData?.Description.ToString();
+                FBBillingSearchResult.OrderSource = partData?.Manufacturer.ToString();
+                FBBillingSearchResult.Supplier = skuData?.Manufacturer.ToString();
+
+                PricingDetail priceDtls = Utility.GetPricingDetails(Convert.ToInt32(customertId), techId, customerState, FarmerBrothersEntitites);
+                decimal? travelRateDefined = priceDtls.HourlyTravlRate;
+                decimal? laborRateDefined = priceDtls.HourlyLablrRate;
+
+                double TravelTotal, LaborTotal, PartsTotal, TotalInvoice = 0;
+                if (!string.IsNullOrEmpty(startDateTime) && !string.IsNullOrEmpty(arrivalDateTime))
+                {
+                    DateTime arrival = Convert.ToDateTime(arrivalDateTime);
+                    DateTime strt = Convert.ToDateTime(startDateTime);
+                    TimeSpan timeDiff = arrival.Subtract(strt);
+
+                    //******                    
+                    int isDateHolidayWeekend = Utility.IsDateHolidayWeekend(strt.ToString("MM/dd/yyyy"), FarmerBrothersEntitites);
+
+                    int OnCallStartTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTime"]);
+                    int OnCallStartTimeMinutes = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTimeMinutes"]);
+                    int OnCallEndTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallEndTime"]);
+
+                    DateTime AfterHoursStartTime = Convert.ToDateTime(strt.ToString("MM-dd-yyyy")).AddHours(OnCallStartTime).AddMinutes(OnCallStartTimeMinutes);
+                    DateTime AfterHourdsEndTime = Convert.ToDateTime(strt.ToString("MM-dd-yyyy")).AddHours(OnCallEndTime);
+
+                    if (isDateHolidayWeekend == 1 || isDateHolidayWeekend == 2 ||
+                       (strt > AfterHoursStartTime || strt < AfterHourdsEndTime))
+                    {
+                        if (Convert.ToBoolean(priceDtls.AfterHoursRatesApply))
+                        {
+                            travelRateDefined = priceDtls.AfterHoursTravelRate;
+                        }
+                    }
+
+                    //******
+
+
+
+
+
+                    decimal? travelAmt = priceDtls == null ? 0 : travelRateDefined;
+                    TravelTotal = Convert.ToDouble(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+                }
+              
+                else
+                {
+                    TravelTotal = 0;
+                }
+
+                if (!string.IsNullOrEmpty(arrivalDateTime) && !string.IsNullOrEmpty(completionDateTime))
+                {
+                    DateTime completion = Convert.ToDateTime(completionDateTime);
+                    DateTime arrival = Convert.ToDateTime(arrivalDateTime);
+                    TimeSpan timeDiff = completion.Subtract(arrival);
+
+                    //******                    
+                    int isDateHolidayWeekend = Utility.IsDateHolidayWeekend(completion.ToString("MM/dd/yyyy"), FarmerBrothersEntitites);
+
+                    int OnCallStartTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTime"]);
+                    int OnCallStartTimeMinutes = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTimeMinutes"]);
+                    int OnCallEndTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallEndTime"]);
+
+                    DateTime AfterHoursStartTime = Convert.ToDateTime(completion.ToString("MM-dd-yyyy")).AddHours(OnCallStartTime).AddMinutes(OnCallStartTimeMinutes);
+                    DateTime AfterHourdsEndTime = Convert.ToDateTime(completion.ToString("MM-dd-yyyy")).AddHours(OnCallEndTime);
+
+                    if (isDateHolidayWeekend == 1 || isDateHolidayWeekend == 2 ||
+                       (completion > AfterHoursStartTime || completion < AfterHourdsEndTime))
+                    {
+                        if (Convert.ToBoolean(priceDtls.AfterHoursRatesApply))
+                        {
+                            laborRateDefined = priceDtls.AfterHoursTravelRate;
+                        }
+                    }
+
+                    decimal? laborAmt = priceDtls == null ? 0 : laborRateDefined;
+                    LaborTotal = Convert.ToDouble(laborAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                }
+                else
+                {
+                    LaborTotal = 0;
+                }
+
+                //PartsTotal = Math.Round(Convert.ToDouble(Quantity * SKUCost), 2);
+                double partsTotalValue = Math.Round(Convert.ToDouble(Quantity * SKUCost), 2);
+                double partsDiscount = priceDtls == null ? 0 : Convert.ToDouble(priceDtls.PartsDiscount / 100);
+                double partsDiscountValue = partsTotalValue * (partsDiscount);
+                PartsTotal = partsTotalValue + partsDiscountValue;
+
+
+                TotalInvoice = Math.Round((TravelTotal + LaborTotal + PartsTotal), 2);
+
+                FBBillingSearchResult.TravelTotal = TravelTotal.ToString();
+                FBBillingSearchResult.LaborTotal = LaborTotal.ToString();
+                FBBillingSearchResult.PartsTotal = PartsTotal.ToString();
+                FBBillingSearchResult.TotalInvoice = TotalInvoice.ToString();
+                FBBillingSearchResult.CustomerPO = workOrd?.CustomerPO.ToString();
+                FBBillingSearchResult.HardnessRating = wd?.HardnessRating.ToString();
+
+                TECH_HIERARCHY techHView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == techId).FirstOrDefault();
+                dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, postalCode);
+                decimal distance = 0;
+                if (travelDetails != null)
+                {
+                    var element = travelDetails.rows[0].elements[0];
+                    distance = element == null ? 0 : (element.distance == null ? 0 : element.distance.value * (decimal)0.000621371192);
+                    distance = Math.Round(distance, 0);
+                }
+                FBBillingSearchResult.Distance = distance.ToString();
+
+
+                BillingData.Add(FBBillingSearchResult);
+            }
+            BillingRptModel.SearchResults = BillingData;
+
+
+            return BillingData;
+        }
 
         private IList<BillingReportSearchResultModel> GetBillingreport(BillingReportModel BillingRptModel)
         {
@@ -621,6 +934,257 @@ namespace FarmerBrothers.Controllers
             return BillingData;
         }
 
+        private IList<BillingReportSearchResultModel> GetBillingreport_New(BillingReportModel BillingRptModel)
+        {
+            List<BillingReportSearchResultModel> BillingData = new List<BillingReportSearchResultModel>();
+            String DF = BillingRptModel.BillingFromDate.ToString();
+            String DT = Convert.ToDateTime(BillingRptModel.BillingToDate).AddDays(1).ToString();
+            String TL = BillingRptModel.DealerId.ToString();
+            String FA = BillingRptModel.TechID.ToString();
+            String PPID = BillingRptModel.ParentACC == null ? "0" : BillingRptModel.ParentACC.ToString();
+            String AccountNo = BillingRptModel.AccountNo == null ? "0" : BillingRptModel.AccountNo.ToString();
+            
+            decimal LaborCost = Convert.ToDecimal(ConfigurationManager.AppSettings["LaborCost"]);
+            MarsViews mars = new MarsViews();
+            DataTable dt = mars.fbBilling("USP_Billing_Report", DF, DT, AccountNo, TL, FA, PPID);
+
+            
+            //DataTable dt = mars.fbSuperInvoice("USP_SuperInvoice_Report", DF, DT, PPID, FA, TL);
+            BillingReportSearchResultModel FBBillingSearchResult;
+            foreach (DataRow dr in dt.Rows)
+            {
+                FBBillingSearchResult = new BillingReportSearchResultModel();
+                string WorkorderID = dr["WorkorderID"] == DBNull.Value ? "" : dr["WorkorderID"].ToString();
+                FBBillingSearchResult.WorkorderID = WorkorderID;
+                FBBillingSearchResult.WorkorderEntryDate = dr["WorkorderEntryDate"] == DBNull.Value ? "" : dr["WorkorderEntryDate"].ToString();
+                string customertId = dr["CustomerID"] == DBNull.Value ? "" : dr["CustomerID"].ToString();
+                FBBillingSearchResult.CustomerID = customertId;
+                FBBillingSearchResult.CompanyName = dr["CompanyName"] == DBNull.Value ? "" : dr["CompanyName"].ToString();
+                FBBillingSearchResult.Address1 = dr["Address1"] == DBNull.Value ? "" : dr["Address1"].ToString();
+                FBBillingSearchResult.Address2 = dr["Address2"] == DBNull.Value ? "" : dr["Address2"].ToString();
+                FBBillingSearchResult.City = dr["City"] == DBNull.Value ? "" : dr["City"].ToString();
+                string customerState = dr["CustomerState"] == DBNull.Value ? "" : dr["CustomerState"].ToString();
+                FBBillingSearchResult.CustomerState = customerState;
+                string postalCode = dr["PostalCode"] == DBNull.Value ? "" : dr["PostalCode"].ToString();
+                FBBillingSearchResult.PostalCode = postalCode;
+                FBBillingSearchResult.Route = dr["Route"] == DBNull.Value ? "" : dr["Route"].ToString();
+                FBBillingSearchResult.Branch = dr["Branch"] == DBNull.Value ? "" : dr["Branch"].ToString();
+                int techId = dr["Techid"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Techid"]);
+                FBBillingSearchResult.Techid = techId == 0 ? "" : techId.ToString();
+                FBBillingSearchResult.TechName = dr["TechName"] == DBNull.Value ? "" : dr["TechName"].ToString();
+                FBBillingSearchResult.WorkorderCallstatus = dr["WorkorderCallstatus"] == DBNull.Value ? "" : dr["WorkorderCallstatus"].ToString();
+
+                string arrivalDateTime, startDateTime, completionDateTime = "";
+                startDateTime = dr["StartDateTime"] == DBNull.Value ? "" : dr["StartDateTime"].ToString();
+                arrivalDateTime = dr["ArrivalDateTime"] == DBNull.Value ? "" : dr["ArrivalDateTime"].ToString();
+                completionDateTime = dr["CompletionDateTime"] == DBNull.Value ? "" : dr["CompletionDateTime"].ToString();
+
+                FBBillingSearchResult.StartDateTime = startDateTime;
+                FBBillingSearchResult.ArrivalDateTime = arrivalDateTime;
+                FBBillingSearchResult.CompletionDateTime = completionDateTime;
+
+                FBBillingSearchResult.PurchaseOrder = dr["PurchaseOrder"] == DBNull.Value ? "" : dr["PurchaseOrder"].ToString();
+                FBBillingSearchResult.BillingID = dr["BillingID"] == DBNull.Value ? "" : dr["BillingID"].ToString();
+                FBBillingSearchResult.ScheduleDate = dr["ScheduleDate"] == DBNull.Value ? "" : dr["ScheduleDate"].ToString();
+                FBBillingSearchResult.AppointmentDate = dr["AppointmentDate"] == DBNull.Value ? "" : dr["AppointmentDate"].ToString();
+                FBBillingSearchResult.WorkorderEquipCount = dr["WorkorderEquipCount"] == DBNull.Value ? "" : dr["WorkorderEquipCount"].ToString();
+                FBBillingSearchResult.ThirdPartyPO = dr["ThirdPartyPO"] == DBNull.Value ? "" : dr["ThirdPartyPO"].ToString();
+                FBBillingSearchResult.Estimate = dr["Estimate"] == DBNull.Value ? "" : dr["Estimate"].ToString();
+                FBBillingSearchResult.FinalEstimate = dr["FinalEstimate"] == DBNull.Value ? "" : dr["FinalEstimate"].ToString();
+                FBBillingSearchResult.EstimateApprovedBy = dr["EstimateApprovedBy"] == DBNull.Value ? "" : dr["EstimateApprovedBy"].ToString();
+                FBBillingSearchResult.OriginalWorkorderid = dr["OriginalWorkorderid"] == DBNull.Value ? "" : dr["OriginalWorkorderid"].ToString();
+                FBBillingSearchResult.WorkorderCalltypeid = dr["WorkorderCalltypeid"] == DBNull.Value ? "" : dr["WorkorderCalltypeid"].ToString();
+                FBBillingSearchResult.TechCalled = dr["TechCalled"] == DBNull.Value ? "" : dr["TechCalled"].ToString();
+                FBBillingSearchResult.DispatchTechID = dr["DispatchTechID"] == DBNull.Value ? "" : dr["DispatchTechID"].ToString();
+                FBBillingSearchResult.DispatchTechName = dr["DispatchTechName"] == DBNull.Value ? "" : dr["DispatchTechName"].ToString();
+                FBBillingSearchResult.NoServiceRequired = dr["NoServiceRequired"] == DBNull.Value ? "" : dr["NoServiceRequired"].ToString();
+                FBBillingSearchResult.NSRReason = dr["NSRReason"] == DBNull.Value ? "" : dr["NSRReason"].ToString();
+                string parentId = dr["PricingParentID"] == DBNull.Value ? "" : dr["PricingParentID"].ToString();
+                FBBillingSearchResult.PricingParentID = parentId;
+                FBBillingSearchResult.Category = dr["Category"] == DBNull.Value ? "" : dr["Category"].ToString();
+                FBBillingSearchResult.SerialNumber = dr["SerialNumber"] == DBNull.Value ? "" : dr["SerialNumber"].ToString();
+                FBBillingSearchResult.Model = dr["Model"] == DBNull.Value ? "" : dr["Model"].ToString();
+                FBBillingSearchResult.Manufacturer = dr["Manufacturer"] == DBNull.Value ? "" : dr["Manufacturer"].ToString();
+                FBBillingSearchResult.Solutionid = dr["Solutionid"] == DBNull.Value ? "" : dr["Solutionid"].ToString();
+                FBBillingSearchResult.WorkPerformedNotes = dr["WorkPerformedNotes"] == DBNull.Value ? "" : dr["WorkPerformedNotes"].ToString();
+
+                //string WorkPerformedNotes = dr["WorkPerformedNotes"] == DBNull.Value ? "" : dr["WorkPerformedNotes"].ToString();
+                //NotesHistory nts = FarmerBrothersEntitites.NotesHistories.Where(w => w.WorkorderID.ToString() == WorkorderID && (w.Notes.Contains("comments") || w.Notes.Contains("Comments"))).FirstOrDefault();
+                //FBBillingSearchResult.WorkPerformedNotes = nts == null ? "" : nts.Notes.Contains(':') ? nts.Notes.Split(':')[1] : nts.Notes;
+
+                FBBillingSearchResult.WorkPerformedNotes = dr["WorkPerformedNotes"] == DBNull.Value ? "" : dr["WorkPerformedNotes"].ToString();
+
+                FBBillingSearchResult.CustomerName = dr["CustomerName"] == DBNull.Value ? "" : dr["CustomerName"].ToString();
+
+                int Quantity = dr["Quantity"] == DBNull.Value ? 0 : Convert.ToInt32(dr["Quantity"]);
+                FBBillingSearchResult.Quantity = Quantity.ToString();
+
+                FBBillingSearchResult.Sku = dr["Sku"] == DBNull.Value ? "" : dr["Sku"].ToString();
+
+                decimal SKUCost = dr["SKUCost"] == DBNull.Value ? 0 : Convert.ToDecimal(dr["SKUCost"]);
+                FBBillingSearchResult.SKUCost = SKUCost;
+
+                FBBillingSearchResult.VendorCode = dr["VendorCode"] == DBNull.Value ? "" : dr["VendorCode"].ToString();
+                FBBillingSearchResult.Description = dr["Description"] == DBNull.Value ? "" : dr["Description"].ToString();
+                FBBillingSearchResult.OrderSource = dr["OrderSource"] == DBNull.Value ? "" : dr["OrderSource"].ToString();
+                FBBillingSearchResult.Supplier = dr["Supplier"] == DBNull.Value ? "" : dr["Supplier"].ToString();
+
+                PricingDetail priceDtls = Utility.GetPricingDetails(Convert.ToInt32(customertId), techId, customerState, FarmerBrothersEntitites);
+                decimal? travelRateDefined = priceDtls.HourlyTravlRate;
+                decimal? laborRateDefined = priceDtls.HourlyLablrRate;
+
+                double TravelTotal, LaborTotal, PartsTotal, TotalInvoice = 0;
+                if (!string.IsNullOrEmpty(startDateTime) && !string.IsNullOrEmpty(arrivalDateTime))
+                {
+                    DateTime arrival = Convert.ToDateTime(arrivalDateTime);
+                    DateTime strt = Convert.ToDateTime(startDateTime);
+                    TimeSpan timeDiff = arrival.Subtract(strt);
+
+                    /*if (!string.IsNullOrEmpty(parentId) && parentId == "9001239") //Updated as per the email "SEB - - Parent Acct #9001239"
+                    {
+                        TravelTotal = Math.Round(((Convert.ToDateTime(arrivalDateTime).Subtract(Convert.ToDateTime(startDateTime))).TotalMinutes) * 1.58333, 2);                        
+                    }
+                    else
+                    {
+                        TravelTotal = Math.Round(((Convert.ToDateTime(arrivalDateTime).Subtract(Convert.ToDateTime(startDateTime))).TotalMinutes) * 1.41666, 2);
+                    }*/
+
+
+                    //******                    
+                    int isDateHolidayWeekend = Utility.IsDateHolidayWeekend(strt.ToString("MM/dd/yyyy"), FarmerBrothersEntitites);
+
+                    int OnCallStartTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTime"]);
+                    int OnCallStartTimeMinutes = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTimeMinutes"]);
+                    int OnCallEndTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallEndTime"]);
+
+                    DateTime AfterHoursStartTime = Convert.ToDateTime(strt.ToString("MM-dd-yyyy")).AddHours(OnCallStartTime).AddMinutes(OnCallStartTimeMinutes);
+                    DateTime AfterHourdsEndTime = Convert.ToDateTime(strt.ToString("MM-dd-yyyy")).AddHours(OnCallEndTime);
+
+                    if (isDateHolidayWeekend == 1 || isDateHolidayWeekend == 2 ||
+                       (strt > AfterHoursStartTime || strt < AfterHourdsEndTime))
+                    {
+                        if (Convert.ToBoolean(priceDtls.AfterHoursRatesApply))
+                        {
+                            travelRateDefined = priceDtls.AfterHoursTravelRate;
+                        }
+                    }
+
+                    //******
+
+
+
+
+
+                    decimal? travelAmt = priceDtls == null ? 0 : travelRateDefined;
+                    TravelTotal = Convert.ToDouble(travelAmt * Convert.ToDecimal(timeDiff.TotalHours));
+                }
+                //else if (string.IsNullOrEmpty(startDateTime) && !string.IsNullOrEmpty(arrivalDateTime))
+                //{
+                //    TravelTotal = ((Convert.ToDateTime(arrivalDateTime).Ticks) * 1440) * 1.41666;
+                //}
+                //else if (!string.IsNullOrEmpty(startDateTime) && string.IsNullOrEmpty(arrivalDateTime))
+                //{
+                //    TravelTotal = ((Convert.ToDateTime(startDateTime).Ticks) * 1440) * 1.41666;
+                //}
+                //else if (string.IsNullOrEmpty(startDateTime) && string.IsNullOrEmpty(arrivalDateTime))
+                //{
+                //    TravelTotal = 0;
+                //}
+                else
+                {
+                    TravelTotal = 0;
+                }
+
+                if (!string.IsNullOrEmpty(arrivalDateTime) && !string.IsNullOrEmpty(completionDateTime))
+                {
+                    DateTime completion = Convert.ToDateTime(completionDateTime);
+                    DateTime arrival = Convert.ToDateTime(arrivalDateTime);
+                    TimeSpan timeDiff = completion.Subtract(arrival);
+
+                    /*if (!string.IsNullOrEmpty(parentId) && parentId == "9001239") //Updated as per the email "SEB - - Parent Acct #9001239"
+                    {
+                        LaborTotal = Math.Round(((Convert.ToDateTime(completionDateTime).Subtract(Convert.ToDateTime(arrivalDateTime))).TotalMinutes) * 1.58333, 2);
+                    }
+                    else
+                    {
+                        LaborTotal = Math.Round(((Convert.ToDateTime(completionDateTime).Subtract(Convert.ToDateTime(arrivalDateTime))).TotalMinutes) * 1.41666, 2);
+                    }*/
+
+                    //******                    
+                    int isDateHolidayWeekend = Utility.IsDateHolidayWeekend(completion.ToString("MM/dd/yyyy"), FarmerBrothersEntitites);
+
+                    int OnCallStartTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTime"]);
+                    int OnCallStartTimeMinutes = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallStartTimeMinutes"]);
+                    int OnCallEndTime = Convert.ToInt32(ConfigurationManager.AppSettings["OnCallEndTime"]);
+
+                    DateTime AfterHoursStartTime = Convert.ToDateTime(completion.ToString("MM-dd-yyyy")).AddHours(OnCallStartTime).AddMinutes(OnCallStartTimeMinutes);
+                    DateTime AfterHourdsEndTime = Convert.ToDateTime(completion.ToString("MM-dd-yyyy")).AddHours(OnCallEndTime);
+
+                    if (isDateHolidayWeekend == 1 || isDateHolidayWeekend == 2 ||
+                       (completion > AfterHoursStartTime || completion < AfterHourdsEndTime))
+                    {
+                        if (Convert.ToBoolean(priceDtls.AfterHoursRatesApply))
+                        {
+                            laborRateDefined = priceDtls.AfterHoursTravelRate;
+                        }
+                    }
+
+                    decimal? laborAmt = priceDtls == null ? 0 : laborRateDefined;
+                    LaborTotal = Convert.ToDouble(laborAmt * Convert.ToDecimal(timeDiff.TotalHours));
+
+                }
+                //else if (string.IsNullOrEmpty(arrivalDateTime) && !string.IsNullOrEmpty(completionDateTime))
+                //{
+                //    LaborTotal = ((Convert.ToDateTime(arrivalDateTime).Ticks) * 1440) * 1.41666;
+                //}
+                //else if (!string.IsNullOrEmpty(arrivalDateTime) && string.IsNullOrEmpty(completionDateTime))
+                //{
+                //    LaborTotal = ((Convert.ToDateTime(completionDateTime).Ticks) * 1440) * 1.41666;
+                //}
+                //if (string.IsNullOrEmpty(arrivalDateTime) && string.IsNullOrEmpty(completionDateTime))
+                //{
+                //    LaborTotal = 0;
+                //}
+                else
+                {
+                    LaborTotal = 0;
+                }
+
+                //PartsTotal = Math.Round(Convert.ToDouble(Quantity * SKUCost), 2);
+                double partsTotalValue = Math.Round(Convert.ToDouble(Quantity * SKUCost), 2);
+                double partsDiscount = priceDtls == null ? 0 : Convert.ToDouble(priceDtls.PartsDiscount / 100);
+                double partsDiscountValue = partsTotalValue * (partsDiscount);
+                PartsTotal = partsTotalValue + partsDiscountValue;
+
+
+                TotalInvoice = Math.Round((TravelTotal + LaborTotal + PartsTotal), 2);
+
+                FBBillingSearchResult.TravelTotal = TravelTotal.ToString();
+                FBBillingSearchResult.LaborTotal = LaborTotal.ToString();
+                FBBillingSearchResult.PartsTotal = PartsTotal.ToString();
+                FBBillingSearchResult.TotalInvoice = TotalInvoice.ToString();
+                FBBillingSearchResult.CustomerPO = dr["CustomerPO"] == DBNull.Value ? "" : dr["CustomerPO"].ToString();
+                FBBillingSearchResult.HardnessRating = dr["HardnessRating"] == DBNull.Value ? "" : dr["HardnessRating"].ToString();
+
+                TECH_HIERARCHY techHView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == techId).FirstOrDefault();
+                dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, postalCode);
+                decimal distance = 0;
+                if (travelDetails != null)
+                {
+                    var element = travelDetails.rows[0].elements[0];
+                    distance = element == null ? 0 : (element.distance == null ? 0 : element.distance.value * (decimal)0.000621371192);
+                    distance = Math.Round(distance, 0);
+                }
+                FBBillingSearchResult.Distance = distance.ToString();
+
+
+                BillingData.Add(FBBillingSearchResult);
+            }
+            BillingRptModel.SearchResults = BillingData;
+
+            return BillingData;
+        }
+
         public JsonResult ClearBillingResults()
         {
             TempData["SearchCriteria"] = null;
@@ -639,6 +1203,8 @@ namespace FarmerBrothers.Controllers
                 {
                     BillingModel = TempData["SearchCriteria"] as BillingReportModel;
                     searchResults = GetBillingreport(BillingModel);
+                    //var searchresults = GetBillingreport(BillingModel);
+                    //searchResults = new List<BillingReportSearchResultModel>();
                 }
 
                 TempData["SearchCriteria"] = BillingModel;
@@ -3405,18 +3971,17 @@ namespace FarmerBrothers.Controllers
         private IList<NonServiceSearchResults> GetNonServiceEventResults(NonServiceSearchModel nonServiceEventModel)
         {
             DateTime startdate = Convert.ToDateTime(nonServiceEventModel.DateFrom);
-            DateTime enddate = Convert.ToDateTime(nonServiceEventModel.DateTo);
-            enddate.AddDays(1);
+            DateTime enddate = Convert.ToDateTime(nonServiceEventModel.DateTo).AddDays(1);
 
-            string fromdate = startdate.ToString("MM/dd/yyyy");
-            string todate = enddate.ToString("MM/dd/yyyy");
+            //string fromdate = startdate.ToString("MM/dd/yyyy");
+            //string todate = enddate.ToString("MM/dd/yyyy");
 
 
             List<NonServiceSearchResults> nonServiceEventResultsList = new List<NonServiceSearchResults>();
             string sSql = " SELECT FBCallReason.Description, COUNT(*)";
             sSql = sSql + " FROM NonServiceworkorder   (nolock) ";
             sSql = sSql + " INNER JOIN FBCallReason   (nolock) ON NonServiceworkorder.CallReason = FBCallReason.SourceCode";
-            sSql = sSql + " WHERE NonServiceworkorder.CreatedDate >= '" + nonServiceEventModel.DateFrom + "' and NonServiceworkorder.CreatedDate < '" + nonServiceEventModel.DateTo + "'";
+            sSql = sSql + " WHERE NonServiceworkorder.CreatedDate >= '" + startdate + "' and NonServiceworkorder.CreatedDate <= '" + enddate + "'";
             sSql = sSql + " GROUP BY FBCallReason.Description";
             sSql = sSql + " ORDER BY FBCallReason.Description";
 
@@ -3499,7 +4064,7 @@ namespace FarmerBrothers.Controllers
         {
             //string[] columns = { "ServiceType", "Count", "EventID", "CustomerType", "Description", "EventStatus", "EntryDate", "CompanyName", "Address1", "City", "State", "PostalCode"
             //                   , "EmailAddress", "Notes", "Route"};
-            string[] columns = {  "EventID", "CustomerId", "Region", "Branch", "Route", "Description", "EventStatus", "EntryDate", "ClosureDate", "CompanyName", "Address1", "City", "State", "PostalCode", "EmailSentTo", "CreatedUserName" };
+            string[] columns = {  "EventID", "CustomerId", "Region", "Branch", "Route", "Description", "EventStatus", "EntryDate", "ClosureDate", "CompanyName", "Address1", "City", "State", "PostalCode", "EmailSentTo", "CreatedUserName", "ClosedBy", "ResolutionCallerName", "ClosureNotes" };
             byte[] filecontent = ExcelExportHelper.ExportExcel(serialNumbersearchResults, "Customer-Service Event Details", true, columns);
             var fileStream = new MemoryStream(filecontent);
             return File(filecontent, System.Net.Mime.MediaTypeNames.Application.Octet, "Customer-Service-Events.xlsx");
@@ -3507,21 +4072,26 @@ namespace FarmerBrothers.Controllers
 
         private List<NonServiceSearchResults> GetNonServiceSpecificDataResults(string DateFrom, string DateTo, string description)
         {
+            DateTime startdate = Convert.ToDateTime(DateFrom);
+            DateTime enddate = Convert.ToDateTime(DateTo).AddDays(1);
+
             List<NonServiceSearchResults> nonServiceEventResultsList = new List<NonServiceSearchResults>();
             string sSql = @" SELECT dbo.FBCallReason.Description, dbo.NonServiceworkorder.WorkOrderID,dbo.NonServiceworkorder.CreatedDate,
-                             dbo.Contact.CompanyName, dbo.Contact.ContactID, dbo.Contact.RegionNumber,dbo.Contact.Branch,dbo.Contact.Route,
-                            dbo.Contact.Address1, dbo.Contact.City, dbo.Contact.State, dbo.Contact.PostalCode, dbo.NonServiceworkorder.NonServiceEventStatus, 
-                            dbo.NonServiceworkorder.EmailSentTo,dbo.NonServiceworkorder.CloseDate, dbo.FbUserMaster.FirstName, dbo.FbUserMaster.LastName
-                             --,STUFF((SELECT CHAR(13) + CHAR(10), dbo.NotesHistory.Notes as [text()]
+                                        dbo.Contact.CompanyName, dbo.Contact.ContactID, dbo.Contact.RegionNumber,dbo.Contact.Branch,dbo.Contact.Route,
+                                    dbo.Contact.Address1, dbo.Contact.City, dbo.Contact.State, dbo.Contact.PostalCode, dbo.NonServiceworkorder.NonServiceEventStatus, 
+                                    dbo.NonServiceworkorder.EmailSentTo,dbo.NonServiceworkorder.CloseDate, createdBy.FirstName as createdFirstName, createdBy.LastName as createdLastName,
+                                    closedBy.FirstName  as closedFirstName, closedBy.LastName as ClosedLastName, dbo.NonServiceworkorder.ResolutionCallerName
+                                --,STUFF((SELECT CHAR(13) + CHAR(10), dbo.NotesHistory.Notes as [text()]
                                 --,STUFF((SELECT '; ', dbo.NotesHistory.Notes as [text()]
                                 --FROM dbo.NotesHistory   (nolock) 
                                 --WHERE dbo.NotesHistory.NonServiceWorkorderID = dbo.NonServiceworkorder.WorkOrderID
                                 --FOR XML PATH('')),1,1,'') [Notes]
                                     FROM dbo.NonServiceworkorder
-                             INNER JOIN dbo.Contact   (nolock) ON dbo.Contact.ContactID = dbo.NonServiceworkorder.CustomerID
-                             LEFT JOIN dbo.NotesHistory  (nolock)  ON dbo.NotesHistory.NonServiceWorkorderID = dbo.NonServiceworkorder.WorkOrderID
-                             INNER JOIN dbo.FBCallReason  (nolock) ON dbo.NonServiceworkorder.CallReason= dbo.FBCallReason.SourceCode 
-                            INNER JOIN dbo.FbUserMaster (nolock) ON dbo.NonServiceworkorder.CreatedBy = dbo.FbUserMaster.UserId
+                                INNER JOIN dbo.Contact   (nolock) ON dbo.Contact.ContactID = dbo.NonServiceworkorder.CustomerID
+                                LEFT JOIN dbo.NotesHistory  (nolock)  ON dbo.NotesHistory.NonServiceWorkorderID = dbo.NonServiceworkorder.WorkOrderID
+                                INNER JOIN dbo.FBCallReason  (nolock) ON dbo.NonServiceworkorder.CallReason= dbo.FBCallReason.SourceCode 
+                            INNER JOIN dbo.FbUserMaster createdBy (nolock) ON dbo.NonServiceworkorder.CreatedBy = createdBy.UserId
+                            INNER JOIN dbo.FbUserMaster closedBy (nolock) ON dbo.NonServiceworkorder.CreatedBy = closedBy.UserId
                             WHERE";
 
             if (description.ToUpper() != "ALL")
@@ -3536,12 +4106,13 @@ namespace FarmerBrothers.Controllers
                 }
             }
 
-            sSql = sSql + " dbo.NonServiceworkorder.CreatedDate >= '" + DateFrom + "'";
-            sSql = sSql + " and dbo.NonServiceworkorder.CreatedDate <= '" + DateTo + "'";
+            sSql = sSql + " dbo.NonServiceworkorder.CreatedDate >= '" + startdate + "'";
+            sSql = sSql + " and dbo.NonServiceworkorder.CreatedDate <= '" + enddate + "'";
             sSql = sSql + " GROUP BY dbo.FBCallReason.Description, dbo.NonServiceworkorder.WorkOrderID,dbo.NonServiceworkorder.CreatedDate,";
             sSql = sSql + " dbo.Contact.CompanyName, dbo.Contact.ContactID, dbo.Contact.RegionNumber,dbo.Contact.Branch,dbo.Contact.Route, dbo.Contact.Address1," +
                                     " dbo.Contact.City, dbo.Contact.State, dbo.Contact.PostalCode,dbo.NonServiceworkorder.NonServiceEventStatus, dbo.NonServiceworkorder.EmailSentTo,dbo.NonServiceworkorder.CloseDate," +
-                                    "dbo.FbUserMaster.FirstName, dbo.FbUserMaster.LastName";
+                                    "createdBy.FirstName, createdBy.LastName," +
+                                    "closedBy.FirstName, closedBy.LastName, dbo.NonServiceworkorder.ResolutionCallerName";
 
             MarsViews mars = new MarsViews();
             DataTable dt = mars.fnTpspVendors(sSql);
@@ -3550,7 +4121,8 @@ namespace FarmerBrothers.Controllers
             {
                 nonServiceSearchResultModel = new NonServiceSearchResults();
                 nonServiceSearchResultModel.Description = dr["Description"].ToString();
-                nonServiceSearchResultModel.EventID = dr["WorkOrderID"].ToString();
+                int eventId = Convert.ToInt32(dr["WorkOrderID"]);
+                nonServiceSearchResultModel.EventID = eventId.ToString();
                 nonServiceSearchResultModel.EventStatus = dr["NonServiceEventStatus"].ToString();// "Open";
                 nonServiceSearchResultModel.EntryDate = dr["CreatedDate"].ToString();
                 nonServiceSearchResultModel.ClosureDate = dr["CloseDate"].ToString();
@@ -3565,7 +4137,13 @@ namespace FarmerBrothers.Controllers
                 nonServiceSearchResultModel.PostalCode = dr["PostalCode"].ToString();
                 //nonServiceSearchResultModel.Notes = dr["Notes"].ToString();
                 nonServiceSearchResultModel.EmailSentTo = dr["EmailSentTo"] == DBNull.Value ? "" : dr["EmailSentTo"].ToString();
-                nonServiceSearchResultModel.CreatedUserName = ((dr["FirstName"] == DBNull.Value ? "" : dr["FirstName"].ToString()) + " " + (dr["LastName"] == DBNull.Value ? "" : dr["LastName"].ToString())).Trim();
+                nonServiceSearchResultModel.CreatedUserName = ((dr["createdFirstName"] == DBNull.Value ? "" : dr["createdFirstName"].ToString()) + " " + (dr["createdLastName"] == DBNull.Value ? "" : dr["createdLastName"].ToString())).Trim();
+                nonServiceSearchResultModel.ClosedBy = ((dr["closedFirstName"] == DBNull.Value ? "" : dr["closedFirstName"].ToString()) + " " + (dr["ClosedLastName"] == DBNull.Value ? "" : dr["ClosedLastName"].ToString())).Trim();
+                nonServiceSearchResultModel.ResolutionCallerName = dr["ResolutionCallerName"].ToString();
+                
+                string ClosureNotes = FarmerBrothersEntitites.NotesHistories.Where(n => n.NonServiceWorkorderID == eventId && n.Notes.Contains("Closure Notes :")).Select(s => s.Notes).FirstOrDefault();
+                nonServiceSearchResultModel.ClosureNotes = string.IsNullOrEmpty(ClosureNotes) ? "" : ClosureNotes.Replace("Closure Notes : ", "");
+
                 nonServiceEventResultsList.Add(nonServiceSearchResultModel);               
             }
 

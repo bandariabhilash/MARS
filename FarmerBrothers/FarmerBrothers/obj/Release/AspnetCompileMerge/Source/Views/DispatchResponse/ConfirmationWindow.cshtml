@@ -1,4 +1,5 @@
 ﻿
+@model FarmerBrothers.Data.DispatchResponseModel
 @{
     ViewBag.Title = "ConfirmationWindow";
     Layout = "~/Views/Shared/_Layout_WithOutMenu.cshtml";
@@ -7,28 +8,43 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#yesbtn').on('click', function () {
-             $.ajax({
+            $.ajax({
                 url: '@Url.Action("EscalationEmailProcess", "DispatchResponse")',
                 type: 'GET',
-                 data: { "workOrderId": `@ViewBag.workOrderId`, "techId": `@ViewBag.techId`, "response": `@ViewBag.response`, "isResponsible": `@ViewBag.isResponsible`, "isBillable": `@ViewBag.isBillable` },
+                data: { "workOrderId": `@ViewBag.workOrderId`, "techId": `@ViewBag.techId`, "response": `@ViewBag.response`, "isResponsible": `@ViewBag.isResponsible`, "isBillable": `@ViewBag.isBillable` },
                 success: function (jsonResult) {
-                    if (jsonResult.success == true)
-                    {
+                    if (jsonResult.success == true) {
                         $("#techidlbl").text(jsonResult.dispatchModel.TechId);
                         $("#eventidlbl").text(jsonResult.dispatchModel.WorkOrderId);
                         $("#messagelbl").text(jsonResult.dispatchModel.Message);
                     }
                 }
             });
-        })
-    });
+        });
 
+
+        $('#erfYesbtn').on('click', function () {
+            $.ajax({
+                url: '@Url.Action("ERFCancellationProcess", "DispatchResponse")',
+                type: 'GET',
+                data: { "ErfId": `@ViewBag.erfId`, "WorkorderId": `@ViewBag.workOrderId`, "ApprovalStatus": `@ViewBag.approvalStatus` },
+                success: function (jsonResult) {
+                    if (jsonResult.success == true) {                       
+                        $("#messagelbl").text(jsonResult.dispatchModel.Message);
+                    }
+                }
+            });
+        });
+
+    });
+    
 </script>
 
 
 
 
-
+@if (!ViewBag.IsERF)
+{
     <section class="container-fluid white-bg pad">
         <div class="row top-info">
             <div class="col-xs-12 col-sm-4 col-md-3">
@@ -42,16 +58,16 @@
             <div class="customer-content margin-top">
                 <div class="row customer clear-input">
                     <div class="col-md-3 sm-pad-reset" style="width:50%;">
-                        
-                            <div class="col-sm-6-o">
-                                <span class="col-md-5">Tech ID:</span>
-                                <div class="col-md-7">
-                                    <div class="form-group">
-                                        <label id="techidlbl">@ViewBag.techId</label>
-                                    </div>
+
+                        <div class="col-sm-6-o">
+                            <span class="col-md-5">Tech ID:</span>
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label id="techidlbl">@ViewBag.techId</label>
                                 </div>
                             </div>
-                       
+                        </div>
+
                         <div class="col-sm-6-o">
                             <span class="col-md-5">Work Order ID:</span>
                             <div class="col-md-7">
@@ -60,7 +76,7 @@
                                 </div>
                             </div>
                         </div>
-                       
+
                         <div class="col-sm-6-o">
                         </div>
                         <div class="col-sm-6-o">
@@ -102,4 +118,46 @@
             </div>
         </div>
     </section>
+}
 
+else
+{
+    <section class="container-fluid white-bg pad">
+        <div class="row top-info">
+            <div class="col-xs-12 col-sm-4 col-md-3">
+                <b>ERF Update Response</b>
+            </div>
+        </div>
+    </section>
+
+    <section class="container-fluid white-bg pad fixedSecond header">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-sm-6-o">
+                    @{
+                       
+                           <label>Are you sure you want to send Cancellation Email for <span>ViewBag.text</span></label>
+                       
+                    }
+                </div>
+            </div>
+            <div class="col-md-6" style="display: inline-flex;">
+                <div class="col-md-3">
+                    <button value="yes" id="erfYesbtn" class="btn btn-primary">YES</button>
+                </div>
+                <div class="col-md-3">
+                    <button value="no" id="erfNobtn" class="btn btn-orange">NO</button>
+                </div>
+
+            </div>
+            <div class="col-md-12">
+                <div class="col-sm-6-o">
+                </div>
+                <div class="col-sm-6-o">
+                    <label id="messagelbl"></label>
+                </div>
+            </div>
+        </div>
+    </section>
+
+}

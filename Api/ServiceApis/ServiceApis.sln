@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceApis", "ServiceApis.csproj", "{DC08BACE-419F-488F-A311-5004240BCB4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "..\DataAccess\DataAccess.csproj", "{DA324E14-EAF9-40A7-90A8-BE2FFB5FC609}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC08BACE-419F-488F-A311-5004240BCB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC08BACE-419F-488F-A311-5004240BCB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC08BACE-419F-488F-A311-5004240BCB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC08BACE-419F-488F-A311-5004240BCB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA324E14-EAF9-40A7-90A8-BE2FFB5FC609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA324E14-EAF9-40A7-90A8-BE2FFB5FC609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA324E14-EAF9-40A7-90A8-BE2FFB5FC609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA324E14-EAF9-40A7-90A8-BE2FFB5FC609}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9407B399-DB98-4AA7-8C61-07B10D98AC83}
+	EndGlobalSection
+EndGlobal
