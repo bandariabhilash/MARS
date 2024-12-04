@@ -189,9 +189,7 @@
     <EntitySet Name="NEMANumberLists" EntityType="FarmerBrothers.Data.NEMANumberList" />
     <EntitySet Name="NoAutoEmailZipCodes" EntityType="FarmerBrothers.Data.NoAutoEmailZipCode" />
     <EntitySet Name="NoAutomaticEmailContracts" EntityType="FarmerBrothers.Data.NoAutomaticEmailContract" />
-    <EntitySet Name="NonFBCustomers" EntityType="FarmerBrothers.Data.NonFBCustomer" />
     <EntitySet Name="NonSerializeds" EntityType="FarmerBrothers.Data.NonSerialized" />
-    <EntitySet Name="NonServiceworkorders" EntityType="FarmerBrothers.Data.NonServiceworkorder" />
     <EntitySet Name="NotesHistories" EntityType="FarmerBrothers.Data.NotesHistory" />
     <EntitySet Name="OnCallGroups" EntityType="FarmerBrothers.Data.OnCallGroup" />
     <EntitySet Name="PhoneSolveLogs" EntityType="FarmerBrothers.Data.PhoneSolveLog" />
@@ -273,10 +271,6 @@
     <AssociationSet Name="FK_UserApplication_FbUserMaster" Association="FarmerBrothers.Data.FK_UserApplication_FbUserMaster">
       <End Role="FbUserMaster" EntitySet="FbUserMasters" />
       <End Role="UserApplication" EntitySet="UserApplications" />
-    </AssociationSet>
-    <AssociationSet Name="FK_NotesHistory_NonServiceworkorder" Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder">
-      <End Role="NonServiceworkorder" EntitySet="NonServiceworkorders" />
-      <End Role="NotesHistory" EntitySet="NotesHistories" />
     </AssociationSet>
     <AssociationSet Name="FK_UserApplication_Privilege1" Association="FarmerBrothers.Data.FK_UserApplication_Privilege1">
       <End Role="Privilege" EntitySet="Privileges" />
@@ -391,6 +385,16 @@
       <End Role="WorkOrder" EntitySet="WorkOrders" />
       <End Role="WorkorderPart" EntitySet="WorkorderParts" />
     </AssociationSet>
+    <EntitySet Name="TMP_BlackBerry_NSR" EntityType="FarmerBrothers.Data.TMP_BlackBerry_NSR" />
+    <EntitySet Name="TMP_BlackBerry_SCFAssetInfo" EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFAssetInfo" />
+    <EntitySet Name="TMP_BlackBerry_SCFPartsInfo" EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFPartsInfo" />
+    <EntitySet Name="TMP_BlackBerry_SCFInvoiceInfo" EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFInvoiceInfo" />
+    <EntitySet Name="NonServiceworkorders" EntityType="FarmerBrothers.Data.NonServiceworkorder" />
+    <AssociationSet Name="FK_NotesHistory_NonServiceworkorder" Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder">
+      <End Role="NonServiceworkorder" EntitySet="NonServiceworkorders" />
+      <End Role="NotesHistory" EntitySet="NotesHistories" />
+    </AssociationSet>
+    <EntitySet Name="NonFBCustomers" EntityType="FarmerBrothers.Data.NonFBCustomer" />
   </EntityContainer>
   <ComplexType Name="USP_GetTechDataByServiceCenterId_Result">
     <Property Type="Int32" Name="TechID" Nullable="false" />
@@ -1046,6 +1050,9 @@
     <NavigationProperty Name="UserType" Relationship="FarmerBrothers.Data.FK_FbUserMaster_UserType" FromRole="FbUserMaster" ToRole="UserType" />
     <NavigationProperty Name="UserApplications" Relationship="FarmerBrothers.Data.FK_UserApplication_FbUserMaster" FromRole="FbUserMaster" ToRole="UserApplication" />
     <NavigationProperty Name="FBCustomerNotes" Relationship="FarmerBrothers.Data.FK_FBCustomerNotes_FbUserMaster" FromRole="FbUserMaster" ToRole="FBCustomerNote" />
+    <Property Name="RefreshTokenExpiryTime" Type="DateTime" Precision="3" />
+    <Property Name="RefreshToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceAccess" Type="Boolean" />
   </EntityType>
   <EntityType Name="FBUserReport">
     <Key>
@@ -1169,14 +1176,6 @@
     </Key>
     <Property Name="ContractID" Type="Int32" Nullable="false" />
   </EntityType>
-  <EntityType Name="NonFBCustomer">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="NonFBCustomerId" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-    <Property Name="NonFBCustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-  </EntityType>
   <EntityType Name="NonSerialized">
     <Key>
       <PropertyRef Name="NSerialid" />
@@ -1200,30 +1199,6 @@
     <Property Name="Location" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
     <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__NonSerial__Worko__2057CCD0" FromRole="NonSerialized" ToRole="WorkOrder" />
   </EntityType>
-  <EntityType Name="NonServiceworkorder">
-    <Key>
-      <PropertyRef Name="WorkOrderID" />
-    </Key>
-    <Property Name="NonServiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="WorkOrderID" Type="Int32" Nullable="false" />
-    <Property Name="CustomerID" Type="Int32" />
-    <Property Name="CallReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <Property Name="CreatedBy" Type="Int32" />
-    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-    <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-    <Property Name="IsAutoDispatched" Type="Boolean" />
-    <Property Name="CallerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-    <Property Name="CallBack" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <Property Name="IsUnknownWorkOrder" Type="Boolean" />
-    <Property Name="NonServiceEventStatus" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
-    <Property Name="CloseDate" Type="DateTime" Precision="3" />
-    <Property Name="EmailSentTo" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-    <Property Name="MainContactName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-    <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="NotesHistories" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NonServiceworkorder" ToRole="NotesHistory" />
-  </EntityType>
   <EntityType Name="NotesHistory">
     <Key>
       <PropertyRef Name="NotesID" />
@@ -1239,8 +1214,8 @@
     <Property Name="EntryDate" Type="DateTime" Precision="0" />
     <Property Name="NonServiceWorkorderID" Type="Int32" />
     <Property Name="isDispatchNotes" Type="Int16" />
-    <NavigationProperty Name="NonServiceworkorder" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NotesHistory" ToRole="NonServiceworkorder" />
     <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__NotesHist__Worko__3493CFA7" FromRole="NotesHistory" ToRole="WorkOrder" />
+    <NavigationProperty Name="NonServiceworkorder" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NotesHistory" ToRole="NonServiceworkorder" />
   </EntityType>
   <EntityType Name="OnCallGroup">
     <Key>
@@ -2310,18 +2285,6 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_NotesHistory_NonServiceworkorder">
-    <End Type="FarmerBrothers.Data.NonServiceworkorder" Role="NonServiceworkorder" Multiplicity="0..1" />
-    <End Type="FarmerBrothers.Data.NotesHistory" Role="NotesHistory" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="NonServiceworkorder">
-        <PropertyRef Name="WorkOrderID" />
-      </Principal>
-      <Dependent Role="NotesHistory">
-        <PropertyRef Name="NonServiceWorkorderID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
   <Association Name="FK_UserApplication_Privilege1">
     <End Type="FarmerBrothers.Data.Privilege" Role="Privilege" Multiplicity="0..1" />
     <End Type="FarmerBrothers.Data.UserApplication" Role="UserApplication" Multiplicity="*" />
@@ -2967,4 +2930,143 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="TMP_BlackBerry_NSR">
+    <Key>
+      <PropertyRef Name="UniqueInvoiceID" />
+    </Key>
+    <Property Name="UniqueInvoiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="Reasion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="TMP_BlackBerry_SCFAssetInfo">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="ServiceCode" Type="Int32" />
+    <Property Name="CompletionCode" Type="Int32" />
+    <Property Name="EquipTypeCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+    <Property Name="VendorCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="SerialNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="CloseCall" Type="Int16" />
+    <Property Name="EventUpdated" Type="Int16" />
+    <Property Name="SpawnEventID" Type="Int32" />
+    <Property Name="AssetKey" Type="Int32" />
+    <Property Name="ManufacturerDesc" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="CategoryDesc" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="ClosureConfirmationNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Sent5191Email" Type="Int16" />
+    <Property Name="TechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="Weight" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Ratio" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="SpawnOrderCreated" Type="Int16" />
+    <Property Name="SymptomCode" Type="Int32" />
+    <Property Name="SystemCode" Type="Int32" />
+    <Property Name="Temperature" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="ReasonCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityType Name="TMP_BlackBerry_SCFPartsInfo">
+    <Key>
+      <PropertyRef Name="UniquePartsID" />
+    </Key>
+    <Property Name="UniquePartsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="EntryNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="ItemNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="VendorNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+    <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="SKUID" Type="Int32" />
+    <Property Name="Quantity" Type="Int32" />
+    <Property Name="Pid" Type="Int32" />
+    <Property Name="SKU" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+    <Property Name="recExists" Type="Int16" />
+    <Property Name="AssetID" Type="Int32" />
+  </EntityType>
+  <EntityType Name="TMP_BlackBerry_SCFInvoiceInfo">
+    <Key>
+      <PropertyRef Name="UniqueInvoiceID" />
+    </Key>
+    <Property Name="UniqueInvoiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkorderID" Type="Int32" />
+    <Property Name="TechID" Type="Int32" />
+    <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="StartDateTime" Type="DateTime" Precision="0" />
+    <Property Name="ArrivalDateTime" Type="DateTime" Precision="0" />
+    <Property Name="CompletionDateTime" Type="DateTime" Precision="0" />
+    <Property Name="EntryDate" Type="DateTime" Precision="0" />
+    <Property Name="InvoiceKey" Type="Int32" />
+    <Property Name="TechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="SignedBy" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+    <Property Name="Signature" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="WaterTested" Type="Boolean" />
+    <Property Name="HardnessRating" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerSign" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="TechnicianSign" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="StateofEquipment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ServiceDelayReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="TroubleshootSteps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="FollowupComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ReviewedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="IsUnderWarrenty" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="WarrentyFor" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="AdditionalFollowupReq" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+    <Property Name="IsOperational" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="NonServiceworkorder">
+    <Key>
+      <PropertyRef Name="WorkOrderID" />
+    </Key>
+    <Property Name="NonServiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="WorkOrderID" Type="Int32" Nullable="false" />
+    <Property Name="CustomerID" Type="Int32" />
+    <Property Name="CallReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+    <Property Name="CreatedBy" Type="Int32" />
+    <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+    <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+    <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+    <Property Name="IsAutoDispatched" Type="Boolean" />
+    <Property Name="CallerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="CallBack" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="IsUnknownWorkOrder" Type="Boolean" />
+    <Property Name="NonServiceEventStatus" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+    <Property Name="CloseDate" Type="DateTime" Precision="3" />
+    <Property Name="EmailSentTo" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="MainContactName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+    <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="ClosedBy" Type="Int32" />
+    <Property Name="ResolutionCallerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="NotesHistories" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NonServiceworkorder" ToRole="NotesHistory" />
+  </EntityType>
+  <Association Name="FK_NotesHistory_NonServiceworkorder">
+    <End Type="FarmerBrothers.Data.NonServiceworkorder" Role="NonServiceworkorder" Multiplicity="0..1" />
+    <End Type="FarmerBrothers.Data.NotesHistory" Role="NotesHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NonServiceworkorder">
+        <PropertyRef Name="WorkOrderID" />
+      </Principal>
+      <Dependent Role="NotesHistory">
+        <PropertyRef Name="NonServiceWorkorderID" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityType Name="NonFBCustomer">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="NonFBCustomerId" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="NonFBCustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+    <Property Name="IsActive" Type="Boolean" />
+    <Property Name="email" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+  </EntityType>
 </Schema>

@@ -138,7 +138,7 @@ namespace FarmerBrothers.Controllers
             workOrderManagementModel.BranchIds = new List<int>();
             workOrderManagementModel.AssistTechIds = new List<int>();
             workOrderManagementModel.SystemInfoes = FarmerBrothersEntitites.SystemInfoes.Where(s => s.Active == 1).OrderBy(s => s.Sequence).ToList();
-            workOrderManagementModel.Solutions = FarmerBrothersEntitites.Solutions.Where(s => s.Active == 1).OrderBy(s => s.SolutionId).ToList();
+            workOrderManagementModel.Solutions = FarmerBrothersEntitites.Solutions.Where(s => s.Active == 1).OrderBy(s => s.Description).ToList();
             workOrderManagementModel.Solutions.Insert(0, new Solution()
             {
                 Description = "",
@@ -4341,5 +4341,6 @@ namespace FarmerBrothers.Controllers
             return jsonResult;
         }
         #endregion
+
     }
 }

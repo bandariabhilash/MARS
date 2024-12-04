@@ -140,6 +140,7 @@ namespace ServiceApis.Models
 
         public string Message { get; set; }
 
+        public string Comments { get; set; }
         public WorkOrder FillCustomerData(WorkOrder entityWorkOrder, bool cleanDependentLists, FBContext context, Contact sCustomer = null)
         {
             string workOrderstatus = entityWorkOrder.WorkorderCallstatus;

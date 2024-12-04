@@ -88,8 +88,8 @@ D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Debug\EntityFramework.xml
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Debug\EntityFramework.SqlServer.xml
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\bin\Debug\Newtonsoft.Json.xml
-D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Debug\FarmerBrothers.Data.csproj.AssemblyReference.cache
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Debug\FarmerBrothers.Data.csproj.CoreCompileInputs.cache
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Debug\FarmerBrothers.Data.csproj.CopyComplete
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Debug\FarmerBrothers.Data.dll
 D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Debug\FarmerBrothers.Data.pdb
+D:\Projects\FarmerBrothers\FarmerBrothersMars\MARS\FarmerBrothers\FarmerBrothers.Data\obj\Debug\FarmerBrothers.Data.csproj.AssemblyReference.cache

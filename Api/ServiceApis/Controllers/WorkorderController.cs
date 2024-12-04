@@ -12,6 +12,8 @@ using Customer = DataAccess.Db.Contact;
 
 namespace ServiceApis.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class WorkorderController : BaseController
     {
         private readonly IWorkorderRepository _workorderRepository;

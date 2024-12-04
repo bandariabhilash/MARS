@@ -38,6 +38,8 @@ namespace FarmerBrothers.Data
         public string EmailSentTo { get; set; }
         public string MainContactName { get; set; }
         public string PhoneNumber { get; set; }
+        public Nullable<int> ClosedBy { get; set; }
+        public string ResolutionCallerName { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NotesHistory> NotesHistories { get; set; }

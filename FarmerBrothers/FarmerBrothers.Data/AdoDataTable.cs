@@ -154,6 +154,32 @@ namespace FarmerBrothers.Data
             return dt;
         }
 
+        public DataTable fbBilling(string strSql, string StartDate, string EndDate, string AccountNo, string Dealerid, string FamilyAff, string PPID)
+        {
+            SqlConnection sqlConnection = new SqlConnection(con);
+            sqlConnection.Open();
+            SqlCommand cmnd = new SqlCommand(strSql, sqlConnection);
+            cmnd.CommandType = CommandType.StoredProcedure;
+            DateTime SDate = Convert.ToDateTime(StartDate);
+            DateTime EDate = Convert.ToDateTime(EndDate);
+            String SD = SDate.ToString("MM/dd/yyyy");
+            String ED = EDate.ToString("MM/dd/yyyy");
+            int TL = string.IsNullOrEmpty(Dealerid) ? 0 : (Convert.ToInt32(Dealerid) < 0 ? 0 : Convert.ToInt32(Dealerid));
+            String FA = FamilyAff.ToLower() == "all" ? "0" : FamilyAff.ToString();
+            String AcntNo = AccountNo == null ? "0" : AccountNo.ToString();
+
+            cmnd.Parameters.AddWithValue("@StartDate", SD);
+            cmnd.Parameters.AddWithValue("@EndDate", ED);
+            cmnd.Parameters.AddWithValue("@AccountNo", AcntNo);
+            cmnd.Parameters.AddWithValue("@DealerId", TL);
+            cmnd.Parameters.AddWithValue("@FamilyAff", FA);
+            cmnd.Parameters.AddWithValue("@PPID", PPID);
+            SqlDataAdapter da = new SqlDataAdapter(cmnd);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+            return dt;
+        }
+
     }
 
 }

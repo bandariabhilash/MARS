@@ -21,7 +21,6 @@
 <script src="~/Content/jquery.validate.unobtrusive.min.js"></script>
 
 @* Clover Iframe *@
-<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
 <script src="https://checkout.sandbox.dev.clover.com/sdk.js"></script>
 @*<script src="https://checkout.clover.com/sdk.js"></script>*@
 
@@ -3649,6 +3648,9 @@
                             //if (UserPrivilege["Work Order"] == "Edit-Only" || UserPrivilege["Work Order"] == "Full")
                             {
                                                 <div class="col-md-12 customer-col2" style="justify-content: flex-end; display: flex;">
+                                                    <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
+                                                             <a href="https://docs.google.com/forms/d/1bCqtRKbBxXoP7xVQBMS6gT2Q3YiDs-zave9bUliFesk/viewform?chromeless=1&edit_requested=true" target="_blank">E-EML Form</a>
+                                                    </span>
                                                     <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
                                                         @*Service Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsServiceBillableFeed" })
                                                         @Html.Hidden("IsServiceBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsServiceBillableFeed}}", new { @class = "IsServiceBillableFeedHidden" })*@                                                        

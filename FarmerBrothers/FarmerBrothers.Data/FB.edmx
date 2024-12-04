@@ -759,6 +759,9 @@
           <Property Name="CreatedUserId" Type="int" />
           <Property Name="CreatedUserName" Type="varchar" MaxLength="150" />
           <Property Name="CustomerParent" Type="nvarchar" MaxLength="150" />
+          <Property Name="RefreshTokenExpiryTime" Type="datetime" />
+          <Property Name="RefreshToken" Type="ntext" />
+          <Property Name="ServiceAccess" Type="bit" />
         </EntityType>
         <EntityType Name="FBUserReports">
           <Key>
@@ -887,6 +890,8 @@
           <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="NonFBCustomerId" Type="nvarchar" MaxLength="20" />
           <Property Name="NonFBCustomerName" Type="varchar" MaxLength="200" />
+          <Property Name="IsActive" Type="bit" />
+          <Property Name="email" Type="varchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="NonSerialized">
           <Key>
@@ -932,6 +937,8 @@
           <Property Name="EmailSentTo" Type="varchar" MaxLength="255" />
           <Property Name="MainContactName" Type="varchar" MaxLength="255" />
           <Property Name="PhoneNumber" Type="varchar" MaxLength="20" />
+          <Property Name="ClosedBy" Type="int" />
+          <Property Name="ResolutionCallerName" Type="varchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="NotesHistory">
           <Key>
@@ -1210,6 +1217,99 @@
           <Property Name="TravelOverTimeRateFlag" Type="bit" />
           <Property Name="TravelOvertimeRate" Type="money" />
           <Property Name="TravelZoneRateFlag" Type="bit" />
+        </EntityType>
+        <EntityType Name="TMP_BlackBerry_NSR">
+          <Key>
+            <PropertyRef Name="UniqueInvoiceID" />
+          </Key>
+          <Property Name="UniqueInvoiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WorkorderID" Type="int" />
+          <Property Name="TechID" Type="int" />
+          <Property Name="Reasion" Type="varchar" MaxLength="250" />
+          <Property Name="Comments" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="TMP_BlackBerry_SCFAssetInfo">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="UniqueID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WorkorderID" Type="int" />
+          <Property Name="TechID" Type="int" />
+          <Property Name="ServiceCode" Type="int" />
+          <Property Name="CompletionCode" Type="int" />
+          <Property Name="EquipTypeCode" Type="nvarchar" MaxLength="5" />
+          <Property Name="VendorCode" Type="nvarchar" MaxLength="20" />
+          <Property Name="Model" Type="varchar" MaxLength="50" />
+          <Property Name="SerialNo" Type="varchar" MaxLength="50" />
+          <Property Name="EntryDate" Type="smalldatetime" />
+          <Property Name="CloseCall" Type="smallint" />
+          <Property Name="EventUpdated" Type="smallint" />
+          <Property Name="SpawnEventID" Type="int" />
+          <Property Name="AssetKey" Type="int" />
+          <Property Name="ManufacturerDesc" Type="varchar" MaxLength="255" />
+          <Property Name="CategoryDesc" Type="varchar" MaxLength="255" />
+          <Property Name="ClosureConfirmationNo" Type="nvarchar" MaxLength="50" />
+          <Property Name="Notes" Type="ntext" />
+          <Property Name="Sent5191Email" Type="smallint" />
+          <Property Name="TechName" Type="varchar" MaxLength="90" />
+          <Property Name="Weight" Type="varchar" MaxLength="20" />
+          <Property Name="Ratio" Type="varchar" MaxLength="20" />
+          <Property Name="SpawnOrderCreated" Type="smallint" />
+          <Property Name="SymptomCode" Type="int" />
+          <Property Name="SystemCode" Type="int" />
+          <Property Name="Temperature" Type="varchar" MaxLength="10" />
+          <Property Name="ReasonCode" Type="varchar" MaxLength="20" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'FB_Dev.dbo.TMP_BlackBerry_SCFInvoiceInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="TMP_BlackBerry_SCFInvoiceInfo">
+          <Key>
+            <PropertyRef Name="UniqueInvoiceID" />
+          </Key>
+          <Property Name="UniqueInvoiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WorkorderID" Type="int" />
+          <Property Name="TechID" Type="int" />
+          <Property Name="InvoiceNo" Type="nvarchar" MaxLength="50" />
+          <Property Name="StartDateTime" Type="smalldatetime" />
+          <Property Name="ArrivalDateTime" Type="smalldatetime" />
+          <Property Name="CompletionDateTime" Type="smalldatetime" />
+          <Property Name="EntryDate" Type="smalldatetime" />
+          <Property Name="InvoiceKey" Type="int" />
+          <Property Name="TechName" Type="varchar" MaxLength="90" />
+          <Property Name="SignedBy" Type="varchar" MaxLength="90" />
+          <Property Name="Signature" Type="nvarchar(max)" />
+          <Property Name="WaterTested" Type="bit" />
+          <Property Name="HardnessRating" Type="varchar" MaxLength="10" />
+          <Property Name="CustomerSign" Type="text" />
+          <Property Name="TechnicianSign" Type="text" />
+          <Property Name="StateofEquipment" Type="ntext" />
+          <Property Name="ServiceDelayReason" Type="ntext" />
+          <Property Name="TroubleshootSteps" Type="ntext" />
+          <Property Name="FollowupComments" Type="ntext" />
+          <Property Name="ReviewedBy" Type="nvarchar" MaxLength="150" />
+          <Property Name="IsUnderWarrenty" Type="nvarchar" MaxLength="10" />
+          <Property Name="WarrentyFor" Type="nvarchar" MaxLength="150" />
+          <Property Name="AdditionalFollowupReq" Type="nvarchar" MaxLength="10" />
+          <Property Name="IsOperational" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="TMP_BlackBerry_SCFPartsInfo">
+          <Key>
+            <PropertyRef Name="UniquePartsID" />
+          </Key>
+          <Property Name="UniquePartsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="WorkorderID" Type="int" />
+          <Property Name="TechID" Type="int" />
+          <Property Name="EntryNo" Type="varchar" MaxLength="50" />
+          <Property Name="ItemNo" Type="varchar" MaxLength="50" />
+          <Property Name="VendorNo" Type="varchar" MaxLength="50" />
+          <Property Name="Description" Type="varchar" MaxLength="250" />
+          <Property Name="EntryDate" Type="smalldatetime" />
+          <Property Name="SKUID" Type="int" />
+          <Property Name="Quantity" Type="int" />
+          <Property Name="Pid" Type="int" />
+          <Property Name="SKU" Type="varchar" MaxLength="80" />
+          <Property Name="recExists" Type="smallint" />
+          <Property Name="AssetID" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -2742,6 +2842,9 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <EntitySet Name="TechSchedule" EntityType="Self.TechSchedule" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ThirdpartyConMaintenanceZonerate" EntityType="Self.ThirdpartyConMaintenanceZonerate" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ThirdPartyContractMaintenance" EntityType="Self.ThirdPartyContractMaintenance" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TMP_BlackBerry_NSR" EntityType="Self.TMP_BlackBerry_NSR" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TMP_BlackBerry_SCFAssetInfo" EntityType="Self.TMP_BlackBerry_SCFAssetInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TMP_BlackBerry_SCFPartsInfo" EntityType="Self.TMP_BlackBerry_SCFPartsInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TmpInvTransfer" EntityType="Self.TmpInvTransfer" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TmpinvTransferNonserialized" EntityType="Self.TmpinvTransferNonserialized" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TmpinvTransferSerialized" EntityType="Self.TmpinvTransferSerialized" Schema="dbo" store:Type="Tables" />
@@ -2769,6 +2872,35 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <EntitySet Name="WorkorderStatusLog" EntityType="Self.WorkorderStatusLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WorkorderType" EntityType="Self.WorkorderType" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ZonePriority" EntityType="Self.ZonePriority" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TMP_BlackBerry_SCFInvoiceInfo" EntityType="Self.TMP_BlackBerry_SCFInvoiceInfo" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [TMP_BlackBerry_SCFInvoiceInfo].[UniqueInvoiceID] AS [UniqueInvoiceID], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[WorkorderID] AS [WorkorderID], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TechID] AS [TechID], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[InvoiceNo] AS [InvoiceNo], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[StartDateTime] AS [StartDateTime], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[ArrivalDateTime] AS [ArrivalDateTime], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[CompletionDateTime] AS [CompletionDateTime], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[EntryDate] AS [EntryDate], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[InvoiceKey] AS [InvoiceKey], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TechName] AS [TechName], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[SignedBy] AS [SignedBy], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[Signature] AS [Signature], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[WaterTested] AS [WaterTested], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[HardnessRating] AS [HardnessRating], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[CustomerSign] AS [CustomerSign], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TechnicianSign] AS [TechnicianSign], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[StateofEquipment] AS [StateofEquipment], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[ServiceDelayReason] AS [ServiceDelayReason], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TroubleshootSteps] AS [TroubleshootSteps], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[FollowupComments] AS [FollowupComments], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[ReviewedBy] AS [ReviewedBy], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[IsUnderWarrenty] AS [IsUnderWarrenty], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[WarrentyFor] AS [WarrentyFor], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[AdditionalFollowupReq] AS [AdditionalFollowupReq], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[IsOperational] AS [IsOperational]
+    FROM [dbo].[TMP_BlackBerry_SCFInvoiceInfo] AS [TMP_BlackBerry_SCFInvoiceInfo]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="TMP_SerialNOReport" EntityType="Self.TMP_SerialNOReport" store:Type="Tables" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [TMP_SerialNOReport].[EventID] AS [EventID], 
@@ -3402,9 +3534,7 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <EntitySet Name="NEMANumberLists" EntityType="FarmerBrothers.Data.NEMANumberList" />
           <EntitySet Name="NoAutoEmailZipCodes" EntityType="FarmerBrothers.Data.NoAutoEmailZipCode" />
           <EntitySet Name="NoAutomaticEmailContracts" EntityType="FarmerBrothers.Data.NoAutomaticEmailContract" />
-          <EntitySet Name="NonFBCustomers" EntityType="FarmerBrothers.Data.NonFBCustomer" />
           <EntitySet Name="NonSerializeds" EntityType="FarmerBrothers.Data.NonSerialized" />
-          <EntitySet Name="NonServiceworkorders" EntityType="FarmerBrothers.Data.NonServiceworkorder" />
           <EntitySet Name="NotesHistories" EntityType="FarmerBrothers.Data.NotesHistory" />
           <EntitySet Name="OnCallGroups" EntityType="FarmerBrothers.Data.OnCallGroup" />
           <EntitySet Name="PhoneSolveLogs" EntityType="FarmerBrothers.Data.PhoneSolveLog" />
@@ -3486,10 +3616,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <AssociationSet Name="FK_UserApplication_FbUserMaster" Association="FarmerBrothers.Data.FK_UserApplication_FbUserMaster">
             <End Role="FbUserMaster" EntitySet="FbUserMasters" />
             <End Role="UserApplication" EntitySet="UserApplications" />
-          </AssociationSet>
-          <AssociationSet Name="FK_NotesHistory_NonServiceworkorder" Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder">
-            <End Role="NonServiceworkorder" EntitySet="NonServiceworkorders" />
-            <End Role="NotesHistory" EntitySet="NotesHistories" />
           </AssociationSet>
           <AssociationSet Name="FK_UserApplication_Privilege1" Association="FarmerBrothers.Data.FK_UserApplication_Privilege1">
             <End Role="Privilege" EntitySet="Privileges" />
@@ -3604,6 +3730,16 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
             <End Role="WorkOrder" EntitySet="WorkOrders" />
             <End Role="WorkorderPart" EntitySet="WorkorderParts" />
           </AssociationSet>
+          <EntitySet Name="TMP_BlackBerry_NSR" EntityType="FarmerBrothers.Data.TMP_BlackBerry_NSR" />
+          <EntitySet Name="TMP_BlackBerry_SCFAssetInfo" EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFAssetInfo" />
+          <EntitySet Name="TMP_BlackBerry_SCFPartsInfo" EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFPartsInfo" />
+          <EntitySet Name="TMP_BlackBerry_SCFInvoiceInfo" EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFInvoiceInfo" />
+          <EntitySet Name="NonServiceworkorders" EntityType="FarmerBrothers.Data.NonServiceworkorder" />
+          <AssociationSet Name="FK_NotesHistory_NonServiceworkorder" Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder">
+            <End Role="NonServiceworkorder" EntitySet="NonServiceworkorders" />
+            <End Role="NotesHistory" EntitySet="NotesHistories" />
+          </AssociationSet>
+          <EntitySet Name="NonFBCustomers" EntityType="FarmerBrothers.Data.NonFBCustomer" />
           </EntityContainer>
         <ComplexType Name="USP_GetTechDataByServiceCenterId_Result">
           <Property Type="Int32" Name="TechID" Nullable="false" />
@@ -4259,6 +4395,9 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <NavigationProperty Name="UserType" Relationship="FarmerBrothers.Data.FK_FbUserMaster_UserType" FromRole="FbUserMaster" ToRole="UserType" />
           <NavigationProperty Name="UserApplications" Relationship="FarmerBrothers.Data.FK_UserApplication_FbUserMaster" FromRole="FbUserMaster" ToRole="UserApplication" />
           <NavigationProperty Name="FBCustomerNotes" Relationship="FarmerBrothers.Data.FK_FBCustomerNotes_FbUserMaster" FromRole="FbUserMaster" ToRole="FBCustomerNote" />
+          <Property Name="RefreshTokenExpiryTime" Type="DateTime" Precision="3" />
+          <Property Name="RefreshToken" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceAccess" Type="Boolean" />
         </EntityType>
         <EntityType Name="FBUserReport">
           <Key>
@@ -4382,14 +4521,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           </Key>
           <Property Name="ContractID" Type="Int32" Nullable="false" />
         </EntityType>
-        <EntityType Name="NonFBCustomer">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="NonFBCustomerId" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
-          <Property Name="NonFBCustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
-        </EntityType>
         <EntityType Name="NonSerialized">
           <Key>
             <PropertyRef Name="NSerialid" />
@@ -4413,30 +4544,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <Property Name="Location" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__NonSerial__Worko__2057CCD0" FromRole="NonSerialized" ToRole="WorkOrder" />
         </EntityType>
-        <EntityType Name="NonServiceworkorder">
-          <Key>
-            <PropertyRef Name="WorkOrderID" />
-          </Key>
-          <Property Name="NonServiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="WorkOrderID" Type="Int32" Nullable="false" />
-          <Property Name="CustomerID" Type="Int32" />
-          <Property Name="CallReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="CreatedBy" Type="Int32" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
-          <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
-          <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Name="IsAutoDispatched" Type="Boolean" />
-          <Property Name="CallerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="CallBack" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Name="IsUnknownWorkOrder" Type="Boolean" />
-          <Property Name="NonServiceEventStatus" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Name="CloseDate" Type="DateTime" Precision="3" />
-          <Property Name="EmailSentTo" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="MainContactName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
-          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="NotesHistories" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NonServiceworkorder" ToRole="NotesHistory" />
-        </EntityType>
         <EntityType Name="NotesHistory">
           <Key>
             <PropertyRef Name="NotesID" />
@@ -4452,8 +4559,8 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <Property Name="EntryDate" Type="DateTime" Precision="0" />
           <Property Name="NonServiceWorkorderID" Type="Int32" />
           <Property Name="isDispatchNotes" Type="Int16" />
-          <NavigationProperty Name="NonServiceworkorder" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NotesHistory" ToRole="NonServiceworkorder" />
           <NavigationProperty Name="WorkOrder" Relationship="FarmerBrothers.Data.FK__NotesHist__Worko__3493CFA7" FromRole="NotesHistory" ToRole="WorkOrder" />
+          <NavigationProperty Name="NonServiceworkorder" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NotesHistory" ToRole="NonServiceworkorder" />
         </EntityType>
         <EntityType Name="OnCallGroup">
           <Key>
@@ -5523,18 +5630,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_NotesHistory_NonServiceworkorder">
-          <End Type="FarmerBrothers.Data.NonServiceworkorder" Role="NonServiceworkorder" Multiplicity="0..1" />
-          <End Type="FarmerBrothers.Data.NotesHistory" Role="NotesHistory" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="NonServiceworkorder">
-              <PropertyRef Name="WorkOrderID" />
-            </Principal>
-            <Dependent Role="NotesHistory">
-              <PropertyRef Name="NonServiceWorkorderID" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UserApplication_Privilege1">
           <End Type="FarmerBrothers.Data.Privilege" Role="Privilege" Multiplicity="0..1" />
           <End Type="FarmerBrothers.Data.UserApplication" Role="UserApplication" Multiplicity="*" />
@@ -6180,6 +6275,145 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="TMP_BlackBerry_NSR">
+          <Key>
+            <PropertyRef Name="UniqueInvoiceID" />
+          </Key>
+          <Property Name="UniqueInvoiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkorderID" Type="Int32" />
+          <Property Name="TechID" Type="Int32" />
+          <Property Name="Reasion" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Comments" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TMP_BlackBerry_SCFAssetInfo">
+          <Key>
+            <PropertyRef Name="UniqueID" />
+          </Key>
+          <Property Name="UniqueID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkorderID" Type="Int32" />
+          <Property Name="TechID" Type="Int32" />
+          <Property Name="ServiceCode" Type="Int32" />
+          <Property Name="CompletionCode" Type="Int32" />
+          <Property Name="EquipTypeCode" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="VendorCode" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="SerialNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="EntryDate" Type="DateTime" Precision="0" />
+          <Property Name="CloseCall" Type="Int16" />
+          <Property Name="EventUpdated" Type="Int16" />
+          <Property Name="SpawnEventID" Type="Int32" />
+          <Property Name="AssetKey" Type="Int32" />
+          <Property Name="ManufacturerDesc" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="CategoryDesc" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="ClosureConfirmationNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Notes" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Sent5191Email" Type="Int16" />
+          <Property Name="TechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+          <Property Name="Weight" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="Ratio" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="SpawnOrderCreated" Type="Int16" />
+          <Property Name="SymptomCode" Type="Int32" />
+          <Property Name="SystemCode" Type="Int32" />
+          <Property Name="Temperature" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="ReasonCode" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="TMP_BlackBerry_SCFPartsInfo">
+          <Key>
+            <PropertyRef Name="UniquePartsID" />
+          </Key>
+          <Property Name="UniquePartsID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkorderID" Type="Int32" />
+          <Property Name="TechID" Type="Int32" />
+          <Property Name="EntryNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ItemNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="VendorNo" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="EntryDate" Type="DateTime" Precision="0" />
+          <Property Name="SKUID" Type="Int32" />
+          <Property Name="Quantity" Type="Int32" />
+          <Property Name="Pid" Type="Int32" />
+          <Property Name="SKU" Type="String" MaxLength="80" FixedLength="false" Unicode="false" />
+          <Property Name="recExists" Type="Int16" />
+          <Property Name="AssetID" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TMP_BlackBerry_SCFInvoiceInfo">
+          <Key>
+            <PropertyRef Name="UniqueInvoiceID" />
+          </Key>
+          <Property Name="UniqueInvoiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkorderID" Type="Int32" />
+          <Property Name="TechID" Type="Int32" />
+          <Property Name="InvoiceNo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StartDateTime" Type="DateTime" Precision="0" />
+          <Property Name="ArrivalDateTime" Type="DateTime" Precision="0" />
+          <Property Name="CompletionDateTime" Type="DateTime" Precision="0" />
+          <Property Name="EntryDate" Type="DateTime" Precision="0" />
+          <Property Name="InvoiceKey" Type="Int32" />
+          <Property Name="TechName" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+          <Property Name="SignedBy" Type="String" MaxLength="90" FixedLength="false" Unicode="false" />
+          <Property Name="Signature" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="WaterTested" Type="Boolean" />
+          <Property Name="HardnessRating" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerSign" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="TechnicianSign" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="StateofEquipment" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ServiceDelayReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TroubleshootSteps" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FollowupComments" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ReviewedBy" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="IsUnderWarrenty" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="WarrentyFor" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="AdditionalFollowupReq" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="IsOperational" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="NonServiceworkorder">
+          <Key>
+            <PropertyRef Name="WorkOrderID" />
+          </Key>
+          <Property Name="NonServiceID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="WorkOrderID" Type="Int32" Nullable="false" />
+          <Property Name="CustomerID" Type="Int32" />
+          <Property Name="CallReason" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedBy" Type="Int32" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CustomerCity" Type="String" MaxLength="70" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerState" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="CustomerZipCode" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="IsAutoDispatched" Type="Boolean" />
+          <Property Name="CallerName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CallBack" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="IsUnknownWorkOrder" Type="Boolean" />
+          <Property Name="NonServiceEventStatus" Type="String" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Name="CloseDate" Type="DateTime" Precision="3" />
+          <Property Name="EmailSentTo" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="MainContactName" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Name="ClosedBy" Type="Int32" />
+          <Property Name="ResolutionCallerName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="NotesHistories" Relationship="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" FromRole="NonServiceworkorder" ToRole="NotesHistory" />
+        </EntityType>
+        <Association Name="FK_NotesHistory_NonServiceworkorder">
+          <End Type="FarmerBrothers.Data.NonServiceworkorder" Role="NonServiceworkorder" Multiplicity="0..1" />
+          <End Type="FarmerBrothers.Data.NotesHistory" Role="NotesHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NonServiceworkorder">
+              <PropertyRef Name="WorkOrderID" />
+            </Principal>
+            <Dependent Role="NotesHistory">
+              <PropertyRef Name="NonServiceWorkorderID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="NonFBCustomer">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NonFBCustomerId" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="NonFBCustomerName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" />
+          <Property Name="email" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6850,6 +7084,9 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
           <EntitySetMapping Name="FbUserMasters">
             <EntityTypeMapping TypeName="FarmerBrothers.Data.FbUserMaster">
               <MappingFragment StoreEntitySet="FbUserMaster">
+                <ScalarProperty Name="ServiceAccess" ColumnName="ServiceAccess" />
+                <ScalarProperty Name="RefreshToken" ColumnName="RefreshToken" />
+                <ScalarProperty Name="RefreshTokenExpiryTime" ColumnName="RefreshTokenExpiryTime" />
                 <ScalarProperty Name="CustomerParent" ColumnName="CustomerParent" />
                 <ScalarProperty Name="CreatedUserName" ColumnName="CreatedUserName" />
                 <ScalarProperty Name="CreatedUserId" ColumnName="CreatedUserId" />
@@ -7021,15 +7258,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="NonFBCustomers">
-            <EntityTypeMapping TypeName="FarmerBrothers.Data.NonFBCustomer">
-              <MappingFragment StoreEntitySet="NonFBCustomers">
-                <ScalarProperty Name="NonFBCustomerName" ColumnName="NonFBCustomerName" />
-                <ScalarProperty Name="NonFBCustomerId" ColumnName="NonFBCustomerId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="NonSerializeds">
             <EntityTypeMapping TypeName="FarmerBrothers.Data.NonSerialized">
               <MappingFragment StoreEntitySet="NonSerialized">
@@ -7050,30 +7278,6 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
                 <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
                 <ScalarProperty Name="Erfid" ColumnName="Erfid" />
                 <ScalarProperty Name="NSerialid" ColumnName="NSerialid" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="NonServiceworkorders">
-            <EntityTypeMapping TypeName="FarmerBrothers.Data.NonServiceworkorder">
-              <MappingFragment StoreEntitySet="NonServiceworkorder">
-                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-                <ScalarProperty Name="MainContactName" ColumnName="MainContactName" />
-                <ScalarProperty Name="EmailSentTo" ColumnName="EmailSentTo" />
-                <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
-                <ScalarProperty Name="NonServiceEventStatus" ColumnName="NonServiceEventStatus" />
-                <ScalarProperty Name="IsUnknownWorkOrder" ColumnName="IsUnknownWorkOrder" />
-                <ScalarProperty Name="CallBack" ColumnName="CallBack" />
-                <ScalarProperty Name="CallerName" ColumnName="CallerName" />
-                <ScalarProperty Name="IsAutoDispatched" ColumnName="IsAutoDispatched" />
-                <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
-                <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
-                <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="CallReason" ColumnName="CallReason" />
-                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-                <ScalarProperty Name="WorkOrderID" ColumnName="WorkOrderID" />
-                <ScalarProperty Name="NonServiceID" ColumnName="NonServiceID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -8425,6 +8629,138 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
                 <ScalarProperty Name="PartsIssueid" ColumnName="PartsIssueid" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TMP_BlackBerry_NSR">
+            <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_NSR">
+              <MappingFragment StoreEntitySet="TMP_BlackBerry_NSR">
+                <ScalarProperty Name="Comments" ColumnName="Comments" />
+                <ScalarProperty Name="Reasion" ColumnName="Reasion" />
+                <ScalarProperty Name="TechID" ColumnName="TechID" />
+                <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+                <ScalarProperty Name="UniqueInvoiceID" ColumnName="UniqueInvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TMP_BlackBerry_SCFAssetInfo">
+            <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_SCFAssetInfo">
+              <MappingFragment StoreEntitySet="TMP_BlackBerry_SCFAssetInfo">
+                <ScalarProperty Name="ReasonCode" ColumnName="ReasonCode" />
+                <ScalarProperty Name="Temperature" ColumnName="Temperature" />
+                <ScalarProperty Name="SystemCode" ColumnName="SystemCode" />
+                <ScalarProperty Name="SymptomCode" ColumnName="SymptomCode" />
+                <ScalarProperty Name="SpawnOrderCreated" ColumnName="SpawnOrderCreated" />
+                <ScalarProperty Name="Ratio" ColumnName="Ratio" />
+                <ScalarProperty Name="Weight" ColumnName="Weight" />
+                <ScalarProperty Name="TechName" ColumnName="TechName" />
+                <ScalarProperty Name="Sent5191Email" ColumnName="Sent5191Email" />
+                <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="ClosureConfirmationNo" ColumnName="ClosureConfirmationNo" />
+                <ScalarProperty Name="CategoryDesc" ColumnName="CategoryDesc" />
+                <ScalarProperty Name="ManufacturerDesc" ColumnName="ManufacturerDesc" />
+                <ScalarProperty Name="AssetKey" ColumnName="AssetKey" />
+                <ScalarProperty Name="SpawnEventID" ColumnName="SpawnEventID" />
+                <ScalarProperty Name="EventUpdated" ColumnName="EventUpdated" />
+                <ScalarProperty Name="CloseCall" ColumnName="CloseCall" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="SerialNo" ColumnName="SerialNo" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+                <ScalarProperty Name="EquipTypeCode" ColumnName="EquipTypeCode" />
+                <ScalarProperty Name="CompletionCode" ColumnName="CompletionCode" />
+                <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+                <ScalarProperty Name="TechID" ColumnName="TechID" />
+                <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+                <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TMP_BlackBerry_SCFPartsInfo">
+            <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_SCFPartsInfo">
+              <MappingFragment StoreEntitySet="TMP_BlackBerry_SCFPartsInfo">
+                <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+                <ScalarProperty Name="recExists" ColumnName="recExists" />
+                <ScalarProperty Name="SKU" ColumnName="SKU" />
+                <ScalarProperty Name="Pid" ColumnName="Pid" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="SKUID" ColumnName="SKUID" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="VendorNo" ColumnName="VendorNo" />
+                <ScalarProperty Name="ItemNo" ColumnName="ItemNo" />
+                <ScalarProperty Name="EntryNo" ColumnName="EntryNo" />
+                <ScalarProperty Name="TechID" ColumnName="TechID" />
+                <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+                <ScalarProperty Name="UniquePartsID" ColumnName="UniquePartsID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TMP_BlackBerry_SCFInvoiceInfo">
+            <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_SCFInvoiceInfo">
+              <MappingFragment StoreEntitySet="TMP_BlackBerry_SCFInvoiceInfo">
+                <ScalarProperty Name="IsOperational" ColumnName="IsOperational" />
+                <ScalarProperty Name="AdditionalFollowupReq" ColumnName="AdditionalFollowupReq" />
+                <ScalarProperty Name="WarrentyFor" ColumnName="WarrentyFor" />
+                <ScalarProperty Name="IsUnderWarrenty" ColumnName="IsUnderWarrenty" />
+                <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
+                <ScalarProperty Name="FollowupComments" ColumnName="FollowupComments" />
+                <ScalarProperty Name="TroubleshootSteps" ColumnName="TroubleshootSteps" />
+                <ScalarProperty Name="ServiceDelayReason" ColumnName="ServiceDelayReason" />
+                <ScalarProperty Name="StateofEquipment" ColumnName="StateofEquipment" />
+                <ScalarProperty Name="TechnicianSign" ColumnName="TechnicianSign" />
+                <ScalarProperty Name="CustomerSign" ColumnName="CustomerSign" />
+                <ScalarProperty Name="HardnessRating" ColumnName="HardnessRating" />
+                <ScalarProperty Name="WaterTested" ColumnName="WaterTested" />
+                <ScalarProperty Name="Signature" ColumnName="Signature" />
+                <ScalarProperty Name="SignedBy" ColumnName="SignedBy" />
+                <ScalarProperty Name="TechName" ColumnName="TechName" />
+                <ScalarProperty Name="InvoiceKey" ColumnName="InvoiceKey" />
+                <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+                <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
+                <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+                <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+                <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+                <ScalarProperty Name="TechID" ColumnName="TechID" />
+                <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+                <ScalarProperty Name="UniqueInvoiceID" ColumnName="UniqueInvoiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NonServiceworkorders">
+            <EntityTypeMapping TypeName="FarmerBrothers.Data.NonServiceworkorder">
+              <MappingFragment StoreEntitySet="NonServiceworkorder">
+                <ScalarProperty Name="ResolutionCallerName" ColumnName="ResolutionCallerName" />
+                <ScalarProperty Name="ClosedBy" ColumnName="ClosedBy" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="MainContactName" ColumnName="MainContactName" />
+                <ScalarProperty Name="EmailSentTo" ColumnName="EmailSentTo" />
+                <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
+                <ScalarProperty Name="NonServiceEventStatus" ColumnName="NonServiceEventStatus" />
+                <ScalarProperty Name="IsUnknownWorkOrder" ColumnName="IsUnknownWorkOrder" />
+                <ScalarProperty Name="CallBack" ColumnName="CallBack" />
+                <ScalarProperty Name="CallerName" ColumnName="CallerName" />
+                <ScalarProperty Name="IsAutoDispatched" ColumnName="IsAutoDispatched" />
+                <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
+                <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
+                <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CallReason" ColumnName="CallReason" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="WorkOrderID" ColumnName="WorkOrderID" />
+                <ScalarProperty Name="NonServiceID" ColumnName="NonServiceID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NonFBCustomers">
+            <EntityTypeMapping TypeName="FarmerBrothers.Data.NonFBCustomer">
+              <MappingFragment StoreEntitySet="NonFBCustomers">
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="NonFBCustomerName" ColumnName="NonFBCustomerName" />
+                <ScalarProperty Name="NonFBCustomerId" ColumnName="NonFBCustomerId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

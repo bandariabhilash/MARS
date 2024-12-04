@@ -155,3 +155,6 @@ D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\Microsoft.Extensions.Dep
 D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\Microsoft.Extensions.Logging.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\Microsoft.Extensions.Logging.Abstractions.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\Microsoft.Extensions.Options.dll
+D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\System.Net.Http.Formatting.dll
+D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\System.Web.Http.dll
+D:\Projects\GIT\MARS\Api\ServiceApis\bin\Release\net8.0\Newtonsoft.Json.Bson.dll

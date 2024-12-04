@@ -9,6 +9,8 @@ D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Azure.Identit
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\EntityFramework.SqlServer.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\EntityFramework.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\JWT.dll
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\System.Net.Http.Formatting.dll
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\System.Web.Http.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Microsoft.Bcl.AsyncInterfaces.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Microsoft.Data.SqlClient.dll
@@ -34,6 +36,7 @@ D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Microsoft.Ope
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Microsoft.SqlServer.Server.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Microsoft.Win32.SystemEvents.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Newtonsoft.Json.dll
+D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Newtonsoft.Json.Bson.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
 D:\Projects\GIT\MARS\Api\ServiceApis\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll

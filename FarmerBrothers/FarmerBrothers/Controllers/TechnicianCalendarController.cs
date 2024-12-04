@@ -114,12 +114,79 @@ namespace FarmerBrothers.Controllers
 
                 strQuery1 = @"SELECT tech.Dealerid as Tech_Id, tech.CompanyName+' - '+ tech.city as Tech_Name from 
                             TECH_HIERARCHY tech where searchType in ('SP','NA') and FamilyAff != 'SPT' GROUP BY tech.Dealerid, tech.CompanyName+' - '+ tech.city";
+               
 
                 CalendarTechnicianModel objTechnicianModel = new CalendarTechnicianModel();
                 objTechnicianModel.TimeZone = TimeZone;
                 objTechnicianModel.ResourceList = fnResourceList(strQuery);
                 objTechnicianModel.ResourceList1 = fnResourceList1(strQuery1);
                 objTechnicianModel.IsTechSchedule = IsTechSchedule;
+
+
+                /*List<string> Colors = new List<string> { "#f8a398", "#56ca85", "#51a0ed", "Red", "Green", "Blue", "Yellow", "#D2E445", "#FF7FD4", "#D42AFF",
+                                                     "#FF00AA", "#FF5500", "#AA00D5", "#FFFF00","#41c7f4", "#f441aa", "#d39f12", "#41aa90", "#12af12",
+                                                     "#f6b5f5", "#c6b5f6", "#8acdd5", "#92aeb1", "#5fbf5b", "#bf9ef6", "#f69ee4", "#cfee7a", "#20ddf9",
+                                                     "#7753ae", "#6483dd", "#93b6c2", "#6ceeaf","#ee916c", "#6cacee", "#63ce6f", "#bece63", "#ddab86",
+                                                     "#dd86b7", "#9384c5", "#7ebcce", "#84c2bb", "#36ee80", "#d3cfe5", "#9bc6a9", "#f1e74e", "#e1dfc0" };
+                
+                var resoursList = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.SearchType.ToLower() == "sp").Select(s => new 
+                {
+                    techId = s.DealerId,
+                    desc = s.CompanyName+ " - " + s.City,
+                    branch = s.BranchName,
+                    branchNum = s.BranchNumber
+                }).GroupBy(g => new { g.techId, g.desc, g.branch, g.branchNum }).ToList();
+
+                if (Tid != "")
+                {
+                    resoursList = resoursList.Where(r => r.Key.techId == Convert.ToInt32(Tid)).ToList();
+                }
+                else
+                {
+                    resoursList = resoursList.Where(r => r.Key.branchNum == strBranchID && r.Key.branchNum != null && r.Key.branchNum != "").ToList();
+                }
+
+                objTechnicianModel.ResourceList = new List<ResourceFields>();
+                int i = 0;
+                foreach (var res in resoursList)
+                {
+                    objTechnicianModel.ResourceList.Add
+                   (
+                        new ResourceFields()
+                        {
+                            IsChecked = true,
+                            Id = res.Key.techId.ToString(),
+                            Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(res.Key.desc.ToLower()),
+                            Color = Colors[i]
+                        }
+                   );
+                    i = i + 1;
+                }
+
+                 var resoursList1 = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.FamilyAff.ToLower() != "spt" && (t.SearchType.ToLower() == "sp" || t.SearchType.ToLower() == "na")).Select(s => new
+                 {
+                     techId = s.DealerId,
+                     desc = s.CompanyName + " - " + s.City,
+                     techpostalCode = s.PostalCode
+                 }).GroupBy(g => new { g.techId, g.desc, g.techpostalCode }).ToList();
+
+                 if (Tid != "")
+                 {
+                     resoursList1 = resoursList1.Where(r => r.Key.techId != Convert.ToInt32(Tid)).ToList();
+                 }
+
+                 objTechnicianModel.ResourceList1 = new List<ResourceFields1>();
+                 foreach (var res in resoursList1)
+                 {
+                     objTechnicianModel.ResourceList1.Add
+                    (
+                         new ResourceFields1()
+                         {
+                             Id = res.Key.techId.ToString(),
+                             Text = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(res.Key.desc.ToString().ToLower()),
+                         }
+                    );
+                 }*/
 
                 string onCallStartTime = "";
                 string onCallEndTime = "";
@@ -557,7 +624,9 @@ namespace FarmerBrothers.Controllers
             return Json(Appoint, JsonRequestBehavior.AllowGet);
         }
         public JsonResult TechScheduleBatch(EditParams param, string Resourcelist, string TimeZone)
-        {
+        {            
+           // return Json("technician and Replacetech cannot be same ", JsonRequestBehavior.AllowGet);
+
             TimeZone = TimeZone.Replace("Daylight", "Standard").Replace("Alaska", "Alaskan").Replace("Local", "Hawaiian");
             TimeZoneInfo.ClearCachedData();
 
@@ -844,6 +913,41 @@ namespace FarmerBrothers.Controllers
                 }
             }
             return isExist;
+        }
+
+        public JsonResult CheckIfTechUnAvailable(int techId, DateTime StartTime)
+        {
+            bool isAvilable = false;
+            using (FarmerBrothersEntities FarmerBrothersEntitites = new FarmerBrothersEntities())
+            {
+                List<TechSchedule> holidays = (from sc in FarmerBrothersEntitites.TechSchedules
+                                               join tech in FarmerBrothersEntitites.TECH_HIERARCHY on sc.TechId equals tech.DealerId
+                                               where DbFunctions.TruncateTime(sc.ScheduleDate) == DbFunctions.TruncateTime(StartTime) && sc.TechId == techId
+                                               && tech.SearchType == "SP" && tech.PostalCode != null
+                                               select sc).ToList();
+
+                if (holidays != null)
+                {
+                    foreach (TechSchedule holiday in holidays)
+                    {
+                        DateTime UnavailableStartDate = Convert.ToDateTime(StartTime.ToString("MM/dd/yyyy") + " " + new DateTime().AddHours(Convert.ToDouble(holiday.ScheduleStartTime)).ToString("hh:mm tt"));
+                        DateTime UnavailableEndDate = Convert.ToDateTime(StartTime.ToString("MM/dd/yyyy") + " " + new DateTime().AddHours(Convert.ToDouble(holiday.ScheduleEndTime)).ToString("hh:mm tt"));
+                      
+                        if ((UnavailableStartDate <= StartTime) && (UnavailableEndDate > StartTime)) 
+                        {
+                            isAvilable = true;
+                            break;
+                        }
+                        else
+                        {
+                            isAvilable = false;
+                        }
+                    }
+                }
+            }
+
+
+            return Json(isAvilable, JsonRequestBehavior.AllowGet);
         }
 
         public static bool IsTechUnAvailable(int techId, DateTime StartTime, out int replaceTech)

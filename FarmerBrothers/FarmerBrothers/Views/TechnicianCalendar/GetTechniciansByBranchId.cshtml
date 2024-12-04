@@ -13,7 +13,7 @@
     //var serverTimeZoneDiff = -5.0   // if your server is in CST time zone (UTC -6.0) (in hours). if your server CST is in Daylight Saving Time means mention the value as -5.0
     //var clientSideTimeZoneDiff = new Date().getTimezoneOffset() / 60; // get client time zone difference and convert it to hours;
     //ej.serverTimezoneOffset = serverTimeZoneDiff + clientSideTimeZoneDiff;
-    
+
 
     $(document).ready(function ()
     {
@@ -24,8 +24,9 @@
             window.open('@Url.Action("WorkorderManagement", "Workorder")' + "?workOrderId=" + Number(el.textContent.substr(3).trim()), '');
 
         });
+    })
 
-    } )
+
 
     function onAppointmentWindowOpen(args) {
 
@@ -49,6 +50,7 @@
             newDate.setDate(startDate.getDate() + 1);
             schObj._appointmentAddWindow.find("#" + schObj._id + "enddate").ejDatePicker({ value: newDate.toLocaleDateString(), enabled: true });
         });
+
     }
     function onCreate(args) {
 
@@ -70,9 +72,43 @@
         });
     }
 
+    function ActionBegin(args) {
+        //debugger;
+        if (args.requestType === 'appointmentSave' || args.requestType === 'appoinementEdit') {
+            var categoryrecord = args.model.categorizeSettings.dataSource.find(item => item.Text === args.data.Categorize);
+            var categoryData = categoryrecord ? categoryrecord.Id : null;
+
+            var techsStr = args.data.TechSchedule_ownerfield_0;
+            var techsList = techsStr.split(',');
+
+            if (techsList.includes(categoryData)) {
+                AlertPopup("Technician and ReplaceTechnician cannot be same");
+                args.cancel = true;  // Cancel the save action
+                return;
+            }
+            else {
+                var replacetech = categoryData ? parseInt(categoryData) : 0;
+
+                $.ajax({
+                    url: "@Url.Action("CheckIfTechUnAvailable", "TechnicianCalendar")",
+                    async: false,
+                    data: {
+                        techId: replacetech, StartTime: new Date(args.data.StartTime).toLocaleString("en-US")
+                    },
+                    success: function (Result) {
+                        if (Result == true) {
+                            AlertPopup("Replace Tech not Available");
+                            args.cancel = true;  
+                            return;
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     function OnAppointmentClick(args) {
-        //alert("Hi");
+        //alert(args);
         //debugger;
         if(args.appointment.Subject.toString().indexOf("IWO") >= 0 || args.appointment.Subject.toString().indexOf("PWO") >= 0 || args.appointment.Subject.toString().indexOf("RWO") >= 0)
         {
@@ -151,7 +187,8 @@
     }
     function  OnAppointmentOpen(args)
     {
-        //  alert(args);
+       // alert(args);
+        //debugger;
         if(typeof args.appointment=='undefined')
             args.cancel = false;
         else if(args.appointment.Subject.toString().indexOf("Installation Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Preventative Maintenance Work Order") >= 0 || args.appointment.Subject.toString().indexOf("Removal Work Order") >= 0)
@@ -159,6 +196,10 @@
             args.cancel =true;
         }
 
+        $("#done").on('click', function (event) {
+            debugger;
+            event.preventDefault();
+        });
     }
     function  OnNavigation(args)
     {
@@ -374,7 +415,7 @@
                             //.ReminderSettings(rem=> rem.Enable(true).AlertBefore(3))
                             .Resources(res =>
                             {
-                                res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true)
+                                res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true)                                
                                 .ResourceSettings(flds => flds.Datasource(Model.ResourceList).Text("Text").Id("Id").Color("Color")).Add();
                             })
                                 .AppointmentSettings(fields => fields.Datasource(ds => ds.URL("../TechnicianCalendar/TechScheduleGetData?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + (Model.TimeZone)).CrudURL("../TechnicianCalendar/TechScheduleBatch?Resourcelist=" + String.Join(",", (Model.ResourceList.ToList().Select(m => m.Id))) + "&TimeZone=" + Model.TimeZone).Adaptor("UrlAdaptor"))
@@ -515,10 +556,10 @@
                         ShowAllDayRow(true)
                            // .ReminderSettings(rem => rem.Enable(true).AlertBefore(3))
                         .ScheduleClientSideEvents(ev => ev.AppointmentClick("OnAppointmentClick").AppointmentHover("OnAppointmentHover").AppointmentWindowOpen("OnAppointmentOpen"))
-                            .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick").Reminder("reminderCustom"))
+                            .ScheduleClientSideEvents(ev => ev.CellClick("OnCellClick").CellDoubleClick("OnCellDoubleClick").Reminder("reminderCustom").ActionBegin("ActionBegin"))
                         .ShowCurrentTimeIndicator().
                         ShowNextPrevMonth(false)
-                        .CategorizeSettings(fields => fields.Title("Replace Tech").TableName("RepTechs").Datasource(Model.ResourceList1).Enable(true).AllowMultiple(false).Id("Id").Text("Text"))
+                        .CategorizeSettings(fields => fields.Title("Replace Tech").TableName("RepTechs").Datasource(Model.ResourceList1).Enable(true).AllowMultiple(false).Id("Id").Text("Text"))                        
                         .Resources(res =>
                         {
                             res.Field("TechnicianId").Title("Technician").Name("Technicians").AllowMultiple(true)
@@ -535,7 +576,7 @@
                             .AllDay("AllDay")
                             .Recurrence("Recurrence")
                             .RecurrenceRule("RecurrenceRule")
-                            .Categorize("Categorize")
+                            .Categorize("Categorize")                            
                             )
 
                             )

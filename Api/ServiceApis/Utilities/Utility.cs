@@ -62,22 +62,51 @@ namespace ServiceApis.Utilities
                 .Where(cbe => cbe.CurrentCustomerId == accountNumber)
                 .ToList();
         }
-        public static DateTime GetCurrentTime(string zipCode, FBContext _context)
+        //public static DateTime GetCurrentTime(string zipCode, FBContext _context)
+        //{
+        //    //using (FBContext newEntity = new FBContext())
+        //    {
+        //        if (zipCode != null && zipCode.Length > 5)
+        //        {
+        //            zipCode = zipCode.Substring(0, 5);
+        //        }
+
+        //        FormattableString query = $"SELECT dbo.getCustDateTime('{zipCode}')";
+        //        //string query = @"Select dbo.getCustDateTime('" + zipCode + "')";
+        //        var result = _context.Database.SqlQuery<DateTime>(query);
+
+        //        return result.ElementAt(0);
+        //    }
+        //}
+
+        public static DateTime GetCurrentTime(string zipCode, FBContext context)
         {
-            //using (FBContext newEntity = new FBContext())
+            // Ensure the ZIP code is no longer than 5 characters
+            if (zipCode.Length > 5)
             {
-                if (zipCode != null && zipCode.Length > 5)
-                {
-                    zipCode = zipCode.Substring(0, 5);
-                }
-
-                FormattableString query = $"SELECT dbo.getCustDateTime('{zipCode}')";
-                //string query = @"Select dbo.getCustDateTime('" + zipCode + "')";
-                var result = _context.Database.SqlQuery<DateTime>(query);
-
-                return result.ElementAt(0);
+                zipCode = zipCode.Substring(0, 5);
             }
+
+            // Use a parameterized query
+            string query = "SELECT dbo.getCustDateTime(@zipCode)";
+            var parameter = new System.Data.SqlClient.SqlParameter("@zipCode", zipCode);
+
+            // Execute the query
+            var result = context.Database.SqlQueryRaw<DateTime>(query, parameter).FirstOrDefault();
+
+            // Handle the case where no value is returned
+            if (result == default)
+            {
+                // Return a default value or throw an exception
+                return DateTime.MinValue; // or handle as needed
+            }
+
+            return result;
         }
+
+
+
+
 
 
         //public static DateTime GetCurrentTime(string zipCode)
@@ -195,5 +224,91 @@ namespace ServiceApis.Utilities
             }
             return timeZone;
         }
+
+        //public static IEnumerable<TechHierarchyView> GetTechDataByBranchType(FBContext MarsServiceEntitites, string branchDesc, string branchType)
+        //{
+        //    string query = string.Empty;
+        //    if (string.IsNullOrWhiteSpace(branchType))
+        //    {
+        //        query = @"select distinct d.dealerid AS TechID, d.CompanyName +' - '+ d.city AS PreferredProvider from TECH_HIERARCHY d where searchType='SP' and FamilyAff !='SPT' 
+        //                and dealerID NOT IN (8888888,8888889,8888890,8888891,8888892,8888893,8888894,8888895,8888907,8888908,8888911,8888917,
+        //                8888918,8888941,8888942,8888945,8888953,9999999,8888897,9999995,9999998,8888980,8888981,8888984,9990061,9990062,9990065) order by PreferredProvider asc";
+        //    }
+        //    else
+        //    {
+        //        query = @"select distinct d.dealerid AS TechID, d.CompanyName +' - '+ d.city AS PreferredProvider from TECH_HIERARCHY d 
+        //                    where searchType='SP' and dealerID NOT IN (8888888,8888889,8888890,8888891,8888892,8888893,8888894,8888895,8888907,8888908,8888911,8888917,
+        //                8888918,8888941,8888942,8888945,8888953,9999999,8888897,9999995,9999998,8888980,8888981,8888984,9990061,9990062,9990065) and FamilyAff = '" + branchType + "'"
+        //                + "order by PreferredProvider asc";
+        //    }
+        //    return MarsServiceEntitites.Database.SqlQuery<TechHierarchyView>(query);
+        //}
+
+        //    public static IEnumerable<TechHierarchyView> GetTechDataByBranchType(FBContext MarsServiceEntities, string branchDesc, string branchType)
+        //    {
+        //        var dealerIds = new List<int>
+        //{
+        //    8888888, 8888889, 8888890, 8888891, 8888892, 8888893,
+        //    8888894, 8888895, 8888907, 8888908, 8888911, 8888917,
+        //    8888918, 8888941, 8888942, 8888945, 8888953, 9999999,
+        //    8888897, 9999995, 9999998, 8888980, 8888981, 8888984,
+        //    9990061, 9990062, 9990065
+        //};
+
+        //        string dealerIdsString = string.Join(", ", dealerIds);
+
+        //        string query = @"
+        //    SELECT DISTINCT d.dealerid AS TechID, 
+        //           d.CompanyName + ' - ' + d.city AS PreferredProvider 
+        //    FROM TECH_HIERARCHY d 
+        //    WHERE searchType = 'SP' 
+        //      AND dealerID NOT IN (" + dealerIdsString + @")";
+
+        //        if (!string.IsNullOrWhiteSpace(branchType))
+        //        {
+        //            query += " AND FamilyAff = @branchType";
+        //        }
+
+        //        query += " ORDER BY PreferredProvider ASC";
+
+        //        var parameters = new System.Data.SqlClient.SqlParameter[]
+        //        {
+        //    new System.Data.SqlClient.SqlParameter("@branchType", branchType ?? (object)DBNull.Value)
+        //        };
+
+        //        return MarsServiceEntities.Database.SqlQueryRaw<TechHierarchyView>(query, parameters);
+
+
+        //    }
+
+        public static IEnumerable<TechHierarchyView> GetTechDataByBranchType(FBContext MarsServiceEntities, string branchDesc, string branchType)
+        {
+            // Define the list of dealer IDs to exclude
+            var excludedDealerIds = new List<int>
+    {
+        8888888, 8888889, 8888890, 8888891, 8888892, 8888893,
+        8888894, 8888895, 8888907, 8888908, 8888911, 8888917,
+        8888918, 8888941, 8888942, 8888945, 8888953, 9999999,
+        8888897, 9999995, 9999998, 8888980, 8888981, 8888984,
+        9990061, 9990062, 9990065
+    };
+
+            // Build the LINQ query
+            var query = MarsServiceEntities.TechHierarchies
+                .Where(d => d.SearchType == "SP" &&
+                            !excludedDealerIds.Contains(d.DealerId) &&
+                            (string.IsNullOrWhiteSpace(branchType) || d.FamilyAff == branchType))
+                .Select(d => new TechHierarchyView
+                {
+                    TechID = d.DealerId,
+                    PreferredProvider = d.CompanyName + " - " + d.City
+                })
+                .Distinct()
+                .OrderBy(d => d.PreferredProvider);
+
+            return query.ToList(); // Convert to List if needed
+        }
+
+
     }
 }

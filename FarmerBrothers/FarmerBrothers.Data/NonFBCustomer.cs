@@ -17,5 +17,7 @@ namespace FarmerBrothers.Data
         public int Id { get; set; }
         public string NonFBCustomerId { get; set; }
         public string NonFBCustomerName { get; set; }
+        public Nullable<bool> IsActive { get; set; }
+        public string email { get; set; }
     }
 }

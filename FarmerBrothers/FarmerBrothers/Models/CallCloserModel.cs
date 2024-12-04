@@ -1,6 +1,8 @@
 ﻿using FarmerBrothers.Data;
+using FarmerBrothers.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 
@@ -38,7 +40,25 @@ namespace FarmerBrothers.Models
                 this.EquipmentCount = entity.WorkorderEquipments.Where(wr => wr.WorkorderID == this.WorkOrderId).Count();
                 this.TechName = entity.TECH_HIERARCHY.Where(t => t.DealerId == workOrderSchedule.Techid).Select(s => s.CompanyName).FirstOrDefault();
             }
-            
+
+            string url = ConfigurationManager.AppSettings["DispatchResponseUrl"];
+            if (workOrderSchedule.WorkOrder.WorkorderCallstatus.ToLower() == "pending acceptance")
+            {
+                this.AcceptUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=0&isResponsible=true"));
+                this.RescheduleUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=8&isResponsible=true"));
+            }           
+            if (workOrderSchedule.WorkOrder.WorkorderCallstatus.ToLower() == "accepted")
+            {
+                this.StartUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=6&isResponsible=true"));
+                this.ArrivelUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=2&isResponsible=true"));
+                this.CompleteUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=3&isResponsible=true"));
+                this.RescheduleUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=8&isResponsible=true"));
+            }
+            if (workOrderSchedule.WorkOrder.WorkorderCallstatus.ToLower() == "on site")
+            {
+                this.CompleteUrl = string.Format("{0}{1}&encrypt=yes", url, new Encrypt_Decrypt().Encrypt("workOrderId=" + workOrderSchedule.WorkorderID + "&techId=" + workOrderSchedule.Techid + "&response=3&isResponsible=true"));
+            }
+
         }
 
         public int? WorkOrderId { get; set; }
@@ -60,6 +80,12 @@ namespace FarmerBrothers.Models
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string CustomerPO { get; set; }
+
+        public string AcceptUrl { get; set; }
+        public string StartUrl { get; set; }
+        public string ArrivelUrl { get; set; }
+        public string CompleteUrl { get; set; }
+        public string RescheduleUrl { get; set; }
 
     }
 }

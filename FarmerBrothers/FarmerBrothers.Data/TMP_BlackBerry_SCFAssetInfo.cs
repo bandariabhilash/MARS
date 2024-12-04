@@ -34,5 +34,12 @@ namespace FarmerBrothers.Data
         public string Notes { get; set; }
         public Nullable<short> Sent5191Email { get; set; }
         public string TechName { get; set; }
+        public string Weight { get; set; }
+        public string Ratio { get; set; }
+        public Nullable<short> SpawnOrderCreated { get; set; }
+        public Nullable<int> SymptomCode { get; set; }
+        public Nullable<int> SystemCode { get; set; }
+        public string Temperature { get; set; }
+        public string ReasonCode { get; set; }
     }
 }

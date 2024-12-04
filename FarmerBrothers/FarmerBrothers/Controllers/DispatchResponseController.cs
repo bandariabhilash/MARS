@@ -994,6 +994,11 @@ namespace FarmerBrothersMailResponse.Controllers
             dispatchModel.WorkOrderId = workOrderId;
 
             WorkorderSchedule techWorkOrderSchedule = workOrder.WorkorderSchedules.Where(ws => ws.Techid == techId).FirstOrDefault();
+            if(techWorkOrderSchedule == null)
+            {
+                dispatchModel.Message = "No schedule found, Please resend the email and try again";
+                return View("DispatchResponse", "_Layout_WithOutMenu", dispatchModel);
+            }
 
             if (techId != 0 && techHierarchyView != null)
             {
@@ -2074,17 +2079,17 @@ namespace FarmerBrothersMailResponse.Controllers
             int returnValue = FarmerBrothersEntitites.SaveChanges();
 
             if (Status.ToLower() == "cancel")
-            {               
-                ViewBag.isERF = true;
-                ViewBag.erfId = erf.ErfID;
-                ViewBag.text = "ERF " + erf.ErfID;
-                ViewBag.workOrderId = erf.WorkorderID;
-                ViewBag.approvalStatus = erf.ApprovalStatus;
+            {
+                //ViewBag.isERF = true;
+                //ViewBag.erfId = erf.ErfID;
+                //ViewBag.text = "ERF " + erf.ErfID;
+                //ViewBag.workOrderId = erf.WorkorderID;
+                //ViewBag.approvalStatus = erf.ApprovalStatus;
 
-                return View("ConfirmationWindow", ViewBag);
+                //return View("ConfirmationWindow", ViewBag);
 
-                //ERFNewController enc = new ERFNewController();
-                //enc.ERFEmail(erf.ErfID, erf.WorkorderID, false, erf.ApprovalStatus, true);
+                ERFNewController enc = new ERFNewController();
+                enc.ERFEmail(erf.ErfID, erf.WorkorderID, false, erf.ApprovalStatus, true);
             }
 
             dispatchModel.IsERF = true;
@@ -4203,10 +4208,12 @@ namespace FarmerBrothersMailResponse.Controllers
             cardModel.CustomerId = Convert.ToInt32(wo.CustomerID);
             cardModel.FinalTransactionId = wo.FinalTransactionId;
             cardModel.WorkorderEntryDate = wo.WorkorderEntryDate;
-            cardModel.StartDateTime = wd.StartDateTime;
-            cardModel.ArrivalDateTime = wd.ArrivalDateTime;
-            cardModel.CompletionDateTime = wd.CompletionDateTime;
-                       
+            if (wd != null)
+            {
+                cardModel.StartDateTime = wd.StartDateTime;
+                cardModel.ArrivalDateTime = wd.ArrivalDateTime;
+                cardModel.CompletionDateTime = wd.CompletionDateTime;
+            }         
             cardModel.PreTravelCost = 0; 
 
             cardModel.FromView = FromView;

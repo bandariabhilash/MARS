@@ -125,6 +125,7 @@ namespace ServiceApis.Models
             customer.State = CustModel.State;
             customer.PostalCode = CustModel.ZipCode;
             customer.FirstName = CustModel.MainContactName;
+            customer.Phone = CustModel.PhoneNumber;
             customer.Email = CustModel.MainEmailAddress;
             customer.SearchType = "CA";
             customer.PricingParentId = CustModel.ParentNumber;

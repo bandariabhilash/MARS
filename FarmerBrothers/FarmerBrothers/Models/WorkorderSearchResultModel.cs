@@ -779,9 +779,7 @@ namespace FarmerBrothers.Models
 
         //public string IsBillable { get; set; }
         //public string TotalUnitPrice { get; set; }
-        public string ServicePriority { get; set; }
-        public string PPID { get; set; }
-        public string PPIDDESC { get; set; }
+        public string ServicePriority { get; set; }        
 
         public string CustomerMainContactName { get; set; }
         public string CustomerPhone { get; set; }
@@ -839,5 +837,7 @@ namespace FarmerBrothers.Models
         public string CustomerPO { get; set; }
         public string Tracking { get; set; }
         public string NTE { get; set; }
+        public string PPID { get; set; }
+        public string PPIDDESC { get; set; }
     }
 }

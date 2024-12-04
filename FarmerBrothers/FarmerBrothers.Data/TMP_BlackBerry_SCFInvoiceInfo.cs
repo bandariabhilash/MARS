@@ -28,5 +28,16 @@ namespace FarmerBrothers.Data
         public string Signature { get; set; }
         public Nullable<bool> WaterTested { get; set; }
         public string HardnessRating { get; set; }
+        public string CustomerSign { get; set; }
+        public string TechnicianSign { get; set; }
+        public string StateofEquipment { get; set; }
+        public string ServiceDelayReason { get; set; }
+        public string TroubleshootSteps { get; set; }
+        public string FollowupComments { get; set; }
+        public string ReviewedBy { get; set; }
+        public string IsUnderWarrenty { get; set; }
+        public string WarrentyFor { get; set; }
+        public string AdditionalFollowupReq { get; set; }
+        public string IsOperational { get; set; }
     }
 }

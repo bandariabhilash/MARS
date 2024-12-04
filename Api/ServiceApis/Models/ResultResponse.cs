@@ -9,7 +9,7 @@
             public bool IsSuccess { get; set; }
         public int responseCode { get; set; }
 
-            public int ReasonCode { get; set; }
+            //public int ReasonCode { get; set; }
     }
 
     public class ERFResponseClass

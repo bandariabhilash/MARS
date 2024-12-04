@@ -2,6 +2,7 @@
 using ServiceApis.IRepository;
 using ServiceApis.Models;
 using ServiceApis.Utilities;
+using System.Data.Entity;
 
 namespace ServiceApis.Repository
 {
@@ -155,6 +156,58 @@ namespace ServiceApis.Repository
             }
 
 
+        }
+
+        public Contact ValidCustomerDetails(string customerId)
+        {
+            Contact customer = null;
+            using (FBContext MarsServiceEntitites = new FBContext())
+            {
+                int cid = Convert.ToInt32(customerId);
+                customer = MarsServiceEntitites.Contacts.Where(e => e.ContactId == cid && e.IsUnknownUser != 1
+                  && (e.SearchType.ToString().Equals("C") || e.SearchType.ToString().Equals("CA") || e.SearchType.ToString().Equals("XC") || e.SearchType.ToString().Equals("XCA") ||
+                  e.SearchType.ToString().Equals("XCI") || e.SearchType.ToString().Equals("CCS") || e.SearchType.ToString().Equals("CFS") || e.SearchType.ToString().Equals("CB") ||
+                  e.SearchType.ToString().Equals("CE") || e.SearchType.ToString().Equals("CFD") || e.SearchType.ToString().Equals("PFS") || e.SearchType.ToString().Equals("BR"))).FirstOrDefault();
+            }
+
+            return customer;
+        }
+
+        public bool IsTechUnAvailable(int techId, DateTime StartTime, out int replaceTech)
+        {
+            bool isAvilable = false;
+            replaceTech = techId;
+            using (FBContext FarmerBrothersEntitites = new FBContext())
+            {
+                List<TechSchedule> holidays = (from sc in FarmerBrothersEntitites.TechSchedules
+                                               where DbFunctions.TruncateTime(sc.ScheduleDate) == DbFunctions.TruncateTime(StartTime) && sc.TechId == techId
+                                               select sc).ToList();
+
+                if (holidays != null)
+                {
+                    foreach (TechSchedule holiday in holidays)
+                    {
+                        DateTime UnavailableStartDate = Convert.ToDateTime(StartTime.ToString("MM/dd/yyyy") + " " + new DateTime().AddHours(Convert.ToDouble(holiday.ScheduleStartTime)).ToString("hh:mm tt"));
+                        DateTime UnavailableEndDate = Convert.ToDateTime(StartTime.ToString("MM/dd/yyyy") + " " + new DateTime().AddHours(Convert.ToDouble(holiday.ScheduleEndTime)).ToString("hh:mm tt"));
+
+                        if ((UnavailableStartDate <= StartTime) && (UnavailableEndDate > StartTime))
+                        {
+                            if (holiday.ReplaceTech != null && holiday.ReplaceTech != 0)
+                            {
+                                replaceTech = Convert.ToInt32(holiday.ReplaceTech);
+                                IsTechUnAvailable(replaceTech, StartTime, out replaceTech);
+                            }
+                            else
+                            { return true; }
+                        }
+                        else
+                        {
+                            isAvilable = false;
+                        }
+                    }
+                }
+            }
+            return isAvilable;
         }
 
     }

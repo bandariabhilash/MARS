@@ -25,18 +25,18 @@ namespace ServiceApis.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost]
-        [Authorize]
-        [Route("CreateERF")]
-        public JsonResult CreateERF([FromBody] ERFRequestModel RequestData)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userName = User.FindFirstValue(ClaimTypes.GivenName);
+        //[HttpPost]
+        //[Authorize]
+        //[Route("CreateERF")]
+        //public JsonResult CreateERF([FromBody] ERFRequestModel RequestData)
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var userName = User.FindFirstValue(ClaimTypes.GivenName);
 
-            ResultResponse<ERFResponseClass> result = _erfRepository.SaveERFData(RequestData, Convert.ToInt32(userId), userName);
+        //    ResultResponse<ERFResponseClass> result = _erfRepository.SaveERFData(RequestData, Convert.ToInt32(userId), userName);
 
-            return Json(result);
-        }
+        //    return Json(result);
+        //}
 
         
     }

@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="c4a82cdc87a442fda6c5a7400e10bc8e" Name="Diagram1" ZoomLevel="41">
+      <Diagram DiagramId="c4a82cdc87a442fda6c5a7400e10bc8e" Name="Diagram1" ZoomLevel="59">
         <EntityTypeShape EntityType="FarmerBrothers.Data.AgentDispatchLog" Width="1.5" PointX="0.75" PointY="8.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.AllFBStatu" Width="1.5" PointX="0.75" PointY="11.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.AMPSList" Width="1.5" PointX="13.75" PointY="4.25" />
@@ -55,9 +55,7 @@
         <EntityTypeShape EntityType="FarmerBrothers.Data.NEMANumberList" Width="1.5" PointX="25.75" PointY="4.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.NoAutoEmailZipCode" Width="1.5" PointX="25.75" PointY="7.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.NoAutomaticEmailContract" Width="1.5" PointX="12.75" PointY="7.25" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NonFBCustomer" Width="1.5" PointX="25.75" PointY="10.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.NonSerialized" Width="1.5" PointX="3" PointY="77.875" />
-        <EntityTypeShape EntityType="FarmerBrothers.Data.NonServiceworkorder" Width="1.5" PointX="3.75" PointY="8.5" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.NotesHistory" Width="1.5" PointX="6" PointY="43.125" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.OnCallGroup" Width="1.5" PointX="7.75" PointY="29.25" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.PhoneSolveLog" Width="1.5" PointX="3" PointY="18.625" />
@@ -119,7 +117,6 @@
         <AssociationConnector Association="FarmerBrothers.Data.FK_FBReports_FbUserMaster" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_FbUserMaster_UserType" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_UserApplication_FbUserMaster" />
-        <AssociationConnector Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" />
         <AssociationConnector Association="FarmerBrothers.Data.FK_UserApplication_Privilege1" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__0E6E26BF" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Asset__5F7E2DAC" />
@@ -154,6 +151,13 @@
         <AssociationConnector Association="FarmerBrothers.Data.FK__CCInvoice__Worko__52793849" />
         <EntityTypeShape EntityType="FarmerBrothers.Data.WorkorderPart" Width="1.5" PointX="3" PointY="52.625" />
         <AssociationConnector Association="FarmerBrothers.Data.FK__Workorder__Worko__51300E55" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TMP_BlackBerry_NSR" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFAssetInfo" Width="1.5" PointX="34.375" PointY="5.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFPartsInfo" Width="1.5" PointX="34.375" PointY="12.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.TMP_BlackBerry_SCFInvoiceInfo" Width="1.5" PointX="34.375" PointY="17.75" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NonServiceworkorder" Width="1.5" PointX="34.375" PointY="25.125" />
+        <AssociationConnector Association="FarmerBrothers.Data.FK_NotesHistory_NonServiceworkorder" />
+        <EntityTypeShape EntityType="FarmerBrothers.Data.NonFBCustomer" Width="1.5" PointX="9.375" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

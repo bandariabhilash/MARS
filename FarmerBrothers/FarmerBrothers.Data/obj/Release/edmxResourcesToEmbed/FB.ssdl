@@ -754,6 +754,9 @@
     <Property Name="CreatedUserId" Type="int" />
     <Property Name="CreatedUserName" Type="varchar" MaxLength="150" />
     <Property Name="CustomerParent" Type="nvarchar" MaxLength="150" />
+    <Property Name="RefreshTokenExpiryTime" Type="datetime" />
+    <Property Name="RefreshToken" Type="ntext" />
+    <Property Name="ServiceAccess" Type="bit" />
   </EntityType>
   <EntityType Name="FBUserReports">
     <Key>
@@ -882,6 +885,8 @@
     <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
     <Property Name="NonFBCustomerId" Type="nvarchar" MaxLength="20" />
     <Property Name="NonFBCustomerName" Type="varchar" MaxLength="200" />
+    <Property Name="IsActive" Type="bit" />
+    <Property Name="email" Type="varchar" MaxLength="250" />
   </EntityType>
   <EntityType Name="NonSerialized">
     <Key>
@@ -927,6 +932,8 @@
     <Property Name="EmailSentTo" Type="varchar" MaxLength="255" />
     <Property Name="MainContactName" Type="varchar" MaxLength="255" />
     <Property Name="PhoneNumber" Type="varchar" MaxLength="20" />
+    <Property Name="ClosedBy" Type="int" />
+    <Property Name="ResolutionCallerName" Type="varchar" MaxLength="150" />
   </EntityType>
   <EntityType Name="NotesHistory">
     <Key>
@@ -1205,6 +1212,99 @@
     <Property Name="TravelOverTimeRateFlag" Type="bit" />
     <Property Name="TravelOvertimeRate" Type="money" />
     <Property Name="TravelZoneRateFlag" Type="bit" />
+  </EntityType>
+  <EntityType Name="TMP_BlackBerry_NSR">
+    <Key>
+      <PropertyRef Name="UniqueInvoiceID" />
+    </Key>
+    <Property Name="UniqueInvoiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkorderID" Type="int" />
+    <Property Name="TechID" Type="int" />
+    <Property Name="Reasion" Type="varchar" MaxLength="250" />
+    <Property Name="Comments" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="TMP_BlackBerry_SCFAssetInfo">
+    <Key>
+      <PropertyRef Name="UniqueID" />
+    </Key>
+    <Property Name="UniqueID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkorderID" Type="int" />
+    <Property Name="TechID" Type="int" />
+    <Property Name="ServiceCode" Type="int" />
+    <Property Name="CompletionCode" Type="int" />
+    <Property Name="EquipTypeCode" Type="nvarchar" MaxLength="5" />
+    <Property Name="VendorCode" Type="nvarchar" MaxLength="20" />
+    <Property Name="Model" Type="varchar" MaxLength="50" />
+    <Property Name="SerialNo" Type="varchar" MaxLength="50" />
+    <Property Name="EntryDate" Type="smalldatetime" />
+    <Property Name="CloseCall" Type="smallint" />
+    <Property Name="EventUpdated" Type="smallint" />
+    <Property Name="SpawnEventID" Type="int" />
+    <Property Name="AssetKey" Type="int" />
+    <Property Name="ManufacturerDesc" Type="varchar" MaxLength="255" />
+    <Property Name="CategoryDesc" Type="varchar" MaxLength="255" />
+    <Property Name="ClosureConfirmationNo" Type="nvarchar" MaxLength="50" />
+    <Property Name="Notes" Type="ntext" />
+    <Property Name="Sent5191Email" Type="smallint" />
+    <Property Name="TechName" Type="varchar" MaxLength="90" />
+    <Property Name="Weight" Type="varchar" MaxLength="20" />
+    <Property Name="Ratio" Type="varchar" MaxLength="20" />
+    <Property Name="SpawnOrderCreated" Type="smallint" />
+    <Property Name="SymptomCode" Type="int" />
+    <Property Name="SystemCode" Type="int" />
+    <Property Name="Temperature" Type="varchar" MaxLength="10" />
+    <Property Name="ReasonCode" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'FB_Dev.dbo.TMP_BlackBerry_SCFInvoiceInfo' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="TMP_BlackBerry_SCFInvoiceInfo">
+    <Key>
+      <PropertyRef Name="UniqueInvoiceID" />
+    </Key>
+    <Property Name="UniqueInvoiceID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkorderID" Type="int" />
+    <Property Name="TechID" Type="int" />
+    <Property Name="InvoiceNo" Type="nvarchar" MaxLength="50" />
+    <Property Name="StartDateTime" Type="smalldatetime" />
+    <Property Name="ArrivalDateTime" Type="smalldatetime" />
+    <Property Name="CompletionDateTime" Type="smalldatetime" />
+    <Property Name="EntryDate" Type="smalldatetime" />
+    <Property Name="InvoiceKey" Type="int" />
+    <Property Name="TechName" Type="varchar" MaxLength="90" />
+    <Property Name="SignedBy" Type="varchar" MaxLength="90" />
+    <Property Name="Signature" Type="nvarchar(max)" />
+    <Property Name="WaterTested" Type="bit" />
+    <Property Name="HardnessRating" Type="varchar" MaxLength="10" />
+    <Property Name="CustomerSign" Type="text" />
+    <Property Name="TechnicianSign" Type="text" />
+    <Property Name="StateofEquipment" Type="ntext" />
+    <Property Name="ServiceDelayReason" Type="ntext" />
+    <Property Name="TroubleshootSteps" Type="ntext" />
+    <Property Name="FollowupComments" Type="ntext" />
+    <Property Name="ReviewedBy" Type="nvarchar" MaxLength="150" />
+    <Property Name="IsUnderWarrenty" Type="nvarchar" MaxLength="10" />
+    <Property Name="WarrentyFor" Type="nvarchar" MaxLength="150" />
+    <Property Name="AdditionalFollowupReq" Type="nvarchar" MaxLength="10" />
+    <Property Name="IsOperational" Type="nvarchar" MaxLength="10" />
+  </EntityType>
+  <EntityType Name="TMP_BlackBerry_SCFPartsInfo">
+    <Key>
+      <PropertyRef Name="UniquePartsID" />
+    </Key>
+    <Property Name="UniquePartsID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="WorkorderID" Type="int" />
+    <Property Name="TechID" Type="int" />
+    <Property Name="EntryNo" Type="varchar" MaxLength="50" />
+    <Property Name="ItemNo" Type="varchar" MaxLength="50" />
+    <Property Name="VendorNo" Type="varchar" MaxLength="50" />
+    <Property Name="Description" Type="varchar" MaxLength="250" />
+    <Property Name="EntryDate" Type="smalldatetime" />
+    <Property Name="SKUID" Type="int" />
+    <Property Name="Quantity" Type="int" />
+    <Property Name="Pid" Type="int" />
+    <Property Name="SKU" Type="varchar" MaxLength="80" />
+    <Property Name="recExists" Type="smallint" />
+    <Property Name="AssetID" Type="int" />
   </EntityType>
   <!--Errors Found During Generation:
 warning 6002: The table/view 'FB_Dev.dbo.TMP_SerialNOReport' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -2737,6 +2837,9 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="TechSchedule" EntityType="Self.TechSchedule" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ThirdpartyConMaintenanceZonerate" EntityType="Self.ThirdpartyConMaintenanceZonerate" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ThirdPartyContractMaintenance" EntityType="Self.ThirdPartyContractMaintenance" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TMP_BlackBerry_NSR" EntityType="Self.TMP_BlackBerry_NSR" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TMP_BlackBerry_SCFAssetInfo" EntityType="Self.TMP_BlackBerry_SCFAssetInfo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TMP_BlackBerry_SCFPartsInfo" EntityType="Self.TMP_BlackBerry_SCFPartsInfo" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TmpInvTransfer" EntityType="Self.TmpInvTransfer" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TmpinvTransferNonserialized" EntityType="Self.TmpinvTransferNonserialized" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="TmpinvTransferSerialized" EntityType="Self.TmpinvTransferSerialized" Schema="dbo" store:Type="Tables" />
@@ -2764,6 +2867,35 @@ warning 6002: The table/view 'FB_Dev.dbo.VW_tech_Hierarchy' does not have a prim
     <EntitySet Name="WorkorderStatusLog" EntityType="Self.WorkorderStatusLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="WorkorderType" EntityType="Self.WorkorderType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="ZonePriority" EntityType="Self.ZonePriority" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TMP_BlackBerry_SCFInvoiceInfo" EntityType="Self.TMP_BlackBerry_SCFInvoiceInfo" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [TMP_BlackBerry_SCFInvoiceInfo].[UniqueInvoiceID] AS [UniqueInvoiceID], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[WorkorderID] AS [WorkorderID], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TechID] AS [TechID], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[InvoiceNo] AS [InvoiceNo], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[StartDateTime] AS [StartDateTime], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[ArrivalDateTime] AS [ArrivalDateTime], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[CompletionDateTime] AS [CompletionDateTime], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[EntryDate] AS [EntryDate], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[InvoiceKey] AS [InvoiceKey], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TechName] AS [TechName], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[SignedBy] AS [SignedBy], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[Signature] AS [Signature], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[WaterTested] AS [WaterTested], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[HardnessRating] AS [HardnessRating], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[CustomerSign] AS [CustomerSign], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TechnicianSign] AS [TechnicianSign], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[StateofEquipment] AS [StateofEquipment], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[ServiceDelayReason] AS [ServiceDelayReason], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[TroubleshootSteps] AS [TroubleshootSteps], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[FollowupComments] AS [FollowupComments], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[ReviewedBy] AS [ReviewedBy], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[IsUnderWarrenty] AS [IsUnderWarrenty], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[WarrentyFor] AS [WarrentyFor], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[AdditionalFollowupReq] AS [AdditionalFollowupReq], 
+    [TMP_BlackBerry_SCFInvoiceInfo].[IsOperational] AS [IsOperational]
+    FROM [dbo].[TMP_BlackBerry_SCFInvoiceInfo] AS [TMP_BlackBerry_SCFInvoiceInfo]</DefiningQuery>
+    </EntitySet>
     <EntitySet Name="TMP_SerialNOReport" EntityType="Self.TMP_SerialNOReport" store:Type="Tables" store:Schema="dbo">
       <DefiningQuery>SELECT 
     [TMP_SerialNOReport].[EventID] AS [EventID], 

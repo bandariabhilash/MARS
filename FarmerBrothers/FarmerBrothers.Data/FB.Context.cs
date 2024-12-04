@@ -77,9 +77,7 @@ namespace FarmerBrothers.Data
         public virtual DbSet<NEMANumberList> NEMANumberLists { get; set; }
         public virtual DbSet<NoAutoEmailZipCode> NoAutoEmailZipCodes { get; set; }
         public virtual DbSet<NoAutomaticEmailContract> NoAutomaticEmailContracts { get; set; }
-        public virtual DbSet<NonFBCustomer> NonFBCustomers { get; set; }
         public virtual DbSet<NonSerialized> NonSerializeds { get; set; }
-        public virtual DbSet<NonServiceworkorder> NonServiceworkorders { get; set; }
         public virtual DbSet<NotesHistory> NotesHistories { get; set; }
         public virtual DbSet<OnCallGroup> OnCallGroups { get; set; }
         public virtual DbSet<PhoneSolveLog> PhoneSolveLogs { get; set; }
@@ -143,6 +141,12 @@ namespace FarmerBrothers.Data
         public virtual DbSet<WorkOrder> WorkOrders { get; set; }
         public virtual DbSet<CCInvoiceDetail> CCInvoiceDetails { get; set; }
         public virtual DbSet<WorkorderPart> WorkorderParts { get; set; }
+        public virtual DbSet<TMP_BlackBerry_NSR> TMP_BlackBerry_NSR { get; set; }
+        public virtual DbSet<TMP_BlackBerry_SCFAssetInfo> TMP_BlackBerry_SCFAssetInfo { get; set; }
+        public virtual DbSet<TMP_BlackBerry_SCFPartsInfo> TMP_BlackBerry_SCFPartsInfo { get; set; }
+        public virtual DbSet<TMP_BlackBerry_SCFInvoiceInfo> TMP_BlackBerry_SCFInvoiceInfo { get; set; }
+        public virtual DbSet<NonServiceworkorder> NonServiceworkorders { get; set; }
+        public virtual DbSet<NonFBCustomer> NonFBCustomers { get; set; }
     
         public virtual int USP_AfterHoursClosestTechDispatch_Details(string customerZip)
         {

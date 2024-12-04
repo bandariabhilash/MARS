@@ -41,46 +41,31 @@ namespace ServiceApis.Repository
                             {
                                 if (string.IsNullOrWhiteSpace(RequestData.CustomerName))
                                 {
-                                    errorMessage += " CustomerName is required";
+                                    errorMessage += "| CustomerName";
                                     isvalid = false;
                                 }
                                 if (string.IsNullOrWhiteSpace(RequestData.Address1))
                                 {
-                                    errorMessage += " Address1 is required";
+                                    errorMessage += "| Address1";
                                     isvalid = false;
                                 }
                                 if (string.IsNullOrWhiteSpace(RequestData.City))
                                 {
-                                    if(!string.IsNullOrWhiteSpace(errorMessage))
-                                    {
-                                        errorMessage += "\n";
-                                    }
-
-                                    errorMessage += " City is required";
+                                    errorMessage += "| City";
                                     isvalid = false;
                                 }
                                 if (string.IsNullOrWhiteSpace(RequestData.State))
                                 {
-                                    if (!string.IsNullOrWhiteSpace(errorMessage))
-                                    {
-                                        errorMessage += "\n";
-                                    }
-
-                                    errorMessage += " State is required";
+                                    errorMessage += "| State";
                                     isvalid = false;
                                 }
                                 if (string.IsNullOrWhiteSpace(RequestData.PostalCode))
                                 {
-                                    if (!string.IsNullOrWhiteSpace(errorMessage))
-                                    {
-                                        errorMessage += "\n";
-                                    }
-
-                                    errorMessage += " PostalCode is required";
+                                    errorMessage += "| PostalCode";
                                     isvalid = false;
                                 }
 
-                                if(!isvalid)
+                                if (!isvalid)
                                 {
                                     transaction.Rollback();
 
@@ -99,6 +84,8 @@ namespace ServiceApis.Repository
                                     workorderModel.Customer.City = RequestData.City;
                                     workorderModel.Customer.State = RequestData.State;
                                     workorderModel.Customer.ZipCode = RequestData.PostalCode;
+                                    workorderModel.Customer.MainContactName = RequestData.MainContactName;
+                                    workorderModel.Customer.PhoneNumber = RequestData.MainContactNum;
 
                                     int custSaveResult = CustomerModel.saveCustomerDetails(workorderModel.Customer, _context);                                    
                                     if (custSaveResult == 0)
@@ -121,6 +108,8 @@ namespace ServiceApis.Repository
                                         custMdl.City = RequestData.City;
                                         custMdl.State = RequestData.State;
                                         custMdl.ZipCode = RequestData.PostalCode;
+                                        custMdl.MainContactName = RequestData.MainContactName;
+                                        custMdl.PhoneNumber = RequestData.MainContactNum;
                                     }
                                 }
                             }
@@ -130,18 +119,35 @@ namespace ServiceApis.Repository
                         }
                         else
                         {
-                            errorMessage += "Invalid Customer";
+                            errorMessage += "| Invalid Customer";
                             isvalid = false;
                         }
 
                         if(RequestData.ERFId == 0)
                         {
-                            errorMessage += " ERFId is required";
+                            errorMessage += "| ERFId";
+                            isvalid = false;
+                        }
+                        if (string.IsNullOrWhiteSpace(RequestData.MainContactName))
+                        {
+                            errorMessage += "| Main Contact Name";
+                            isvalid = false;
+                        }
+                        if (string.IsNullOrWhiteSpace(RequestData.MainContactNum))
+                        {
+                            errorMessage += "| Main Contact Number";
+                            isvalid = false;
+                        }
+                        if (string.IsNullOrWhiteSpace(RequestData.Comments))
+                        {
+                            errorMessage += "| Comments";
                             isvalid = false;
                         }
 
                         if (!isvalid)
                         {
+                            errorMessage += " required";
+
                             transaction.Rollback();
 
                             result.responseCode = 500;
@@ -154,8 +160,8 @@ namespace ServiceApis.Repository
 
                         //workorderModel.Notes = RequestData.Comments;
                         workorderModel.WorkOrder = new WorkOrder();
-                        workorderModel.WorkOrder.CallerName = "N/A";
-                        workorderModel.WorkOrder.WorkorderContactName = "N/A";
+                        workorderModel.WorkOrder.CallerName = RequestData.MainContactName;
+                        workorderModel.WorkOrder.WorkorderContactName = RequestData.MainContactName;
                         workorderModel.WorkOrder.HoursOfOperation = "N/A";
                         workorderModel.WorkOrder.WorkorderCalltypeid = 1300;
                         workorderModel.WorkOrder.WorkorderCalltypeDesc = "Installation";
@@ -171,7 +177,7 @@ namespace ServiceApis.Repository
                         priority.Fbstatus = "P3  - PLANNED";
                         workorderModel.PriorityList.Add(priority);
                         //workorderModel.NewNotes = new List<NewNotesModel>();
-                        //workorderModel.NewNotes = erfModel.NewNotes;
+                        workorderModel.Comments = RequestData.Comments;
 
                         workorderModel.WorkOrderEquipments = new List<WorkOrderManagementEquipmentModel>();
                         workorderModel.WorkOrderEquipmentsRequested = new List<WorkOrderManagementEquipmentModel>();
@@ -246,10 +252,26 @@ namespace ServiceApis.Repository
                 DateTime CurrentTime = DateTime.Now;//Utility.GetCurrentTime(workorderManagement.Customer.ZipCode, WOFBEntity);
                 workOrder.WorkorderEntryDate = CurrentTime;
                 workOrder.WorkorderModifiedDate = workOrder.WorkorderEntryDate;
+                workOrder.EntryUserName = userName;
+                workOrder.WorkorderEntryUserid = userId;
+                workOrder.WorkorderModifiedUserid = userId;
                 workOrder.ModifiedUserName = userName;
 
                 workOrder.WorkorderModifiedDate = workOrder.WorkorderEntryDate;
                 workOrder.WorkorderCallstatus = "Open";
+
+                NotesHistory newcommentsHistory = new NotesHistory()
+                {
+                    AutomaticNotes = 0,
+                    EntryDate = currentTime,
+                    Notes = workorderManagement.Comments,
+                    Userid = userId,
+                    UserName = userName,
+                    WorkorderId = workOrder.WorkorderId,
+                    IsDispatchNotes = 0
+                };
+                _context.NotesHistories.Add(newcommentsHistory);
+
 
                 {
                     NotesHistory notesHistory = new NotesHistory()
@@ -312,7 +334,7 @@ namespace ServiceApis.Repository
                     {
                         Assetid = assetCounter.IndexValue.Value,
                         CallTypeid = 1300,
-                        Category = "OTHER",
+                        Category = ".11 - No Info – Only OTHER",
                         Symptomid = 2001,
                         Location = "OTH"
                     };
@@ -322,7 +344,7 @@ namespace ServiceApis.Repository
                     {
                         Assetid = assetCounter.IndexValue.Value,
                         CallTypeid = 1300,
-                        Category = "OTHER",
+                        Category = ".11 - No Info – Only OTHER",
                         Symptomid = 2001,
                         Location = "OTH"
                     };

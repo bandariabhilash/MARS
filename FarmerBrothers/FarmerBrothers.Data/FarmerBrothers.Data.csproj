@@ -331,6 +331,18 @@
     <Compile Include="TmpinvTransferSerialized.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>
+    <Compile Include="TMP_BlackBerry_NSR.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TMP_BlackBerry_SCFAssetInfo.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TMP_BlackBerry_SCFInvoiceInfo.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TMP_BlackBerry_SCFPartsInfo.cs">
+      <DependentUpon>FB.tt</DependentUpon>
+    </Compile>
     <Compile Include="TMP_SerialNOReport.cs">
       <DependentUpon>FB.tt</DependentUpon>
     </Compile>

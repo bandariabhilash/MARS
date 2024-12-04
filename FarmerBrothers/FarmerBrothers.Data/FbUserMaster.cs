@@ -61,6 +61,9 @@ namespace FarmerBrothers.Data
         public Nullable<int> CreatedUserId { get; set; }
         public string CreatedUserName { get; set; }
         public string CustomerParent { get; set; }
+        public Nullable<System.DateTime> RefreshTokenExpiryTime { get; set; }
+        public string RefreshToken { get; set; }
+        public Nullable<bool> ServiceAccess { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FBActivityLog> FBActivityLogs { get; set; }

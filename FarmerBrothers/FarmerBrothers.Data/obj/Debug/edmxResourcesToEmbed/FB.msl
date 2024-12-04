@@ -665,6 +665,9 @@
     <EntitySetMapping Name="FbUserMasters">
       <EntityTypeMapping TypeName="FarmerBrothers.Data.FbUserMaster">
         <MappingFragment StoreEntitySet="FbUserMaster">
+          <ScalarProperty Name="ServiceAccess" ColumnName="ServiceAccess" />
+          <ScalarProperty Name="RefreshToken" ColumnName="RefreshToken" />
+          <ScalarProperty Name="RefreshTokenExpiryTime" ColumnName="RefreshTokenExpiryTime" />
           <ScalarProperty Name="CustomerParent" ColumnName="CustomerParent" />
           <ScalarProperty Name="CreatedUserName" ColumnName="CreatedUserName" />
           <ScalarProperty Name="CreatedUserId" ColumnName="CreatedUserId" />
@@ -836,15 +839,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="NonFBCustomers">
-      <EntityTypeMapping TypeName="FarmerBrothers.Data.NonFBCustomer">
-        <MappingFragment StoreEntitySet="NonFBCustomers">
-          <ScalarProperty Name="NonFBCustomerName" ColumnName="NonFBCustomerName" />
-          <ScalarProperty Name="NonFBCustomerId" ColumnName="NonFBCustomerId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="NonSerializeds">
       <EntityTypeMapping TypeName="FarmerBrothers.Data.NonSerialized">
         <MappingFragment StoreEntitySet="NonSerialized">
@@ -865,30 +859,6 @@
           <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
           <ScalarProperty Name="Erfid" ColumnName="Erfid" />
           <ScalarProperty Name="NSerialid" ColumnName="NSerialid" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="NonServiceworkorders">
-      <EntityTypeMapping TypeName="FarmerBrothers.Data.NonServiceworkorder">
-        <MappingFragment StoreEntitySet="NonServiceworkorder">
-          <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
-          <ScalarProperty Name="MainContactName" ColumnName="MainContactName" />
-          <ScalarProperty Name="EmailSentTo" ColumnName="EmailSentTo" />
-          <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
-          <ScalarProperty Name="NonServiceEventStatus" ColumnName="NonServiceEventStatus" />
-          <ScalarProperty Name="IsUnknownWorkOrder" ColumnName="IsUnknownWorkOrder" />
-          <ScalarProperty Name="CallBack" ColumnName="CallBack" />
-          <ScalarProperty Name="CallerName" ColumnName="CallerName" />
-          <ScalarProperty Name="IsAutoDispatched" ColumnName="IsAutoDispatched" />
-          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
-          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
-          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
-          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="CallReason" ColumnName="CallReason" />
-          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
-          <ScalarProperty Name="WorkOrderID" ColumnName="WorkOrderID" />
-          <ScalarProperty Name="NonServiceID" ColumnName="NonServiceID" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -2240,6 +2210,138 @@
           <ScalarProperty Name="Quantity" ColumnName="Quantity" />
           <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
           <ScalarProperty Name="PartsIssueid" ColumnName="PartsIssueid" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TMP_BlackBerry_NSR">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_NSR">
+        <MappingFragment StoreEntitySet="TMP_BlackBerry_NSR">
+          <ScalarProperty Name="Comments" ColumnName="Comments" />
+          <ScalarProperty Name="Reasion" ColumnName="Reasion" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="UniqueInvoiceID" ColumnName="UniqueInvoiceID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TMP_BlackBerry_SCFAssetInfo">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_SCFAssetInfo">
+        <MappingFragment StoreEntitySet="TMP_BlackBerry_SCFAssetInfo">
+          <ScalarProperty Name="ReasonCode" ColumnName="ReasonCode" />
+          <ScalarProperty Name="Temperature" ColumnName="Temperature" />
+          <ScalarProperty Name="SystemCode" ColumnName="SystemCode" />
+          <ScalarProperty Name="SymptomCode" ColumnName="SymptomCode" />
+          <ScalarProperty Name="SpawnOrderCreated" ColumnName="SpawnOrderCreated" />
+          <ScalarProperty Name="Ratio" ColumnName="Ratio" />
+          <ScalarProperty Name="Weight" ColumnName="Weight" />
+          <ScalarProperty Name="TechName" ColumnName="TechName" />
+          <ScalarProperty Name="Sent5191Email" ColumnName="Sent5191Email" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="ClosureConfirmationNo" ColumnName="ClosureConfirmationNo" />
+          <ScalarProperty Name="CategoryDesc" ColumnName="CategoryDesc" />
+          <ScalarProperty Name="ManufacturerDesc" ColumnName="ManufacturerDesc" />
+          <ScalarProperty Name="AssetKey" ColumnName="AssetKey" />
+          <ScalarProperty Name="SpawnEventID" ColumnName="SpawnEventID" />
+          <ScalarProperty Name="EventUpdated" ColumnName="EventUpdated" />
+          <ScalarProperty Name="CloseCall" ColumnName="CloseCall" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="SerialNo" ColumnName="SerialNo" />
+          <ScalarProperty Name="Model" ColumnName="Model" />
+          <ScalarProperty Name="VendorCode" ColumnName="VendorCode" />
+          <ScalarProperty Name="EquipTypeCode" ColumnName="EquipTypeCode" />
+          <ScalarProperty Name="CompletionCode" ColumnName="CompletionCode" />
+          <ScalarProperty Name="ServiceCode" ColumnName="ServiceCode" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="UniqueID" ColumnName="UniqueID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TMP_BlackBerry_SCFPartsInfo">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_SCFPartsInfo">
+        <MappingFragment StoreEntitySet="TMP_BlackBerry_SCFPartsInfo">
+          <ScalarProperty Name="AssetID" ColumnName="AssetID" />
+          <ScalarProperty Name="recExists" ColumnName="recExists" />
+          <ScalarProperty Name="SKU" ColumnName="SKU" />
+          <ScalarProperty Name="Pid" ColumnName="Pid" />
+          <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <ScalarProperty Name="SKUID" ColumnName="SKUID" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="VendorNo" ColumnName="VendorNo" />
+          <ScalarProperty Name="ItemNo" ColumnName="ItemNo" />
+          <ScalarProperty Name="EntryNo" ColumnName="EntryNo" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="UniquePartsID" ColumnName="UniquePartsID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="TMP_BlackBerry_SCFInvoiceInfo">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.TMP_BlackBerry_SCFInvoiceInfo">
+        <MappingFragment StoreEntitySet="TMP_BlackBerry_SCFInvoiceInfo">
+          <ScalarProperty Name="IsOperational" ColumnName="IsOperational" />
+          <ScalarProperty Name="AdditionalFollowupReq" ColumnName="AdditionalFollowupReq" />
+          <ScalarProperty Name="WarrentyFor" ColumnName="WarrentyFor" />
+          <ScalarProperty Name="IsUnderWarrenty" ColumnName="IsUnderWarrenty" />
+          <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
+          <ScalarProperty Name="FollowupComments" ColumnName="FollowupComments" />
+          <ScalarProperty Name="TroubleshootSteps" ColumnName="TroubleshootSteps" />
+          <ScalarProperty Name="ServiceDelayReason" ColumnName="ServiceDelayReason" />
+          <ScalarProperty Name="StateofEquipment" ColumnName="StateofEquipment" />
+          <ScalarProperty Name="TechnicianSign" ColumnName="TechnicianSign" />
+          <ScalarProperty Name="CustomerSign" ColumnName="CustomerSign" />
+          <ScalarProperty Name="HardnessRating" ColumnName="HardnessRating" />
+          <ScalarProperty Name="WaterTested" ColumnName="WaterTested" />
+          <ScalarProperty Name="Signature" ColumnName="Signature" />
+          <ScalarProperty Name="SignedBy" ColumnName="SignedBy" />
+          <ScalarProperty Name="TechName" ColumnName="TechName" />
+          <ScalarProperty Name="InvoiceKey" ColumnName="InvoiceKey" />
+          <ScalarProperty Name="EntryDate" ColumnName="EntryDate" />
+          <ScalarProperty Name="CompletionDateTime" ColumnName="CompletionDateTime" />
+          <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+          <ScalarProperty Name="StartDateTime" ColumnName="StartDateTime" />
+          <ScalarProperty Name="InvoiceNo" ColumnName="InvoiceNo" />
+          <ScalarProperty Name="TechID" ColumnName="TechID" />
+          <ScalarProperty Name="WorkorderID" ColumnName="WorkorderID" />
+          <ScalarProperty Name="UniqueInvoiceID" ColumnName="UniqueInvoiceID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NonServiceworkorders">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.NonServiceworkorder">
+        <MappingFragment StoreEntitySet="NonServiceworkorder">
+          <ScalarProperty Name="ResolutionCallerName" ColumnName="ResolutionCallerName" />
+          <ScalarProperty Name="ClosedBy" ColumnName="ClosedBy" />
+          <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+          <ScalarProperty Name="MainContactName" ColumnName="MainContactName" />
+          <ScalarProperty Name="EmailSentTo" ColumnName="EmailSentTo" />
+          <ScalarProperty Name="CloseDate" ColumnName="CloseDate" />
+          <ScalarProperty Name="NonServiceEventStatus" ColumnName="NonServiceEventStatus" />
+          <ScalarProperty Name="IsUnknownWorkOrder" ColumnName="IsUnknownWorkOrder" />
+          <ScalarProperty Name="CallBack" ColumnName="CallBack" />
+          <ScalarProperty Name="CallerName" ColumnName="CallerName" />
+          <ScalarProperty Name="IsAutoDispatched" ColumnName="IsAutoDispatched" />
+          <ScalarProperty Name="CustomerZipCode" ColumnName="CustomerZipCode" />
+          <ScalarProperty Name="CustomerState" ColumnName="CustomerState" />
+          <ScalarProperty Name="CustomerCity" ColumnName="CustomerCity" />
+          <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="CallReason" ColumnName="CallReason" />
+          <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+          <ScalarProperty Name="WorkOrderID" ColumnName="WorkOrderID" />
+          <ScalarProperty Name="NonServiceID" ColumnName="NonServiceID" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="NonFBCustomers">
+      <EntityTypeMapping TypeName="FarmerBrothers.Data.NonFBCustomer">
+        <MappingFragment StoreEntitySet="NonFBCustomers">
+          <ScalarProperty Name="email" ColumnName="email" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="NonFBCustomerName" ColumnName="NonFBCustomerName" />
+          <ScalarProperty Name="NonFBCustomerId" ColumnName="NonFBCustomerId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

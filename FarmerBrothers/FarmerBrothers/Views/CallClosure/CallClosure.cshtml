@@ -23,7 +23,29 @@
         float: right;
         height: auto;
     }
+
+    .e-frozen-right {
+        position: sticky;
+        right: 0;
+        z-index: 1; /* Ensure the right column stays on top */
+    }
+    .actionIcon:hover {
+        background-color: #86cbea;
+    }
+    .disable {
+        pointer-events: none !important;
+        opacity: 0.2;
+        cursor: not-allowed;
+    }
 </style> 
+
+<script type="text/x-jsrender" id="actionTemplate">
+    <span style="width: 25px; height: 25px; border: 1px solid;  padding: 0.2em; margin:0.2em;" title="Accept" class="icon-check"></span>
+    <span style="width: 25px; height: 25px; border: 1px solid;  padding: 0.2em; margin:0.2em;" title="Start" class="icon-play"></span>
+    <span style="width: 25px; height: 25px; border: 1px solid;  padding: 0.2em; margin:0.2em;" title="Arrive" class="icon-truck"></span>
+    <span style="width: 25px; height: 25px; border: 1px solid;  padding: 0.2em; margin:0.2em;" title="Complete" class="icon-stop"></span>
+    <span style="width: 25px; height: 25px; border: 1px solid;  padding: 0.2em; margin:0.2em;" title="Reschedule" class="icon-random"></span>
+</script>
 
 <script type="text/javascript">
     $( document ).ready( function ()
@@ -37,8 +59,45 @@
         {
             args.cell.className += " urlStyle";
         }
+        if (args.column.headerText == "Actions") {
+            if (args.rowData.AcceptUrl) {
+                args.cell.children[0].className += " actionIcon"
+            }
+            else {
+                args.cell.children[0].className += " disable"
+            }
+
+            if (args.rowData.StartUrl) {
+                args.cell.children[1].className += " actionIcon"
+            }
+            else {
+                args.cell.children[1].className += " disable"
+            }
+
+            if (args.rowData.ArrivelUrl) {
+                args.cell.children[2].className += " actionIcon"
+            }
+            else {
+                args.cell.children[2].className += " disable"
+            }
+
+            if (args.rowData.CompleteUrl) {
+                args.cell.children[3].className += " actionIcon"
+            }
+            else {
+                args.cell.children[3].className += " disable"
+            }
+
+            if (args.rowData.RescheduleUrl) {
+                args.cell.children[4].className += " actionIcon"
+            }
+            else {
+                args.cell.children[4].className += " disable"
+            }
+        }
 
     }
+
     function RecordClick( args )
     {
         if ( args.columnName == "Work Order ID" )
@@ -47,6 +106,31 @@
         }
         if (args.columnName == "Print") {
             getPdfData(args.data["WorkOrderId"], args.data["WorkOrderCallStatus"]);
+        }
+        if (args.columnName == "Actions") {
+            var actionUrl = ""; data = "";
+            switch (args['cell']['context'].title) {
+                case "Accept":
+                    actionUrl = args.data.AcceptUrl;
+                    break;
+                case "Start":
+                    actionUrl = args.data.StartUrl;
+                    break;
+                case "Arrive":
+                    actionUrl = args.data.ArrivelUrl;
+                    break;
+                case "Complete":
+                    actionUrl = args.data.CompleteUrl;
+                    break;
+                case "Reschedule":
+                    actionUrl = args.data.RescheduleUrl;
+                    break;
+            }
+
+            if (actionUrl) {
+                window.open(actionUrl, '_blank', 'noreferrer').focus();
+            }
+
         }
     }
 
@@ -307,6 +391,7 @@
                                                .FilterSettings(filter => { filter.FilterType(FilterType.Menu); })
                                         .Columns(col =>
                                         {
+                                            col.HeaderText("Actions").TemplateID("#actionTemplate").Width(180).IsFrozen(false).Add();
                                             col.HeaderText("Print").Commands(command =>
                                             {
                                                 command.Type(UnboundType.Edit)
@@ -315,8 +400,8 @@
                                                     ContentType = Syncfusion.JavaScript.ContentType.ImageOnly,
                                                     PrefixIcon = "e-icon e-pdf"
                                                 }).Add();
-                                            }).IsUnbound(true).Width(80).Add();
-                                            col.Field("WorkOrderId").HeaderText("Work Order ID").IsPrimaryKey(true).Width(100).Add();
+                                            }).IsUnbound(true).IsFrozen(false).Width(80).Add();
+                                            col.Field("WorkOrderId").HeaderText("Work Order ID").IsPrimaryKey(true).IsFrozen(false).Width(100).Add();
                                             col.Field("TechName").HeaderText("Technician").Width(110).Add();
                                             col.Field("WorkorderCalltypeDesc").HeaderText("Service Code").Width(100).Add();
                                             col.Field("WorkOrderCallStatus").HeaderText("Work Order Status").Width(100).Add();
@@ -329,13 +414,14 @@
                                             col.Field("EntryDate").HeaderText("Entry Date").Width(100).Add();
                                             col.Field("DispatchDate").HeaderText("Dispatch Date").Width(100).Add();
                                             col.Field("SLACountDown").HeaderText("SLA Count Down/Elapsed(SLA)").Width(130).Add();
-                                            col.Field("EquipmentCount").HeaderText("Equip Count").Width(100).Add();
+                                            col.Field("EquipmentCount").HeaderText("Equip Count").Add();
 
                                         })
                                         .ClientSideEvents(eve =>
                                         {
                                             eve.RecordClick("RecordClick")
                                                 .QueryCellInfo("queryCellInfo");
+
                                         }))
 
 

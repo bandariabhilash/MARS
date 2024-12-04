@@ -88,6 +88,7 @@ namespace FarmerBrothers.Models
         public string SalesTaxTotal { get; set; }
         public string AuthTransactionId { get; set; }
         public string FinalTransactionId { get; set; }
+        public string FamilyAff { get; set; }
 
     }
 

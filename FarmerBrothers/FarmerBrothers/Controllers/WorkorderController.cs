@@ -814,7 +814,7 @@ namespace FarmerBrothers.Controllers
                 workOrderManagementModel.AssistTechIds = new List<int>();
                 workOrderManagementModel.IsNewPartsOrder = isNewPartsOrder;
                 workOrderManagementModel.SystemInfoes = FarmerBrothersEntitites.SystemInfoes.Where(s => s.Active == 1).OrderBy(s => s.Sequence).ToList();
-                workOrderManagementModel.Solutions = FarmerBrothersEntitites.Solutions.Where(s => s.Active == 1).OrderBy(s => s.Sequence).ToList();
+                workOrderManagementModel.Solutions = FarmerBrothersEntitites.Solutions.Where(s => s.Active == 1).OrderBy(s => s.Description).ToList();
                 workOrderManagementModel.Solutions.Insert(0, new Solution()
                 {
                     Description = "",
@@ -5155,19 +5155,21 @@ namespace FarmerBrothers.Controllers
                             workOrder.FollowupCallID = new Nullable<int>(Convert.ToInt32(workorderManagement.Notes.FollowUpRequestID));
                         }
 
-                        workOrder.AuthTransactionId = workorderManagement.PaymentTransactionId;
-                        NotesHistory authTransactionHistory = new NotesHistory()
+                        if (!string.IsNullOrWhiteSpace(workorderManagement.PaymentTransactionId))
                         {
-                            AutomaticNotes = 1,
-                            EntryDate = currentTime,
-                            Notes = @"Auth Payment TransactionId : " + workorderManagement.PaymentTransactionId,
-                            Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
-                            UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
-                            isDispatchNotes = 0
-                        };
+                            workOrder.AuthTransactionId = workorderManagement.PaymentTransactionId;
+                            NotesHistory authTransactionHistory = new NotesHistory()
+                            {
+                                AutomaticNotes = 1,
+                                EntryDate = currentTime,
+                                Notes = @"Auth Payment TransactionId : " + workorderManagement.PaymentTransactionId,
+                                Userid = System.Web.HttpContext.Current.Session["UserId"] != null ? Convert.ToInt32(System.Web.HttpContext.Current.Session["UserId"]) : 1234,
+                                UserName = UserName == null ? Convert.ToString(System.Web.HttpContext.Current.Session["UserName"]) : UserName,
+                                isDispatchNotes = 0
+                            };
 
-                        workOrder.NotesHistories.Add(authTransactionHistory);
-
+                            workOrder.NotesHistories.Add(authTransactionHistory);
+                        }
 
 
                         NotesHistory notesHistory = new NotesHistory()
@@ -10403,7 +10405,34 @@ namespace FarmerBrothers.Controllers
                     ccMailAddress += fbcs.RSREmail + ";";
                 }                
             }
-               
+
+
+            NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+            if(nonfbcust != null)
+            {
+                if (!string.IsNullOrWhiteSpace(nonfbcust.email))
+                {
+                    ccMailAddress += nonfbcust.email + ";";
+                }
+            }
+
+
+            /*
+            //Included as per Email "Hardcode to Revive Parent #'s" received on Feb 24th, 2024
+            if (customer.PricingParentID == "9001228")
+            {
+                ccMailAddress += "cfrancis@reviveservice.com";
+            }
+            if (customer.PricingParentID == "9001239")
+            {
+                ccMailAddress += "cfrancis@reviveservice.com";
+            }*/
+            //Included as per Email "Conserv Fuel_ Service Calls" received on Oct 28, 2024
+            if (customer.PricingParentID == "9341102")
+            {
+                ccMailAddress += "mgalicia@farmerbros.com";
+            }
+
             bool ccResult = sendCCListEmail(salesEmailBodywithOutLinks, fromAddress, ccMailAddress, BccEmailAddress, subject, techId, customer, SalesEmailAddress, esmEmailAddress);
 
 
@@ -12232,7 +12261,7 @@ namespace FarmerBrothers.Controllers
                 }
             }
 
-            data = data.OrderBy(s => s.Sequence).ToList();
+            data = data.OrderBy(s => s.Description).ToList();
 
             JsonResult jsonResult = new JsonResult();
             jsonResult.Data = new { success = true, serverError = ErrorCode.SUCCESS, data = data };

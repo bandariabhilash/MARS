@@ -26,7 +26,7 @@ namespace FarmerBrothers.Data
         public Nullable<int> NonServiceWorkorderID { get; set; }
         public Nullable<short> isDispatchNotes { get; set; }
     
-        public virtual NonServiceworkorder NonServiceworkorder { get; set; }
         public virtual WorkOrder WorkOrder { get; set; }
+        public virtual NonServiceworkorder NonServiceworkorder { get; set; }
     }
 }

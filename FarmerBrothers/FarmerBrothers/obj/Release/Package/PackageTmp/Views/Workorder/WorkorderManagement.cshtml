@@ -19,7 +19,6 @@
 
 
 @* Clover Iframe *@
-<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
 <script src="https://checkout.sandbox.dev.clover.com/sdk.js"></script>
 @*<script src="https://checkout.clover.com/sdk.js"></script>*@
 
@@ -6977,18 +6976,21 @@
 
                                 if (UserPrivilege["Work Order"] == "Edit-Only" || UserPrivilege["Work Order"] == "Full")
                                 {
-                                    <div class="col-md-12 customer-col2" style="justify-content: flex-end; display: flex;">
-                                        <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
-                                            Service Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsServiceBillableFeed" })
-                                            @Html.Hidden("IsServiceBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsServiceBillableFeed}}", new { @class = "IsServiceBillableFeedHidden" })
-                                        </span>
-                                        @if (Model.IsOpen == false)
-                                        {
-                                            @*<button onclick="OnCCProcessClick()" style="float:right;margin-top:10px;" class="btn btn-primary">CC Process</button>*@
-                                            <button id="completeEventBtn" type="submit" style="margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
-                                        }
+                                        <div class="col-md-12 customer-col2" style="justify-content: flex-end; display: flex;">
+                                            <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
+                                                <a href="https://docs.google.com/forms/d/1bCqtRKbBxXoP7xVQBMS6gT2Q3YiDs-zave9bUliFesk/viewform?chromeless=1&edit_requested=true" target="_blank">E-EML Form</a>
+                                            </span>
+                                            <span style="margin: 1em 2em 0 0; font-size: 1.5em; ">
+                                                Service Billable: @Html.CheckBoxFor(w => w.IsBillableFeed, new { @class = "WorkOrderFields IsServiceBillableFeed" })
+                                                @Html.Hidden("IsServiceBillableFeed_" + DateTime.Now.ToString("ddMMyyyyHHmmss"), "{{:IsServiceBillableFeed}}", new { @class = "IsServiceBillableFeedHidden" })
+                                            </span>
+                                            @if (Model.IsOpen == false)
+                                            {
+                                                @*<button onclick="OnCCProcessClick()" style="float:right;margin-top:10px;" class="btn btn-primary">CC Process</button>*@
+                                                <button id="completeEventBtn" type="submit" style="margin-top:10px;" class="btn btn-primary" onclick="SetSubmitOperation(6)" name="action:WorkorderSave">Complete Work Order</button>
+                                            }
 
-                                    </div>
+                                        </div>
                                 }
                             }
 

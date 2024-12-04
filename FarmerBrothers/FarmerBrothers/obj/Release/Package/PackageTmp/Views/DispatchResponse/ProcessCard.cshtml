@@ -5,6 +5,14 @@
     var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
     serializer.MaxJsonLength = Int32.MaxValue;
     var jsonSkuList = serializer.Serialize(Model.SKUList);
+
+    var serializerparts = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var jsonPartsList = serializerparts.Serialize(Model.PartsList);
+
+    var serializerbillingdetails = new System.Web.Script.Serialization.JavaScriptSerializer();
+    serializer.MaxJsonLength = Int32.MaxValue;
+    var jsonBillingDetailsList = serializerbillingdetails.Serialize(Model.BillingDetails);
 }
 
 @model FarmerBrothers.Models.ProcessCardModel
@@ -17,7 +25,6 @@
 @using FarmerBrothers.Models;
 
 @* Clover Iframe *@
-<script src="https://cdn.polyfill.io/v3/polyfill.min.js"></script>
 <script src="https://checkout.sandbox.dev.clover.com/sdk.js"></script>
 @*<script src="https://checkout.clover.com/sdk.js"></script>*@
 
@@ -44,6 +51,11 @@
             $('[data-popup="popup-cloverpayment"]').fadeIn(350);
         });
 
+        var skGrid = $("#PartsDetails").ejGrid("instance");
+        skGrid.dataSource(@Html.Raw(jsonPartsList));
+
+        var billGrid = $("#BillingDetails").ejGrid("instance");
+        billGrid.dataSource(@Html.Raw(jsonBillingDetailsList));
 
         $("#BillingTotalLbl").html(Number(@Model.BillingTotal).toFixed(2));
 

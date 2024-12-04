@@ -1265,6 +1265,7 @@ namespace FarmerBrothers.Controllers
 
             string toAddress = "";
             string ccAddress = "";
+            string bccAddress = "";
             if (workorderId != null)
             {
                 workorderData = FarmerBrothersEntitites.WorkOrders.Where(wo => wo.WorkorderID == workorderId).FirstOrDefault();
@@ -1360,6 +1361,29 @@ namespace FarmerBrothers.Controllers
                     string WOId = (workorderData == null) ? "" : workorderData.WorkorderID.ToString();
                     salesEmailBody.Append(WOId);
                     salesEmailBody.Append("<BR>");
+
+                salesEmailBody.Append("Parent: ");
+                if (customer.PricingParentID != null)
+                {
+                    NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                    string parentNum = "", ParentName = "";
+                    if (nonfbcust != null)
+                    {
+                        parentNum = nonfbcust.NonFBCustomerId;
+                        ParentName = nonfbcust.NonFBCustomerName;
+                    }
+                    else
+                    {
+                        parentNum = customer.PricingParentID;
+                        ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                    }
+                    salesEmailBody.Append(parentNum + " " + ParentName);
+                }
+                else
+                {
+                    salesEmailBody.Append("");
+                }
+                salesEmailBody.Append("<BR>");
 
                 salesEmailBody.Append("Additional NSV: ");
                 salesEmailBody.Append(erfData.TotalNSV);
@@ -1661,7 +1685,11 @@ namespace FarmerBrothers.Controllers
                 //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                 //salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Complete \">COMPLETE</a>");
                 //salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
-                salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Cancel \">CANCEL</a>");
+
+                string CancelUrl = url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Cancel";
+                //salesEmailBody.Append("<a href=\"" + url + "ERFId=" + erfData.ErfID + "&ESM=" + ESMId + "&Status=Cancel \">CANCEL</a>");
+
+                salesEmailBody.Append($"<a href='{CancelUrl}'>CANCEL</a>");
                 salesEmailBody.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
                 string subjectLine = "";               
@@ -1727,7 +1755,8 @@ namespace FarmerBrothers.Controllers
                     {
                         toAddress += ";" + FBU.EmailId;
                     }
-                    ccAddress += ";erfprocessing@farmerbros.com";
+                    ccAddress += ";erfprocessing@farmerbros.com;ram@maibpo.com";
+                    bccAddress += ";abhilash@teqdatum.com";
                 }
                 else
                 {
@@ -1875,6 +1904,7 @@ namespace FarmerBrothers.Controllers
 
                 string mailTo = toAddress;
                 string mailCC = ccAddress;
+                string mailBcc = bccAddress;
                 string EmailList = "";
                 if (!string.IsNullOrWhiteSpace(mailTo))
                 {
@@ -1934,10 +1964,20 @@ namespace FarmerBrothers.Controllers
                                     EmailList += address + ";";
                                 }
                         }
+
+                        string[] bccaddresses = mailBcc.Split(';');
+                        foreach (string address in bccaddresses)
+                        {
+                            if (!Utility.isValidEmail(address)) continue;
+                            if (!string.IsNullOrWhiteSpace(address))
+                            {
+                                message.Bcc.Add(new MailAddress(address));                                
+                            }
+                        }
                     }
 
-                    string fromAddress = "reviveservice@mktalt.com";// ConfigurationManager.AppSettings["DispatchMailFromAddress"];
-                        message.From = new MailAddress(fromAddress);
+                    string fromAddress = ConfigurationManager.AppSettings["DispatchMailFromAddress"]; //"reviveservice@mktalt.com";//
+                    message.From = new MailAddress(fromAddress);
                         message.Subject = subject.ToString();
                         message.IsBodyHtml = true;
 

@@ -305,6 +305,7 @@ namespace FarmerBrothers.Controllers
             else
             {
                 BillingRptModel.SearchResults = GetBillingreport(BillingRptModel);
+
                 //int totalCount = BillingRptModel.SearchResults.Sum(item => Convert.ToInt32(item.ToatlEventsByTech));
                 //BillingReportSearchResultModel BillingSearchResultModel = new BillingReportSearchResultModel();
                 //BillingSearchResultModel.BranchName = "Total Calls";
@@ -653,11 +654,12 @@ namespace FarmerBrothers.Controllers
                                     W.OriginalWorkorderid,W.WorkorderCalltypeid as WorkorderCalltypeid,'' as TechCalled,W.AppointmentDate,WS.Techid as DispatchTechID,WS.TechName as DispatchTechName,
                                     W.NoServiceRequired,WD.NSRReason,C.PricingParentID,EQP.Category as Category,EQP.SerialNumber as SerialNumber,EQP.Model as Model,EQP.Manufacturer Manufacturer,EQP.Solutionid as Solutionid
                                     ,TBS.Notes As WorkPerformedNotes,W.CustomerName,WP.Quantity,WP.Sku,sku.SKUCost,sku.VendorCode, WP.Description,WP.Manufacturer as OrderSource,sku.Manufacturer as Supplier,
-                                    " + LaborCost + @" as TravelTotal, "+ LaborCost + @" as LaborTotal, WP.Total as PartsTotal, W.CustomerPO, WD.HardnessRating
+                                    " + LaborCost + @" as TravelTotal, "+ LaborCost + @" as LaborTotal, WP.Total as PartsTotal, W.CustomerPO, WD.HardnessRating, tch.FamilyAff
                                     from workorder W 
                                     inner join Contact C on C.ContactID = W.CustomerID
                                     inner join WorkorderDetails WD on WD.WorkorderID = W.WorkorderID
                                     inner join WorkorderSchedule WS on WS.WorkorderID = W.WorkorderID
+                                    inner join TECH_HIERARCHY tch on tch.DealerId = ws.Techid
                                     inner join WorkorderEquipment EQP on W.WorkorderID = EQP.WorkorderID
                                     left outer join WorkorderParts WP on W.Workorderid = WP.WorkorderID and WP.AssetID = EQP.Assetid
                                     left outer join sku on sku.Sku = WP.Sku  and sku.SkuActive = 1 
@@ -681,11 +683,11 @@ namespace FarmerBrothers.Controllers
 
             if (FA == "SPD")
             {
-                ssql = ssql + " and FamilyAff != 'SPT'";
+                ssql = ssql + " and tch.FamilyAff != 'SPT'";
             }
             if (FA == "SPT")
             {
-                ssql = ssql + " and FamilyAff = 'SPT'";
+                ssql = ssql + " and tch.FamilyAff = 'SPT'";
             }
             
             if (!string.IsNullOrEmpty(PPID)  && PPID != "0")
@@ -914,6 +916,8 @@ namespace FarmerBrothers.Controllers
                 FBBillingSearchResult.TotalInvoice = TotalInvoice.ToString();
                 FBBillingSearchResult.CustomerPO = dr["CustomerPO"] == DBNull.Value ? "" : dr["CustomerPO"].ToString();
                 FBBillingSearchResult.HardnessRating = dr["HardnessRating"] == DBNull.Value ? "" : dr["HardnessRating"].ToString();
+
+                FBBillingSearchResult.FamilyAff = dr["FamilyAff"] == DBNull.Value ? "" : (dr["FamilyAff"].ToString() == "SPT" ? "3rd Party" : "Internal");
 
                 TECH_HIERARCHY techHView = FarmerBrothersEntitites.TECH_HIERARCHY.Where(t => t.DealerId == techId).FirstOrDefault();
                 dynamic travelDetails = Utility.GetTravelDetailsBetweenZipCodes(techHView.PostalCode, postalCode);
@@ -5418,6 +5422,27 @@ namespace FarmerBrothers.Controllers
                 woresults.DispatchTech = dr["DispatchTech"] != DBNull.Value ? dr["DispatchTech"].ToString() : "";
                 woresults.Tracking = dr["Tracking"] != DBNull.Value ? dr["Tracking"].ToString() : "";
 
+                woresults.PPID = dr["PricingParentID"] != DBNull.Value ? dr["PricingParentID"].ToString() : "";
+
+                string parentNum = "", ParentName = "";
+                if (customer.PricingParentID != null)
+                {
+                    NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();                    
+                    if (nonfbcust != null)
+                    {
+                        parentNum = nonfbcust.NonFBCustomerId;
+                        ParentName = nonfbcust.NonFBCustomerName;
+                    }
+                    else
+                    {
+                        parentNum = customer.PricingParentID;
+                        ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                    }                   
+                }
+
+                woresults.PPID = parentNum;
+                woresults.PPIDDESC = ParentName;
+
                 decimal ? eqpTotal = erfId == "" ? 0 : FarmerBrothersEntitites.FBERFEquipments.Where(eqp => eqp.ERFId == erfId).Sum(x => x.TotalCost);
                 decimal? expTotal = erfId == "" ? 0 : FarmerBrothersEntitites.FBERFExpendables.Where(eqp => eqp.ERFId == erfId).Sum(x => x.TotalCost);
 
@@ -5517,10 +5542,10 @@ namespace FarmerBrothers.Controllers
                                         ERF.ERFStatus,ERF.CashSaleStatus,ERF.CustomerID,ERF.OriginalRequestedDate,ERF.EntryDate as ERFEntryDate, ModifiedUser.FirstName +' '+ModifiedUser.LastName as ERFLastUpdatedUser, ERF.ModifiedDate as ERFLastUpdatedDate,
                                         ERF.OrderType, ERF.ShipToBranch, ERF.SiteReady,ERF.CurrentNSV, (ERF.TotalNSV + ERF.CurrentNSV) as TotalNSV,ERF.ApprovalStatus,
                                         Contact.CompanyName, Contact.Address1, Contact.City, 
-                                        Contact.State,Contact.PostalCode, Contact.FieldServiceManager, Contact.FSMJDE, Contact.PricingParentName, 
+                                        Contact.State,Contact.PostalCode, Contact.FieldServiceManager, Contact.FSMJDE, 
                                         Contact.DeliveryDesc,
                                         Contact.CustomerRegion,Contact.RegionNumber, Contact.CustomerBranch,Contact.Branch,Contact.SearchType,
-                                        Contact.SearchDesc,Contact.PricingParentID, ERF.OriginalRequestedDate as AppointmentDate,
+                                        Contact.SearchDesc, ERF.OriginalRequestedDate as AppointmentDate,
                                         fbeqp.Quantity as EqpQty, '' as EquipmentTotal, fbexp.Quantity as ExpQty, '' as ExpandableTotal,'' as Total,
                                         C.ContingentType as EqpType, C.ContingentName as EqpName, CD.Name as EqpCategoryName, 
                                         C1.ContingentType as ExpType, C1.ContingentName as ExpName,CD1.Name as ExpCategoryName,
@@ -5530,7 +5555,7 @@ namespace FarmerBrothers.Controllers
                                         Workorderschedule.EntryDate as DispatchDate, Workorderschedule.ModifiedScheduleDate as AcceptedDate, DispatchTech.CompanyName As DispatchTech,
                                         fbeqp.SerialNumber As EqpSerialNumber, fbeqp.OrderType As EqpOrderType, fbeqp.DepositInvoiceNumber As EqpDepositInvoiceNumber , 
                                         fbeqp.DepositAmount As EqpDepositAmount, fbeqp.FinalInvoiceNumber As EqpFinalInvoiceNumber, fbeqp.InvoiceTotal As EqpInvoiceTotal,
-										ERF.Tracking                                        
+										ERF.Tracking,Contact.PricingParentID, Contact.PricingParentName                                       
                                         from ERF (nolock)
                                         INNER JOIN Contact (nolock) ON ERF.CustomerID = Contact.ContactID
                                         LEFT JOIN FBERFEquipment as fbeqp (nolock) ON fbeqp.ERFId = Erf.ErfID
@@ -5618,6 +5643,28 @@ namespace FarmerBrothers.Controllers
                         {
                             dr["AppointmentDate"] = dr["OriginalRequestedDate"];
                         }
+
+                        int CustomerID = dr["CustomerID"] != DBNull.Value ? Convert.ToInt32(dr["CustomerID"]) : 0;
+                        Contact customer = FarmerBrothersEntitites.Contacts.Where(con => con.ContactID == CustomerID).FirstOrDefault();
+
+                        string parentNum = "", ParentName = "";
+                        if (customer.PricingParentID != null)
+                        {
+                            NonFBCustomer nonfbcust = FarmerBrothersEntitites.NonFBCustomers.Where(c => c.NonFBCustomerId == customer.PricingParentID).FirstOrDefault();
+                            if (nonfbcust != null)
+                            {
+                                parentNum = nonfbcust.NonFBCustomerId;
+                                ParentName = nonfbcust.NonFBCustomerName;
+                            }
+                            else
+                            {
+                                parentNum = customer.PricingParentID;
+                                ParentName = customer.PricingParentDesc == null ? "" : customer.PricingParentDesc;
+                            }
+                        }
+
+                        dr["PricingParentID"] = parentNum;
+                        dr["PricingParentName"] = ParentName;
 
                         //string name = (dr["FirstName"] != DBNull.Value ? dr["FirstName"].ToString() : "") +  " " + (dr["LastName"] != DBNull.Value ? dr["LastName"].ToString() : "");
                         //dr["OriginatorName"] = name.Trim();
@@ -5736,6 +5783,8 @@ namespace FarmerBrothers.Controllers
                 DataColumn dc54 = new DataColumn("EqpFinalInvoiceNumber", typeof(String));
                 DataColumn dc55 = new DataColumn("EqpInvoiceTotal", typeof(String));
                 DataColumn dc56 = new DataColumn("Tracking", typeof(String));
+                DataColumn dc57 = new DataColumn("PricingParentID", typeof(String));
+                DataColumn dc58 = new DataColumn("PricingParentName", typeof(String));
 
                 dt.Columns.Add(dc1);
                 dt.Columns.Add(dc2);
@@ -5793,6 +5842,8 @@ namespace FarmerBrothers.Controllers
                 dt.Columns.Add(dc54);
                 dt.Columns.Add(dc55);
                 dt.Columns.Add(dc56);
+                dt.Columns.Add(dc57);
+                dt.Columns.Add(dc58);
             }
 
             TempData["WorkOrderSearchCriteria"] = workOrderSearchModel;
@@ -5800,7 +5851,7 @@ namespace FarmerBrothers.Controllers
             string[] columns = {"WorkorderID","CustomerID","OriginatorName","ERFLastUpdatedUser","ERFLastUpdatedDate","CompanyName","Address1","City","State","PostalCode","WorkorderCallstatus","AppointmentDate","ERFEntryDate","DispatchDate","AcceptedDate","DispatchTech","WorkorderCalltypeid",
                                 "WorkorderCalltypeDesc","ERFID","ERFStatus","CashSaleStatus","FSMJDE","CustomerRegion","RegionNumber","CustomerBranch","Branch","FSMJDE","OrderType","ShipToBranch","SiteReady","EqpQty",
                                 "EquipmentTotal","ExpQty","ExpandableTotal","Total", "TotalNSV", "ApprovalStatus", "CompanyName", "WorkorderCloseDate", "WorkorderCallstatus", "EqpType","EqpName","EqpCategoryName", "ExpType","ExpName","ExpCategoryName",
-                                "OriginatorName","EqpInternalType", "EqpVendorType","ExpInternalType", "ExpVendorType", "EqpSerialNumber", "EqpOrderType", "EqpDepositInvoiceNumber", "EqpDepositAmount", "EqpFinalInvoiceNumber", "EqpInvoiceTotal", "Tracking"};
+                                "OriginatorName","EqpInternalType", "EqpVendorType","ExpInternalType", "ExpVendorType", "EqpSerialNumber", "EqpOrderType", "EqpDepositInvoiceNumber", "EqpDepositAmount", "EqpFinalInvoiceNumber", "EqpInvoiceTotal", "Tracking", "PricingParentID", "PricingParentName"};
                       
             byte[] filecontent = ExcelExportHelper.ExportExcel(dt, "", false, columns);
             var fileStream = new MemoryStream(filecontent);

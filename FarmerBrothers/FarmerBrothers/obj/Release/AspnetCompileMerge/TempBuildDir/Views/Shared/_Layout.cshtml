@@ -55,7 +55,7 @@
     <script src="~/Scripts/common/ej.unobtrusive.min.js"></script>
     <link href="~/Content/ej/web/bootstrap-theme/ej.web.all.min.css" rel="stylesheet" />
     <link href="~/icon/font-awesome.css" rel="stylesheet">
-    <script src="~/Scripts/Mars/MarsCommon.js"></script>
+    @*<script src="~/Scripts/Mars/MarsCommon.js" async></script>*@
     <script src="~/Scripts/html2canvas.js"></script>
     <script src="~/Scripts/jspdf.min.js"></script>
 
@@ -97,6 +97,25 @@
                 e.preventDefault();
             });
         });
+
+        function AlertPopup(message) {
+            var messages = message.split("|");
+
+            $('#alertmessage').text('');
+            if (messages.length > 1) {
+                $('#alertmessage').append('<ul>');
+                for (var i = 0; i < messages.length; i++) {
+                    if (messages[i].length > 0) {
+                        $('#alertmessage').append('<li>' + messages[i] + '</li>');
+                    }
+                }
+                $('#alertmessage').append('</ul>');
+            }
+            else {
+                $('#alertmessage').text(message);
+            }
+            $("[data-popup='popupalert']").show();
+        }
     </script>
 
     <style>
@@ -113,8 +132,8 @@
         }
     </style>
 
-    <link rel="stylesheet" type="text/css" href="~/Content/jquery-confirm.css" />
-    <script src="~/Scripts/jquery.confirm.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/Content/jquery-confirm.css"  async/>
+    <script src="~/Scripts/jquery.confirm.js" async></script>
 </head>
 <body>
     <div id="ForWaitCursor">

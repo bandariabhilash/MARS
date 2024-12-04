@@ -26,7 +26,7 @@ namespace FarmerBrothers.Data
         public Nullable<int> Quantity { get; set; }
         public Nullable<int> Pid { get; set; }
         public string SKU { get; set; }
-        public Nullable<short> Recexists { get; set; }
+        public Nullable<short> recExists { get; set; }
         public Nullable<int> AssetID { get; set; }
     }
 }

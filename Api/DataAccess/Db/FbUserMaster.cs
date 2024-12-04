@@ -85,6 +85,8 @@ public partial class FbUserMaster
 
     public string? RefreshToken { get; set; }
 
+    public bool? ServiceAccess { get; set; }
+
     public virtual ICollection<FbactivityLog> FbactivityLogs { get; set; } = new List<FbactivityLog>();
 
     public virtual ICollection<FbcustomerNote> FbcustomerNotes { get; set; } = new List<FbcustomerNote>();
